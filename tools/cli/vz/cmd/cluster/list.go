@@ -36,7 +36,7 @@ func NewCmdClusterList(streams genericclioptions.IOStreams) *cobra.Command {
 		Short: "List the clusters",
 		Long:  "List the clusters",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			if err := listClusters(args); err != nil {
+			if err := listClusters(streams, args); err != nil {
 				return err
 			}
 			return nil
@@ -46,7 +46,7 @@ func NewCmdClusterList(streams genericclioptions.IOStreams) *cobra.Command {
 	return cmd
 }
 
-func listClusters(args []string) error {
+func listClusters(streams genericclioptions.IOStreams, args []string) error {
 
 	clientset, err := cluster_client.NewForConfig(pkg.GetKubeConfig())
 	if err != nil {
@@ -77,6 +77,6 @@ func listClusters(args []string) error {
 	}
 
 	// print out the data
-	helpers.PrintTable(headings, data)
+	helpers.PrintTable(headings, data, streams.Out)
 	return nil
 }
