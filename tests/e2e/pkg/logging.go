@@ -4,10 +4,13 @@
 package pkg
 
 import (
+	"context"
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/onsi/ginkgo"
+	meta "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // LogLevel is the logging level used to control log output
@@ -74,4 +77,22 @@ func CreateLogFile(filename string, content string) error {
 	f.WriteString(content)
 	f.Sync()
 	return nil
+}
+
+func LogPodStatus(namespaces ...string) {
+	fmt.Printf("Pod status\n")
+	for _, namespace := range namespaces {
+		fmt.Printf("\t%s\n", namespace)
+		pods, err := GetKubernetesClientset().CoreV1().Pods(namespace).List(context.TODO(), meta.ListOptions{})
+		if err != nil {
+			fmt.Printf("\t\tERROR = %v\n", err)
+		} else {
+			for _, pod := range (*pods).Items {
+				fmt.Printf("\t\t%s = %v\n", pod.Name, pod.Status.Phase)
+				for _, status := range pod.Status.ContainerStatuses {
+					fmt.Printf("\t\t\t%s = %v\n", status.Name, status.State.String())
+				}
+			}
+		}
+	}
 }

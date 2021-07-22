@@ -26,10 +26,14 @@ var _ = Describe("keycloak url test", func() {
 				Eventually(func() error {
 					api, err := pkg.GetAPIEndpoint(pkg.GetKubeConfigPathFromEnv())
 					if err != nil {
+						fmt.Printf("ERROR=%v", err)
+						pkg.LogPodStatus("verrazzano-system", "keycloak")
 						return err
 					}
 					ingress, err := api.GetIngress("keycloak", "keycloak")
 					if err != nil {
+						fmt.Printf("ERROR=%v", err)
+						pkg.LogPodStatus("verrazzano-system", "keycloak")
 						return err
 					}
 					keycloakURL = fmt.Sprintf("https://%s", ingress.Spec.TLS[0].Hosts[0])
