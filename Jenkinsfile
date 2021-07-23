@@ -8,7 +8,7 @@ def SUSPECT_LIST = ""
 def SCAN_IMAGE_PATCH_OPERATOR = false
 def VERRAZZANO_DEV_VERSION = ""
 
-def agentLabel = env.JOB_NAME.contains('master') ? "phxlarge" : "VM.Standard2.8"
+def agentLabel = env.JOB_NAME.contains('master') ? "phxlarge" : "phxlarge"
 
 pipeline {
     options {

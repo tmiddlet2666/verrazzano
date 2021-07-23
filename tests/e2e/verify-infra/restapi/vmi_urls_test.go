@@ -34,7 +34,7 @@ var _ = Describe("VMI urls test", func() {
 				Eventually(func() bool {
 					api, err := pkg.GetAPIEndpoint(pkg.GetKubeConfigPathFromEnv())
 					if err != nil {
-						fmt.Printf("ERROR=%v", err)
+						fmt.Printf("ERROR=%v\n", err)
 						pkg.LogPodStatus("verrazzano-system", "keycloak")
 						return false
 					}

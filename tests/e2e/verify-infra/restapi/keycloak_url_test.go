@@ -21,18 +21,20 @@ var _ = Describe("keycloak url test", func() {
 
 	Context("Fetching the keycloak url using api and test ", func() {
 		It("Fetches keycloak url", func() {
+			fmt.Printf("DEBUG VZ-2854: 503 error\n")
+			pkg.LogPodStatus("verrazzano-system", "keycloak")
 			if !pkg.IsManagedClusterProfile() {
 				var keycloakURL string
 				Eventually(func() error {
 					api, err := pkg.GetAPIEndpoint(pkg.GetKubeConfigPathFromEnv())
 					if err != nil {
-						fmt.Printf("ERROR=%v", err)
+						fmt.Printf("ERROR=%v\n", err)
 						pkg.LogPodStatus("verrazzano-system", "keycloak")
 						return err
 					}
 					ingress, err := api.GetIngress("keycloak", "keycloak")
 					if err != nil {
-						fmt.Printf("ERROR=%v", err)
+						fmt.Printf("ERROR=%v\n", err)
 						pkg.LogPodStatus("verrazzano-system", "keycloak")
 						return err
 					}

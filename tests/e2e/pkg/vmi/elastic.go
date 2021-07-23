@@ -51,13 +51,13 @@ func (e *Elastic) Connect() bool {
 	kubeconfigPath := pkg.GetKubeConfigPathFromEnv()
 	api, err := pkg.GetAPIEndpoint(kubeconfigPath)
 	if err != nil {
-		fmt.Printf("ERROR=%v", err)
+		fmt.Printf("ERROR=%v\n", err)
 		pkg.LogPodStatus("verrazzano-system", "keycloak")
 		return false
 	}
 	esURL, err := api.GetElasticURL()
 	if err != nil {
-		fmt.Printf("ERROR=%v", err)
+		fmt.Printf("ERROR=%v\n", err)
 		pkg.LogPodStatus("verrazzano-system", "keycloak")
 		return false
 	}

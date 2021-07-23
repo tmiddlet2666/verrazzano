@@ -191,7 +191,7 @@ func runScan(args []string) int {
 				fmt.Printf("WARNING: %s does not exist, skipping\n", arg)
 				continue
 			}
-			fmt.Printf("Error getting file info for %s: %v", arg, err.Error())
+			fmt.Printf("Error getting file info for %s: %v\n", arg, err.Error())
 			return 1
 		}
 		if argInfo.IsDir() {
@@ -218,7 +218,7 @@ func runScan(args []string) int {
 			err = checkFile(arg, argInfo)
 		}
 		if err != nil {
-			fmt.Printf("Error processing %s: %v", arg, err.Error())
+			fmt.Printf("Error processing %s: %v\n", arg, err.Error())
 			return 1
 		}
 	}
