@@ -83,9 +83,13 @@ func LogPodStatus(namespaces ...string) {
 	fmt.Printf("Pod status\n")
 	for _, namespace := range namespaces {
 		fmt.Printf("\t%s\n", namespace)
-		pods, err := GetKubernetesClientset().CoreV1().Pods(namespace).List(context.TODO(), meta.ListOptions{})
+		c, err := GetKubernetesClientset()
 		if err != nil {
-			fmt.Printf("\t\tERROR = %v\n", err)
+			fmt.Printf("\t\tGetKubernetesClientset ERROR=%v\n", err)
+		}
+		pods, err := c.CoreV1().Pods(namespace).List(context.TODO(), meta.ListOptions{})
+		if err != nil {
+			fmt.Printf("\t\tPodsList ERROR=%v\n", err)
 		} else {
 			for _, pod := range (*pods).Items {
 				fmt.Printf("\t\t%s = %v\n", pod.Name, pod.Status.Phase)
