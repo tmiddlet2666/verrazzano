@@ -52,13 +52,13 @@ func (e *Elastic) Connect() bool {
 	api, err := pkg.GetAPIEndpoint(kubeconfigPath)
 	if err != nil {
 		fmt.Printf("ERROR=%v\n", err)
-		pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
+		pkg.LogPodStatus("ingress-nginx", "verrazzano-system", "keycloak")
 		return false
 	}
 	esURL, err := api.GetElasticURL()
 	if err != nil {
 		fmt.Printf("ERROR=%v\n", err)
-		pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
+		pkg.LogPodStatus("ingress-nginx", "verrazzano-system", "keycloak")
 		return false
 	}
 	body, err := e.retryGet(esURL, pkg.Username, pkg.GetVerrazzanoPasswordInCluster(kubeconfigPath), kubeconfigPath)

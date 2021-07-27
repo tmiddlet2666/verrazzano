@@ -88,13 +88,13 @@ func validateConsoleUrlsCluster(kubeconfig string, clusterPrefix string) bool {
 	consoleUrls, err := getConsoleURLsFromLog(filepath.FromSlash(installLogDir + "/" + clusterPrefix + "/" + installLog))
 	if err != nil {
 		pkg.Log(pkg.Error, fmt.Sprintf("There is an error getting console URLs from the log file - %v", err))
-		pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
+		pkg.LogPodStatus("ingress-nginx", "verrazzano-system", "keycloak")
 		return false
 	}
 	expectedConsoleUrls, err := getExpectedConsoleURLs(kubeconfig)
 	if err != nil {
 		pkg.Log(pkg.Error, fmt.Sprintf("There is an error getting console URLs from the API server - %v", err))
-		pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
+		pkg.LogPodStatus("ingress-nginx", "verrazzano-system", "keycloak")
 		return false
 	}
 
