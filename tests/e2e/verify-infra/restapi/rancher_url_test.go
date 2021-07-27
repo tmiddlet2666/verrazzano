@@ -29,13 +29,13 @@ var _ = Describe("rancher url test", func() {
 					api, err := pkg.GetAPIEndpoint(kubeconfigPath)
 					if err != nil {
 						fmt.Printf("ERROR=%v\n", err)
-						pkg.LogPodStatus("verrazzano-system", "keycloak")
+						pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
 						return err
 					}
 					ingress, err := api.GetIngress("cattle-system", "rancher")
 					if err != nil {
 						fmt.Printf("ERROR=%v\n", err)
-						pkg.LogPodStatus("verrazzano-system", "keycloak")
+						pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
 						return err
 					}
 					rancherURL = fmt.Sprintf("https://%s", ingress.Spec.TLS[0].Hosts[0])

@@ -35,13 +35,13 @@ var _ = Describe("VMI urls test", func() {
 					api, err := pkg.GetAPIEndpoint(pkg.GetKubeConfigPathFromEnv())
 					if err != nil {
 						fmt.Printf("ERROR=%v\n", err)
-						pkg.LogPodStatus("verrazzano-system", "keycloak")
+						pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
 						return false
 					}
 					response, err := api.Get("apis/verrazzano.io/v1/namespaces/verrazzano-system/verrazzanomonitoringinstances/system")
 					if err != nil {
 						pkg.Log(pkg.Error, fmt.Sprintf("Error fetching system VMI from api, error: %v", err))
-						pkg.LogPodStatus("verrazzano-system", "keycloak")
+						pkg.LogPodStatus("istio-system", "verrazzano-system", "keycloak")
 						return false
 					}
 					if response.StatusCode != http.StatusOK {
