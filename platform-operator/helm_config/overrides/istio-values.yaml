@@ -16,6 +16,7 @@ global:
   imagePullPolicy: IfNotPresent
   proxy:
     readinessFailureThreshold: 90
+    logLevel: info
 
 gateways:
   istio-egressgateway:
