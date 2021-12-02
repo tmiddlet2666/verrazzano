@@ -8,10 +8,17 @@ SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 CLUSTER_COUNT=${1:-1}
 KUBECONFIG_DIR=$2
 INSTALL_CALICO=${3:-true}
+PRIVATE_CLUSTER=${4:-false}
 REQUIRED_VNC_COUNT=0
 REQUIRED_LB_COUNT=0
 CLUSTER_NAME_PREFIX="oke"
 MODULE_NAME_PREFIX="oke"
+
+set_private_access() {
+  echo "Cluster access set to private."
+  export TF_VAR_cluster_access=private
+  export TF_VAR_bastion_enabled=true
+}
 
 check_for_resources() {
   local resource_type=$1
@@ -36,6 +43,10 @@ check_for_resources() {
     exit 1
   fi
 }
+
+if [ $PRIVATE_CLUSTER == true ] ; then
+    set_private_access
+fi
 
 if [ -z "$TF_VAR_compartment_id" ] ; then
     echo "TF_VAR_compartment_id env var must be set!"
