@@ -87,6 +87,16 @@ do
   status_code=$?
 
   if [ ${status_code:-1} -eq 0 ]; then
+    # if the cluster has been created with private endpoints then setup the ssh tunnel through the bastion host
+    if [ "$TF_VAR_bastion_enabled" = true ] ; then
+      echo "Setting up ssh tunnel through bastion host."
+      ../../setup_ssh_tunnel.sh
+      if [ $? -ne 0 ]; then
+          echo "Can't setup ssh tunnel through bastion host!"
+          exit 1
+      fi
+    fi
+
     echo "Create kube config for cluster ${TF_VAR_label_prefix}-$CLUSTER_NAME_PREFIX-$i ..."
     CLUSTER_OCID=$(oci ce cluster list --compartment-id "${TF_VAR_compartment_id}" --name "${TF_VAR_label_prefix}-${CLUSTER_NAME_PREFIX}-$i" --lifecycle-state "ACTIVE" | jq -r '.data[0]."id"')
     echo "OCID of the cluster ${TF_VAR_label_prefix}-$CLUSTER_NAME_PREFIX-$i : ${CLUSTER_OCID}."
