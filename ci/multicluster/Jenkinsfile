@@ -1176,7 +1176,7 @@ def createOKEClusters(clusterPrefix) {
     script {
             int clusterCount = params.TOTAL_CLUSTERS.toInteger()
         withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
-            sh """
+            sh '''
                 # get the ssh public key
                 ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
                 # convert SSH2 public key into an OpenSSH format
@@ -1196,7 +1196,7 @@ def createOKEClusters(clusterPrefix) {
                     echo "Waiting for nodes to transition to 'READY'..."
                     kubectl wait --for=condition=ready nodes --timeout=5m --all
                 done
-            """
+            '''
         }
     }
 }
