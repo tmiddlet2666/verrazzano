@@ -1186,7 +1186,7 @@ def createOKEClusters(clusterPrefix) {
                 export TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}
                 echo "tests will execute" > $TESTS_EXECUTED_FILE
                 echo "Create OKE cluster"
-                for i in $(seq 1 $clusterCount)
+                for (( i=1; i<=$clusterCount; i++ ))
                 do
                     mkdir -p "$KUBECONFIG_DIR/$i"
                     export KUBECONFIG="$KUBECONFIG_DIR/$i/kube_config"
