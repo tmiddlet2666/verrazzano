@@ -308,6 +308,9 @@ pipeline {
                         }
                         stage('Create OKE Clusters') {
                             when { expression { return params.TEST_ENV == 'ocidns_oke' || params.TEST_ENV == 'magicdns_oke'} }
+                            environment {
+                                TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
+                            }
                             steps {
                                 echo "OKE Cluster Prefix: ${OKE_CLUSTER_PREFIX}"
                                 createOKEClusters("${OKE_CLUSTER_PREFIX}")
@@ -1184,8 +1187,16 @@ def createOKEClusters(clusterPrefix) {
                 echo "tests will execute" > ${TESTS_EXECUTED_FILE}
                 mkdir -p ${KUBECONFIG_DIR}
                 echo "Create OKE cluster"
-                cd ${TEST_SCRIPTS_DIR}
-                TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ./create_oke_multi_cluster.sh "$clusterCount" "${KUBECONFIG_DIR}" ${params.CREATE_CLUSTER_USE_CALICO} true
+                for i in $(seq 1 $clusterCount)
+                do
+                    mkdir -p "${KUBECONFIG_DIR}/$i"
+                    export KUBECONFIG="${KUBECONFIG_DIR}/$i/kube_config"
+                    TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO}
+                    echo "Waiting for nodes to be added to cluster..."
+                    timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
+                    echo "Waiting for nodes to transition to 'READY'..."
+                    kubectl wait --for=condition=ready nodes --timeout=5m --all
+                done
             """
         }
     }
