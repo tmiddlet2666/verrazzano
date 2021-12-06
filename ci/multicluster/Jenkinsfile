@@ -1184,13 +1184,13 @@ def createOKEClusters(clusterPrefix) {
                 # set the ssh public key value for terraform
                 export TF_VAR_ssh_public_key_path=/tmp/opc_ssh.pub
                 export TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}
-                echo "tests will execute" > $TESTS_EXECUTED_FILE
+                echo "tests will execute" > ${TESTS_EXECUTED_FILE}
                 echo "Create OKE cluster"
-                for (( i=1; i<=$clusterCount; i++ ))
+                for (( i=1; i<=${clusterCount}; i++ ))
                 do
-                    mkdir -p "$KUBECONFIG_DIR/$i"
-                    export KUBECONFIG="$KUBECONFIG_DIR/$i/kube_config"
-                    TF_VAR_label_prefix=$clusterPrefix TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO}
+                    mkdir -p "${KUBECONFIG_DIR}/$i"
+                    export KUBECONFIG="${KUBECONFIG_DIR}/$i/kube_config"
+                    TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO}
                     echo "Waiting for nodes to be added to cluster..."
                     timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
                     echo "Waiting for nodes to transition to 'READY'..."
