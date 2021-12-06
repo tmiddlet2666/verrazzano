@@ -12,6 +12,10 @@ metadata:
 data:
   conf.lua: |
     local clusterHostSuffix = '{{ .Values.config.envName }}'..'.'..'{{ .Values.config.dnsSuffix }}'
+    local nodePort = '{{ .Values.config.nodePort }}'
+    if nodePort then
+      clusterHostSuffix = clusterHostSuffix..':'..nodePort
+    end
 {{- with .Values.api.proxy }}
     local ingressHost = ngx.req.get_headers()["x-forwarded-host"]
     if not ingressHost then
@@ -32,6 +36,9 @@ data:
         singleLogoutUri = ingressUri..singleLogoutPath,
         hostUri = ingressUri
     })
+    auth.info("+++ ABMITRA clusterHostSuffix: "..clusterHostSuffix)
+    auth.info("+++ ABMITRA ingressHost: "..ingressHost)
+    auth.info("+++ ABMITRA ingressUri: "..ingressUri)
 
     -- determine backend and set backend parameters
     local backend, can_redirect = auth.getBackendNameFromIngressHost(ingressHost)

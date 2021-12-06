@@ -30,6 +30,13 @@ else
 fi
 
 DNS_SUFFIX=$(get_dns_suffix ${INGRESS_IP})
+ingress_type=$(get_config_value ".ingress.type")
+if [ ${ingress_type} == "NodePort" ]; then
+    node_port=$(kubectl get svc ingress-controller-ingress-nginx-controller -n ingress-nginx -o json | jq -r '.spec.ports[] | select(.port==443).nodePort')
+    DNS_SUFFIX=${DNS_SUFFIX}:${node_port}
+fi
+echo "++++++ ABMITRA ++++++"
+echo $DNS_SUFFIX
 
 # build_extra_init_containers_override overrides the keycloak extraInitContainers helm value with YAML that
 # includes the image path constructed from the bill of materials
@@ -77,9 +84,10 @@ function install_keycloak {
       exit 1
     fi
 
+    DNS_SUFFIX_LB_NP=$(get_dns_suffix ${INGRESS_IP})
     KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set-string dnsTarget=${DNS_TARGET_NAME}"
-    KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set rulesHost=keycloak.${ENV_NAME}.${DNS_SUFFIX}"
-    KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set tlsHosts=keycloak.${ENV_NAME}.${DNS_SUFFIX}"
+    KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set rulesHost=keycloak.${ENV_NAME}.${DNS_SUFFIX_LB_NP}"
+    KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set tlsHosts=keycloak.${ENV_NAME}.${DNS_SUFFIX_LB_NP}"
     KEYCLOAK_ARGUMENTS="$KEYCLOAK_ARGUMENTS --set tlsSecret=${ENV_NAME}-secret"
 
     # Handle any additional Keycloak install args

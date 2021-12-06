@@ -122,6 +122,7 @@ config:
   envName:
   dnsSuffix: verrazzano.io
   enableMonitoringStorage: true
+  nodePort:
 
 security:
   adminsGroup: &default_adminsGroup verrazzano-admins

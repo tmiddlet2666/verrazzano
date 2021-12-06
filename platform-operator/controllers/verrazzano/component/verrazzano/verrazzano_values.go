@@ -192,6 +192,7 @@ type objectStoreSettings struct {
 type configValues struct {
 	EnvName                 string `json:"envName,omitempty"`
 	DNSSuffix               string `json:"dnsSuffix,omitempty"`
+	NodePort                string `json:"nodePort,omitempty"`
 	EnableMonitoringStorage bool   `json:"enableMonitoringStorage,omitempty"`
 }
 

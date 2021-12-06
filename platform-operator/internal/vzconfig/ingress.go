@@ -9,8 +9,12 @@ import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	vpoconst "github.com/verrazzano/verrazzano/platform-operator/constants"
 	"k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
+	"k8s.io/client-go/kubernetes"
+	controllerruntime "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"strconv"
 )
 
 // GetEnvName Returns the configured environment name, or "default" if not specified in the configuration
@@ -95,7 +99,7 @@ func GetIngressIP(client client.Client, vz *vzapi.Verrazzano) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	if serviceType == vzapi.LoadBalancer {
+	if serviceType == vzapi.LoadBalancer || serviceType == vzapi.NodePort {
 		svc := v1.Service{}
 		if err := client.Get(context.TODO(), types.NamespacedName{Name: vpoconst.NGINXControllerServiceName, Namespace: globalconst.IngressNamespace}, &svc); err != nil {
 			return "", err
@@ -122,4 +126,30 @@ func BuildDNSDomain(client client.Client, vz *vzapi.Verrazzano) (string, error) 
 	envName := GetEnvName(vz)
 	dnsDomain := fmt.Sprintf("%s.%s", envName, dnsSuffix)
 	return dnsDomain, nil
+}
+
+func getNodePort() (string,error) {
+	var nodePort int32
+	cfg, err := controllerruntime.GetConfig()
+	if err != nil {
+		return "",err
+	}
+	k, err := kubernetes.NewForConfig(cfg)
+	if err != nil {
+		fmt.Errorf("Unable to get k8s client")
+		return  "",err
+	}
+
+	service,err := k.CoreV1().Services("ingress-nginx").Get(context.TODO(),"ingress-controller-ingress-nginx-controller",metav1.GetOptions{})
+	if err != nil {
+		fmt.Errorf("Unable to get services")
+		return "",err
+	}
+
+	for _,port := range service.Spec.Ports {
+		if port.Port == 443 {
+			nodePort = port.NodePort
+		}
+	}
+	return strconv.Itoa(int(nodePort)),nil
 }

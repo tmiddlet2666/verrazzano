@@ -8,9 +8,11 @@ import (
 	"fmt"
 	"io/fs"
 	"io/ioutil"
+	"k8s.io/client-go/kubernetes"
 	"os"
 	"os/exec"
 	"path/filepath"
+	"strconv"
 	"strings"
 	"time"
 
@@ -179,22 +181,75 @@ func appendVerrazzanoValues(ctx spi.ComponentContext, overrides *verrazzanoValue
 		}
 	}
 
-	envName := vzconfig.GetEnvName(effectiveCR)
-	overrides.Config = &configValues{
-		EnvName:   envName,
-		DNSSuffix: dnsSuffix,
+
+
+	/*
+	ABMITRA Debug code
+	 */
+
+	cfg, err := controllerruntime.GetConfig()
+	if err != nil {
+		return err
+	}
+	k, err := kubernetes.NewForConfig(cfg)
+	if err != nil {
+		ctx.Log().Errorf("Unable to get k8s client")
+		return  err
 	}
 
+	service,err := k.CoreV1().Services("ingress-nginx").Get(context.TODO(),"ingress-controller-ingress-nginx-controller",metav1.GetOptions{})
+	if err != nil {
+		ctx.Log().Errorf("Unable to get services")
+		return err
+	}
+	var nodePort int32
+	for _,port := range service.Spec.Ports {
+		if port.Port == 443 {
+			nodePort = port.NodePort
+		}
+	}
+	fmt.Printf("+++ ABMITRA NODEPORT = %v +++ \n",nodePort)
+	fmt.Printf("+++ ABMITRA : dnsSuffix = %v +++ \n",dnsSuffix)
+
+	envName := vzconfig.GetEnvName(effectiveCR)
+	if nodePort > 0 {
+		overrides.Config = &configValues{
+			EnvName:   envName,
+			DNSSuffix: dnsSuffix,
+			NodePort: strconv.Itoa(int(nodePort)),
+		}
+	} else {
+		overrides.Config = &configValues{
+			EnvName:   envName,
+			DNSSuffix: dnsSuffix,
+		}
+	}
+
+
+	/*
+		ABMITRA Debug code
+	*/
 	overrides.Keycloak = &keycloakValues{Enabled: vzconfig.IsKeycloakEnabled(effectiveCR)}
 	overrides.Rancher = &rancherValues{Enabled: vzconfig.IsRancherEnabled(effectiveCR)}
 	overrides.Console = &consoleValues{Enabled: vzconfig.IsConsoleEnabled(effectiveCR)}
 	overrides.VerrazzanoOperator = &voValues{Enabled: isVMOEnabled(effectiveCR)}
 	overrides.MonitoringOperator = &vmoValues{Enabled: isVMOEnabled(effectiveCR)}
-	overrides.API = &apiValues{
-		Proxy: &proxySettings{
-			OidcProviderHost:          fmt.Sprintf("keycloak.%s.%s", envName, dnsSuffix),
-			OidcProviderHostInCluster: keycloakInClusterURL,
-		},
+	if nodePort > 0  {
+		nodePortString := strconv.Itoa(int(nodePort))
+		overrides.API = &apiValues{
+			Proxy: &proxySettings{
+				//OidcRealm: fmt.Sprintf("keycloak.%s.%s:%s", envName, dnsSuffix),
+				OidcProviderHost:          fmt.Sprintf("keycloak.%s.%s:%s", envName, dnsSuffix,nodePortString),
+				OidcProviderHostInCluster: keycloakInClusterURL,
+			},
+		}
+	} else {
+		overrides.API = &apiValues{
+			Proxy: &proxySettings{
+				OidcProviderHost:          fmt.Sprintf("keycloak.%s.%s", envName, dnsSuffix),
+				OidcProviderHostInCluster: keycloakInClusterURL,
+			},
+		}
 	}
 	return nil
 }
