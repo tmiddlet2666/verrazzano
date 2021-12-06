@@ -1185,7 +1185,6 @@ def createOKEClusters(clusterPrefix) {
                 export TF_VAR_ssh_public_key_path=/tmp/opc_ssh.pub
                 export TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}
                 echo "tests will execute" > ${TESTS_EXECUTED_FILE}
-                mkdir -p "${KUBECONFIG_DIR}"
                 echo "Create OKE cluster"
                 for i in $(seq 1 $clusterCount)
                 do
