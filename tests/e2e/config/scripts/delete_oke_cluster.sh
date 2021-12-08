@@ -5,9 +5,7 @@
 #
 
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
-CLUSTER_COUNT=${1:-1}
-KUBECONFIG_DIR=${2:-""}
-INSTALL_CALICO=${3:-true}
+INSTALL_CALICO=${1:-true}
 
 set +e
 
@@ -52,30 +50,11 @@ function cleanup_vz_resources() {
   kubectl get pvc,pv,svc -A
 }
 
-for i in $(seq 1 $CLUSTER_COUNT)
-do
-  if [ "$CLUSTER_COUNT" -gt 1 ]; then
-    echo "Setting ${KUBECONFIG_DIR}/$i/kube_config to KUBECONFIG"
-    export KUBECONFIG=${KUBECONFIG_DIR}/$i/kube_config
-    export VERRAZZANO_KUBECONFIG=$KUBECONFIG
-  fi
-  cleanup_vz_resources
-done
+export VERRAZZANO_KUBECONFIG=$KUBECONFIG
+cleanup_vz_resources
 
 # delete the OKE clusters
 cd $SCRIPT_DIR/terraform/cluster
-
-for i in $(seq 1 $CLUSTER_COUNT)
-do
-  if [ "$CLUSTER_COUNT" -gt 1 ]; then
-    workspace=cluster-$i
-    echo "Setting Terraform workspace: $workspace"
-    ./terraform workspace select $workspace -no-color
-  fi
-
-  # Set Calico related mandatory variables
-  export TF_VAR_calico_enabled="${INSTALL_CALICO}"
-  export TF_VAR_calico_version="$(grep 'calico-version=' ${SCRIPT_DIR}/../../../../.third-party-test-versions | sed 's/calico-version=//g')"
-
-  ./delete-cluster.sh
-done
+export TF_VAR_calico_enabled="${INSTALL_CALICO}"
+export TF_VAR_calico_version="$(grep 'calico-version=' ${SCRIPT_DIR}/../../../../.third-party-test-versions | sed 's/calico-version=//g')"
+./delete-cluster.sh

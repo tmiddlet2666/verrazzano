@@ -708,9 +708,14 @@ pipeline {
                           cd ${GO_REPO_PATH}/verrazzano
                           ./tests/e2e/config/scripts/oci_dns_ops.sh -o delete -s z${zoneId} || echo "Failed to delete DNS zone z${zoneId}"
                         fi
-                        cd ${TEST_SCRIPTS_DIR}
-                        TF_VAR_label_prefix=${OKE_CLUSTER_PREFIX} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ./delete_oke_cluster.sh "$clusterCount" "${KUBECONFIG_DIR}"
                     """
+                    for(int count=1; count<=clusterCount; count++) {
+                        sh """
+                            cd ${TEST_SCRIPTS_DIR}
+                            export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
+                            TF_VAR_label_prefix=${OKE_CLUSTER_PREFIX} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ./delete_oke_cluster.sh
+                        """
+                    }
                 }
                 sh """
                     if [ -f ${POST_DUMP_FAILED_FILE} ]; then
@@ -1184,18 +1189,13 @@ def createOKEClusters(clusterPrefix) {
                     ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
                     # set the ssh public key value for terraform
                     export TF_VAR_ssh_public_key_path=/tmp/opc_ssh.pub
-                    export TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}
+                    export TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count
                     export TF_VAR_vcn_cidr="10.$count.0.0/16"
                     echo "tests will execute" > ${TESTS_EXECUTED_FILE}
                     echo "Create OKE cluster"
                     mkdir -p "${KUBECONFIG_DIR}/$count"
                     export KUBECONFIG="${KUBECONFIG_DIR}/$count/kube_config"
-                    TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME} ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO}
-                    echo "Waiting for nodes to be added to cluster..."
-                    timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
-                    echo "Waiting for nodes to transition to 'READY'..."
-                    kubectl wait --for=condition=ready nodes --timeout=5m --all
-                    
+                    TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO}                    
                 """
                 }
             }
