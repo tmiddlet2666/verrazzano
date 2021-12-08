@@ -8,6 +8,7 @@ SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 
 PRIVATE_CLUSTER=${1:-false}
 INSTALL_CALICO=${2:-true}
+CLUSTER_INDEX=${3:-1}
 
 set_private_access() {
   echo "Cluster access set to private."
@@ -72,7 +73,7 @@ export TF_VAR_calico_enabled="${INSTALL_CALICO}"
 export TF_VAR_calico_version="$(grep 'calico-version=' ${SCRIPT_DIR}/../../../../.third-party-test-versions | sed 's/calico-version=//g')"
 
 echo "Create cluster started at $(date)"
-./create-cluster.sh
+./create-cluster.sh $CLUSTER_INDEX
 echo "Create cluster completed at $(date)"
 status_code=$?
 if [ ${status_code:-1} -eq 0 ]; then

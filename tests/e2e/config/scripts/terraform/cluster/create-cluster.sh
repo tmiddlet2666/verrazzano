@@ -5,8 +5,13 @@
 #
 
 . ./init.sh
-
+CLUSTER_INDEX=${1:-1}
 $SCRIPT_DIR/terraform init -no-color
+if [ "$CLUSTER_INDEX" -gt 1 ]; then
+  workspace=cluster-${CLUSTER_INDEX}
+  echo "Creating Terraform workspace: $workspace"
+  $SCRIPT_DIR/terraform workspace new $workspace -no-color
+fi
 $SCRIPT_DIR/terraform plan -var-file=$TF_VAR_nodepool_config.tfvars -var-file=$TF_VAR_region.tfvars -no-color
 
 set -o pipefail

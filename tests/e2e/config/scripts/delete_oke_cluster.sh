@@ -5,7 +5,8 @@
 #
 
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
-INSTALL_CALICO=${1:-true}
+CLUSTER_INDEX=${1:-1}
+INSTALL_CALICO=${2:-true}
 
 set +e
 
@@ -55,6 +56,11 @@ cleanup_vz_resources
 
 # delete the OKE clusters
 cd $SCRIPT_DIR/terraform/cluster
+if [ "$CLUSTER_INDEX" -gt 1 ]; then
+  workspace=cluster-${CLUSTER_INDEX}
+  echo "Selecting Terraform workspace: $workspace"
+  $SCRIPT_DIR/terraform workspace select $workspace -no-color
+fi
 export TF_VAR_calico_enabled="${INSTALL_CALICO}"
 export TF_VAR_calico_version="$(grep 'calico-version=' ${SCRIPT_DIR}/../../../../.third-party-test-versions | sed 's/calico-version=//g')"
 ./delete-cluster.sh
