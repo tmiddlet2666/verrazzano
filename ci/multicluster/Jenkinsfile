@@ -713,7 +713,7 @@ pipeline {
                         sh """
                             cd ${TEST_SCRIPTS_DIR}
                             export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
-                            TF_VAR_label_prefix=${OKE_CLUSTER_PREFIX} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ./delete_oke_cluster.sh $count
+                            TF_VAR_label_prefix=${OKE_CLUSTER_PREFIX}-$count TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ./delete_oke_cluster.sh $count
                         """
                     }
                 }
@@ -1195,7 +1195,7 @@ def createOKEClusters(clusterPrefix) {
                     echo "Create OKE cluster"
                     mkdir -p "${KUBECONFIG_DIR}/$count"
                     export KUBECONFIG="${KUBECONFIG_DIR}/$count/kube_config"
-                    TF_VAR_label_prefix=${clusterPrefix} TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO} $count                    
+                    TF_VAR_label_prefix=${clusterPrefix}-$count TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ${WORKSPACE}/tests/e2e/config/scripts/create_oke_cluster.sh true ${params.CREATE_CLUSTER_USE_CALICO} $count                    
                 """
                 }
             }
