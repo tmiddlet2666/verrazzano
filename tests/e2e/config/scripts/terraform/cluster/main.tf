@@ -31,7 +31,7 @@ module "oke" {
   vcn_name = "${var.cluster_name}-vcn"
   vcn_dns_label = var.cluster_name
   label_prefix = var.label_prefix
-  vcn_cidrs     = [var.vcn_cidrs]
+  vcn_cidr     = [var.vcn_cidr]
 
   operator_shape = { shape="VM.Standard.E3.Flex", ocpus=1, memory=4, boot_volume_size=50 }
   operator_notification_endpoint = ""

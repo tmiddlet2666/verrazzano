@@ -53,6 +53,6 @@ variable "operator_enabled" {
 variable "node_pool_image_id" {}
 variable "calico_enabled" {}
 variable "calico_version" {}
-variable "vcn_cidrs" {
+variable "vcn_cidr" {
   default = "10.0.0.0/16"
 }
