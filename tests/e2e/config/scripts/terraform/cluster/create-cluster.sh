@@ -6,7 +6,7 @@
 
 . ./init.sh
 
-$SCRIPT_DIR/terraform init -no-color -reconfigure
+$SCRIPT_DIR/terraform init -no-color
 $SCRIPT_DIR/terraform plan -var-file=$TF_VAR_nodepool_config.tfvars -var-file=$TF_VAR_region.tfvars -no-color
 
 set -o pipefail
