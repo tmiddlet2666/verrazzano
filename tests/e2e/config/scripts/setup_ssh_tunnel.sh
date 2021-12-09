@@ -30,6 +30,7 @@ if [ $? -ne 0 ]; then
   exit 1
 fi
 
+echo "TF_VAR_label_prefix is ${TF_VAR_label_prefix}"
 # find the CIDR for the VPN
 VCN_CIDR=$(oci network vcn list \
   --compartment-id "${TF_VAR_compartment_id}" \
