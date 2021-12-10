@@ -51,7 +51,7 @@ if [ -z "$VCN_ID" ]; then
     echo "Failed to get the id for OKE cluster vcn ${TF_VAR_label_prefix}-oke"
     exit 0
 fi
-
+echo "create-cluster VCN_ID is ${VCN_ID}"
 # find private_workers_seclist id
 SEC_LIST_ID=$(oci network security-list list \
   --compartment-id "${TF_VAR_compartment_id}" \
@@ -63,7 +63,7 @@ if [ -z "$SEC_LIST_ID" ]; then
     echo "Failed to get the id for security-list ${TF_VAR_label_prefix}-workers"
     exit 0
 fi
-
+echo "create-cluster SEC_LIST_ID is ${SEC_LIST_ID}"
 # find pub_lb_subnet CIDR
 LB_SUBNET_CIDR=$(oci network subnet list \
   --compartment-id "${TF_VAR_compartment_id}" \
@@ -75,7 +75,7 @@ if [ -z "$LB_SUBNET_CIDR" ]; then
     echo "Failed to get the cidr-block for subnet ${TF_VAR_label_prefix}-pub_lb"
     exit 0
 fi
-
+echo "create-cluster LB_SUBNET_CIDR is ${LB_SUBNET_CIDR}"
 # get current ingress-security-rules
 oci network security-list get --security-list-id "${SEC_LIST_ID}" | jq '.data."ingress-security-rules"' > ingress-security-rules.json
 if [ $? -eq 0 ]; then
