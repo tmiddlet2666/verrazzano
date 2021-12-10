@@ -42,6 +42,7 @@ if [ -z "VCN_CIDR" ]; then
     exit 1
 fi
 
+echo "VCN_CIDR is ${VCN_CIDR}"
 # find bastion compute instance id
 BASTION_ID=$(oci compute instance list \
   --compartment-id "${TF_VAR_compartment_id}" \
@@ -52,7 +53,7 @@ if [ -z "$BASTION_ID" ]; then
     echo "Failed to get the OCID for compute instance ${TF_VAR_label_prefix}-bastion"
     exit 1
 fi
-
+echo "BASTION_ID is ${BASTION_ID}"
 # find public IP for the bastion compute instance
 BASTION_IP=$(oci compute instance list-vnics \
   --compartment-id "${TF_VAR_compartment_id}" \
@@ -63,7 +64,7 @@ if [ -z "$BASTION_IP" ]; then
     echo "Failed to get the public IP for compute instance ${TF_VAR_label_prefix}-bastion"
     exit 1
 fi
-
+echo "BASTION_IP is ${BASTION_IP}"
 # run sshuttle
 sshuttle -r opc@$BASTION_IP $VCN_CIDR --ssh-cmd 'ssh -o StrictHostKeyChecking=no -i '${OPC_USER_KEY_FILE}'' &
 SHUTTLE_PID=$!
