@@ -3,7 +3,7 @@
 
 module "oke" {
   source = "oracle-terraform-modules/oke/oci"
-  version = "3.3.0"
+  version = "4.0.4"
 
   tenancy_id = var.tenancy_id
   user_id = var.user_id
@@ -32,6 +32,15 @@ module "oke" {
   vcn_dns_label = var.cluster_name
   label_prefix = var.label_prefix
   vcn_cidr     = var.vcn_cidr
+  create_drg   = true
+  nat_gateway_route_rules = [
+    {
+      destination       = "${var.nat_cidr}"
+      destination_type  = "CIDR_BLOCK"
+      network_entity_id = "drg"
+      description       = "Multi-Cluster"
+    }
+  ]
 
   operator_shape = { shape="VM.Standard.E3.Flex", ocpus=1, memory=4, boot_volume_size=50 }
   operator_notification_endpoint = ""
