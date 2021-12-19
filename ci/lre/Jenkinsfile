@@ -21,7 +21,7 @@ pipeline {
             dev_lre_cluster_id = credentials('dev-lre-cluster-id')
             dev_lre_bastion_ip = credentials('dev_lre_bastion_ip')
             OCI_CLI_REGION = "us-ashburn-1"
-            #KUBECONFIG
+            KUBECONFIG = "~/.oci/config"
     }
 
 
@@ -48,6 +48,7 @@ pipeline {
                           echo 'region=${OCI_CLI_REGION}'
                           echo 'key_file=${OCI_CLI_KEY_FILE}'
                         } >> ~/.oci/config
+                        export KUBECONFIG=~/.oci/config
                     """
                 }
             }
