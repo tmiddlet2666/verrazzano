@@ -1,0 +1,69 @@
+// Copyright (c) 2021, Oracle and/or its affiliates.
+// Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
+pipeline {
+    options {
+        skipDefaultCheckout true
+        timestamps ()
+    }
+
+    agent {
+        docker {
+            image "${RUNNER_DOCKER_IMAGE}"
+            args "${RUNNER_DOCKER_ARGS}"
+            registryUrl "${RUNNER_DOCKER_REGISTRY_URL}"
+            label 'internal'
+        }
+    }
+
+    environment {
+            dev_lre_compartment_id = credentials('dev-lre-compartment-id')
+            dev_lre_bastion_ip = credentials('dev_lre_bastion_ip')
+            #KUBECONFIG
+    }
+
+
+    stages {
+        stage('call sh-keygen to create public and private keys')
+            steps {
+                script {
+                    sh """
+                        # delete the key file if it exists
+                        rm -f ~/.ssh/id_rsa
+                        # call ssh-keygen to create the keys
+                        ssh-keygen -m PEM -N '' -f ~/.ssh/id_rsa
+                        # export the ssh public key value for LRE cluster
+                        export ssh_public_key_path=~/.ssh/id_rsa.pub
+                        # export the ssh private key file for LRE cluster
+                        export ssh_public_key_path=~/.ssh/id_rsa
+                    """
+                }
+            }
+        }
+
+        stage('set up ssh tunnel') {
+            steps {
+                script {
+                    sh """
+                        export jenkins_user=$(whoami)'
+                        echo "user = ${jenkins_user}"
+                        echo "Create ssh tunnel"
+                        cd ${GO_REPO_PATH}/verrazzano/
+                        ./ci/scripts/lre_setup_ssh_tunnel.sh
+                    """
+                    }
+                }
+            }
+        }
+
+        stage('run kubectl to get nodes') {
+            steps {
+                script {
+                    sh """
+                        echo "run kubectl get nodes"
+                        kubectl get nodes > ${WORKSPACE}/verrazzano/verrazzano-lre-nodes.log --tail -1
+                    """
+            }
+        }
+    }
+}
