@@ -110,6 +110,7 @@ pipeline {
                         echo "run kubectl get nodes"
                         kubectl get nodes > ${WORKSPACE}/verrazzano/verrazzano-lre-nodes.log --tail -1
                     """
+                }
             }
         }
     }
