@@ -19,7 +19,7 @@ pipeline {
     environment {
             dev_lre_compartment_id = credentials('dev-lre-compartment-id')
             dev_lre_cluster_id = credentials('dev-lre-cluster-id')
-            dev_lre_bastion_ip = credentials('dev_lre_bastion_ip')
+            dev_lre_bastion_ip = credentials('dev-lre-bastion-ip')
             OCI_CLI_REGION = "us-ashburn-1"
             KUBECONFIG = "~/.oci/config"
     }
