@@ -40,6 +40,7 @@ pipeline {
                     sh """
                         mkdir -p ~/.oci
                         cp ${OCI_CLI_KEY_FILE} ~/.oci
+                        ls -ls ~/.oci
                         rm -rf ~/oci/config
                         {
                           echo '[DEFAULT]'
@@ -47,7 +48,7 @@ pipeline {
                           echo 'fingerprint=${OCI_CLI_FINGERPRINT}'
                           echo 'tenancy=${OCI_CLI_TENANCY}'
                           echo 'region=${OCI_CLI_REGION}'
-                          echo 'key_file=~/.oci/oci-api-key'
+                          echo 'key_file=~/.oci/alm.pem'
                         } >> ~/.oci/config
                         export KUBECONFIG=~/.oci/config
                     """
