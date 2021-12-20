@@ -48,6 +48,8 @@ pipeline {
                           echo 'region=${OCI_CLI_REGION}'
                           echo 'key_file=${OCI_CLI_KEY_FILE}'
                         } >> ~/.oci/config
+                        echo 'Printing oci config file'
+                        cat ~/.oci/config
                         export KUBECONFIG=~/.oci/config
                     """
                 }
