@@ -26,13 +26,13 @@ BASTION_ID=$(oci bastion bastion list \
             --compartment-id "${dev_lre_compartment_id}" --all \
             | jq -r '.data[0]."id"')
 
-SESSION_ID=oci bastion session create-port-forwarding \
+SESSION_ID=$(oci bastion session create-port-forwarding \
    --bastion-id $BASTION_ID \
    --display-name br-test-pf-session \
    --ssh-public-key-file ${ssh_public_key_path} \
    --key-type PUB \
    --target-private-ip 10.196.0.58 \
-   --target-port 6443
+   --target-port 6443)
 
 echo "Waiting for $SESSION_ID to start"
 sleep 15
