@@ -46,8 +46,8 @@ pipeline {
                           echo 'fingerprint=${OCI_CLI_FINGERPRINT}'
                           echo 'tenancy=${OCI_CLI_TENANCY}'
                           echo 'region=${OCI_CLI_REGION}'
+                          echo 'key_file=${OCI_CLI_KEY_FILE}'
                         } >> ~/.oci/config
-                        cat ${OCI_CLI_KEY_FILE} | sed 's/^/    /' >> ~/.oci/config
                         export KUBECONFIG=~/.oci/config
                     """
                 }
