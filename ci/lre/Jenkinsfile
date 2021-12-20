@@ -24,8 +24,21 @@ pipeline {
             KUBECONFIG = "~/.oci/config"
     }
 
-
     stages {
+        stage('set up ssh tunnel') {
+            steps {
+                script {
+                    sh '''
+                        export jenkins_user=$(whoami)'
+                        echo "user = ${jenkins_user}"
+                        echo "create ssh tunnel"
+                        cd ${GO_REPO_PATH}/verrazzano/
+                        /ci/scripts/lre_setup_ssh_tunnel.sh
+                    '''
+                }
+            }
+        }
+
         stage("create oci config file") {
             environment {
                 OCI_CLI_AUTH="api_key"
@@ -88,20 +101,6 @@ pipeline {
                         # export the ssh private key file for LRE cluster
                         export ssh_public_key_path=~/.ssh/id_rsa
                     """
-                }
-            }
-        }
-
-        stage('set up ssh tunnel') {
-            steps {
-                script {
-                    sh '''
-                        export jenkins_user=$(whoami)'
-                        echo "user = ${jenkins_user}"
-                        echo "create ssh tunnel"
-                        cd ${GO_REPO_PATH}/verrazzano/
-                        ./ci/scripts/lre_setup_ssh_tunnel.sh
-                    '''
                 }
             }
         }
