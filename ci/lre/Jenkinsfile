@@ -29,7 +29,7 @@ pipeline {
             steps {
                 script {
                     sh '''
-                        export jenkins_user=$(whoami)'
+                        export jenkins_user=$(whoami)
                         echo "user = ${jenkins_user}"
                         echo "create ssh tunnel"
                         cd ${GO_REPO_PATH}/verrazzano/
