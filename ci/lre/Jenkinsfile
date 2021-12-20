@@ -93,8 +93,8 @@ pipeline {
             steps {
                 script {
                     sh """
-                        #export jenkins_user=$(whoami)'
-                        #echo "user = ${jenkins_user}"
+                        export jenkins_user=\$(whoami)'
+                        echo "user = ${jenkins_user}"
                         echo "create ssh tunnel"
                         cd ${GO_REPO_PATH}/verrazzano/
                         ./ci/scripts/lre_setup_ssh_tunnel.sh
