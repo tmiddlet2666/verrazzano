@@ -32,8 +32,8 @@ pipeline {
         dev_lre_bastion_ip = credentials('dev-lre-bastion-ip')
         OCI_CLI_REGION = "us-ashburn-1"
         KUBECONFIG = "~/.oci/config"
-        ssh_public_key_path=~/.ssh/id_rsa.pub
-        ssh_public_key_path=~/.ssh/id_rsa
+        ssh_public_key_path = "~/.ssh/id_rsa.pub"
+        ssh_public_key_path = "~/.ssh/id_rsa"
     }
 
     stages {
