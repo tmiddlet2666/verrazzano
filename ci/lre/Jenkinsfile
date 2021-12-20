@@ -33,7 +33,7 @@ pipeline {
         OCI_CLI_REGION = "us-ashburn-1"
         KUBECONFIG = "~/.oci/config"
         ssh_public_key_path = "~/.ssh/id_rsa.pub"
-        ssh_public_key_path = "~/.ssh/id_rsa"
+        ssh_private_key_path = "~/.ssh/id_rsa"
     }
 
     stages {
