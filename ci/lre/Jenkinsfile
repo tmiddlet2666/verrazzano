@@ -150,13 +150,14 @@ pipeline {
                 script {
                     sh """
                         # delete the key file if it exists
-                        rm -f ~/.ssh/id_rsa
+                        rm -f ~/.ssh/id_rsa*
                         # call ssh-keygen to create the keys
                         ssh-keygen -m PEM -N '' -f ~/.ssh/id_rsa
                         # export the ssh public key value for LRE cluster
                         export ssh_public_key_path=~/.ssh/id_rsa.pub
                         # export the ssh private key file for LRE cluster
                         export ssh_public_key_path=~/.ssh/id_rsa
+                        ls -ls ~/.ssh
                     """
                 }
             }
