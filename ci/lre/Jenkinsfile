@@ -170,7 +170,7 @@ pipeline {
                         echo "user = ${jenkins_user}"
                         echo "create ssh tunnel"
                         cd ${GO_REPO_PATH}/verrazzano/
-                        /ci/scripts/lre_setup_ssh_tunnel.sh
+                        ci/scripts/lre_setup_ssh_tunnel.sh
                     '''
                 }
             }
