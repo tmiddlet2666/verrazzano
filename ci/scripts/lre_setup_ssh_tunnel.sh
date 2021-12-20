@@ -26,13 +26,22 @@ BASTION_ID=$(oci bastion bastion list \
             --compartment-id "${dev_lre_compartment_id}" --all \
             | jq -r '.data[0]."id"')
 
+if [ -z "$BASTION_ID" ]; then
+    echo "Failed to get the BASTION_ID"
+    exit 1
+fi
+
 SESSION_ID=$(oci bastion session create-port-forwarding \
    --bastion-id $BASTION_ID \
    --display-name br-test-pf-session \
-   --ssh-public-key-file ${ssh_public_key_path} \
-   --key-type PUB \
+   --ssh-public-key-file ~/.ssh/id_rsa.pub \
    --target-private-ip 10.196.0.58 \
    --target-port 6443)
+
+if [ -z "$SESSION_ID" ]; then
+    echo "Failed to create a bastion session"
+    exit 1
+fi
 
 echo "Waiting for $SESSION_ID to start"
 sleep 15
@@ -44,3 +53,8 @@ COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   sed 's|<localPort>|6443|g'`
 echo ${COMMAND}
 eval ${COMMAND}
+
+if [ $? -ne 0 ]; then
+  echo "Failed to ssh tunnel to the bastion host ${BASTION_ID}"
+  exit 1
+fi
