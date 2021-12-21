@@ -56,7 +56,7 @@ if [ -z "$COMMAND" ]; then
     echo "didn't find the command to set up ssh tunnel"
     exit 1
 fi
-COMMAND+=" -o StrictHostKeyChecking=no opc@10.196.0.58"
+COMMAND+=" -o StrictHostKeyChecking=no"
 echo "command = ${COMMAND}"
 echo "Setting up the ssh tunnel"
 eval ${COMMAND}
