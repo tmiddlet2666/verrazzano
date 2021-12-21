@@ -179,6 +179,8 @@ pipeline {
             steps {
                 script {
                     sh """
+                        ls -ls ~/.kube
+                        cat ~/.kube/config
                         echo "run kubectl get nodes"
                         kubectl get nodes
                         #kubectl get nodes > ${WORKSPACE}/verrazzano/verrazzano-lre-nodes.log --tail -1
