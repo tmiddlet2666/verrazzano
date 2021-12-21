@@ -44,7 +44,7 @@ if [ -z "$SESSION_ID" ]; then
 fi
 
 echo "Waiting for $SESSION_ID to start"
-sleep 15
+sleep 60
 
 COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   jq '.data."ssh-metadata".command' | \
