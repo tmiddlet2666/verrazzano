@@ -36,7 +36,7 @@ SESSION_ID=$(oci bastion session create-port-forwarding \
    --display-name lre-test-pf-session1 \
    --ssh-public-key-file ~/.ssh/id_rsa.pub \
    --target-private-ip 10.196.0.58 \
-   --target-port 6443 | jq '.data.id')
+   --target-port 6443 | jq '.data.id' | sed s/\"//g)
 
 if [ -z "$SESSION_ID" ]; then
     echo "Failed to create a bastion session"
@@ -52,6 +52,10 @@ COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   sed 's|<privateKey>|${ssh_private_key_path}|g' | \
   sed 's|<localPort>|6443|g'`
 echo "command = ${COMMAND}"
+if [ -z "$COMMAND" ]; then
+    echo "didn't find the command to set up ssh tunnel"
+    exit 1
+fi
 echo "Setting up the ssh tunnel"
 eval ${COMMAND}
 
