@@ -31,6 +31,7 @@ pipeline {
         dev_lre_cluster_id = credentials('dev-lre-cluster-id')
         dev_lre_bastion_ip = credentials('dev-lre-bastion-ip')
         OCI_CLI_REGION = "us-ashburn-1"
+        OCI_CLI_CONFIG_FILE = "${WORKSPACE}/.oci/config"
         KUBECONFIG = "${WORKSPACE}/.kube/config"
         ssh_public_key_path = "${WORKSPACE}/.ssh/id_rsa.pub"
         ssh_private_key_path = "${WORKSPACE}/.ssh/id_rsa"
@@ -138,6 +139,7 @@ pipeline {
                         --cluster-id ${dev_lre_cluster_id} \
                         --file ${KUBECONFIG} \
                         --region ${OCI_CLI_REGION} \
+                        --config-file ${OCI_CLI_CONFIG_FILE}
                         --token-version 2.0.0  \
                         --kube-endpoint PRIVATE_ENDPOINT
                     """
