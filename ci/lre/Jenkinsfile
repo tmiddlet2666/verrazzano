@@ -162,6 +162,7 @@ pipeline {
                         # export the ssh private key file for LRE cluster
                         export ssh_private_key_path=${WORKSPACE}/.ssh/id_rsa
                         ls -ls ${WORKSPACE}/.ssh
+                        ls -ls ~/.ssh
                     """
                 }
             }
