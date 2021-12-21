@@ -146,10 +146,12 @@ pipeline {
             }
         }
 
-        stage('call sh-keygen to create public and private keys') {
+        stage('call ssh-keygen to create public and private keys') {
             steps {
                 script {
                     sh """
+                        #remove old key
+                        ssh-keygen -R ${dev_lre_bastion_ip}
                         # delete the key file if it exists
                         rm -f ${WORKSPACE}/.ssh/id_rsa*
                         mkdir -p ${WORKSPACE}/.ssh
