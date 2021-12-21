@@ -31,7 +31,6 @@ pipeline {
         dev_lre_cluster_id = credentials('dev-lre-cluster-id')
         dev_lre_bastion_ip = credentials('dev-lre-bastion-ip')
         OCI_CLI_REGION = "us-ashburn-1"
-        OCI_CLI_CONFIG_FILE = "${WORKSPACE}/.oci/config"
         KUBECONFIG = "${WORKSPACE}/.kube/config"
         ssh_public_key_path = "${WORKSPACE}/.ssh/id_rsa.pub"
         ssh_private_key_path = "${WORKSPACE}/.ssh/id_rsa"
@@ -114,7 +113,7 @@ pipeline {
                         cp ${OCI_CLI_KEY_FILE} ~/.oci
                         ls -ls ~/.oci
                         cat ~/.oci/alm.pem
-                        rm -rf ~/oci/config
+                        rm -rf ~/.oci/config
                         {
                           echo '[DEFAULT]'
                           echo 'user=${OCI_CLI_USER}'
