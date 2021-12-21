@@ -110,19 +110,19 @@ pipeline {
             steps {
                 script{
                     sh """
-                        mkdir -p ${WORKSPACE}/.oci
-                        cp ${OCI_CLI_KEY_FILE} ${WORKSPACE}/.oci
-                        ls -ls ${WORKSPACE}/.oci
-                        cat ${WORKSPACE}/.oci/alm.pem
-                        rm -rf ${WORKSPACE}/oci/config
+                        mkdir -p ~/.oci
+                        cp ${OCI_CLI_KEY_FILE} ~/.oci
+                        ls -ls ~/.oci
+                        cat ~/.oci/alm.pem
+                        rm -rf ~/oci/config
                         {
                           echo '[DEFAULT]'
                           echo 'user=${OCI_CLI_USER}'
                           echo 'fingerprint=${OCI_CLI_FINGERPRINT}'
                           echo 'tenancy=${OCI_CLI_TENANCY}'
                           echo 'region=${OCI_CLI_REGION}'
-                          echo 'key_file=${WORKSPACE}/.oci/alm.pem'
-                        } >> ${WORKSPACE}/.oci/config
+                          echo 'key_file=~/.oci/alm.pem'
+                        } >> ~/.oci/config
                     """
                 }
             }
@@ -139,7 +139,6 @@ pipeline {
                         --cluster-id ${dev_lre_cluster_id} \
                         --file ${KUBECONFIG} \
                         --region ${OCI_CLI_REGION} \
-                        --config-file ${OCI_CLI_CONFIG_FILE}
                         --token-version 2.0.0  \
                         --kube-endpoint PRIVATE_ENDPOINT
                     """
