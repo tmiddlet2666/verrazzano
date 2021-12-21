@@ -33,10 +33,10 @@ fi
 
 SESSION_ID=$(oci bastion session create-port-forwarding \
    --bastion-id $BASTION_ID \
-   --display-name br-test-pf-session \
+   --display-name lre-test-pf-session1 \
    --ssh-public-key-file ~/.ssh/id_rsa.pub \
    --target-private-ip 10.196.0.58 \
-   --target-port 6443)
+   --target-port 6443 | jq '.data.id')
 
 if [ -z "$SESSION_ID" ]; then
     echo "Failed to create a bastion session"
