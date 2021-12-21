@@ -56,8 +56,11 @@ if [ -z "$COMMAND" ]; then
     echo "didn't find the command to set up ssh tunnel"
     exit 1
 fi
+COMMAND+=" -o StrictHostKeyChecking=no opc@10.196.0.58"
+echo "command = ${COMMAND}"
 echo "Setting up the ssh tunnel"
 eval ${COMMAND}
+
 
 if [ $? -ne 0 ]; then
   echo "Failed to setup ssh tunnel to the bastion host ${BASTION_ID}"
