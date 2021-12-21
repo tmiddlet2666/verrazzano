@@ -171,6 +171,7 @@ pipeline {
                         cd ${GO_REPO_PATH}/verrazzano/
                         ci/scripts/lre_setup_ssh_tunnel.sh
                         sed -i 's|server:.*|server: https://127.0.0.1:6443|g' $KUBECONFIG
+                        cat ${KUBECONFIG}
                         echo "run kubectl get nodes"
                         kubectl get nodes
                     '''

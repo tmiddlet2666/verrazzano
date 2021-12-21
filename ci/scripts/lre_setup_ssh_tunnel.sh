@@ -51,10 +51,13 @@ COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   sed 's/"//g' | \
   sed 's|<privateKey>|${ssh_private_key_path}|g' | \
   sed 's|<localPort>|6443|g'`
-echo ${COMMAND}
+echo "command = ${COMMAND}"
+echo "Setting up the ssh tunnel"
 eval ${COMMAND}
 
 if [ $? -ne 0 ]; then
-  echo "Failed to ssh tunnel to the bastion host ${BASTION_ID}"
+  echo "Failed to setup ssh tunnel to the bastion host ${BASTION_ID}"
   exit 1
 fi
+
+echo "Successfully set up ssh tunnel"
