@@ -174,27 +174,54 @@ pipeline {
                         echo "create ssh tunnel"
                         cd ${GO_REPO_PATH}/verrazzano/
                         ci/scripts/lre_setup_ssh_tunnel.sh
-                        sed -i 's|server:.*|server: https://127.0.0.1:6443|g' $KUBECONFIG
-                        cat ${KUBECONFIG}
-                        echo "run kubectl get nodes"
-                        kubectl get nodes
                     '''
                 }
             }
         }
 
-        stage('run kubectl to get nodes') {
-            steps {
-                script {
-                    sh """
-                        ls -ls ${KUBECONFIG}
-                        cat ${KUBECONFIG}
-                        echo "run kubectl get nodes"
-                        kubectl get nodes
-                        #kubectl get nodes > ${WORKSPACE}/verrazzano/verrazzano-lre-nodes.log --tail -1
-                    """
+        stage('Run Acceptance Tests') {
+            parallel {
+                stage('verify-infra restapi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/restapi')
+                    }
+                }
+                stage('verify-infra vmi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/vmi')
+                    }
+                }
+                stage('examples helidon') {
+                    steps {
+                        runGinkgo('examples/hello-helidon')
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
+                    junit testResults: '**/*test-result.xml', allowEmptyResults: true
                 }
             }
         }
     }
 }
+
+def runGinkgoRandomize(testSuitePath) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            ginkgo -p --randomize-all -v --keep-going --no-color ${testSuitePath}/...
+        """
+    }
+}
+
+def runGinkgo(testSuitePath) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            ginkgo -v --keep=going --no-color ${testSuitePath}/...
+        """
+    }
+}
+
