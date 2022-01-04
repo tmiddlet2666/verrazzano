@@ -810,7 +810,6 @@ func TestDeleteCertAndSecretWhenAppConfigIsDeleted(t *testing.T) {
 			return nil
 		})
 
-
 	// Expect a call to update the app config resource with the finalizer removed.
 	cli.EXPECT().
 		Update(gomock.Any(), gomock.Any()).

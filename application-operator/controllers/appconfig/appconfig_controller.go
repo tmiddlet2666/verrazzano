@@ -34,7 +34,6 @@ type Reconciler struct {
 
 const finalizerName = "appconfig.finalizers.verrazzano.io"
 
-
 // SetupWithManager registers our controller with the manager
 func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
@@ -302,4 +301,3 @@ func updateRestartVersion(ctx context.Context, client client.Client, u *unstruct
 func isAppConfigBeingDeleted(appConfig *oamv1.ApplicationConfiguration) bool {
 	return appConfig != nil && appConfig.GetDeletionTimestamp() != nil
 }
-

@@ -89,5 +89,3 @@ func buildCertificateNameFromAppName(appName types.NamespacedName) (string, erro
 	}
 	return fmt.Sprintf("%s-%s-cert", appName.Namespace, appName.Name), nil
 }
-
-
