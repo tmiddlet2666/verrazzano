@@ -11,6 +11,7 @@ import (
 	"github.com/verrazzano/verrazzano/application-operator/constants"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
@@ -47,7 +48,8 @@ func cleanupCert(certName string, c client.Client, log logr.Logger) (err error) 
 	log.Info("Deleting cert", "cert", nsn)
 	err = c.Delete(context.TODO(), cert, &client.DeleteOptions{})
 	if err != nil {
-		if k8serrors.IsNotFound(err) {
+		// integration tests do not install cert manager so no match error is generated
+		if k8serrors.IsNotFound(err) || meta.IsNoMatchError(err) {
 			log.Info("NotFound deleting cert", "cert", nsn)
 			return nil
 		}
