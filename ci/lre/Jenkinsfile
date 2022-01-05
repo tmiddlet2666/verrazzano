@@ -179,6 +179,57 @@ pipeline {
             }
         }
 
+        stage ('Install Verrazzano') {
+            steps {
+                script {
+                    VZ_INSTALL_METRIC = metricJobName('install_v8o')
+                    metricTimerStart("${VZ_INSTALL_METRIC}")
+                    getVerrazzanoOperatorYaml()
+                }
+                installVerrazzano()
+            }
+            post {
+                always {
+                    script {
+                        dumpInstallLogs()
+                        VZ_TEST_METRIC = metricJobName('')
+                        metricTimerStart("${VZ_TEST_METRIC}")
+                    }
+                }
+                failure {
+                    script {
+                        INSTALL_METRICS_PUSHED=metricTimerEnd("${VZ_INSTALL_METRIC}", '0')
+                    }
+                }
+                success {
+                    script {
+                        INSTALL_METRICS_PUSHED=metricTimerEnd("${VZ_INSTALL_METRIC}", '1')
+                    }
+                }
+            }
+        }
+
+        stage ('Verify Install') {
+            parallel {
+                stage('verify-infra restapi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/restapi')
+                    }
+                }
+                stage('verify-infra vmi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/vmi')
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
+                    junit testResults: '**/*test-result.xml', allowEmptyResults: true
+                }
+            }
+        }
+
         stage('Run Acceptance Tests') {
             parallel {
                 stage('examples helidon') {
