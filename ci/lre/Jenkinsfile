@@ -181,16 +181,6 @@ pipeline {
 
         stage('Run Acceptance Tests') {
             parallel {
-                stage('verify-infra restapi') {
-                    steps {
-                        runGinkgoRandomize('verify-infra/restapi')
-                    }
-                }
-                stage('verify-infra vmi') {
-                    steps {
-                        runGinkgoRandomize('verify-infra/vmi')
-                    }
-                }
                 stage('examples helidon') {
                     steps {
                         runGinkgo('examples/hello-helidon')
@@ -220,7 +210,7 @@ def runGinkgo(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh """
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
-            ginkgo -v --keep=going --no-color ${testSuitePath}/...
+            ginkgo -v --keep-going --no-color ${testSuitePath}/...
         """
     }
 }
