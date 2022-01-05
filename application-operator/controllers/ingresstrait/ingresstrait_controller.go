@@ -314,7 +314,13 @@ func (r *Reconciler) createGatewayCertificate(ctx context.Context, trait *vzapi.
 		}
 	}
 
-	appName := trait.Labels[oam.LabelAppName]
+	appName, ok := trait.Labels[oam.LabelAppName]
+	if !ok {
+		err = fmt.Errorf("failed to obtain app name from ingress trait")
+		status.Errors = append(status.Errors, err)
+		status.Results = append(status.Results, controllerutil.OperationResultNone)
+		return ""
+	}
 	certName, err = buildCertificateNameFromAppName(types.NamespacedName{Namespace: trait.Namespace, Name: appName})
 	if err != nil {
 		r.Log.Error(err, "failed to create certificate name from ingress trait")
