@@ -203,7 +203,7 @@ func (r *Reconciler) removeFinalizerIfRequired(ctx context.Context, appConfig *o
 func (r *Reconciler) addFinalizerIfRequired(ctx context.Context, appConfig *oamv1.ApplicationConfiguration) error {
 	if appConfig.GetDeletionTimestamp().IsZero() && !vzstring.SliceContainsString(appConfig.Finalizers, finalizerName) {
 		appName := vznav.GetNamespacedNameFromObjectMeta(appConfig.ObjectMeta)
-		r.Log.V(1).Info("Adding finalizer for appConfig", "appConfig", appName)
+		r.Log.Info("Adding finalizer for appConfig", "appConfig", appName)
 		appConfig.Finalizers = append(appConfig.Finalizers, finalizerName)
 		if err := r.Update(ctx, appConfig); err != nil {
 			r.Log.Error(err, "failed to add finalizer to appConfig", "appConfig", appName)
