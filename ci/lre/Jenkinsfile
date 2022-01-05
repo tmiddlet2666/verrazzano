@@ -153,6 +153,8 @@ pipeline {
                         oci secrets secret-bundle get \
                         --secret-id ocid1.vaultsecret.oc1.iad.amaaaaaalknnwbqazxnc3gnntel3mj72gospsd2t6hpnxvh2r5zwlq7nf3wq \
                         | jq '.data."secret-bundle-content".content' | sed 's/"//g' | base64 --decode >> ${KUBECONFIG}
+                        echo "print downloaded kubeconfig"
+                        cat ${KUBECONFIG}
                     """
                 }
             }
