@@ -142,19 +142,14 @@ pipeline {
                 script {
                     sh """
                         mkdir -p ${WORKSPACE}/.kube
-                        rm -rf $KUBECONFIG
+                        rm -rf ${KUBECONFIG}
                         # get kubeconfig from OCI
-                        #oci ce cluster create-kubeconfig \
-                        #--cluster-id ${dev_lre_cluster_id} \
-                        #--file ${KUBECONFIG} \
-                        #--region ${OCI_CLI_REGION} \
-                        #--token-version 2.0.0  \
-                        #--kube-endpoint PRIVATE_ENDPOINT
-                        oci secrets secret-bundle get \
-                        --secret-id ocid1.vaultsecret.oc1.iad.amaaaaaalknnwbqazxnc3gnntel3mj72gospsd2t6hpnxvh2r5zwlq7nf3wq \
-                        | jq '.data."secret-bundle-content".content' | sed 's/"//g' | base64 --decode >> ${KUBECONFIG}
-                        echo "print downloaded kubeconfig"
-                        cat ${KUBECONFIG}
+                        oci ce cluster create-kubeconfig \
+                        --cluster-id ${dev_lre_cluster_id} \
+                        --file ${KUBECONFIG} \
+                        --region ${OCI_CLI_REGION} \
+                        --token-version 2.0.0  \
+                        --kube-endpoint PRIVATE_ENDPOINT
                     """
                 }
             }
@@ -194,7 +189,7 @@ pipeline {
                         echo "run kubectl get nodes"
                         kubectl get nodes
                         echo "run kubectl get pods"
-                        kubectl get nodes
+                        kubectl get pods
                     '''
                 }
             }
