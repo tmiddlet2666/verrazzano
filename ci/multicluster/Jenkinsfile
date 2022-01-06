@@ -356,6 +356,7 @@ pipeline {
                             }
                         }
                     }
+                }
                 stage("Configure Clusters") {
                     parallel {
                         stage("Configure OKE/OCI DNS") {
