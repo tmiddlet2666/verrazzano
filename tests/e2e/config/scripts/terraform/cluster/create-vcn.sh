@@ -5,8 +5,8 @@
 #
 
 . ./init.sh
-$SCRIPT_DIR/terraform init -no-color
-$SCRIPT_DIR/terraform plan -no-color
+$SCRIPT_DIR/terraform init $1 -no-color
+$SCRIPT_DIR/terraform plan $1 -no-color
 
 set -o pipefail
 
@@ -16,14 +16,14 @@ MAX_TRIES=3
 while true; do
    tries=$((tries+1))
    echo "terraform apply iteration ${tries}"
-   $SCRIPT_DIR/terraform apply  -auto-approve -no-color && break
+   $SCRIPT_DIR/terraform apply $1 -auto-approve -no-color && break
    if [ "$tries" -ge "$MAX_TRIES" ];
    then
       echo "Terraform apply tries exceeded.  Cluster creation has failed!"
       break
    fi
    echo "Deleting Cluster Terraform and applying again"
-   ./delete-vcn.sh
+   ./delete-vcn.sh $1
    sleep 30
 done
 

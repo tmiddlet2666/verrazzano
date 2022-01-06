@@ -6,4 +6,4 @@
 
 . ./init.sh
 
-$SCRIPT_DIR/terraform destroy -auto-approve -no-color
+$SCRIPT_DIR/terraform destroy $1 -auto-approve -no-color
