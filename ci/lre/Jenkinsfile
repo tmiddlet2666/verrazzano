@@ -174,7 +174,7 @@ pipeline {
                         cd ${GO_REPO_PATH}/verrazzano/
                         ci/scripts/lre_setup_ssh_tunnel.sh
                         #wait a bit for the tunnel to be setup
-                        sleep 60 
+                        sleep 60
                         ls -ls ${KUBECONFIG}
                         sed -i 's|server:.*|server: https://127.0.0.1:6443|g' $KUBECONFIG
                         cat ${KUBECONFIG}
@@ -191,7 +191,7 @@ pipeline {
             parallel {
                 stage('examples helidon') {
                     steps {
-                        runGinkgo('examples/hello-helidon')
+                        runGinkgo('examples/helidon')
                     }
                 }
             }
