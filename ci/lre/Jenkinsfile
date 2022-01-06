@@ -35,12 +35,6 @@ pipeline {
         ssh_public_key_path = "${WORKSPACE}/.ssh/id_rsa.pub"
         ssh_private_key_path = "${WORKSPACE}/.ssh/id_rsa"
 
-        EXTERNAL_ELASTICSEARCH = "${params.EXTERNAL_ELASTICSEARCH}"
-
-        // used for console artifact capture on failure
-        JENKINS_READ = credentials('jenkins-auditor')
-        OCI_CLI_AUTH="instance_principal"
-        OCI_OS_NAMESPACE = credentials('oci-os-namespace')
         OCI_CLI_AUTH="api_key"
         OCI_CLI_TENANCY = credentials('oci-dev-tenancy')
         OCI_CLI_USER = credentials('oci-dev-user-ocid')
