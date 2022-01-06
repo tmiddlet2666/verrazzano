@@ -335,7 +335,7 @@ pipeline {
                                     }
                                 }
                                 stage('Create Multi-Cluster vcn') {
-                                    when { params.CREATE_MULTI_CLUSTER_VCN }
+                                    when { params.CREATE_MULTI_CLUSTER_VCN == true }
                                     environment {
                                         TF_VAR_vcn_name="${params.MULTI_CLUSTER_VCN_NAME}"
                                         TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
