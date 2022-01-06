@@ -24,7 +24,7 @@ while true; do
       break
    fi
    echo "Deleting Cluster Terraform and applying again"
-   ./delete-vcn.sh $1
+   $SCRIPT_DIR/delete-vcn.sh $1
    sleep 30
 done
 
