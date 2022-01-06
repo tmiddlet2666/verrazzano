@@ -1,14 +1,14 @@
-// Copyright (c) 2021, Oracle and/or its affiliates.
+// Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 package externaldns
 
 import (
+	"path/filepath"
+
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
-	"path/filepath"
 )
 
 type externalDNSComponent struct {
@@ -26,7 +26,7 @@ func NewComponent() spi.Component {
 			ChartNamespace:          "cert-manager",
 			IgnoreNamespaceOverride: true,
 			SupportsOperatorInstall: true,
-			ImagePullSecretKeyname:  secret.DefaultImagePullSecretKeyName,
+			ImagePullSecretKeyname:  imagePullSecretHelmKey,
 			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "external-dns-values.yaml"),
 			AppendOverridesFunc:     AppendOverrides,
 			MinVerrazzanoVersion:    constants.VerrazzanoVersion1_0_0,
@@ -43,5 +43,9 @@ func (e externalDNSComponent) IsReady(compContext spi.ComponentContext) bool {
 }
 
 func (e externalDNSComponent) IsEnabled(compContext spi.ComponentContext) bool {
-	return isEnabled(compContext)
+	dns := compContext.EffectiveCR().Spec.Components.DNS
+	if dns != nil && dns.OCI != nil {
+		return true
+	}
+	return false
 }

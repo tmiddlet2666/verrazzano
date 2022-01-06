@@ -6,6 +6,11 @@ package mysql
 import (
 	"context"
 	"fmt"
+	"os"
+	"path/filepath"
+	"strings"
+
+	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
@@ -17,13 +22,11 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 
 	"io/ioutil"
+
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
-	"os"
-	"path/filepath"
 	controllerruntime "sigs.k8s.io/controller-runtime"
-	"strings"
 )
 
 const (
@@ -45,18 +48,14 @@ func isReady(context spi.ComponentContext, name string, namespace string) bool {
 	return status.DeploymentsReady(context.Log(), context.Client(), deployments, 1)
 }
 
-// isEnabled checks to see if the MySQL component is enabled in the effective CR
-func isEnabled(context spi.ComponentContext) bool {
-	keycloak := context.EffectiveCR().Spec.Components.Keycloak
-	if keycloak != nil && keycloak.Enabled != nil {
-		return *keycloak.Enabled
-	}
-	return false
-}
-
 // appendMySQLOverrides appends the MySQL helm overrides
 func appendMySQLOverrides(compContext spi.ComponentContext, _ string, _ string, _ string, kvs []bom.KeyValue) ([]bom.KeyValue, error) {
 	cr := compContext.EffectiveCR()
+
+	kvs, err := appendCustomImageOverrides(kvs)
+	if err != nil {
+		return kvs, ctrlerrors.RetryableError{Source: ComponentName, Cause: err}
+	}
 
 	if compContext.For(ComponentName).GetOperation() == vzconst.UpgradeOperation {
 		secret := &v1.Secret{}
@@ -91,7 +90,7 @@ func appendMySQLOverrides(compContext spi.ComponentContext, _ string, _ string, 
 	}
 
 	// generate the MySQl PV overrides
-	kvs, err := generateVolumeSourceOverrides(compContext, kvs)
+	kvs, err = generateVolumeSourceOverrides(compContext, kvs)
 	if err != nil {
 		return []bom.KeyValue{}, ctrlerrors.RetryableError{Source: ComponentName, Cause: err}
 	}
@@ -238,6 +237,22 @@ func generateVolumeSourceOverrides(compContext spi.ComponentContext, kvs []bom.K
 			Value: "true",
 		})
 	}
+	return kvs, nil
+}
+
+//appendCustomImageOverrides - Append the custom overrides for the busybox initContainer
+func appendCustomImageOverrides(kvs []bom.KeyValue) ([]bom.KeyValue, error) {
+	bomFile, err := bom.NewBom(config.GetDefaultBOMFilePath())
+	if err != nil {
+		return kvs, ctrlerrors.RetryableError{Source: ComponentName, Cause: err}
+	}
+
+	imageOverrides, err := bomFile.BuildImageOverrides("oraclelinux")
+	if err != nil {
+		return kvs, ctrlerrors.RetryableError{Source: ComponentName, Cause: err}
+	}
+
+	kvs = append(kvs, imageOverrides...)
 	return kvs, nil
 }
 

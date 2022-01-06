@@ -1,28 +1,17 @@
-// Copyright (c) 2020, 2021, Oracle and/or its affiliates.
+// Copyright (c) 2020, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 package main
 
 import (
+	"context"
 	"flag"
-	"github.com/verrazzano/verrazzano/application-operator/controllers/containerizedworkload"
+	"fmt"
 	"os"
 
 	"github.com/crossplane/oam-kubernetes-runtime/apis/core"
 	certapiv1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
-	"github.com/verrazzano/verrazzano/pkg/log"
-	istioclinet "istio.io/client-go/pkg/apis/networking/v1alpha3"
-	istioversionedclient "istio.io/client-go/pkg/clientset/versioned"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/client-go/dynamic"
-	"k8s.io/client-go/kubernetes"
-	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
-	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
-	"k8s.io/client-go/tools/clientcmd"
-	ctrl "sigs.k8s.io/controller-runtime"
-	kzap "sigs.k8s.io/controller-runtime/pkg/log/zap"
-	"sigs.k8s.io/controller-runtime/pkg/webhook"
-
+	vzapp "github.com/verrazzano/verrazzano/application-operator/apis/app/v1alpha1"
 	clustersv1alpha1 "github.com/verrazzano/verrazzano/application-operator/apis/clusters/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/application-operator/apis/oam/v1alpha1"
 	wls "github.com/verrazzano/verrazzano/application-operator/apis/weblogic/v8"
@@ -35,15 +24,31 @@ import (
 	"github.com/verrazzano/verrazzano/application-operator/controllers/clusters/multiclustersecret"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/clusters/verrazzanoproject"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/cohworkload"
+	"github.com/verrazzano/verrazzano/application-operator/controllers/containerizedworkload"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/helidonworkload"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/ingresstrait"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/loggingtrait"
+	"github.com/verrazzano/verrazzano/application-operator/controllers/metricstemplate"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/metricstrait"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/webhooks"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/wlsworkload"
 	"github.com/verrazzano/verrazzano/application-operator/internal/certificates"
 	"github.com/verrazzano/verrazzano/application-operator/mcagent"
+	"github.com/verrazzano/verrazzano/pkg/log"
 	vmcclient "github.com/verrazzano/verrazzano/platform-operator/clients/clusters/clientset/versioned/scheme"
+	istioclinet "istio.io/client-go/pkg/apis/networking/v1alpha3"
+	istioversionedclient "istio.io/client-go/pkg/clientset/versioned"
+	k8sapiext "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/dynamic"
+	"k8s.io/client-go/kubernetes"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
+	"k8s.io/client-go/tools/clientcmd"
+	ctrl "sigs.k8s.io/controller-runtime"
+	kzap "sigs.k8s.io/controller-runtime/pkg/log/zap"
+	"sigs.k8s.io/controller-runtime/pkg/webhook"
 )
 
 var (
@@ -52,12 +57,14 @@ var (
 
 func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
+	_ = k8sapiext.AddToScheme(scheme)
 
 	// Add core oam types to scheme
 	_ = core.AddToScheme(scheme)
 
 	// Add ingress trait to scheme
 	_ = vzapi.AddToScheme(scheme)
+	_ = vzapp.AddToScheme(scheme)
 	_ = istioclinet.AddToScheme(scheme)
 	_ = wls.AddToScheme(scheme)
 
@@ -128,23 +135,23 @@ func main() {
 		os.Exit(1)
 	}
 
+	config, err := ctrl.GetConfig()
+	if err != nil {
+		setupLog.Error(err, "unable to get kubeconfig")
+		os.Exit(1)
+	}
+
+	kubeClient, err := kubernetes.NewForConfig(config)
+	if err != nil {
+		setupLog.Error(err, "unable to get clientset")
+		os.Exit(1)
+	}
+
 	if enableWebhooks {
 		setupLog.Info("Setting up certificates for webhook")
 		caCert, err := certificates.SetupCertificates(certDir)
 		if err != nil {
 			setupLog.Error(err, "unable to setup certificates for webhook")
-			os.Exit(1)
-		}
-
-		config, err := ctrl.GetConfig()
-		if err != nil {
-			setupLog.Error(err, "unable to get kubeconfig")
-			os.Exit(1)
-		}
-
-		kubeClient, err := kubernetes.NewForConfig(config)
-		if err != nil {
-			setupLog.Error(err, "unable to get clientset")
 			os.Exit(1)
 		}
 
@@ -211,6 +218,25 @@ func main() {
 				},
 			},
 		)
+
+		// Register the mutating webhook for plain old kubernetes objects workloads when the object exists
+		_, err = kubeClient.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(context.TODO(), certificates.ScrapeGeneratorWebhookName, metav1.GetOptions{})
+		if err == nil {
+			mgr.GetWebhookServer().Register(
+				webhooks.ScrapeGeneratorLoadPath,
+				&webhook.Admission{
+					Handler: &webhooks.ScrapeGeneratorWebhook{
+						Client:     mgr.GetClient(),
+						KubeClient: kubeClient,
+					},
+				},
+			)
+			err = certificates.UpdateMutatingWebhookConfiguration(kubeClient, caCert, certificates.ScrapeGeneratorWebhookName)
+			if err != nil {
+				setupLog.Error(err, fmt.Sprintf("unable to update %s mutating webhook configuration", certificates.ScrapeGeneratorWebhookName))
+				os.Exit(1)
+			}
+		}
 
 		mgr.GetWebhookServer().CertDir = certDir
 		appconfigWebhook := &webhooks.AppConfigWebhook{
@@ -370,6 +396,18 @@ func main() {
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ContainerizedWorkload")
 		os.Exit(1)
+	}
+	// Register the metrics workload controller
+	_, err = kubeClient.AdmissionregistrationV1().MutatingWebhookConfigurations().Get(context.TODO(), certificates.ScrapeGeneratorWebhookName, metav1.GetOptions{})
+	if err == nil {
+		if err = (&metricstemplate.Reconciler{
+			Client: mgr.GetClient(),
+			Log:    ctrl.Log.WithName("controllers").WithName("MetricsTemplate"),
+			Scheme: mgr.GetScheme(),
+		}).SetupWithManager(mgr); err != nil {
+			setupLog.Error(err, "unable to create controller", "controller", "MetricsTemplate")
+			os.Exit(1)
+		}
 	}
 	// +kubebuilder:scaffold:builder
 

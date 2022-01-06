@@ -1,4 +1,4 @@
-// Copyright (c) 2021, Oracle and/or its affiliates.
+// Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 def DOCKER_IMAGE_TAG
@@ -274,16 +274,6 @@ pipeline {
                         }
                     }
                 }
-                stage('examples bobs-books') {
-                    steps {
-                        runGinkgo('examples/bobsbooks', "false", "true")
-                    }
-                }
-                stage('examples todo') {
-                    steps {
-                        runGinkgo('examples/todo', "false", "true")
-                    }
-                }
                 stage('examples socks') {
                     steps {
                         runGinkgo('examples/socks', "false", "true")
@@ -365,7 +355,7 @@ pipeline {
                     kubectl -n verrazzano-install get job -o yaml --selector=job-name=verrazzano-install-my-verrazzano > ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-pre-upgrade-job.out
 
                     # Do the upgrade
-                    echo "Following is the verrazano CR file with the new version:"
+                    echo "Following is the verrazzano CR file with the new version:"
                     cat ${WORKSPACE}/verrazzano-upgrade-cr.yaml
                     kubectl apply -f ${WORKSPACE}/verrazzano-upgrade-cr.yaml
 
@@ -564,12 +554,12 @@ pipeline {
                 }
                 stage('examples todo') {
                     steps {
-                        runGinkgo('examples/todo', "true", "true")
+                        runGinkgo('examples/todo', "false", "true")
                     }
                 }
                 stage('examples bobs-books') {
                     steps {
-                        runGinkgo('examples/bobsbooks', "true", "true")
+                        runGinkgo('examples/bobsbooks', "false", "true")
                     }
                 }
             }
@@ -595,11 +585,20 @@ pipeline {
             }
         }
         stage('Uninstall') {
+            options {
+                timeout(time: 30, unit: "MINUTES")
+            }
             steps {
-                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                    sh """
-                        kubectl delete verrazzano my-verrazzano
-                    """
+                script {
+                    try {
+                        sh """
+                            kubectl delete verrazzano my-verrazzano
+                        """
+                    } catch (err) {
+                        currentBuild.result = "FAILURE"
+                        echo "Caught: ${err}"
+                        err 'Verrazzano uninstall failed'
+                    }
                 }
             }
             post {
@@ -625,6 +624,9 @@ pipeline {
                 }
                 failure {
                     dumpK8sCluster('uninstall-failure-cluster-dump')
+                }
+                aborted {
+                    dumpK8sCluster('uninstall-aborted-cluster-dump')
                 }
             }
         }
