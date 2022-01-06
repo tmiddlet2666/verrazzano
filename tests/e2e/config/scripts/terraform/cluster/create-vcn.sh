@@ -4,7 +4,8 @@
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 
-. ./init.sh
+SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
+$SCRIPT_DIR/init.sh
 $SCRIPT_DIR/terraform init $1 -no-color
 $SCRIPT_DIR/terraform plan $1 -no-color
 
