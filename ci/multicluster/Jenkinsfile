@@ -1463,6 +1463,6 @@ def createMultiClusterVCN() {
     sh """
         echo "Creating multi cluster vcn: ${TF_VAR_vcn_name}"
         cd ${WORKSPACE}/continuous-verrazzano-environment/deployments/network_prod
-        . ${GO_REPO_PATH}/verrazzano/tests/e2e/config/scripts/terraform/multicluster/create-vcn.sh
+        . ${GO_REPO_PATH}/verrazzano/tests/e2e/config/scripts/terraform/cluster/create-vcn.sh
     """
 }
