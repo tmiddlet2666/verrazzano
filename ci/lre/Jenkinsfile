@@ -187,8 +187,32 @@ pipeline {
             }
         }
 
+        stage ("run kubectl commands") {
+            steps {
+                script {
+                    sh '''
+                        cat ${KUBECONFIG}
+                        echo "run kubectl get nodes"
+                        kubectl get nodes
+                        echo "run kubectl get pods"
+                        kubectl get pods
+                        '''
+                }
+            }
+        }
+
         stage('Run Acceptance Tests') {
             parallel {
+                stage('verify-infra restapi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/restapi')
+                    }
+                }
+                stage('verify-infra vmi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/vmi')
+                    }
+                }
                 stage('examples helidon') {
                     steps {
                         runGinkgo('examples/helidon')
