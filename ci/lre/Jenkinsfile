@@ -132,6 +132,7 @@ pipeline {
                           echo 'key_file=~/.oci/alm.pem'
                         } >> ~/.oci/config
                         oci setup repair-file-permissions --file /home/opc/.oci/config
+                        cat ~/.oci/config
                     """
                 }
             }
