@@ -5,11 +5,23 @@
 #
 
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
+
+moduleLocation=$1
+if [ -z "$moduleLocation" ]; then
+  echo "Module location must be specified"
+fi
+
+
 $SCRIPT_DIR/init.sh
-$SCRIPT_DIR/terraform init $1 -no-color
-$SCRIPT_DIR/terraform plan $1 -no-color
+
+pushd $moduleLocation
+
+$SCRIPT_DIR/terraform init -no-color
+$SCRIPT_DIR/terraform plan -no-color
 
 set -o pipefail
+
+set -x
 
 # retry 3 times, 30 seconds apart
 tries=0
@@ -17,16 +29,18 @@ MAX_TRIES=3
 while true; do
    tries=$((tries+1))
    echo "terraform apply iteration ${tries}"
-   $SCRIPT_DIR/terraform apply $1 -auto-approve -no-color && break
+   $SCRIPT_DIR/terraform apply -auto-approve -no-color && break
    if [ "$tries" -ge "$MAX_TRIES" ];
    then
       echo "Terraform apply tries exceeded.  Cluster creation has failed!"
       break
    fi
    echo "Deleting Cluster Terraform and applying again"
-   $SCRIPT_DIR/delete-vcn.sh $1
+   $SCRIPT_DIR/delete-vcn.sh $moduleLocation
    sleep 30
 done
+
+popd
 
 if [ "$tries" -ge "$MAX_TRIES" ];
 then
