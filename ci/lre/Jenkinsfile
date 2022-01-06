@@ -41,8 +41,11 @@ pipeline {
         JENKINS_READ = credentials('jenkins-auditor')
         OCI_CLI_AUTH="instance_principal"
         OCI_OS_NAMESPACE = credentials('oci-os-namespace')
-        OCI_OS_ARTIFACT_BUCKET="build-failure-artifacts"
-        OCI_OS_BUCKET="verrazzano-builds"
+        OCI_CLI_AUTH="api_key"
+        OCI_CLI_TENANCY = credentials('oci-dev-tenancy')
+        OCI_CLI_USER = credentials('oci-dev-user-ocid')
+        OCI_CLI_FINGERPRINT = credentials('oci-dev-api-key-fingerprint')
+        OCI_CLI_KEY_FILE = credentials('oci-dev-api-key-file')
     }
 
     stages {
@@ -107,14 +110,6 @@ pipeline {
         }
 
         stage("create oci config file") {
-            environment {
-                OCI_CLI_AUTH="api_key"
-                OCI_CLI_TENANCY = credentials('oci-dev-tenancy')
-                OCI_CLI_USER = credentials('oci-dev-user-ocid')
-                OCI_CLI_FINGERPRINT = credentials('oci-dev-api-key-fingerprint')
-                OCI_CLI_KEY_FILE = credentials('oci-dev-api-key-file')
-                OCI_REGION = "${env.OCI_CLI_REGION}"
-            }
             steps {
                 script{
                     sh """
