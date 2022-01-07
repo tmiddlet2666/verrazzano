@@ -332,19 +332,19 @@ func (r *Reconciler) createOrUpdateRelatedResources(ctx context.Context, trait *
 			// In the case of a wrapper kind or owner, the status is not being updated here as this is handled by the
 			// wrapper owner which is the corresponding Verrazzano wrapper resource/controller.
 			if !vznav.IsOwnedByVerrazzanoWorkloadKind(workload) && !vznav.IsVerrazzanoWorkloadKind(workload) {
-				status.RecordOutcome(r.updateRelatedDeployment(ctx, trait, workload, traitDefaults, child))
+				status.RecordOutcome(r.updateRelatedDeployment(ctx, trait, traitDefaults, child))
 			}
 		case k8sapps.SchemeGroupVersion.WithKind(statefulSetKind):
 			// In the case of a workload having an owner that is a wrapper kind, the status is not being updated here
 			// as this is handled by the wrapper owner which is the corresponding Verrazzano wrapper resource/controller.
 			if !vznav.IsOwnedByVerrazzanoWorkloadKind(workload) {
-				status.RecordOutcome(r.updateRelatedStatefulSet(ctx, trait, workload, traitDefaults, child))
+				status.RecordOutcome(r.updateRelatedStatefulSet(ctx, trait, traitDefaults, child))
 			}
 		case k8score.SchemeGroupVersion.WithKind(podKind):
 			// In the case of a workload having an owner that is a wrapper kind, the status is not being updated here
 			// as this is handled by the wrapper owner which is the corresponding Verrazzano wrapper resource/controller.
 			if !vznav.IsOwnedByVerrazzanoWorkloadKind(workload) {
-				status.RecordOutcome(r.updateRelatedPod(ctx, trait, workload, traitDefaults, child))
+				status.RecordOutcome(r.updateRelatedPod(ctx, trait, traitDefaults, child))
 			}
 		}
 	}
@@ -397,11 +397,11 @@ func (r *Reconciler) deleteOrUpdateMetricSourceResource(ctx context.Context, tra
 	child.SetName(rel.Name)
 	switch rel.Kind {
 	case "Deployment":
-		return r.updateRelatedDeployment(ctx, trait, nil, nil, &child)
+		return r.updateRelatedDeployment(ctx, trait, nil, &child)
 	case "StatefulSet":
-		return r.updateRelatedStatefulSet(ctx, trait, nil, nil, &child)
+		return r.updateRelatedStatefulSet(ctx, trait, nil, &child)
 	case "Pod":
-		return r.updateRelatedPod(ctx, trait, nil, nil, &child)
+		return r.updateRelatedPod(ctx, trait, nil, &child)
 	default:
 		// Return a NotFoundError to cause removal the resource relation from the status.
 		r.Log.Info("Skip delete or update of metrics source of unknown kind", "kind", rel.Kind)
@@ -523,7 +523,7 @@ func (r *Reconciler) findPrometheusScrapeConfigMapNameFromDeployment(deployment 
 
 // updateRelatedDeployment updates the labels and annotations of a related workload deployment.
 // For example containerized workloads produce related deployments.
-func (r *Reconciler) updateRelatedDeployment(ctx context.Context, trait *vzapi.MetricsTrait, workload *unstructured.Unstructured, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
+func (r *Reconciler) updateRelatedDeployment(ctx context.Context, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
 	r.Log.V(1).Info("Update workload deployment", "deployment", vznav.GetNamespacedNameFromUnstructured(child))
 	ref := vzapi.QualifiedResourceRelation{APIVersion: child.GetAPIVersion(), Kind: child.GetKind(), Namespace: child.GetNamespace(), Name: child.GetName(), Role: sourceRole}
 	deployment := &k8sapps.Deployment{
@@ -536,8 +536,8 @@ func (r *Reconciler) updateRelatedDeployment(ctx context.Context, trait *vzapi.M
 			r.Log.Info("Workload child deployment not found")
 			return apierrors.NewNotFound(schema.GroupResource{Group: deployment.APIVersion, Resource: deployment.Kind}, deployment.Name)
 		}
-		deployment.Spec.Template.ObjectMeta.Annotations = MutateAnnotations(trait, workload, traitDefaults, deployment.Spec.Template.ObjectMeta.Annotations)
-		deployment.Spec.Template.ObjectMeta.Labels = MutateLabels(trait, workload, deployment.Spec.Template.ObjectMeta.Labels)
+		deployment.Spec.Template.ObjectMeta.Annotations = MutateAnnotations(trait, traitDefaults, deployment.Spec.Template.ObjectMeta.Annotations)
+		deployment.Spec.Template.ObjectMeta.Labels = MutateLabels(trait, traitDefaults, deployment.Spec.Template.ObjectMeta.Labels)
 		return nil
 	})
 	if err != nil && !apierrors.IsNotFound(err) {
@@ -548,7 +548,7 @@ func (r *Reconciler) updateRelatedDeployment(ctx context.Context, trait *vzapi.M
 
 // updateRelatedStatefulSet updates the labels and annotations of a related workload stateful set.
 // For example coherence workloads produce related stateful sets.
-func (r *Reconciler) updateRelatedStatefulSet(ctx context.Context, trait *vzapi.MetricsTrait, workload *unstructured.Unstructured, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
+func (r *Reconciler) updateRelatedStatefulSet(ctx context.Context, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
 	r.Log.Info("Update workload stateful set", "statefulSet", vznav.GetNamespacedNameFromUnstructured(child))
 	ref := vzapi.QualifiedResourceRelation{APIVersion: child.GetAPIVersion(), Kind: child.GetKind(), Namespace: child.GetNamespace(), Name: child.GetName(), Role: sourceRole}
 	statefulSet := &k8sapps.StatefulSet{
@@ -561,8 +561,8 @@ func (r *Reconciler) updateRelatedStatefulSet(ctx context.Context, trait *vzapi.
 			r.Log.Info("Workload child statefulset not found")
 			return apierrors.NewNotFound(schema.GroupResource{Group: statefulSet.APIVersion, Resource: statefulSet.Kind}, statefulSet.Name)
 		}
-		statefulSet.Spec.Template.ObjectMeta.Annotations = MutateAnnotations(trait, workload, traitDefaults, statefulSet.Spec.Template.ObjectMeta.Annotations)
-		statefulSet.Spec.Template.ObjectMeta.Labels = MutateLabels(trait, workload, statefulSet.Spec.Template.ObjectMeta.Labels)
+		statefulSet.Spec.Template.ObjectMeta.Annotations = MutateAnnotations(trait, traitDefaults, statefulSet.Spec.Template.ObjectMeta.Annotations)
+		statefulSet.Spec.Template.ObjectMeta.Labels = MutateLabels(trait, traitDefaults, statefulSet.Spec.Template.ObjectMeta.Labels)
 		return nil
 	})
 	if err != nil && !apierrors.IsNotFound(err) {
@@ -573,7 +573,7 @@ func (r *Reconciler) updateRelatedStatefulSet(ctx context.Context, trait *vzapi.
 
 // updateRelatedPod updates the labels and annotations of a related workload pod.
 // For example WLS workloads produce related pods.
-func (r *Reconciler) updateRelatedPod(ctx context.Context, trait *vzapi.MetricsTrait, workload *unstructured.Unstructured, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
+func (r *Reconciler) updateRelatedPod(ctx context.Context, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, child *unstructured.Unstructured) (vzapi.QualifiedResourceRelation, controllerutil.OperationResult, error) {
 	r.Log.Info("Update workload pod", "pod", vznav.GetNamespacedNameFromUnstructured(child))
 	rel := vzapi.QualifiedResourceRelation{APIVersion: child.GetAPIVersion(), Kind: child.GetKind(), Namespace: child.GetNamespace(), Name: child.GetName(), Role: sourceRole}
 	pod := &k8score.Pod{
@@ -586,8 +586,8 @@ func (r *Reconciler) updateRelatedPod(ctx context.Context, trait *vzapi.MetricsT
 			r.Log.Info("Workload child pod not found")
 			return apierrors.NewNotFound(schema.GroupResource{Group: pod.APIVersion, Resource: pod.Kind}, pod.Name)
 		}
-		pod.ObjectMeta.Annotations = MutateAnnotations(trait, workload, traitDefaults, pod.ObjectMeta.Annotations)
-		pod.ObjectMeta.Labels = MutateLabels(trait, workload, pod.ObjectMeta.Labels)
+		pod.ObjectMeta.Annotations = MutateAnnotations(trait, traitDefaults, pod.ObjectMeta.Annotations)
+		pod.ObjectMeta.Labels = MutateLabels(trait, traitDefaults, pod.ObjectMeta.Labels)
 		return nil
 	})
 	if err != nil && !apierrors.IsNotFound(err) {
@@ -856,11 +856,11 @@ func mutatePrometheusScrapeConfig(ctx context.Context, trait *vzapi.MetricsTrait
 
 // MutateAnnotations mutates annotations with values used by the scraper config.
 // Annotations are either set or removed depending on the state of the trait.
-func MutateAnnotations(trait *vzapi.MetricsTrait, workload *unstructured.Unstructured, traitDefaults *vzapi.MetricsTraitSpec, annotations map[string]string) map[string]string {
+func MutateAnnotations(trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, annotations map[string]string) map[string]string {
 	mutated := annotations
 
 	// If the trait is being deleted, remove the annotations.
-	if !trait.DeletionTimestamp.IsZero() {
+	if !trait.DeletionTimestamp.IsZero() || traitDefaults == nil {
 		delete(mutated, verrazzanoMetricsEnabledAnnotation)
 		delete(mutated, verrazzanoMetricsPathAnnotation)
 		delete(mutated, verrazzanoMetricsPortAnnotation)
@@ -898,10 +898,10 @@ func MutateAnnotations(trait *vzapi.MetricsTrait, workload *unstructured.Unstruc
 }
 
 // MutateLabels mutates the labels associated with a related resources.
-func MutateLabels(trait *vzapi.MetricsTrait, workload *unstructured.Unstructured, labels map[string]string) map[string]string {
+func MutateLabels(trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, labels map[string]string) map[string]string {
 	mutated := labels
 	// If the trait is not being deleted, copy specific labels from the trait.
-	if trait.DeletionTimestamp.IsZero() {
+	if trait.DeletionTimestamp.IsZero() && traitDefaults != nil {
 		mutated = copyStringMapEntries(mutated, trait.Labels, appObjectMetaLabel, compObjectMetaLabel)
 	}
 	return mutated

@@ -424,7 +424,7 @@ func (r *Reconciler) addMetrics(ctx context.Context, log logr.Logger, namespace 
 		metricLabels = map[string]string{}
 	}
 
-	finalAnnotations := metricstrait.MutateAnnotations(metricsTrait, coherence, traitDefaults, metricAnnotations)
+	finalAnnotations := metricstrait.MutateAnnotations(metricsTrait, traitDefaults, metricAnnotations)
 	log.Info(fmt.Sprintf("Setting annotations on %s: %v", workload.Name, finalAnnotations))
 	err = unstructured.SetNestedStringMap(coherence.Object, finalAnnotations, specAnnotationsFields...)
 	if err != nil {
@@ -432,7 +432,7 @@ func (r *Reconciler) addMetrics(ctx context.Context, log logr.Logger, namespace 
 		return err
 	}
 
-	finalLabels := metricstrait.MutateLabels(metricsTrait, coherence, metricLabels)
+	finalLabels := metricstrait.MutateLabels(metricsTrait, traitDefaults, metricLabels)
 	log.Info(fmt.Sprintf("Setting labels on %s: %v", workload.Name, finalLabels))
 
 	err = unstructured.SetNestedStringMap(coherence.Object, finalLabels, specLabelsFields...)

@@ -340,8 +340,8 @@ func (r *Reconciler) addMetrics(ctx context.Context, log logr.Logger, namespace 
 		helidon.Spec.Template.Annotations = make(map[string]string)
 	}
 
-	labels := metricstrait.MutateLabels(metricsTrait, nil, helidon.Spec.Template.Labels)
-	annotations := metricstrait.MutateAnnotations(metricsTrait, nil, traitDefaults, helidon.Spec.Template.Annotations)
+	labels := metricstrait.MutateLabels(metricsTrait, traitDefaults, helidon.Spec.Template.Labels)
+	annotations := metricstrait.MutateAnnotations(metricsTrait, traitDefaults, helidon.Spec.Template.Annotations)
 
 	finalLabels := mergeMapOverrideWithDest(helidon.Spec.Template.Labels, labels)
 	log.Info(fmt.Sprintf("Setting labels on %s: %v", workload.Name, finalLabels))
