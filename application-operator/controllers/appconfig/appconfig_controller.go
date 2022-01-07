@@ -117,6 +117,10 @@ func (r *Reconciler) cleanupMetricsTraitsResources(ctx context.Context, appConfi
 				var trait = v1alpha1.MetricsTrait{}
 				traitKey := types.NamespacedName{Name: ref.Name, Namespace: appConfig.Namespace}
 				err := r.Get(ctx, traitKey, &trait)
+				if err != nil && k8serrors.IsNotFound(err) {
+					r.Log.Info("Trait is not found and may already be deleted", "trait", traitKey)
+					return nil
+				}
 				if err != nil {
 					return err
 				}
