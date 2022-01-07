@@ -6,7 +6,9 @@ package appconfig
 import (
 	"context"
 	"fmt"
+	"github.com/verrazzano/verrazzano/application-operator/apis/oam/v1alpha1"
 	"github.com/verrazzano/verrazzano/application-operator/controllers/ingresstrait"
+	"github.com/verrazzano/verrazzano/application-operator/controllers/metricstrait"
 	vznav "github.com/verrazzano/verrazzano/application-operator/controllers/navigation"
 	vzconst "github.com/verrazzano/verrazzano/pkg/constants"
 	vzstring "github.com/verrazzano/verrazzano/pkg/string"
@@ -28,8 +30,9 @@ import (
 
 type Reconciler struct {
 	client.Client
-	Log    logr.Logger
-	Scheme *runtime.Scheme
+	Log     logr.Logger
+	Scheme  *runtime.Scheme
+	Metrics *metricstrait.Reconciler
 }
 
 const finalizerName = "appconfig.finalizers.verrazzano.io"
@@ -67,6 +70,11 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		if err := ingresstrait.Cleanup(nsn, r.Client, r.Log); err != nil {
 			return reconcile.Result{}, err
 		}
+		// handle metrics trait clean up
+		err := r.cleanupMetricsTraitsResources(ctx, appConfig)
+		if err != nil {
+			return reconcile.Result{}, err
+		}
 		// resource cleanup has succeeded, remove the finalizer
 		if err := r.removeFinalizerIfRequired(ctx, &appConfig); err != nil {
 			return reconcile.Result{}, err
@@ -97,6 +105,28 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 	log.Info("Successfully reconciled ApplicationConfiguration")
 	return reconcile.Result{}, nil
+}
+
+// cleanupMetricsTraitsResources removes the resources associated with the application metric traits and also disables
+// metrics trait finalization
+func (r *Reconciler) cleanupMetricsTraitsResources(ctx context.Context, appConfig oamv1.ApplicationConfiguration) error {
+	for _, wlStatus := range appConfig.Status.Workloads {
+		for _, wlTrait := range wlStatus.Traits {
+			ref := wlTrait.Reference
+			if ref.Kind == v1alpha1.MetricsTraitKind {
+				var trait = v1alpha1.MetricsTrait{}
+				traitKey := types.NamespacedName{Name: ref.Name, Namespace: appConfig.Namespace}
+				err := r.Get(ctx, traitKey, &trait)
+				if err != nil {
+					return err
+				}
+				// not using returned error or results in this call since clean up issue should not block app
+				// deletion
+				r.Metrics.ReconcileTraitDelete(context.TODO(), &trait, true)
+			}
+		}
+	}
+	return nil
 }
 
 func (r *Reconciler) restartComponent(ctx context.Context, wlNamespace string, wlStatus oamv1.WorkloadStatus, restartVersion string, log logr.Logger) error {

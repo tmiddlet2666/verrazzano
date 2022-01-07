@@ -1,4 +1,4 @@
-// Copyright (c) 2020, 2021, Oracle and/or its affiliates.
+// Copyright (c) 2020, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 package metricstrait
@@ -228,15 +228,15 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 		}
 		return result, err
 	}
-	return r.reconcileTraitDelete(ctx, trait)
+	return r.ReconcileTraitDelete(ctx, trait, false)
 }
 
-// reconcileTraitDelete reconciles a metrics trait that is being deleted.
-func (r *Reconciler) reconcileTraitDelete(ctx context.Context, trait *vzapi.MetricsTrait) (ctrl.Result, error) {
+// ReconcileTraitDelete reconciles a metrics trait that is being deleted.
+func (r *Reconciler) ReconcileTraitDelete(ctx context.Context, trait *vzapi.MetricsTrait, ignoreDeletionTimestamp bool) (ctrl.Result, error) {
 	status := r.deleteOrUpdateObsoleteResources(ctx, trait, &reconcileresults.ReconcileResults{})
 	// Only remove the finalizer if all related resources were successfully updated.
 	if !status.ContainsErrors() {
-		r.removeFinalizerIfRequired(ctx, trait)
+		r.removeFinalizerIfRequired(ctx, trait, ignoreDeletionTimestamp)
 	}
 	return r.updateTraitStatus(ctx, trait, status)
 }
@@ -306,8 +306,9 @@ func (r *Reconciler) addFinalizerIfRequired(ctx context.Context, trait *vzapi.Me
 
 // removeFinalizerIfRequired removes the finalizer from the trait if required
 // The finalizer is only removed if the trait is being deleted and the finalizer had been added
-func (r *Reconciler) removeFinalizerIfRequired(ctx context.Context, trait *vzapi.MetricsTrait) error {
-	if !trait.DeletionTimestamp.IsZero() && vzstring.SliceContainsString(trait.Finalizers, finalizerName) {
+func (r *Reconciler) removeFinalizerIfRequired(ctx context.Context, trait *vzapi.MetricsTrait, ignoreDeletionTimestamp bool) error {
+	if (ignoreDeletionTimestamp || !trait.DeletionTimestamp.IsZero()) &&
+		vzstring.SliceContainsString(trait.Finalizers, finalizerName) {
 		traitName := vznav.GetNamespacedNameFromObjectMeta(trait.ObjectMeta)
 		r.Log.Info("Removing finalizer from trait", "trait", traitName)
 		trait.Finalizers = vzstring.RemoveStringFromSlice(trait.Finalizers, finalizerName)
@@ -612,7 +613,7 @@ func (r *Reconciler) updateTraitStatus(ctx context.Context, trait *vzapi.Metrics
 
 	// If the results contained errors then requeue immediately.
 	if results.ContainsErrors() {
-		r.Log.Info("Failed to reconciled metrics trait", "trait", name)
+		r.Log.Info("Failed to reconcile metrics trait", "trait", name)
 		return reconcile.Result{Requeue: true}, nil
 	}
 
@@ -825,7 +826,7 @@ func updateStatusIfRequired(status *vzapi.MetricsTraitStatus, results *reconcile
 func mutatePrometheusScrapeConfig(ctx context.Context, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, prometheusScrapeConfig *gabs.Container, secret *k8score.Secret, workload *unstructured.Unstructured, c client.Client) (*gabs.Container, error) {
 	oldScrapeConfigs := prometheusScrapeConfig.Search(prometheusScrapeConfigsLabel).Children()
 	prometheusScrapeConfig.Array(prometheusScrapeConfigsLabel) // zero out the array of scrape configs
-	newScrapeJob, newScrapeConfig, err := createScrapeConfigFromTrait(ctx, trait, traitDefaults, secret, workload, c)
+	newScrapeJob, newScrapeConfig, err := createScrapeConfigFromTrait(ctx, trait, secret, workload, c)
 	if err != nil {
 		return prometheusScrapeConfig, err
 	}
@@ -943,7 +944,7 @@ func createPrometheusScrapeConfigMapJobName(trait *vzapi.MetricsTrait) (string, 
 // This populates the Prometheus scrape config template.
 // The job name is returned.
 // The YAML container populated from the Prometheus scrape config template is returned.
-func createScrapeConfigFromTrait(ctx context.Context, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec, secret *k8score.Secret, workload *unstructured.Unstructured, c client.Client) (string, *gabs.Container, error) {
+func createScrapeConfigFromTrait(ctx context.Context, trait *vzapi.MetricsTrait, secret *k8score.Secret, workload *unstructured.Unstructured, c client.Client) (string, *gabs.Container, error) {
 
 	job, err := createPrometheusScrapeConfigMapJobName(trait)
 	if err != nil {

@@ -382,9 +382,10 @@ func main() {
 		os.Exit(1)
 	}
 	if err = (&appconfig.Reconciler{
-		Client: mgr.GetClient(),
-		Log:    ctrl.Log.WithName("controllers").WithName("ApplicationConfiguration"),
-		Scheme: mgr.GetScheme(),
+		Client:  mgr.GetClient(),
+		Log:     ctrl.Log.WithName("controllers").WithName("ApplicationConfiguration"),
+		Scheme:  mgr.GetScheme(),
+		Metrics: metricsReconciler,
 	}).SetupWithManager(mgr); err != nil {
 		setupLog.Error(err, "unable to create controller", "controller", "ApplicationConfiguration")
 		os.Exit(1)

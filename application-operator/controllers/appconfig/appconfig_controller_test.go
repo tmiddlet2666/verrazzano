@@ -8,7 +8,9 @@ import (
 	"fmt"
 	oamrt "github.com/crossplane/crossplane-runtime/apis/core/v1alpha1"
 	certapiv1alpha2 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1alpha2"
+	"github.com/verrazzano/verrazzano/application-operator/apis/oam/v1alpha1"
 	"github.com/verrazzano/verrazzano/application-operator/constants"
+	"github.com/verrazzano/verrazzano/application-operator/controllers/metricstrait"
 	k8score "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"testing"
@@ -51,10 +53,13 @@ func newScheme() *runtime.Scheme {
 
 // newReconciler creates a new reconciler for testing
 func newReconciler(c client.Client) Reconciler {
+	scheme := newScheme()
+	metricsReconciler := &metricstrait.Reconciler{Client: c, Log: ctrl.Log.WithName("mtest"), Scheme: scheme, Scraper: "verrazzano-system/vmi-system-prometheus-0"}
 	return Reconciler{
-		Client: c,
-		Log:    ctrl.Log.WithName("test"),
-		Scheme: newScheme(),
+		Client:  c,
+		Log:     ctrl.Log.WithName("test"),
+		Scheme:  scheme,
+		Metrics: metricsReconciler,
 	}
 }
 
@@ -765,14 +770,15 @@ func TestReconcileStatefulSetNoRestart(t *testing.T) {
 	assert.Equal(false, result.Requeue)
 }
 
-// TestDeleteCertAndSecretWhenAppConfigIsDeleted tests the Reconcile method for the following use case.
+// TestDeleteTraitResourcesWhenAppConfigIsDeleted tests the Reconcile method for the following use case.
 // GIVEN a request to reconcile an app config resource that is marked for deletion
 // WHEN the app config exists
-// THEN ensure that the cert and secret associated with the app config are also deleted
+// THEN ensure that the cert, secret and metrics trait resources associated with the app config are also deleted
 func TestDeleteCertAndSecretWhenAppConfigIsDeleted(t *testing.T) {
 	assert := asserts.New(t)
 	mocker := gomock.NewController(t)
 	cli := mocks.NewMockClient(mocker)
+	mockStatus := mocks.NewMockStatusWriter(mocker)
 	// expect a call to fetch the ApplicationConfiguration
 	cli.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testAppConfigName}, gomock.Not(gomock.Nil())).
@@ -790,6 +796,13 @@ func TestDeleteCertAndSecretWhenAppConfigIsDeleted(t *testing.T) {
 					Kind:       vzconst.StatefulSetWorkloadKind,
 					Name:       testStatefulSetName,
 				},
+				Traits: []oamv1.WorkloadTrait{{
+					Reference: oamrt.TypedReference{
+						APIVersion: "v1alpha1",
+						Kind:       v1alpha1.MetricsTraitKind,
+						Name:       "testMetricTrait",
+					},
+				}},
 			}}
 			return nil
 		})
@@ -809,6 +822,39 @@ func TestDeleteCertAndSecretWhenAppConfigIsDeleted(t *testing.T) {
 			assert.Equal(fmt.Sprintf("%s-%s-cert-secret", testNamespace, testAppConfigName), sec.Name)
 			return nil
 		})
+	// Expect a call to get the metrics trait resource.
+	cli.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: "testMetricTrait"}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, trait *v1alpha1.MetricsTrait) error {
+			trait.TypeMeta = v1.TypeMeta{
+				APIVersion: v1alpha1.SchemeGroupVersion.Identifier(),
+				Kind:       v1alpha1.MetricsTraitKind}
+			trait.ObjectMeta = v1.ObjectMeta{
+				Namespace:  name.Namespace,
+				Name:       name.Name,
+				Finalizers: []string{"metricstrait.finalizers.verrazzano.io"}}
+			return nil
+		})
+
+	// Expect a call to get the status writer
+	cli.EXPECT().Status().Return(mockStatus).AnyTimes()
+	// Expect a call to update the status of the trait status
+	mockStatus.EXPECT().
+		Update(gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *v1alpha1.MetricsTrait, opts ...client.UpdateOption) error {
+			assert.Len(trait.Status.Conditions, 1)
+			assert.Len(trait.Finalizers, 0)
+			return nil
+		})
+
+	// Expect a call to update the metrics trait resource with the finalizer removed.
+	cli.EXPECT().
+		Update(gomock.Any(), gomock.Any()).DoAndReturn(func(ctx context.Context, obj *v1alpha1.MetricsTrait) error {
+		assert.Equal(testNamespace, obj.Namespace)
+		assert.Equal("testMetricTrait", obj.Name)
+		assert.Len(obj.Finalizers, 0)
+		return nil
+	})
 
 	// Expect a call to update the app config resource with the finalizer removed.
 	cli.EXPECT().
