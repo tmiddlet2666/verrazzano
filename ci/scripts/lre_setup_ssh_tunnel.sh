@@ -48,7 +48,7 @@ sleep 60
 COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   jq '.data."ssh-metadata".command' | \
   sed 's/"//g' | \
-  sed 's/ssh/ssh -t ' | \
+  sed 's|ssh|ssh -t|g' | \
   sed 's|<privateKey>|'"${ssh_private_key_path}"'|g' | \
   sed 's|<localPort>|6443|g'`
 echo "command = ${COMMAND}"
