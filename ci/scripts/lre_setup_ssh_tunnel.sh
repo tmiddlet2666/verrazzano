@@ -55,7 +55,8 @@ if [ -z "$COMMAND" ]; then
     echo "didn't find the command to set up ssh tunnel"
     exit 1
 fi
-COMMAND+=" -o StrictHostKeyChecking=no -v -4 'ssh -L 6443:10.196.0.58:8443 keycloakadmin@keycloak.default.138.3.69.217.nip.io' &"
+COMMAND+=" -o StrictHostKeyChecking=no -t -t -v -4 'ssh -L 6443:10.196.0.58:8443 keycloakadmin@138.3.69.217' &"
+sed -i 's|ssh|ssh -t -t|' $COMMAND
 echo "command = ${COMMAND}"
 echo "Setting up the ssh tunnel"
 eval ${COMMAND}
