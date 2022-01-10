@@ -43,7 +43,7 @@ require (
 	github.com/minio/highwayhash v1.0.2 // indirect
 	github.com/mitchellh/mapstructure v1.4.2 // indirect
 	github.com/nats-io/nats-server/v2 v2.5.0 // indirect
-	github.com/onsi/ginkgo/v2 v2.0.0-rc2
+	github.com/onsi/ginkgo/v2 v2.0.0
 	github.com/onsi/gomega v1.17.0
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
 	github.com/openzipkin/zipkin-go v0.2.5 // indirect
