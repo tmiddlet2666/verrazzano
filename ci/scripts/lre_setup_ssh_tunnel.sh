@@ -48,6 +48,7 @@ sleep 60
 COMMAND=`oci bastion session get  --session-id=${SESSION_ID} | \
   jq '.data."ssh-metadata".command' | \
   sed 's/"//g' | \
+  sed 's/ssh/ssh -t ' | \
   sed 's|<privateKey>|'"${ssh_private_key_path}"'|g' | \
   sed 's|<localPort>|6443|g'`
 echo "command = ${COMMAND}"
@@ -55,7 +56,7 @@ if [ -z "$COMMAND" ]; then
     echo "didn't find the command to set up ssh tunnel"
     exit 1
 fi
-COMMAND+=" -o StrictHostKeyChecking=no -t -t -v -4 'ssh -L 6443:10.244.1.78:8443 keycloakadmin@10.244.1.78' &"
+COMMAND+=" -o StrictHostKeyChecking=no -v -4 'ssh -t -L 6443:10.244.1.78:8443 keycloakadmin@10.244.1.78' &"
 echo "command = ${COMMAND}"
 echo "Setting up the ssh tunnel"
 eval ${COMMAND}
