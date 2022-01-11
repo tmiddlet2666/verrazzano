@@ -53,6 +53,11 @@ var _ = framework.VzDescribe("keycloak url test", func() {
 				Eventually(func() (*pkg.HTTPResponse, error) {
 					var err error
 					httpResponse, err = pkg.GetWebPage(keycloakURL, "")
+					pkg.Log(pkg.Info, fmt.Sprintf("httprespone = %s", httpResponse))
+					if (err != nil) {
+						pkg.Log(pkg.Info, fmt.Sprintf("err = %s", err))
+					}
+
 					return httpResponse, err
 				}, waitTimeout, pollingInterval).Should(pkg.HasStatus(http.StatusOK))
 				metrics.Emit(metricsLogger.With("url_web_response_time", time.Since(start).Milliseconds()))
