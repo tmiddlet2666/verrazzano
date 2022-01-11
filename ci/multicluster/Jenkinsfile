@@ -1538,7 +1538,7 @@ def createPFSession() {
             ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
             # convert SSH2 public key into an OpenSSH format
             ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
-            touch ${ADMIN_KUBECONFIG}
+            mkdir -p "$(dirname "${ADMIN_KUBECONFIG}")/" && touch ${ADMIN_KUBECONFIG}
             ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region $cluster_name $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${ADMIN_KUBECONFIG}
             export KUBECONFIG=${ADMIN_KUBECONFIG}
             kubectl get nodes
