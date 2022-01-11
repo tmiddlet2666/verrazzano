@@ -109,6 +109,20 @@ pipeline {
                 defaultValue: '',
                 description: 'Name of the multi cluster provisioning code branch/tag or commit',
                 trim: true)
+        booleanParam (description: 'Whether to create a mc cluster', name: 'CREATE_MULTI_CLUSTER_CLUSTER', defaultValue: false)
+        string (name: 'MULTI_CLUSTER_APISERVER_SUBNET_ID',
+                description: 'apiserver_subnet_id',
+                trim: true)
+        string (name: 'MULTI_CLUSTER_LB_SUBNET_ID',
+                description: 'loadbalancer_subnet_id',
+                trim: true)
+        string (name: 'MULTI_CLUSTER_WORKER_NODE_SUBNET_ID',
+                description: 'workernode_subnet_id',
+                trim: true)
+        string (name: 'MULTI_CLUSTER_VCN_ID',
+                description: 'vcn_id',
+                trim: true)
+         
     }
 
     environment {
@@ -354,6 +368,31 @@ pipeline {
                                         }
                                     }
                                 }
+                                stage('Create Multi-Cluster CLUSTER') {
+                                    when {
+                                        expression {
+                                            return params.CREATE_MULTI_CLUSTER_CLUSTER == true;
+                                        } 
+                                    }
+                                    environment {
+                                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
+                                        TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
+                                        TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
+                                        TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                                        TF_VAR_user_ocid="${TF_VAR_user_id}"
+                                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                                    }
+                                    steps {
+                                        script {
+                                            createMultiClusterCluster()
+                                        }
+                                    }
+                                }
+
+
                             }
                         }
                     }
@@ -1464,5 +1503,12 @@ def createMultiClusterVCN() {
     sh """
         echo "Creating multi cluster vcn: ${TF_VAR_vcn_name}"
         ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-vcn.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/network_prod
+    """
+}
+
+def createMultiClusterCluster() {
+    sh """
+        echo "Creating multi cluster cluster"
+        ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment
     """
 }
