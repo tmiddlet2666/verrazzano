@@ -53,7 +53,8 @@ var _ = framework.VzDescribe("keycloak url test", func() {
 				Eventually(func() (*pkg.HTTPResponse, error) {
 					var err error
 					httpResponse, err = pkg.GetWebPage(keycloakURL, "")
-					pkg.Log(pkg.Info, fmt.Sprintf("httprespone = %s", httpResponse))
+					pkg.Log(pkg.Info, fmt.Sprintf("httprespone header = %s", httpResponse.Header))
+					pkg.Log(pkg.Info, fmt.Sprintf("httprespone body = %s", httpResponse.Body))
 					if (err != nil) {
 						pkg.Log(pkg.Info, fmt.Sprintf("err = %s", err))
 					}
