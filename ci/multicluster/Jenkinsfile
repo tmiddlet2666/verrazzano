@@ -122,6 +122,12 @@ pipeline {
         string (name: 'MULTI_CLUSTER_VCN_ID',
                 description: 'vcn_id',
                 trim: true)
+        string (name: 'MULTI_CLUSTER_CLUSTER_NAME',
+                description: 'cluster_name',
+                trim: true)
+        string (name: 'MULTI_CLUSTER_BASTION_NAME',
+                description: 'bastion_name',
+                trim: true)
          
     }
 
@@ -388,6 +394,17 @@ pipeline {
                                     steps {
                                         script {
                                             createMultiClusterCluster()
+                                        }
+                                    }
+                                }
+                                stage('Create Port forwarding session') {
+                                    environment {
+                                        cluster_name="${params.MULTI_CLUSTER_CLUSTER_NAME}"
+                                        bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
+                                    }
+                                    steps {
+                                        script {
+                                            createPFSession()
                                         }
                                     }
                                 }
@@ -1511,4 +1528,20 @@ def createMultiClusterCluster() {
         echo "Creating multi cluster cluster"
         ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment
     """
+}
+
+def createPFSession() {
+    withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
+        sh """
+            echo "Creating port forwarding session"
+            # get the ssh public key
+            ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
+            # convert SSH2 public key into an OpenSSH format
+            ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
+            touch ${ADMIN_KUBECONFIG}
+            ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region $cluster_name $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${ADMIN_KUBECONFIG}
+            export KUBECONFIG=${ADMIN_KUBECONFIG}
+            kubectl get nodes
+        """
+    }
 }
