@@ -7,6 +7,7 @@ bastion_name=$4
 public_key_file=$5
 private_key_file=$6
 KUBECONFIG=$7
+vcn_id=$8
 
 oci bastion bastion list --compartment-id=$compartment_id
 
@@ -43,10 +44,10 @@ tunnel_command=${tunnel_command//'\'/''}
 tunnel_command="${tunnel_command//<privateKey>/$private_key_file}"
 
 # Add the k8s api forwarding port to the command, as well as necessary flags
-tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bastion_ip} -L 7443:${api_private_endpoint} -N}"
+tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bastion_ip} -L 6443:${api_private_endpoint} -N}"
 
 # Substite the localport in the bastion SSH command
-tunnel_command="${tunnel_command//<localPort>/7443}"
+tunnel_command="${tunnel_command//<localPort>/6443}"
 
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -i}"
@@ -54,7 +55,7 @@ tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -
 #tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
-sed -i.bak "s/${api_private_endpoint}/127.0.0.1:7443/g" $KUBECONFIG
+sed -i.bak "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
 
 echo $tunnel_command
 
