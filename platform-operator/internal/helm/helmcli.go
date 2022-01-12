@@ -153,6 +153,7 @@ func runHelm(log *zap.SugaredLogger, releaseName string, namespace string, chart
 	if wait {
 		cmdArgs = append(cmdArgs, "--wait")
 	}
+	cmdArgs = append(cmdArgs, "--debug")
 	if namespace != "" {
 		cmdArgs = append(cmdArgs, "--namespace")
 		cmdArgs = append(cmdArgs, namespace)
