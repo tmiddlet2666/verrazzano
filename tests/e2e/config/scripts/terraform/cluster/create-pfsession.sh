@@ -10,6 +10,7 @@ KUBECONFIG=$7
 vcn_id=$8
 
 oci bastion bastion list --compartment-id=$compartment_id
+oci network vcn get --vcn-id=$vcn_id
 
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
