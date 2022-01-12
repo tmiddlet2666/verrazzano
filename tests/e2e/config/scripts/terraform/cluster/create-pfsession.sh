@@ -8,9 +8,11 @@ public_key_file=$5
 private_key_file=$6
 KUBECONFIG=$7
 vcn_id=$8
+sec_list_id=$9
 
 oci bastion bastion list --compartment-id=$compartment_id
 oci network vcn get --vcn-id=$vcn_id
+oci network security-list get --security-list-id=$sec_list_id
 
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
