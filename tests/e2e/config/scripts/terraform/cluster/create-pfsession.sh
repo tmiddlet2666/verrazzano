@@ -50,7 +50,7 @@ tunnel_command="${tunnel_command//<localPort>/6443}"
 tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
-sed -i "" "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
+sed -i "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
 
 echo $tunnel_command
 
