@@ -51,7 +51,7 @@ tunnel_command="${tunnel_command//<localPort>/7443}"
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -i}"
 
-tunnel_command="${tunnel_command} &"
+#tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
 sed -i.bak "s/${api_private_endpoint}/127.0.0.1:7443/g" $KUBECONFIG
