@@ -47,7 +47,7 @@ tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bast
 # Substite the localport in the bastion SSH command
 tunnel_command="${tunnel_command//<localPort>/6443}"
 
-tunnel_command="${tunnel_command} &"
+# tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
 sed -i "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
