@@ -45,7 +45,7 @@ tunnel_command="${tunnel_command//<privateKey>/$private_key_file}"
 tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bastion_ip} -L 7443:${api_private_endpoint} -N}"
 
 # Substite the localport in the bastion SSH command
-tunnel_command="${tunnel_command//<localPort>/6443}"
+tunnel_command="${tunnel_command//<localPort>/7443}"
 
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -o StrictHostKeyChecking=no -i}"
@@ -59,5 +59,7 @@ echo $tunnel_command
 
 # Run SSH command
 eval $tunnel_command
+
+sleep 5
 
 echo "KUBECTL READY TO USE"
