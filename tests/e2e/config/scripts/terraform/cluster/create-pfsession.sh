@@ -9,6 +9,7 @@ private_key_file=$6
 KUBECONFIG=$7
 
 oci bastion bastion list --compartment-id=$compartment_id
+oci ce cluster get --cluster-id $cluster_id
 
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
