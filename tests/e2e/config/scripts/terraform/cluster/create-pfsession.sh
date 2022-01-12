@@ -8,6 +8,7 @@ public_key_file=$5
 private_key_file=$6
 KUBECONFIG=$7
 
+oci bastion bastion list --compartment-id=$compartment_id
 
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
