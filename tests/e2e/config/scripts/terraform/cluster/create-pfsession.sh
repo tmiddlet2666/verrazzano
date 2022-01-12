@@ -48,7 +48,7 @@ tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bast
 tunnel_command="${tunnel_command//<localPort>/7443}"
 
 # Disable host key verification
-tunnel_command="${tunnel_command//ssh -i/ssh -o StrictHostKeyChecking=no -i}"
+tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -i}"
 
 tunnel_command="${tunnel_command} &"
 
