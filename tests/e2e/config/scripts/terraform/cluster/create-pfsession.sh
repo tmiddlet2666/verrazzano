@@ -9,7 +9,6 @@ private_key_file=$6
 KUBECONFIG=$7
 
 oci bastion bastion list --compartment-id=$compartment_id
-oci ce cluster get --cluster-id $cluster_id
 
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
@@ -17,6 +16,7 @@ rm $KUBECONFIG
 
 cluster_id=$(oci ce cluster list -c $compartment_id --name $cluster_name --lifecycle-state ACTIVE | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
 echo "cluster_id is $cluster_id"
+oci ce cluster get --cluster-id $cluster_id
 oci ce cluster create-kubeconfig \
 	--cluster-id $cluster_id \
 	--file $KUBECONFIG \
