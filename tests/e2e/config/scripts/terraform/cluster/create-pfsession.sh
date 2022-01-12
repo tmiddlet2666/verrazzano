@@ -48,12 +48,12 @@ tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bast
 tunnel_command="${tunnel_command//<localPort>/6443}"
 
 # Disable host key verification
-tunnel_command="${tunnel_command//ssh/'ssh -o StrictHostKeyChecking=no'}"
+tunnel_command="${tunnel_command//ssh -i/ssh -o StrictHostKeyChecking=no -i}"
 
 tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
-sed -i "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
+sed -i.bak "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
 
 echo $tunnel_command
 
