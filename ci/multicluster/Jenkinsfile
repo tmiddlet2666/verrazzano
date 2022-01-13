@@ -388,6 +388,7 @@ pipeline {
                                         bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
                                         vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
                                         sec_list_id="${params.MULTI_CLUSTER_SEC_LIST_ID}"
+                                        target_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
                                     }
                                     steps {
                                         script {
@@ -1428,7 +1429,7 @@ def createPFSession() {
             # convert SSH2 public key into an OpenSSH format
             ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
             mkdir -p "${KUBECONFIG_DIR}/1" && touch ${ADMIN_KUBECONFIG}
-            ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region $cluster_name $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${ADMIN_KUBECONFIG} $vcn_id $sec_list_id
+            ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region $cluster_name $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${ADMIN_KUBECONFIG} $vcn_id $sec_list_id $target_subnet_id
             export KUBECONFIG=${ADMIN_KUBECONFIG}
             kubectl --v=10 get nodes
         """
