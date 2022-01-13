@@ -11,7 +11,7 @@ vcn_id=$8
 sec_list_id=$9
 target_subnet_id=${10}
 
-oci bastion bastion create --bastion-type standard --compartment-id $compartment_id --target-subnet-id $target_subnet_id --name $bastion_name --client-cidr-list '["0.0.0.0/0"]'
+#oci bastion bastion create --bastion-type standard --compartment-id $compartment_id --target-subnet-id $target_subnet_id --name $bastion_name --client-cidr-list '["0.0.0.0/0"]'
 oci bastion bastion list --compartment-id=$compartment_id
 oci network vcn get --vcn-id=$vcn_id
 oci network security-list get --security-list-id=$sec_list_id
