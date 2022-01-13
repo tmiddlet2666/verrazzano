@@ -384,11 +384,7 @@ pipeline {
                                 }
                                 stage('Create Port forwarding session') {
                                     environment {
-                                        cluster_name="${params.MULTI_CLUSTER_CLUSTER_NAME}"
                                         bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
-                                        vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
-                                        sec_list_id="${params.MULTI_CLUSTER_SEC_LIST_ID}"
-                                        target_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
                                     }
                                     steps {
                                         script {
@@ -1418,7 +1414,7 @@ def createMultiClusterCluster() {
     for(int count=1; count<=clusterCount; count++) {
         sh """
             echo "Creating multi cluster cluster"
-            TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment $count
+            TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment $count
         """
     }
 }
