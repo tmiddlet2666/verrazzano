@@ -1433,9 +1433,9 @@ def createPFSession() {
                 mkdir -p "${KUBECONFIG_DIR}/$count"
                 ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
                 export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
-                echo "Waiting for nodes to be added to cluster at $date..."
+                echo "Waiting for nodes to be added to cluster..."
                 timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
-                echo "Waiting for nodes to transition to 'READY' at $date..."
+                echo "Waiting for nodes to transition to 'READY'..."
                 kubectl wait --for=condition=ready nodes --timeout=5m --all
             """
         }
