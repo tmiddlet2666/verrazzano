@@ -7,6 +7,7 @@
 SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 
 moduleLocation=$1
+count=$2
 if [ -z "$moduleLocation" ]; then
   echo "Module location must be specified"
 fi
@@ -16,6 +17,7 @@ $SCRIPT_DIR/init.sh
 
 pushd $moduleLocation
 
+$SCRIPT_DIR/terraform workspace new $TF_VAR_cluster_name
 $SCRIPT_DIR/terraform init -no-color
 $SCRIPT_DIR/terraform plan -no-color
 
@@ -36,7 +38,7 @@ while true; do
       break
    fi
    echo "Deleting Cluster Terraform and applying again"
-   $SCRIPT_DIR/delete-mc-cluster.sh $moduleLocation
+   $SCRIPT_DIR/delete-mc-cluster.sh $moduleLocation $TF_VAR_cluster_name
    sleep 30
 done
 

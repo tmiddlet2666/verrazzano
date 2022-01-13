@@ -1414,24 +1414,34 @@ def createMultiClusterVCN() {
 }
 
 def createMultiClusterCluster() {
-    sh """
-        echo "Creating multi cluster cluster"
-        ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment
-    """
+    int clusterCount = params.TOTAL_CLUSTERS.toInteger()
+    for(int count=1; count<=clusterCount; count++) {
+        sh """
+            echo "Creating multi cluster cluster"
+            TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment $count
+        """
+    }
 }
 
 def createPFSession() {
-    withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
-        sh """
-            echo "Creating port forwarding session"
-            # get the ssh public key
-            ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
-            # convert SSH2 public key into an OpenSSH format
-            ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
-            mkdir -p "${KUBECONFIG_DIR}/1" && touch ${ADMIN_KUBECONFIG}
-            ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region $cluster_name $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${ADMIN_KUBECONFIG} $vcn_id $sec_list_id $target_subnet_id
-            export KUBECONFIG=${ADMIN_KUBECONFIG}
-            kubectl --v=10 get nodes
-        """
+    int clusterCount = params.TOTAL_CLUSTERS.toInteger()
+    for(int count=1; count<=clusterCount; count++) {
+        int port = ((5+count)*1000)+443
+        withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
+            sh """
+                echo "Creating port forwarding session"
+                # get the ssh public key
+                ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
+                # convert SSH2 public key into an OpenSSH format
+                ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
+                mkdir -p "${KUBECONFIG_DIR}/$count"
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
+                export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
+                echo "Waiting for nodes to be added to cluster at $(date)..."
+                timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
+                echo "Waiting for nodes to transition to 'READY' at $(date)..."
+                kubectl wait --for=condition=ready nodes --timeout=5m --all
+            """
+        }
     }
 }

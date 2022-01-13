@@ -7,16 +7,7 @@ bastion_name=$4
 public_key_file=$5
 private_key_file=$6
 KUBECONFIG=$7
-vcn_id=$8
-sec_list_id=$9
-target_subnet_id=${10}
-
-#oci bastion bastion create --bastion-type standard --compartment-id $compartment_id --target-subnet-id $target_subnet_id --name $bastion_name --client-cidr-list '["0.0.0.0/0"]'
-oci bastion bastion list --compartment-id=$compartment_id
-oci network vcn get --vcn-id=$vcn_id
-oci network security-list get --security-list-id=$sec_list_id
-#oci network security-list update --ingress-security-rules='[{"description": "east west","icmpOptions": null,"isStateless": false,"protocol": "all","source": "10.196.0.0/16","sourceType": "CIDR_BLOCK","tcpOptions": null,"udpOptions": null},{"description": null,"icmpOptions": {"code": null,"type": 3},"isStateless": false,"protocol": "1","source": "10.196.0.0/16","sourceType": "CIDR_BLOCK","tcpOptions": null,"udpOptions": null},{"description": null,"icmpOptions": {"code": 4,"type": 3},"isStateless": false,"protocol": "1","source": "0.0.0.0/0","sourceType": "CIDR_BLOCK","tcpOptions": null,"udpOptions": null},{"description": null,"icmpOptions": null,"isStateless": false,"protocol": "6","source": "0.0.0.0/0","sourceType": "CIDR_BLOCK","tcpOptions": {"destinationPortRange": {"max": 22,"min": 22},"sourcePortRange": null},"udpOptions": null},{"description": null,"icmpOptions": null,"isStateless": false,"protocol": "6","source": "0.0.0.0/0","sourceType": "CIDR_BLOCK","tcpOptions": {"destinationPortRange": {"max": 6443,"min": 6443},"sourcePortRange": null},"udpOptions": null}]' --force --security-list-id=$sec_list_id 
-
+port=$8
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
 rm $KUBECONFIG
@@ -32,9 +23,7 @@ oci ce cluster create-kubeconfig \
 	--kube-endpoint PRIVATE_ENDPOINT
 
 bastion_id=$(oci bastion bastion list -c $compartment_id --name $bastion_name --bastion-lifecycle-state ACTIVE --all | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
-echo "bastion_id is $bastion_id"
 api_private_endpoint=$(oci ce cluster get --cluster-id $cluster_id | jq '.data.endpoints["private-endpoint"]' | sed -e 's/^"//' -e 's/"$//')
-echo "api_private_endpoint is $api_private_endpoint"
 private_ip=$(echo "$api_private_endpoint" | cut -d ':' -f1)
 session_id=$(oci bastion session create-port-forwarding --bastion-id $bastion_id --target-private-ip $private_ip --target-port 6443 --ssh-public-key-file $public_key_file --wait-for-state SUCCEEDED | jq -r '.data.resources[].identifier')
 
@@ -50,10 +39,10 @@ tunnel_command=${tunnel_command//'\'/''}
 tunnel_command="${tunnel_command//<privateKey>/$private_key_file}"
 
 # Add the k8s api forwarding port to the command, as well as necessary flags
-tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bastion_ip} -L 6443:${api_private_endpoint} -N}"
+tunnel_command="${tunnel_command/${username}@${bastion_ip}/-f ${username}@${bastion_ip} -L $port:${api_private_endpoint} -N}"
 
 # Substite the localport in the bastion SSH command
-tunnel_command="${tunnel_command//<localPort>/6443}"
+tunnel_command="${tunnel_command//<localPort>/$port}"
 
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -i}"
@@ -61,7 +50,7 @@ tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -
 tunnel_command="${tunnel_command} &"
 
 # Substitute 127.0.0.1 into kubeconfig file
-sed -i.bak "s/${api_private_endpoint}/127.0.0.1:6443/g" $KUBECONFIG
+sed -i.bak "s/${api_private_endpoint}/127.0.0.1:$port/g" $KUBECONFIG
 
 echo $tunnel_command
 
