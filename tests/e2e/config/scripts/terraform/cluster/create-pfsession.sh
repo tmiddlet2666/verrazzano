@@ -9,7 +9,7 @@ private_key_file=$6
 KUBECONFIG=$7
 vcn_id=$8
 sec_list_id=$9
-target_subnet_id=$10
+target_subnet_id=${10}
 
 oci bastion bastion create --bastion-type standard --compartment-id $compartment_id --target-subnet-id $target_subnet_id --name $bastion_name
 oci bastion bastion list --compartment-id=$compartment_id
