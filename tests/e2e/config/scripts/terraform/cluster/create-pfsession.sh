@@ -11,6 +11,8 @@ port=$8
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
 rm $KUBECONFIG
+oci ce cluster list -c $compartment_id
+exit 0
 
 cluster_id=$(oci ce cluster list -c $compartment_id --name $cluster_name --lifecycle-state ACTIVE | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
 echo "cluster_id is $cluster_id"
