@@ -639,13 +639,7 @@ pipeline {
                         ./tests/e2e/config/scripts/oci_dns_ops.sh -o delete -s z${zoneId} || echo "Failed to delete DNS zone z${zoneId}"
                     fi
                 """
-                for(int count=1; count<=clusterCount; count++) {
-                    sh """
-                        cd ${TEST_SCRIPTS_DIR}
-                        export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
-                        TF_VAR_label_prefix=${OKE_CLUSTER_PREFIX}-$count TF_VAR_state_name=${env.BUILD_NUMBER}-${env.TIMESTAMP}-${env.BRANCH_NAME}-$count ./delete_oke_cluster.sh $count
-                    """
-                }
+                deleteMultiClusterCluster()
                 sh """
                     if [ -f ${POST_DUMP_FAILED_FILE} ]; then
                         echo "Failures seen during dumping of artifacts, treat post as failed"
@@ -1414,7 +1408,18 @@ def createMultiClusterCluster() {
     for(int count=1; count<=clusterCount; count++) {
         sh """
             echo "Creating multi cluster cluster"
+            echo "tests will execute" > ${TESTS_EXECUTED_FILE}
             TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment $count
+        """
+    }
+}
+
+def deleteMultiClusterCluster() {
+    int clusterCount = params.TOTAL_CLUSTERS.toInteger()
+    for(int count=1; count<=clusterCount; count++) {
+        sh """
+            echo "deleting multi cluster cluster"
+            TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${TF_VAR_label_prefix}-$count
         """
     }
 }
