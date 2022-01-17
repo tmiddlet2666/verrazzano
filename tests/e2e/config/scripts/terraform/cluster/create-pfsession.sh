@@ -25,7 +25,7 @@ oci ce cluster create-kubeconfig \
 bastion_id=$(oci bastion bastion list -c $compartment_id --name $bastion_name --bastion-lifecycle-state ACTIVE --all | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
 api_private_endpoint=$(oci ce cluster get --cluster-id $cluster_id | jq '.data.endpoints["private-endpoint"]' | sed -e 's/^"//' -e 's/"$//')
 private_ip=$(echo "$api_private_endpoint" | cut -d ':' -f1)
-session_id=$(oci bastion session create-port-forwarding --bastion-id $bastion_id --target-private-ip $private_ip --target-port 6443 --ssh-public-key-file $public_key_file --wait-for-state SUCCEEDED | jq -r '.data.resources[].identifier')
+session_id=$(oci bastion session create-port-forwarding --bastion-id $bastion_id --target-private-ip $private_ip --session-ttl 10800 --target-port 6443 --ssh-public-key-file $public_key_file --wait-for-state SUCCEEDED | jq -r '.data.resources[].identifier')
 
 echo "ACCESS KUBERNETES CLUSTER VIA PORT FORWARDING"
 username=$(oci bastion session get --session-id $session_id | jq '.data["target-resource-details"]["target-resource-operating-system-user-name"]' | sed -e 's/^"//' -e 's/"$//')
@@ -48,6 +48,8 @@ tunnel_command="${tunnel_command//<localPort>/$port}"
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -i}"
 
 tunnel_command="${tunnel_command} &"
+
+cp $KUBECONFIG $KUBECONFIG_original
 
 # Substitute 127.0.0.1 into kubeconfig file
 sed -i.bak "s/${api_private_endpoint}/127.0.0.1:$port/g" $KUBECONFIG
