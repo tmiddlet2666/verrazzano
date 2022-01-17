@@ -49,7 +49,7 @@ tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -
 
 tunnel_command="${tunnel_command} &"
 
-cp $KUBECONFIG $KUBECONFIG_original
+cp $KUBECONFIG ${KUBECONFIG}_original
 
 # Substitute 127.0.0.1 into kubeconfig file
 sed -i.bak "s/${api_private_endpoint}/127.0.0.1:$port/g" $KUBECONFIG
