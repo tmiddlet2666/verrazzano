@@ -15,6 +15,6 @@ spec:
       type: LoadBalancer
       nginxInstallArgs:
       - name: controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-internal"
-        value: true
+        value: "true"
       - name: controller.service.annotations."service\.beta\.kubernetes\.io/oci-load-balancer-subnet1"
-        value: OCI_LOAD_BALANCER_SUBNET
+        value: "OCI_LOAD_BALANCER_SUBNET"
