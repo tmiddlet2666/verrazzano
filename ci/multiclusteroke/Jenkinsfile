@@ -565,7 +565,7 @@ pipeline {
                 }
             }
         }
-
+/*
         stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
             parallel {
@@ -594,6 +594,7 @@ pipeline {
             }
         }
 
+*/
         stage('Acceptance Tests') {
             stages {
                 /*
@@ -663,6 +664,7 @@ pipeline {
                     }
                 }
             }
+            
             post {
                 failure {
                     script {
