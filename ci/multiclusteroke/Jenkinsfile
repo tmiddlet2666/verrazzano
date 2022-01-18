@@ -596,6 +596,7 @@ pipeline {
 
         stage('Acceptance Tests') {
             stages {
+                /*
                 stage ('Example apps') {
                     parallel {
                         stage ('Examples Helidon') {
@@ -627,6 +628,7 @@ pipeline {
                         }
                     }
                 }
+                */
                 stage ('Console') {
                     steps {
                         runConsoleTests()
