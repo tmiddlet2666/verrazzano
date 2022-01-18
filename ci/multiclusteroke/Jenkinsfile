@@ -1058,6 +1058,7 @@ def verifyManagedClusterPermissions() {
 }
 
 // Test the multicluster Helidon example
+/*
 def testHelidonExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1072,8 +1073,10 @@ def testHelidonExample(testSuitePath) {
         """
     }
 }
+*/
 
 // Test the multicluster sock-shop example
+/*
 def testSockExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1088,8 +1091,10 @@ def testSockExample(testSuitePath) {
         """
     }
 }
+*/
 
 // Test the multicluster todo-list example
+/*
 def testTodoExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1104,6 +1109,7 @@ def testTodoExample(testSuitePath) {
         """
     }
 }
+*/
 
 // Run a test suite against all clusters
 def runGinkgoRandomize(testSuitePath) {
