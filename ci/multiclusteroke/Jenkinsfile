@@ -595,9 +595,10 @@ pipeline {
         }
 
 */
+/*
         stage('Acceptance Tests') {
             stages {
-                /*
+                
                 stage ('Example apps') {
                     parallel {
                         stage ('Examples Helidon') {
@@ -629,8 +630,8 @@ pipeline {
                         }
                     }
                 }
-                */
-                /*
+                
+                
                 stage ('Console') {
                     steps {
                         runConsoleTests()
@@ -646,7 +647,7 @@ pipeline {
                         undeploySampleApp()
                     }
                 }
-                */
+                
                 stage ('Multi-cluster Verify Api') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -688,6 +689,7 @@ pipeline {
                 }
             }
         }
+*/
         stage('Cleanup Tests') {
             stages {
                 stage('verify deregister') {
