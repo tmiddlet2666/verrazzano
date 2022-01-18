@@ -629,6 +629,7 @@ pipeline {
                     }
                 }
                 */
+                /*
                 stage ('Console') {
                     steps {
                         runConsoleTests()
@@ -644,6 +645,7 @@ pipeline {
                         undeploySampleApp()
                     }
                 }
+                */
                 stage ('Multi-cluster Verify Api') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -1469,6 +1471,7 @@ def deploySampleApp() {
     """
 }
 
+/*
 def undeploySampleApp() {
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
@@ -1477,7 +1480,8 @@ def undeploySampleApp() {
       kubectl delete -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/verrazzano-project.yaml
     """
 }
-
+*/
+/*
 def runHelidonNsOpsTest() {
     int clusterCount = params.TOTAL_CLUSTERS.toInteger()
     modifyHelloHelidonApp("hello-helidon-ns", "hello-helidon-ns")
@@ -1491,6 +1495,7 @@ def runHelidonNsOpsTest() {
       ginkgo -v --keep-going --no-color -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/examples/helidon-ns-ops/...
     """
 }
+*/
 
 def runMulticlusterVerifyApi() {
     int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1504,6 +1509,7 @@ def runMulticlusterVerifyApi() {
     }
 }
 
+/*
 def runConsoleTests() {
     // Set app information used by the application page UI tests to assert for app info
     // Console runs on admin cluster and the KUBECONFIG is pointed at it (which is cluster 1)
@@ -1519,6 +1525,7 @@ def runConsoleTests() {
         KUBECONFIG=${ADMIN_KUBECONFIG} RUN_APP_TESTS=true ${GO_REPO_PATH}/verrazzano/ci/scripts/run_console_tests.sh
    """
 }
+*/
 
 def createMultiClusterVCN() {
     sh """
