@@ -11,28 +11,9 @@ port=$8
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
 rm $KUBECONFIG
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaarkzyy7cfaxopanhis2lwacgxbiu3x3cctxzna3fbgcteytlth3gq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaxm6pbizy6ttbgr6vjmonwrmrqd7i4rog3wdzxfmp4cx2576qhn4q
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaafndedtyhqi62qqjmxnlmvhzxcwjhhjkd2qespli44ca6bw3izh3a
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaa2f6jwfar5ypknb2mtp2ctpseh3dz5w3lyalacptlacyrzxfzyjwq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaapxlgdrstk4dxhbqcda25mqgyawcv7exs3jdtq2aj3chhnrwobvhq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaal77ysxulxce5jrysy5esqaougrig7qgjaa7gwqeecqsu7sv7uqq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaam566vmtipgcwufq4oqwnav6he4cafkus7hfcr6t4uco6dlqqb6uq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaagng7fk22lwrcxuntno7zrugeopfo2dmx7sknfnygwcg53rkqdtpq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaa76cxgu5xztvl3ai2cuywqui5qldur5g3sz7kknpahcsafgqntj2a
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaatbvtkqjmaaewdsw7w74tz6m2zgogvjcbpcflimn75crqjsxnxtcq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaab3cwwjtyzmgpfgocvfm5tybjx7442salc4ui3prvncis2jd2iz7q
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaal2ghmfmtdoatyoclmgq2knthcysqhfrqjbzrlm635c74l4subkaq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaa34dujoybznggbn53cksbvduv22psv3g6izybavv6tcc7fn3re4ya
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaarlweqkh7qopm5xon4beycqg7frscwo4ydtvfowr34ctmxv234gra
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaakntkeplcddtvr4dbtw57xapzou2ja6nflyr3ic2ohcaqvsltxeda
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaarlerbw2oqu25gf6nx6xkn7amu6cxd4je2hkvzivrbcrnleggev7q
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaasudt5kgnypsc2o4habgd3ldzypixehidddt4ffdxdc4kecgeooea
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaas6whpry6jqwo3kj5oah5j6yre7r6oygi25u7elukfcxck3lojrjq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaav44hmczh2oglsoua6bvjx2qyzahtp6lwxoshomeamcecotasu2qq
-oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaamjg27cvjjnrv6peeydidikr7lin65lhppqyetxovtckkmykujfga
+#oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaamjg27cvjjnrv6peeydidikr7lin65lhppqyetxovtckkmykujfga
 oci ce cluster list -c $compartment_id
-exit 0
+#exit 0
 
 cluster_id=$(oci ce cluster list -c $compartment_id --name $cluster_name --lifecycle-state ACTIVE | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
 echo "cluster_id is $cluster_id"
