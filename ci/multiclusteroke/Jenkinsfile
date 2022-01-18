@@ -788,7 +788,7 @@ pipeline {
                         ./tests/e2e/config/scripts/oci_dns_ops.sh -o delete -s z${zoneId} || echo "Failed to delete DNS zone z${zoneId}"
                     fi
                 """
-                deleteMultiClusterCluster()
+                deleteMultiClusterCluster("${OKE_CLUSTER_PREFIX}")
                 sh """
                     if [ -f ${POST_DUMP_FAILED_FILE} ]; then
                         echo "Failures seen during dumping of artifacts, treat post as failed"
@@ -1553,12 +1553,12 @@ def createMultiClusterCluster() {
     }
 }
 
-def deleteMultiClusterCluster() {
+def deleteMultiClusterCluster(okeClusterPrefix) {
     int clusterCount = params.TOTAL_CLUSTERS.toInteger()
     for(int count=1; count<=clusterCount; count++) {
         sh """
             echo "deleting multi cluster cluster"
-            TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${OKE_CLUSTER_PREFIX}-$count
+            TF_VAR_cluster_name=${okeClusterPrefix}-$count TF_VAR_node_pool_name=${okeClusterPrefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${okeClusterPrefix}-$count
         """
     }
 }
