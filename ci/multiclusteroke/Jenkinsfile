@@ -106,6 +106,7 @@ pipeline {
         string (name: 'MULTI_CLUSTER_APISERVER_SUBNET_ID',
                 description: 'apiserver_subnet_id',
                 trim: true)
+        booleanParam (description: 'Whether the lb subnet is private', name: 'LB_SUBNET_PRIVATE', defaultValue: false)
         string (name: 'MULTI_CLUSTER_LB_SUBNET_ID',
                 description: 'loadbalancer_subnet_id',
                 trim: true)
@@ -450,7 +451,8 @@ pipeline {
                         stage("Configure OKE/MagicDNS") {
                             when { expression { return params.TEST_ENV == 'magicdns_oke' } }
                             steps {
-                                configureVerrazzanoInstallers(env.INSTALL_CONFIG_FILE_NIPIO_INTERNAL_LB, "./tests/e2e/config/scripts/process_nipio_install_yaml.sh", params.WILDCARD_DNS_DOMAIN)
+                                INSTALL_CONFIG_FILE = params.LB_SUBNET_PRIVATE ? env.INSTALL_CONFIG_FILE_NIPIO_INTERNAL_LB : env.INSTALL_CONFIG_FILE_NIPIO
+                                configureVerrazzanoInstallers(INSTALL_CONFIG_FILE, "./tests/e2e/config/scripts/process_nipio_install_yaml.sh", params.WILDCARD_DNS_DOMAIN)
                             }
                         }
                     }
