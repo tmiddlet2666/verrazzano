@@ -11,7 +11,17 @@ port=$8
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
 rm $KUBECONFIG
-#oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaamjg27cvjjnrv6peeydidikr7lin65lhppqyetxovtckkmykujfga
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaarkzyy7cfaxopanhis2lwacgxbiu3x3cctxzna3fbgcteytlth3gq
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaxm6pbizy6ttbgr6vjmonwrmrqd7i4rog3wdzxfmp4cx2576qhn4q
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaafndedtyhqi62qqjmxnlmvhzxcwjhhjkd2qespli44ca6bw3izh3a
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaeh36dn5457jjawztx6cncwnsepy22gkmwvpgk5coccxoitbuhmga
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaajr7n5jxfch2e4ycjk6ieuyxtyk5xsbrccix5r36nrcqgfoco4aza
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaapecrg7gjaxkoamfv3i57pskgrckc4xnuxzvztxzqfcdkpfkpec3a
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaghwezenuhp2avduw3b2f4dssezcc7wy5ockwih7joc5azo7f5eoa
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaavyv63ynbuo475oyfxxkbbv62ftqhxdwlerdvlncp5cshl5ndvska
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaax5zuf3g754o4lbucrh37nfqvxjn4e5epsfqg6w2v5cr7agpfr67a
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaavyv63ynbuo475oyfxxkbbv62ftqhxdwlerdvlncp5cshl5ndvska
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaeh36dn5457jjawztx6cncwnsepy22gkmwvpgk5coccxoitbuhmga
 oci ce cluster list -c $compartment_id
 #exit 0
 
