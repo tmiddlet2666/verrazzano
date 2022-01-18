@@ -182,6 +182,7 @@ pipeline {
 
         INSTALL_CONFIG_FILE_OCIDNS = "${GO_REPO_PATH}/verrazzano/tests/e2e/config/scripts/install-verrazzano-ocidns.yaml"
         INSTALL_CONFIG_FILE_NIPIO = "${GO_REPO_PATH}/verrazzano/tests/e2e/config/scripts/install-verrazzano-nipio.yaml"
+        INSTALL_CONFIG_FILE_NIPIO_INTERNAL_LB = "${GO_REPO_PATH}/verrazzano/tests/e2e/config/scripts/install-verrazzano-nipio-internal-lb.yaml"
         OCI_DNS_ZONE_NAME="z${zoneId}.v8o.io"
         ACME_ENVIRONMENT="${params.ACME_ENVIRONMENT}"
 
@@ -449,7 +450,7 @@ pipeline {
                         stage("Configure OKE/MagicDNS") {
                             when { expression { return params.TEST_ENV == 'magicdns_oke' } }
                             steps {
-                                configureVerrazzanoInstallers(env.INSTALL_CONFIG_FILE_NIPIO, "./tests/e2e/config/scripts/process_nipio_install_yaml.sh", params.WILDCARD_DNS_DOMAIN)
+                                configureVerrazzanoInstallers(env.INSTALL_CONFIG_FILE_NIPIO_INTERNAL_LB, "./tests/e2e/config/scripts/process_nipio_install_yaml.sh", params.WILDCARD_DNS_DOMAIN)
                             }
                         }
                     }
@@ -1169,6 +1170,7 @@ def configureVerrazzanoInstallers(installResourceTemplate, configProcessorScript
                 # Copy the template config over for the mgd cluster profile configuration
                 cp $installResourceTemplate $destinationPath
                 VZ_ENVIRONMENT_NAME="${envName}" INSTALL_PROFILE=$installProfile $configProcessorScript $destinationPath $allArgs
+                sed -i.bak "s/OCI_LOAD_BALANCER_SUBNET/${params.MULTI_CLUSTER_LB_SUBNET_ID}/g" $destinationPath
             """
         }
     }
@@ -1554,7 +1556,7 @@ def deleteMultiClusterCluster() {
     for(int count=1; count<=clusterCount; count++) {
         sh """
             echo "deleting multi cluster cluster"
-            TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${TF_VAR_label_prefix}-$count
+            TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${OKE_CLUSTER_PREFIX}-$count
         """
     }
 }
