@@ -758,6 +758,18 @@ pipeline {
             """
         }
         always {
+            environment {
+                TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
+                TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
+                TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
+                TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                TF_VAR_user_ocid="${TF_VAR_user_id}"
+                TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
+            }
             script {
                 if ( fileExists(env.TESTS_EXECUTED_FILE) ) {
                     dumpVerrazzanoSystemPods()
@@ -790,7 +802,14 @@ pipeline {
                         ./tests/e2e/config/scripts/oci_dns_ops.sh -o delete -s z${zoneId} || echo "Failed to delete DNS zone z${zoneId}"
                     fi
                 """
-                deleteMultiClusterCluster("${OKE_CLUSTER_PREFIX}")
+                 
+                for(int count=1; count<=clusterCount; count++) {
+                    sh """
+                        echo "deleting multi cluster cluster"
+                        TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${TF_VAR_label_prefix}-$count
+                    """
+                }
+                
                 sh """
                     if [ -f ${POST_DUMP_FAILED_FILE} ]; then
                         echo "Failures seen during dumping of artifacts, treat post as failed"
@@ -1551,16 +1570,6 @@ def createMultiClusterCluster() {
             echo "Creating multi cluster cluster"
             echo "tests will execute" > ${TESTS_EXECUTED_FILE}
             TF_VAR_cluster_name=${TF_VAR_label_prefix}-$count TF_VAR_node_pool_name=${TF_VAR_label_prefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment $count
-        """
-    }
-}
-
-def deleteMultiClusterCluster(okeClusterPrefix) {
-    int clusterCount = params.TOTAL_CLUSTERS.toInteger()
-    for(int count=1; count<=clusterCount; count++) {
-        sh """
-            echo "deleting multi cluster cluster"
-            TF_VAR_cluster_name=${okeClusterPrefix}-$count TF_VAR_node_pool_name=${okeClusterPrefix}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${okeClusterPrefix}-$count
         """
     }
 }
