@@ -8,7 +8,11 @@ public_key_file=$5
 private_key_file=$6
 KUBECONFIG=$7
 port=$8
+target_subnet_id=$9
 echo "CREATE KUBECONFIG at $KUBECONFIG"
+
+oci bastion bastion create --bastion-type STANDARD --compartment-id $compartment_id --target-subnet-id $target_subnet_id --client-cidr-list '["0.0.0.0/0"]'
+exit 0
 
 rm $KUBECONFIG
 #oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaarkzyy7cfaxopanhis2lwacgxbiu3x3cctxzna3fbgcteytlth3gq
@@ -16,8 +20,6 @@ oci ce cluster list -c $compartment_id
 #exit 0
 
 cluster_id=$(oci ce cluster list -c $compartment_id --name $cluster_name --lifecycle-state ACTIVE | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
-echo "cluster_id is $cluster_id"
-oci ce cluster get --cluster-id $cluster_id
 oci ce cluster create-kubeconfig \
 	--cluster-id $cluster_id \
 	--file $KUBECONFIG \

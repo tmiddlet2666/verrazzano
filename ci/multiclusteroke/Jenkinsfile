@@ -1586,7 +1586,7 @@ def createPFSession() {
                 # convert SSH2 public key into an OpenSSH format
                 ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
                 mkdir -p "${KUBECONFIG_DIR}/$count"
-                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port ${params.MULTI_CLUSTER_LB_SUBNET_ID}
                 export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
                 echo "Waiting for nodes to be added to cluster..."
                 timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
