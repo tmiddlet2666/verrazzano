@@ -267,6 +267,7 @@ pipeline {
 def runGinkgoRandomize(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh '''
+            echo ${testSuitePath}
             run_number=0
             if [ ${run_number} -le 3 ] ; then
                 cd ${GO_REPO_PATH}/verrazzano/tests/e2e
