@@ -266,15 +266,15 @@ pipeline {
 
 def runGinkgoRandomize(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        sh """
+        sh '''
             run_number=0
-            if [ ${run_number} -le 3 ]; then
+            if [ ${run_number} -le 3 ] ; then
                 cd ${GO_REPO_PATH}/verrazzano/tests/e2e
                 ginkgo -p --randomize-all -v --keep-going --no-color ${testSuitePath}/...
                 sleep 60
                 run_number=`expr ${run_number}+1`
             fi
-        """
+        '''
     }
 }
 
