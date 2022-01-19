@@ -205,6 +205,11 @@ pipeline {
 
         stage('Run Acceptance Tests') {
             parallel {
+                stage('verify-infra oam') {
+                    steps {
+                         runGinkgoRandomize('verify-infra/oam')
+                    }
+                }
                 stage('verify-infra restapi') {
                     steps {
                         runGinkgoRandomize('verify-infra/restapi')
@@ -215,9 +220,34 @@ pipeline {
                         runGinkgoRandomize('verify-infra/vmi')
                     }
                 }
+                stage('examples bobs books') {
+                    steps {
+                        runGinkgo('examples/bobsbooks')
+                    }
+                }
                 stage('examples helidon') {
                     steps {
                         runGinkgo('examples/helidon')
+                    }
+                }
+                stage('examples helidon config') {
+                    steps {
+                        runGinkgo('examples/helidonconfig')
+                    }
+                }
+                stage('examples socks') {
+                    steps {
+                        runGinkgo('examples/socks')
+                    }
+                }
+                stage('examples springboot') {
+                    steps {
+                        runGinkgo('examples/springboot')
+                    }
+                }
+                stage('examples todo') {
+                    steps {
+                        runGinkgo('examples/todo')
                     }
                 }
             }
