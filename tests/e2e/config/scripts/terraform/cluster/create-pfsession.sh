@@ -11,7 +11,7 @@ port=$8
 target_subnet_id=$9
 echo "CREATE KUBECONFIG at $KUBECONFIG"
 
-oci bastion bastion create --bastion-type STANDARD --compartment-id $compartment_id --target-subnet-id $target_subnet_id --client-cidr-list '["0.0.0.0/0"]'
+oci bastion bastion create --bastion-type STANDARD --compartment-id $compartment_id --target-subnet-id $target_subnet_id --client-cidr-list '["0.0.0.0/0"]' --max-session-ttl 10800 --name $bastion_name
 exit 0
 
 rm $KUBECONFIG
