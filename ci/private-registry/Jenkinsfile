@@ -10,6 +10,7 @@ def ocirRegion = "phx"
 def imageRepoSubPath=""
 def baseImageRepo=""
 def EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS = false
+def CLEAN_BRANCH_NAME="${env.BRANCH_NAME.replace("/", "%2F")}"
 
 pipeline {
     options {
@@ -44,8 +45,8 @@ pipeline {
                 // 1st choice is the default value
                 choices: ["OCIR", "Harbor"])
         string (name: 'ZIPFILE_LOCATION',
-                        defaultValue: 'master-last-clean-periodic-test/verrazzano_periodic.zip',
-                        description: 'The bucket location to use for the Zip file download',
+                        defaultValue: 'NONE',
+                        description: 'The bucket location to use for the Zip file download. If unspecified, <branch>/<commit>/verrazzano.<major>.<minor>.<patch>.zip will be used (since that is uploaded by the periodic job)',
                         trim: true)
         booleanParam (description: 'Whether to create the cluster with Calico for AT testing (defaults to true)', name: 'CREATE_CLUSTER_USE_CALICO', defaultValue: true)
         booleanParam (description: 'Whether to dump k8s cluster on success (off by default can be useful to capture for comparing to failed cluster)', name: 'DUMP_K8S_CLUSTER_ON_SUCCESS', defaultValue: false)
@@ -265,6 +266,12 @@ pipeline {
                     // update the description with some meaningful info
                     setDisplayName()
                     currentBuild.description = params.KUBERNETES_CLUSTER_VERSION + " : " + SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + params.GIT_COMMIT_TO_USE
+
+                    if (params.ZIPFILE_LOCATION == 'NONE') {
+                        zipFileLocation = "${env.GIT_BRANCH}/${SHORT_COMMIT_HASH}/verrazzano.${VERRAZZANO_DEV_VERSION}.zip"
+                    } else {
+                        zipFileLocation = params.ZIPFILE_LOCATION
+                    }
                 }
             }
         }
@@ -272,9 +279,9 @@ pipeline {
         stage('Download and extract Tarball') {
             steps {
                 script {
-                    downloadLocation = "${WORKSPACE}/${params.ZIPFILE_LOCATION}"
+                    downloadLocation = "${WORKSPACE}/${zipFileLocation}"
                     baseFilename = sh (
-                        script: "basename ${params.ZIPFILE_LOCATION} .zip",
+                        script: "basename ${zipFileLocation} .zip",
                         returnStdout: true
                         ).trim()
                     tarfileName = "${baseFilename}.tar.gz"
@@ -288,7 +295,7 @@ pipeline {
 
                     sh """
                         mkdir -p $zipDir || true
-                        oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${params.ZIPFILE_LOCATION} --file ${downloadLocation}
+                        oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${zipFileLocation} --file ${downloadLocation}
                     """
 
                     dir(env.TARBALL_DIR) {

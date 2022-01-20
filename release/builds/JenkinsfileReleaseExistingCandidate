@@ -67,7 +67,8 @@ pipeline {
                             println("ERROR: No releasable commit found for dev version ${VERRAZZANO_DEV_VERSION}")
                             sh "exit 1"
                         }
-                        IMAGES_TO_PUBLISH_OBJECT_STORE_FILE="${env.CLEAN_BRANCH_NAME}/${env.RELEASABLE_IMAGES_OBJECT_STORE}"
+                        def shortCommitHash=LAST_RELEASABLE_COMMIT.substring(0,8)
+                        IMAGES_TO_PUBLISH_OBJECT_STORE_FILE="${env.CLEAN_BRANCH_NAME}/${shortCommitHash}/${RELEASABLE_IMAGES_OBJECT_STORE}"
                     }
                 }
             }

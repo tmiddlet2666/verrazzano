@@ -4,8 +4,6 @@
 def GIT_COMMIT_TO_USE
 def agentLabel = env.JOB_NAME.contains('master') ? "phxlarge" : "VM.Standard2.8"
 def TESTS_FAILED = false
-def tarfilePrefix="verrazzano_periodic"
-def storeLocation=""
 
 pipeline {
     options {
@@ -85,7 +83,6 @@ pipeline {
                     SHORT_COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
                     // update the description with some meaningful info
                     currentBuild.description = SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + GIT_COMMIT_TO_USE
-                    storeLocation="${env.BRANCH_NAME}-last-clean-periodic-test/${tarfilePrefix}.zip"
                 }
             }
         }

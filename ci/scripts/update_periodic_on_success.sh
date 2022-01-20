@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (c) 2021, Oracle and/or its affiliates.
+# Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 
@@ -25,7 +25,7 @@ if [ -z "$3" ]; then
 fi
 ZIPFILE_PREFIX="$3"
 
-if [ -z "$JENKINS_URL" ] || [ -z "$WORKSPACE" ] || [ -z "$OCI_OS_NAMESPACE" ] || [ -z "$OCI_OS_BUCKET" ] || [ -z "$CLEAN_BRANCH_NAME" ] || [ -z "$BRANCH_NAME" ]; then
+if [ -z "$JENKINS_URL" ] || [ -z "$WORKSPACE" ] || [ -z "$OCI_OS_NAMESPACE" ] || [ -z "$OCI_OS_BUCKET" ] || [ -z "$CLEAN_BRANCH_NAME" ] || [ -z "$BRANCH_NAME" ] || [ -z "$RELEASABLE_IMAGES_OBJECT_STORE"]; then
   echo "This script must only be called from Jenkins and requires a number of environment variables are set"
   exit 1
 fi
@@ -52,12 +52,23 @@ oci --region us-phoenix-1 os object put --force --namespace ${OCI_OS_NAMESPACE} 
 # Generate a Verrazzano full Zip for private registry testing
 
 # Get the latest stable generated BOM file
-local_bom=${WORKSPACE}/verrazzano-bom.json
+downloaded_generated_bom=${WORKSPACE}/verrazzano-downloaded-bom.json
 last_ocir_pushed_bom=${WORKSPACE}/last-ocir-pushed-verrazzano-bom.json
-mkdir -p $(dirname ${local_bom}) || true
-oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV}/generated-verrazzano-bom.json --file ${local_bom}
+mkdir -p $(dirname ${downloaded_generated_bom}) || true
+oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV}/generated-verrazzano-bom.json --file ${downloaded_generated_bom}
+
+# Generate and upload the verrazzano_images.txt file based on the downloaded stable generated bom file
+tools/scripts/generate_image_list.sh $downloaded_generated_bom ${WORKSPACE}/verrazzano_images.txt
+oci --region us-phoenix-1 os object put --force --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${CLEAN_BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV}/${RELEASABLE_IMAGES_OBJECT_STORE} --file ${WORKSPACE}/verrazzano_images.txt
+oci --region us-phoenix-1 os object put --force --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${CLEAN_BRANCH_NAME}-last-clean-periodic-test/${RELEASABLE_IMAGES_OBJECT_STORE} --file ${WORKSPACE}/verrazzano_images.txt
+
 # NOTE: The first time we run through for a branch we do not have a last-ocir-pushed-verrazzano-bom.bom present yet in object storage (there is no previous run), so we ignore if it fails to find one here
 oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${CLEAN_BRANCH_NAME}-last-clean-periodic-test/last-ocir-pushed-verrazzano-bom.json --file ${last_ocir_pushed_bom} || true
-# Call the script to generate and publish the BOM
-echo "Creating Zip for commit ${GIT_COMMIT_USED}, short hash ${SHORT_COMMIT_HASH_ENV}, file prefix ${ZIPFILE_PREFIX}, BOM file ${local_bom}"
-ci/scripts/generate_product_zip.sh ${GIT_COMMIT_USED} ${SHORT_COMMIT_HASH_ENV} ${CLEAN_BRANCH_NAME}-last-clean-periodic-test ${ZIPFILE_PREFIX} ${local_bom}
+
+# Check if a product zip already exists for this commit - if it does not, then generate and upload it
+if ! oci --region us-phoenix-1 os object get --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${CLEAN_BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV}/${ZIPFILE_PREFIX}.zip --file ${ZIPFILE_PREFIX}.zip; then
+  echo "Creating Zip for commit ${GIT_COMMIT_USED}, short hash ${SHORT_COMMIT_HASH_ENV}, file prefix ${ZIPFILE_PREFIX}, BOM file ${downloaded_generated_bom}"
+  ci/scripts/generate_product_zip.sh ${GIT_COMMIT_USED} ${SHORT_COMMIT_HASH_ENV} ${CLEAN_BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV} ${ZIPFILE_PREFIX} ${downloaded_generated_bom}
+else
+  echo "Not generating product zip for commit ${GIT_COMMIT_USED} since it already exists at ${CLEAN_BRANCH_NAME}/${SHORT_COMMIT_HASH_ENV}/${ZIPFILE_PREFIX}.zip"
+fi

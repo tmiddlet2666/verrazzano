@@ -40,6 +40,15 @@ pipeline {
         DOCKER_REPO = 'ghcr.io'
         GITHUB_CREDENTIALS = credentials('github-markxnelns-private-access-token')
 
+        OCI_OS_NAMESPACE = credentials('oci-os-namespace')
+        OCI_OS_BUCKET="verrazzano-builds"
+        OCI_CLI_AUTH="api_key"
+        OCI_CLI_TENANCY = credentials('oci-tenancy')
+        OCI_CLI_USER = credentials('oci-user-ocid')
+        OCI_CLI_FINGERPRINT = credentials('oci-api-key-fingerprint')
+        OCI_CLI_KEY_FILE = credentials('oci-api-key')
+        OCI_CLI_REGION = "us-phoenix-1"
+        OCI_REGION = "${env.OCI_CLI_REGION}"
         TIMESTAMP = sh(returnStdout: true, script: "date +%Y%m%d%H%M%S").trim()
     }
 
@@ -83,11 +92,11 @@ pipeline {
 
                 script {
                     def props = readProperties file: '.verrazzano-development-version'
-                    VERRAZZANO_DEV_VERSION = props['verrazzano-development-version']
+                    env.VERRAZZANO_DEV_VERSION = props['verrazzano-development-version']
                     TIMESTAMP = sh(returnStdout: true, script: "date +%Y%m%d%H%M%S").trim()
-                    SHORT_COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
+                    env.SHORT_COMMIT_HASH = sh(returnStdout: true, script: "git rev-parse --short=8 HEAD").trim()
                     // update the description with some meaningful info
-                    currentBuild.description = SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + params.COMMIT_TO_USE
+                    currentBuild.description = env.SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + params.COMMIT_TO_USE
                 }
             }
         }
@@ -218,6 +227,22 @@ pipeline {
                             }
                         }
                     }
+                }
+            }
+        }
+
+        stage('Push Release Product Zip to Object Store') {
+            when {
+                expression { return params.IMAGES_TO_PUBLISH_OBJECT_STORE_FILE == 'NONE' }
+            }
+            environment {
+                CLEAN_BRANCH_NAME="${env.BRANCH_NAME.replace("/", "%2F")}"
+            }
+            steps {
+                script {
+                    sh """
+                      release/scripts/get_and_push_release_product_zip.sh
+                    """
                 }
             }
         }
