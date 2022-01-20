@@ -508,9 +508,7 @@ pipeline {
                 stage ('Verify Install') {
                     // NOTE: The stages are executed in parallel, however the tests themselves are executed against
                     //       each cluster in sequence. If possible, we should parallelize that as well.
-                    steps {
-                        verifyInstall()
-                    }
+                    verifyInstall()
                     post {
                         always {
                             archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
