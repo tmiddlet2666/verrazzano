@@ -5,6 +5,7 @@ def DOCKER_IMAGE_TAG
 def agentLabel = env.JOB_NAME.contains('master') ? "phxlarge" : "VM.Standard2.8"
 def EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS = false
 def PROXY_IMAGES_SPRINGBOOT
+def PROXY_IMAGES_HELIDON
 def PROXY_IMAGES_TODO
 def PROXY_IMAGES_BOBSBOOKS
 
@@ -272,7 +273,10 @@ pipeline {
                 }
                 stage('examples helidon') {
                     steps {
-                        runGinkgoNamespace('examples/helidon', "false", "true", "hello-helidon")
+                        runGinkgo('examples/helidon', "false", "true")
+                        script {
+                            PROXY_IMAGES_HELIDON = getProxyImageCount("hello-helidon")
+                        }
                     }
                 }
                 stage('examples socks') {
@@ -463,6 +467,11 @@ pipeline {
                         validateProxyImageCount("springboot", PROXY_IMAGES_SPRINGBOOT)
                     }
                 }
+                stage("Validate helidon istio upgrade") {
+                    steps {
+                        validateProxyImageCount("hello-helidon", PROXY_IMAGES_HELIDON)
+                    }
+                }
                 stage("Istioctl verify install") {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -562,7 +571,7 @@ pipeline {
                 }
                 stage('examples helidon') {
                     steps {
-                        runGinkgoNamespace('examples/helidon', "true", "false", "hello-helidon")
+                        runGinkgo('examples/helidon', "true", "false")
                     }
                 }
                 stage('examples todo') {
@@ -739,15 +748,6 @@ def runGinkgo(testSuitePath, skipDeploy, skipUndeploy) {
         sh """
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
             ginkgo -v --keep-going --no-color -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/... -- --skipDeploy=${skipDeploy} --skipUndeploy=${skipUndeploy}
-        """
-    }
-}
-
-def runGinkgoNamespace(testSuitePath, skipDeploy, skipUndeploy, namespace) {
-    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        sh """
-            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
-            ginkgo -v --keep-going --no-color -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/... -- --skipDeploy=${skipDeploy} --skipUndeploy=${skipUndeploy} --namespace=${namespace}
         """
     }
 }

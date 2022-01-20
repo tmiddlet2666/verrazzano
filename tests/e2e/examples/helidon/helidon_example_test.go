@@ -5,19 +5,19 @@ package helidon
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-retryablehttp"
 	"io/ioutil"
 	"net/http"
 	"strings"
 	"time"
 
-	"github.com/verrazzano/verrazzano/pkg/k8sutil"
 	"github.com/verrazzano/verrazzano/pkg/test/framework"
 	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
-	"github.com/verrazzano/verrazzano/tests/e2e/pkg"
 
+	"github.com/hashicorp/go-retryablehttp"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	"github.com/verrazzano/verrazzano/pkg/k8sutil"
+	"github.com/verrazzano/verrazzano/tests/e2e/pkg"
 )
 
 const (
@@ -27,17 +27,12 @@ const (
 	shortWaitTimeout     = 5 * time.Minute
 )
 
-var (
-	t                        = framework.NewTestFramework("helidon")
-	generatedNamespace       = pkg.GenerateNamespace("hello-helidon")
-	yamlApplier              = k8sutil.YAMLApplier{}
-	expectedPodsHelloHelidon = []string{"hello-helidon-deployment"}
-)
+var t = framework.NewTestFramework("helidon")
 
 var _ = t.BeforeSuite(func() {
 	if !skipDeploy {
 		start := time.Now()
-		pkg.DeployHelloHelidonApplication(&yamlApplier, namespace, "")
+		pkg.DeployHelloHelidonApplication("")
 		metrics.Emit(t.Metrics.With("deployment_elapsed_time", time.Since(start).Milliseconds()))
 	}
 })
@@ -53,10 +48,21 @@ var _ = t.AfterSuite(func() {
 	}
 	if !skipUndeploy {
 		start := time.Now()
-		pkg.UndeployHelloHelidonApplication(&yamlApplier, namespace)
+		pkg.UndeployHelloHelidonApplication()
 		metrics.Emit(t.Metrics.With("undeployment_elapsed_time", time.Since(start).Milliseconds()))
 	}
 })
+
+var (
+	expectedPodsHelloHelidon = []string{"hello-helidon-deployment"}
+	waitTimeout              = 10 * time.Minute
+	pollingInterval          = 30 * time.Second
+)
+
+const (
+	istioNamespace     = "istio-system"
+	ingressServiceName = "istio-ingressgateway"
+)
 
 var _ = t.Describe("Hello Helidon OAM App test", func() {
 	// Verify hello-helidon-deployment pod is running
@@ -65,7 +71,7 @@ var _ = t.Describe("Hello Helidon OAM App test", func() {
 	// THEN the expected pod must be running in the test namespace
 	t.Describe("hello-helidon-deployment pod", func() {
 		t.It("is running", func() {
-			Eventually(helloHelidonPodsRunning, longWaitTimeout, longPollingInterval).Should(BeTrue())
+			Eventually(helloHelidonPodsRunning, longWaitTimeout, pollingInterval).Should(BeTrue())
 		})
 	})
 
@@ -77,7 +83,7 @@ var _ = t.Describe("Hello Helidon OAM App test", func() {
 	// THEN return the host name found in the gateway.
 	t.It("Get host from gateway.", func() {
 		Eventually(func() (string, error) {
-			host, err = k8sutil.GetHostnameFromGateway(namespace, "")
+			host, err = k8sutil.GetHostnameFromGateway(pkg.HelloHelidonNamespace, "")
 			return host, err
 		}, shortWaitTimeout, shortPollingInterval).Should(Not(BeEmpty()))
 	})
@@ -103,26 +109,26 @@ var _ = t.Describe("Hello Helidon OAM App test", func() {
 		t.It("Retrieve Prometheus scraped metrics", func() {
 			pkg.Concurrently(
 				func() {
-					Eventually(appMetricsExists, longWaitTimeout, longPollingInterval).Should(BeTrue())
+					Eventually(appMetricsExists, waitTimeout, pollingInterval).Should(BeTrue())
 				},
 				func() {
-					Eventually(appComponentMetricsExists, longWaitTimeout, longPollingInterval).Should(BeTrue())
+					Eventually(appComponentMetricsExists, waitTimeout, pollingInterval).Should(BeTrue())
 				},
 				func() {
-					Eventually(appConfigMetricsExists, longWaitTimeout, longPollingInterval).Should(BeTrue())
+					Eventually(appConfigMetricsExists, waitTimeout, pollingInterval).Should(BeTrue())
 				},
 				func() {
-					Eventually(nodeExporterProcsRunning, longWaitTimeout, longPollingInterval).Should(BeTrue())
+					Eventually(nodeExporterProcsRunning, waitTimeout, pollingInterval).Should(BeTrue())
 				},
 				func() {
-					Eventually(nodeExporterDiskIoNow, longWaitTimeout, longPollingInterval).Should(BeTrue())
+					Eventually(nodeExporterDiskIoNow, waitTimeout, pollingInterval).Should(BeTrue())
 				},
 			)
 		})
 	})
 
 	t.Context("Logging.", func() {
-		indexName := "verrazzano-namespace-" + namespace
+		indexName := "verrazzano-namespace-hello-helidon"
 
 		// GIVEN an application with logging enabled
 		// WHEN the Elasticsearch index is retrieved
@@ -155,7 +161,7 @@ var _ = t.Describe("Hello Helidon OAM App test", func() {
 })
 
 func helloHelidonPodsRunning() bool {
-	return pkg.PodsRunning(namespace, expectedPodsHelloHelidon)
+	return pkg.PodsRunning(pkg.HelloHelidonNamespace, expectedPodsHelloHelidon)
 }
 
 func appEndpointAccessible(url string, hostname string) bool {
