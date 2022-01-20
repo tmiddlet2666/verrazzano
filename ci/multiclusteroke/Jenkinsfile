@@ -333,77 +333,8 @@ pipeline {
             }
             stages {
                 stage('Prepare AT environment') {
-                    parallel {
-                        stage('Create OKE Clusters') {
-                            when { expression { return params.TEST_ENV == 'ocidns_oke' || params.TEST_ENV == 'magicdns_oke'} }
-                            environment {
-                                TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
-                            }
-                            stages {
-                                stage('Checkout multi cluster provisioning code') {
-                                    steps {
-                                        script {
-                                            sh """
-                                                git clone -b "${params.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${params.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
-                                            """
-                                        }
-                                    }
-                                }
-                                stage('Create Multi-Cluster vcn') {
-                                    when {
-                                        expression {
-                                            return params.CREATE_MULTI_CLUSTER_VCN == true;
-                                        } 
-                                    }
-                                    environment {
-                                        TF_VAR_vcn_name="${params.MULTI_CLUSTER_VCN_NAME}"
-                                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
-                                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
-                                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
-                                        TF_VAR_user_ocid="${TF_VAR_user_id}"
-                                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
-                                    }
-                                    steps {
-                                        script {
-                                            createMultiClusterVCN()
-                                        }
-                                    }
-                                }
-                                stage('Create Multi-Cluster CLUSTER') {
-                                    when {
-                                        expression {
-                                            return params.CREATE_MULTI_CLUSTER_CLUSTER == true;
-                                        } 
-                                    }
-                                    environment {
-                                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
-                                        TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
-                                        TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
-                                        TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
-                                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
-                                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
-                                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
-                                        TF_VAR_user_ocid="${TF_VAR_user_id}"
-                                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
-                                    }
-                                    steps {
-                                        script {
-                                            createMultiClusterCluster()
-                                        }
-                                    }
-                                }
-                                stage('Create Port forwarding session') {
-                                    environment {
-                                        bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
-                                    }
-                                    steps {
-                                        script {
-                                            createPFSession()
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    steps {
+                        prepareATEnvironment()
                     }
                 }
                 stage("Configure Clusters") {
@@ -503,25 +434,11 @@ pipeline {
                 }
             }
         }
-/*
+
         stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
-            parallel {
-                stage ('Verify Register') {
-                    steps {
-                        verifyRegisterManagedClusters()
-                    }
-                }
-                stage ('Verify Managed Cluster Permissions') {
-                    steps {
-                        verifyManagedClusterPermissions()
-                    }
-                }
-                stage ('Verify Metrics') {
-                    steps {
-                        runGinkgoRandomize('metrics/syscomponents')
-                    }
-                }
+            steps {
+                verifyUpgrade()
             }
             post {
                 failure {
@@ -532,7 +449,7 @@ pipeline {
             }
         }
 
-*/
+
 /*
         stage('Acceptance Tests') {
             stages {
@@ -1021,7 +938,6 @@ def verifyManagedClusterPermissions() {
 }
 
 // Test the multicluster Helidon example
-/*
 def testHelidonExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1036,10 +952,8 @@ def testHelidonExample(testSuitePath) {
         """
     }
 }
-*/
 
 // Test the multicluster sock-shop example
-/*
 def testSockExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1054,10 +968,8 @@ def testSockExample(testSuitePath) {
         """
     }
 }
-*/
 
 // Test the multicluster todo-list example
-/*
 def testTodoExample(testSuitePath) {
     script {
         int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1072,7 +984,6 @@ def testTodoExample(testSuitePath) {
         """
     }
 }
-*/
 
 // Run a test suite against all clusters
 def runGinkgoRandomize(testSuitePath) {
@@ -1433,7 +1344,7 @@ def deploySampleApp() {
     """
 }
 
-/*
+
 def undeploySampleApp() {
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
@@ -1442,8 +1353,8 @@ def undeploySampleApp() {
       kubectl delete -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/verrazzano-project.yaml
     """
 }
-*/
-/*
+
+
 def runHelidonNsOpsTest() {
     int clusterCount = params.TOTAL_CLUSTERS.toInteger()
     modifyHelloHelidonApp("hello-helidon-ns", "hello-helidon-ns")
@@ -1457,7 +1368,7 @@ def runHelidonNsOpsTest() {
       ginkgo -v --keep-going --no-color -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/examples/helidon-ns-ops/...
     """
 }
-*/
+
 
 def runMulticlusterVerifyApi() {
     int clusterCount = params.TOTAL_CLUSTERS.toInteger()
@@ -1471,7 +1382,7 @@ def runMulticlusterVerifyApi() {
     }
 }
 
-/*
+
 def runConsoleTests() {
     // Set app information used by the application page UI tests to assert for app info
     // Console runs on admin cluster and the KUBECONFIG is pointed at it (which is cluster 1)
@@ -1487,7 +1398,113 @@ def runConsoleTests() {
         KUBECONFIG=${ADMIN_KUBECONFIG} RUN_APP_TESTS=true ${GO_REPO_PATH}/verrazzano/ci/scripts/run_console_tests.sh
    """
 }
-*/
+
+def verifyUpgrade() {
+    parallel {
+        stage ('Verify Register') {
+            steps {
+                verifyRegisterManagedClusters()
+            }
+        }
+        stage ('Verify Managed Cluster Permissions') {
+            steps {
+                verifyManagedClusterPermissions()
+            }
+        }
+        stage ('Verify Metrics') {
+            steps {
+                runGinkgoRandomize('metrics/syscomponents')
+            }
+        }
+    }
+}
+
+def prepareATEnvironment() {
+    parallel {
+        stage('Create OKE Clusters') {
+            when { expression { return params.TEST_ENV == 'ocidns_oke' || params.TEST_ENV == 'magicdns_oke'} }
+            environment {
+                TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
+            }
+            stages {
+                stage('Checkout multi cluster provisioning code') {
+                    steps {
+                        script {
+                            sh """
+                                git clone -b "${params.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${params.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
+                            """
+                        }
+                    }
+                }
+                stage('Create Multi-Cluster vcn') {
+                    when {
+                        expression {
+                            return params.CREATE_MULTI_CLUSTER_VCN == true;
+                        } 
+                    }
+                    environment {
+                        TF_VAR_vcn_name="${params.MULTI_CLUSTER_VCN_NAME}"
+                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                        TF_VAR_user_ocid="${TF_VAR_user_id}"
+                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                    }
+                    steps {
+                        script {
+                            createMultiClusterVCN()
+                        }
+                    }
+                }
+                stage('Create Multi-Cluster CLUSTER') {
+                    when {
+                        expression {
+                            return params.CREATE_MULTI_CLUSTER_CLUSTER == true;
+                        } 
+                    }
+                    environment {
+                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
+                        TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
+                        TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
+                        TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                        TF_VAR_user_ocid="${TF_VAR_user_id}"
+                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                    }
+                    steps {
+                        script {
+                            createMultiClusterCluster()
+                        }
+                    }
+                }
+                stage('Create ssh key') {
+                    steps {
+                        withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
+                            sh """
+                                # get the ssh public key
+                                ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2.pub
+                                # convert SSH2 public key into an OpenSSH format
+                                ssh-keygen -i -f /tmp/opc_ssh2.pub > /tmp/opc_ssh.pub
+                            """
+                        }
+                    }
+                }
+                stage('Create Port forwarding session') {
+                    environment {
+                        bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
+                    }
+                    steps {
+                        script {
+                            createPFSession()
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 def createMultiClusterVCN() {
     sh """
@@ -1514,12 +1531,8 @@ def createPFSession() {
         withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
             sh """
                 echo "Creating port forwarding session"
-                # get the ssh public key
-                ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2_$port.pub
-                # convert SSH2 public key into an OpenSSH format
-                ssh-keygen -i -f /tmp/opc_ssh2_$port.pub > /tmp/opc_ssh_$port.pub
                 mkdir -p "${KUBECONFIG_DIR}/$count"
-                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh_$port.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
                 export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
                 echo "Waiting for nodes to be added to cluster..."
                 timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
@@ -1536,13 +1549,9 @@ def createPFSessionLB() {
         int port = ((count)*1000)+443
         withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
             sh """
-                echo "Creating port forwarding session"
-                # get the ssh public key
-                ssh-keygen -y -e -f ${OPC_USER_KEY_FILE} > /tmp/opc_ssh2_$port.pub
-                # convert SSH2 public key into an OpenSSH format
-                ssh-keygen -i -f /tmp/opc_ssh2_$port.pub > /tmp/opc_ssh_$port.pub
+                echo "Creating LB port forwarding session"
                 mkdir -p "${KUBECONFIG_DIR}/$count"
-                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession-lb.sh $TF_VAR_compartment_id $bastion_name ${KUBECONFIG_DIR}/$count/kube_config /tmp/opc_ssh_$port.pub '${OPC_USER_KEY_FILE}' $port ${params.MULTI_CLUSTER_LB_SUBNET_ID}
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession-lb.sh $TF_VAR_compartment_id $bastion_name ${KUBECONFIG_DIR}/$count/kube_config /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' $port ${params.MULTI_CLUSTER_LB_SUBNET_ID}
             """
         }
     }
