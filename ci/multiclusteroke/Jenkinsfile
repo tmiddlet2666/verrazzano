@@ -644,19 +644,7 @@ pipeline {
                 for(int count=1; count<=clusterCount; count++) {
                     sh """
                         echo "deleting multi cluster cluster"
-                        export TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
-                        export TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
-                        export TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
-                        export TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
-                        export TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
-                        export TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
-                        export TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
-                        export TF_VAR_user_ocid="${TF_VAR_user_id}"
-                        export TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
-                        export TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
-                        export TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count
-                        export TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np \
-                        ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${TF_VAR_label_prefix}-$count
+                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}" TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}" TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}" TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}" TF_VAR_compartment_ocid="${TF_VAR_compartment_id}" TF_VAR_fingerprint="${TF_VAR_api_fingerprint}" TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}" TF_VAR_user_ocid="${TF_VAR_user_id}" TF_VAR_private_key_path="${TF_VAR_api_private_key_path}" TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}" TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${TF_VAR_label_prefix}-$count
                     """
                 }
 
@@ -1420,67 +1408,67 @@ def verifyUpgrade() {
 }
 
 def prepareATEnvironment() {
-    parallel {
-        stage('Create OKE Clusters') {
-            when { expression { return params.TEST_ENV == 'ocidns_oke' || params.TEST_ENV == 'magicdns_oke'} }
-            environment {
-                TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
+    stage('Create OKE Clusters') {
+        when { expression { return params.TEST_ENV == 'ocidns_oke' || params.TEST_ENV == 'magicdns_oke'} }
+        environment {
+            TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}"
+        }
+        stages {
+            stage('Checkout multi cluster provisioning code') {
+                steps {
+                    script {
+                        sh """
+                            git clone -b "${params.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${params.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
+                        """
+                    }
+                }
             }
-            stages {
-                stage('Checkout multi cluster provisioning code') {
-                    steps {
-                        script {
-                            sh """
-                                git clone -b "${params.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${params.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
-                            """
-                        }
+            stage('Create Multi-Cluster vcn') {
+                when {
+                    expression {
+                        return params.CREATE_MULTI_CLUSTER_VCN == true;
+                    } 
+                }
+                environment {
+                    TF_VAR_vcn_name="${params.MULTI_CLUSTER_VCN_NAME}"
+                    TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                    TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                    TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                    TF_VAR_user_ocid="${TF_VAR_user_id}"
+                    TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                }
+                steps {
+                    script {
+                        createMultiClusterVCN()
                     }
                 }
-                stage('Create Multi-Cluster vcn') {
-                    when {
-                        expression {
-                            return params.CREATE_MULTI_CLUSTER_VCN == true;
-                        } 
-                    }
-                    environment {
-                        TF_VAR_vcn_name="${params.MULTI_CLUSTER_VCN_NAME}"
-                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
-                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
-                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
-                        TF_VAR_user_ocid="${TF_VAR_user_id}"
-                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
-                    }
-                    steps {
-                        script {
-                            createMultiClusterVCN()
-                        }
+            }
+            stage('Create Multi-Cluster CLUSTER') {
+                when {
+                    expression {
+                        return params.CREATE_MULTI_CLUSTER_CLUSTER == true;
+                    } 
+                }
+                environment {
+                    TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
+                    TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
+                    TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
+                    TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                    TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
+                    TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
+                    TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
+                    TF_VAR_user_ocid="${TF_VAR_user_id}"
+                    TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
+                }
+                steps {
+                    script {
+                        createMultiClusterCluster()
                     }
                 }
-                stage('Create Multi-Cluster CLUSTER') {
-                    when {
-                        expression {
-                            return params.CREATE_MULTI_CLUSTER_CLUSTER == true;
-                        } 
-                    }
-                    environment {
-                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
-                        TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
-                        TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
-                        TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
-                        TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
-                        TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
-                        TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
-                        TF_VAR_user_ocid="${TF_VAR_user_id}"
-                        TF_VAR_private_key_path="${TF_VAR_api_private_key_path}"
-                    }
-                    steps {
-                        script {
-                            createMultiClusterCluster()
-                        }
-                    }
-                }
-                stage('Create ssh key') {
-                    steps {
+            }
+            stage('Create ssh key') {
+                steps {
+                    script {
                         withCredentials([sshUserPrivateKey(credentialsId: '5fcc03de-31ce-4566-b11f-9de38e5d98fd', keyFileVariable: 'OPC_USER_KEY_FILE', passphraseVariable: 'OPC_USER_PASSPHRASE', usernameVariable: 'OPC_USERNAME')]) {
                             sh """
                                 # get the ssh public key
@@ -1491,14 +1479,14 @@ def prepareATEnvironment() {
                         }
                     }
                 }
-                stage('Create Port forwarding session') {
-                    environment {
-                        bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
-                    }
-                    steps {
-                        script {
-                            createPFSession()
-                        }
+            }
+            stage('Create Port forwarding session') {
+                environment {
+                    bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
+                }
+                steps {
+                    script {
+                        createPFSession()
                     }
                 }
             }
