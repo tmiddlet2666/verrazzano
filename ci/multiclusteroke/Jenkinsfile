@@ -508,7 +508,9 @@ pipeline {
                 stage ('Verify Install') {
                     // NOTE: The stages are executed in parallel, however the tests themselves are executed against
                     //       each cluster in sequence. If possible, we should parallelize that as well.
-                    verifyInstall()
+                    steps {
+                        verifyInstall()
+                    }
                     post {
                         always {
                             archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
@@ -1554,35 +1556,37 @@ def createPFSessionLB() {
 }
 
 def verifyInstall() {
-     parallel {
-        stage ('multicluster/verify-install') {
-            steps {
-                runGinkgoRandomize('multicluster/verify-install')
+    script{
+        parallel {
+            stage ('multicluster/verify-install') {
+                steps {
+                    runGinkgoRandomize('multicluster/verify-install')
+                }
             }
-        }
-        stage('verify-install') {
-            steps {
-                runGinkgoRandomize('verify-install')
+            stage('verify-install') {
+                steps {
+                    runGinkgoRandomize('verify-install')
+                }
             }
-        }
-        stage('verify-scripts') {
-            steps {
-                runGinkgoRandomize('scripts')
+            stage('verify-scripts') {
+                steps {
+                    runGinkgoRandomize('scripts')
+                }
             }
-        }
-        stage('verify-infra restapi') {
-            steps {
-                runGinkgoRandomize('verify-infra/restapi')
+            stage('verify-infra restapi') {
+                steps {
+                    runGinkgoRandomize('verify-infra/restapi')
+                }
             }
-        }
-        stage('verify-infra oam') {
-            steps {
-                runGinkgoRandomize('verify-infra/oam')
+            stage('verify-infra oam') {
+                steps {
+                    runGinkgoRandomize('verify-infra/oam')
+                }
             }
-        }
-        stage('verify-infra vmi') {
-            steps {
-                runGinkgoRandomize('verify-infra/vmi')
+            stage('verify-infra vmi') {
+                steps {
+                    runGinkgoRandomize('verify-infra/vmi')
+                }
             }
         }
     }
