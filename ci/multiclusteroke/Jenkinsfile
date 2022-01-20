@@ -573,7 +573,7 @@ pipeline {
         }
 
 
-
+/*
         stage('Acceptance Tests') {
             stages {
                 
@@ -641,7 +641,7 @@ pipeline {
                 }
             }
         }
-
+ */       
         stage('Cleanup Tests') {
             stages {
                 stage('verify deregister') {
