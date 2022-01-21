@@ -1599,8 +1599,8 @@ def createOciConfigSecret() {
 
 def configureClusters() {
     script {
-         parallel {
-            stage("Configure OKE/OCI DNS") {
+         parallel (
+            "ocidns": stage("Configure OKE/OCI DNS") {
                 when { expression { return params.TEST_ENV == 'ocidns_oke' } }
                 stages {
                     stage('Create OCI DNS zone') {
@@ -1636,7 +1636,7 @@ def configureClusters() {
                     }
                 }
             }
-            stage("Configure OKE/MagicDNS") {
+            "magicdns": stage("Configure OKE/MagicDNS") {
                 when { expression { return params.TEST_ENV == 'magicdns_oke' } }
                 steps {
                     script {
@@ -1645,7 +1645,7 @@ def configureClusters() {
                     }
                 }
             }
-        }
+        )
     }
 }
 
