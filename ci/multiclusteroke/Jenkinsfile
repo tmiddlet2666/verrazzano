@@ -1598,7 +1598,7 @@ def createOciConfigSecret() {
 }
 
 def configureClusters() {
-    script {
+    return {
          parallel (
             'ocidns': stage("Configure OKE/OCI DNS") {
                 when { expression { return params.TEST_ENV == 'ocidns_oke' } }
