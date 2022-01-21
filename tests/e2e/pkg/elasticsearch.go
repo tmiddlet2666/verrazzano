@@ -287,7 +287,7 @@ func findHits(searchResult map[string]interface{}, after *time.Time) bool {
 
 // FindLog returns true if a recent log record can be found in the index with matching filters.
 func FindLog(index string, match []Match, mustNot []Match) bool {
-	after := time.Now().Add(-24 * time.Hour)
+	after := time.Now().Add(-72 * time.Hour)
 	query := ElasticQuery{
 		Filters: match,
 		MustNot: mustNot,
