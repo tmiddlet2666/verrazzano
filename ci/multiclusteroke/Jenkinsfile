@@ -407,6 +407,8 @@ pipeline {
                         stage('Create Port forwarding session') {
                             environment {
                                 bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
+                                vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                                sec_list_id="${params.MULTI_CLUSTER_SEC_LIST_ID}"
                             }
                             steps {
                                 script {
@@ -1536,7 +1538,7 @@ def createPFSession() {
             sh """
                 echo "Creating port forwarding session"
                 mkdir -p "${KUBECONFIG_DIR}/$count"
-                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession.sh $TF_VAR_compartment_id $TF_VAR_region ${TF_VAR_label_prefix}-$count $bastion_name /tmp/opc_ssh.pub '${OPC_USER_KEY_FILE}' ${KUBECONFIG_DIR}/$count/kube_config $port $vcn_id $sec_list_id
                 export KUBECONFIG=${KUBECONFIG_DIR}/$count/kube_config
                 echo "Waiting for nodes to be added to cluster..."
                 timeout 15m bash -c 'until kubectl get nodes | grep NAME; do sleep 10; done'
