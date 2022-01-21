@@ -558,6 +558,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
             steps {
@@ -571,12 +572,14 @@ pipeline {
                 }
             }
         }
+        */
+        /*
         stage('Acceptance Tests') {
             steps {
                 acceptanceTests()
             }
             
-        } 
+        } */
         stage('Cleanup Tests') {
             stages {
                 stage('verify deregister') {
