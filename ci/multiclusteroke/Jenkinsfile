@@ -417,7 +417,7 @@ pipeline {
                      }
                 }
                 stage("Configure Clusters") {
-                    parallel (
+                    parallel {
                         stage("Configure OKE/OCI DNS") {
                             when { expression { return params.TEST_ENV == 'ocidns_oke' } }
                             stages {
@@ -463,7 +463,7 @@ pipeline {
                                 }
                             }
                         }
-                    )
+                    }
                 }
                 stage ('Install Verrazzano') {
                     steps {
