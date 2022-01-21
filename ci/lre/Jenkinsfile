@@ -145,12 +145,12 @@ pipeline {
                         --region ${OCI_CLI_REGION} \
                         --token-version 2.0.0  \
                         --kube-endpoint PRIVATE_ENDPOINT
-                        # From tests/e2e/config/scripts/update_oke_kubeconfig.sh
+
+                        # updating kubeconfig with sa
+                        cd ${GO_REPO_PATH}/verrazzano/
+                        ci/scripts/update_lre_kubeconfig.sh
                     """
-                    env.TOKENNAME = sh(kubectl -n kube-system get serviceaccount/kubeconfig-sa -o jsonpath='{.secrets[0].name}')
-                    env.TOKEN = sh(kubectl -n kube-system get secret ${env.TOKENNAME} -o jsonpath='{.data.token}'| base64 --decode)
-                    kubectl config set-credentials kubeconfig-sa --token=${env.TOKEN}
-                    kubectl config set-context --current --user=kubeconfig-sa
+
                 }
             }
         }
