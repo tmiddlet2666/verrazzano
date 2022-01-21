@@ -266,7 +266,7 @@ pipeline {
 
 def runGinkgoRandomize(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        for (int run_number=0;run_number<3;run_number++) {
+        for (int run_number=0;run_number<1;run_number++) {
             sh """
                 cd ${GO_REPO_PATH}/verrazzano/tests/e2e
                 ginkgo -p --randomize-all -v --keep-going --no-color ${testSuitePath}/...
@@ -278,7 +278,7 @@ def runGinkgoRandomize(testSuitePath) {
 
 def runGinkgo(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-        for (int run_number=0;run_number<3;run_number++) {
+        for (int run_number=0;run_number<1;run_number++) {
             sh """
                 cd ${GO_REPO_PATH}/verrazzano/tests/e2e
                 ginkgo -v --keep-going --no-color ${testSuitePath}/...
