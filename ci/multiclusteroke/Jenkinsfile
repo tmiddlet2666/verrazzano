@@ -558,7 +558,7 @@ pipeline {
             }
         }
 
-        /*
+    
         stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
             steps {
@@ -572,7 +572,7 @@ pipeline {
                 }
             }
         }
-        */
+        
         /*
         stage('Acceptance Tests') {
             stages {
@@ -1485,7 +1485,14 @@ def runConsoleTests() {
 }
 
 def verifyUpgrade() {
-    parallel {
+    script {
+        def verifyUpgradeStages = [:]
+        verifyUpgradeStages["Verify Register"] = verifyRegisterManagedClusters()
+        verifyUpgradeStages["Verify Managed Cluster Permissions"] = verifyManagedClusterPermissions()
+        verifyUpgradeStages["Verify Metrics"] = runGinkgoRandomize('metrics/syscomponents')
+        parallel verifyUpgradeStages
+    }
+    /*parallel {
         stage ('Verify Register') {
             steps {
                 verifyRegisterManagedClusters()
@@ -1501,7 +1508,7 @@ def verifyUpgrade() {
                 runGinkgoRandomize('metrics/syscomponents')
             }
         }
-    }
+    }*/
 }
 
 def createMultiClusterVCN() {
@@ -1571,6 +1578,15 @@ def verifyInstall() {
 
 def exampleApps() {
     script {
+        def exampleAppsStages = [:]
+        exampleAppsStages["Examples Helidon"] = testHelidonExample("multicluster/examples/helidon")
+        exampleAppsStages["Examples Helidon Deprecated"] = testHelidonExample("multicluster/examples/helidon-deprecated")
+        exampleAppsStages["Delete Deployed App NS"] = runHelidonNsOpsTest()
+        exampleAppsStages["Examples Sock Shop"] = testSockExample("multicluster/examples/sock-shop")
+        exampleAppsStages["Examples Todo List"] = testTodoExample("multicluster/examples/todo-list")
+        parallel exampleAppsStages
+    }
+    /*script {
          parallel {
             stage ('Examples Helidon') {
                 steps {
@@ -1600,7 +1616,7 @@ def exampleApps() {
                 }
             }
          }
-    }
+    }*/
     
 }
 
