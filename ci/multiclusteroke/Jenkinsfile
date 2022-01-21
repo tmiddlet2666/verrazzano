@@ -574,7 +574,7 @@ pipeline {
         }
         
         
-        stage('Acceptance Tests') {
+        /*stage('Acceptance Tests') {
             stages {
                 stage ('Example apps') {
                     steps {
@@ -639,7 +639,8 @@ pipeline {
                     }
                 }
             }
-         }
+         }*/
+        
         stage('Cleanup Tests') {
             stages {
                 stage('verify deregister') {
