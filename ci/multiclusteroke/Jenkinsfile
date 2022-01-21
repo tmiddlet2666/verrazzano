@@ -575,9 +575,71 @@ pipeline {
         */
         /*
         stage('Acceptance Tests') {
-            steps {
-                acceptanceTests()
+            stages {
+            stage ('Example apps') {
+                steps {
+                    exampleApps()
+                }
             }
+            
+            stage ('Console') {
+                steps {
+                    runConsoleTests()
+                }
+                post {
+                    always {
+                        sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_screenshots.sh"
+                    }
+                }
+            }
+            stage ('Undeploy Sample Application') {
+                steps {
+                    undeploySampleApp()
+                }
+            }
+            
+            stage ('Multi-cluster Verify Api') {
+                steps {
+                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                        script {
+                            runMulticlusterVerifyApi()
+                        }
+                    }
+                }
+                post {
+                    failure {
+                        script {
+                            dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump-pre-uninstall")
+                        }
+                    }
+                }
+            }
+        }
+        
+        post {
+            failure {
+                script {
+                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '0')
+                    dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
+                }
+            }
+            aborted {
+                script {
+                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '0')
+                    dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
+                }
+            }
+            success {
+                script {
+                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '1')
+                    if (EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS == true) {
+                        dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
+                    }
+                }
+            }
+        }
+    }
+    }
             
         } */
         stage('Cleanup Tests') {
@@ -1494,109 +1556,18 @@ def createPFSessionLB() {
 }
 
 def verifyInstall() {
-    script{
-        parallel {
-            stage ('multicluster/verify-install') {
-                steps {
-                    runGinkgoRandomize('multicluster/verify-install')
-                }
-            }
-            stage('verify-install') {
-                steps {
-                    runGinkgoRandomize('verify-install')
-                }
-            }
-            stage('verify-scripts') {
-                steps {
-                    runGinkgoRandomize('scripts')
-                }
-            }
-            stage('verify-infra restapi') {
-                steps {
-                    runGinkgoRandomize('verify-infra/restapi')
-                }
-            }
-            stage('verify-infra oam') {
-                steps {
-                    runGinkgoRandomize('verify-infra/oam')
-                }
-            }
-            stage('verify-infra vmi') {
-                steps {
-                    runGinkgoRandomize('verify-infra/vmi')
-                }
-            }
-        }
+    script {
+        def verifyInstallStages = [:]
+        verifyInstallStages["multicluster/verify-install"] = runGinkgoRandomize('multicluster/verify-install')
+        verifyInstallStages["verify-install"] = runGinkgoRandomize('verify-install')
+        verifyInstallStages["verify-scripts"] = runGinkgoRandomize('scripts')
+        verifyInstallStages["verify-infra restapi"] = runGinkgoRandomize('verify-infra/restapi')
+        verifyInstallStages["verify-infra oam"] = runGinkgoRandomize('verify-infra/oam')
+        verifyInstallStages["verify-infra vmi"] = runGinkgoRandomize('verify-infra/vmi')
+        parallel verifyInstallStages
     }
 }
 
-def acceptanceTests() {
-    script {
-        stages {
-            stage ('Example apps') {
-                steps {
-                    exampleApps()
-                }
-            }
-            
-            stage ('Console') {
-                steps {
-                    runConsoleTests()
-                }
-                post {
-                    always {
-                        sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_screenshots.sh"
-                    }
-                }
-            }
-            stage ('Undeploy Sample Application') {
-                steps {
-                    undeploySampleApp()
-                }
-            }
-            
-            stage ('Multi-cluster Verify Api') {
-                steps {
-                    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
-                        script {
-                            runMulticlusterVerifyApi()
-                        }
-                    }
-                }
-                post {
-                    failure {
-                        script {
-                            dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump-pre-uninstall")
-                        }
-                    }
-                }
-            }
-        }
-        
-        post {
-            failure {
-                script {
-                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '0')
-                    dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
-                }
-            }
-            aborted {
-                script {
-                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '0')
-                    dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
-                }
-            }
-            success {
-                script {
-                    METRICS_PUSHED=metricTimerEnd("${VZ_TEST_METRIC}", '1')
-                    if (EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS == true) {
-                        dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-dump")
-                    }
-                }
-            }
-        }
-    }
-}
 
 def exampleApps() {
     script {

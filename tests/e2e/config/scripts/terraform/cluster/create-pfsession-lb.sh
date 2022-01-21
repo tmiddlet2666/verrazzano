@@ -32,7 +32,7 @@ tunnel_command="${tunnel_command//<localPort>/$port}"
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=5 -o ExitOnForwardFailure=yes -i}"
 
-tunnel_command="while true; do { while true; do echo echo ping; sleep 10; done } | ${tunnel_command};sleep 10;done &"
+tunnel_command="while :; do { while :; do echo echo ping; sleep 10; done } | ${tunnel_command};sleep 10;done > $port.out 2>&1 &"
 
 echo $tunnel_command
 
@@ -45,8 +45,8 @@ while IFS= read -r line; do
     echo "$private_ip $(echo $line | cut -d "/" -f3-)" >> /tmp/hosts
 done <<< "$list"
 cat /tmp/hosts
-sudo cat /tmp/hosts >> /etc/hosts
-sudo cat /etc/hosts
+cat /tmp/hosts | sudo tee -a /etc/hosts >/dev/null
+cat /etc/hosts
 rm -rf /tmp/hosts
 sudo iptables -t nat -A OUTPUT -p tcp --dport 443 -d $private_ip -j DNAT --to-destination 127.0.0.1:$port
 

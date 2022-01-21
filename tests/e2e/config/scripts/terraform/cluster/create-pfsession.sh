@@ -52,7 +52,7 @@ tunnel_command="${tunnel_command//<localPort>/$port}"
 # Disable host key verification
 tunnel_command="${tunnel_command//ssh -i/ssh -4 -v -o StrictHostKeyChecking=no -o ServerAliveInterval=30 -o ServerAliveCountMax=5 -o ExitOnForwardFailure=yes -i}"
 
-tunnel_command="while true; do { while true; do echo echo ping; sleep 10; done } | ${tunnel_command};sleep 10;done &"
+tunnel_command="while :; do { while :; do echo echo ping; sleep 10; done } | ${tunnel_command};sleep 10;done > $port.out 2>&1 &"
 
 cp $KUBECONFIG "${KUBECONFIG}_original"
 
