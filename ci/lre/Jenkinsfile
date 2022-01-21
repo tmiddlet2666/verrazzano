@@ -135,7 +135,7 @@ pipeline {
         stage('Download kubeconfig') {
             steps {
                 script {
-                    sh '''
+                    sh """
                         mkdir -p ${WORKSPACE}/.kube
                         rm -rf ${KUBECONFIG}
                         # get kubeconfig from OCI
@@ -149,7 +149,7 @@ pipeline {
                         # updating kubeconfig with sa
                         cd ${GO_REPO_PATH}/verrazzano/
                         ci/scripts/update_lre_kubeconfig.sh
-                    '''
+                    """
                 }
             }
         }
