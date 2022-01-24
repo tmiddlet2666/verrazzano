@@ -1572,7 +1572,7 @@ def verifyInstall() {
         verifyInstallStages["verify-scripts"] = runGinkgoRandomize('scripts')
         verifyInstallStages["verify-infra restapi"] = runGinkgoRandomize('verify-infra/restapi')
         verifyInstallStages["verify-infra oam"] = runGinkgoRandomize('verify-infra/oam')
-        verifyInstallStages["verify-infra vmi"] = runGinkgoRandomize('verify-infra/vmi')
+        //verifyInstallStages["verify-infra vmi"] = runGinkgoRandomize('verify-infra/vmi')
         parallel verifyInstallStages
     }
 }
