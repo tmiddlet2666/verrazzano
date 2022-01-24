@@ -72,3 +72,5 @@ eval $tunnel_command
 sleep 5
 
 echo "KUBECTL READY TO USE"
+
+while :; do { kubectl --kubeconfig  $KUBECONFIG get nodes} | echo "failed ping";sleep 10;done > $port_ping.out 2>&1 &
