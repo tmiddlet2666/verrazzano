@@ -21,6 +21,16 @@ port=$8
 rm $KUBECONFIG
 #oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaq2qg35j4h7tvzronojvfqrbg524o5be67uv4ncc64c4j3use3j7q
 
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa2b7djjw5w3s62l4f2ofzdzujywblt7l2tachhpmkta6njhnvma3a
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa2cmdt6iaumv4oeilwz6p2botkrehdc4phlyqqzvbxquubb26hwkq
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa32b7j7qqqwxxhsdbndtrt5p2ammrijim756n62ni4iqto4ynbtfq
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa3gszpoby6rzf5bzjggrljq6ubzool5jpli4ieavebml35clncvua
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa3iuq4epbxzbkjhbgo65ni7sr2yad4y6b2aewdjn5rzugqdlntkra
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa52ci6o7a546d3xbrn7olxe3s2wnkmzu3ajkzjcralbr7oqvvinrq
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa7zrpjma4bifyl4yw67xpbyklicsndrfcm262gzruwzvrkkbps6ha
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaa4cwcnhyuowo2mlan5sdbxodm7ewrzlp6icynb3wk2zhaufxbkxa
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaa5zveevat2ip3awnfhu7haghujeo7wdoxlldfc6r7kikxouojtda
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaahfkwk7rciq5cdl455rcnixeyhdjs2slzvzvoetxcevcw7f5d6bq
 oci ce cluster list -c $compartment_id
 #exit 0
 oci lb load-balancer list --compartment-id=$compartment_id
@@ -74,4 +84,4 @@ sleep 5
 
 echo "KUBECTL READY TO USE"
 
-while :; do { kubectl --kubeconfig  $KUBECONFIG get nodes} | echo "failed ping";sleep 10;done > $port_ping.out 2>&1 &
+while :; do kubectl --kubeconfig=$KUBECONFIG get nodes | echo "failed ping";sleep 10;done > $port_ping.out 2>&1 &
