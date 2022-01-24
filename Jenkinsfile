@@ -207,7 +207,6 @@ pipeline {
                                                                        echo "JOB_NAME ${env.JOB_NAME}"
                                                                        echo "JOB ${env.Job}"
                                                                        echo "GIT_BRANCH ${env.GIT_BRANCH}"
-                                                                       echo "Jenkins job ${env.jenkins_job}"
                                                                        echo "Build Number $(env.BUILD_NUMBER)"
                                                                        echo "Print All ENV ----- ${env}"
                                                              """
