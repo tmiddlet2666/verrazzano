@@ -23,6 +23,7 @@ rm $KUBECONFIG
 
 oci ce cluster list -c $compartment_id
 #exit 0
+oci lb load-balancer list --compartment-id=$compartment_id
 
 cluster_id=$(oci ce cluster list -c $compartment_id --name $cluster_name --lifecycle-state ACTIVE | jq '.data[].id' | sed -e 's/^"//' -e 's/"$//')
 oci ce cluster create-kubeconfig \
