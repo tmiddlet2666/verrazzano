@@ -195,23 +195,7 @@ pipeline {
                 }
             }
         }
-                                              stage('Environment Variables Test Stage1') {
-                                                    steps {
-                                                           sh """
-                                                                       echo "K8S Cluster Version ${env.KUBERNETES_CLUSTER_VERSION}"
-                                                                       echo "Build URL ${env.BUILD_URL}"
-                                                                       echo "BRANCH_NAME ${env.BRANCH_NAME}"
-                                                                       echo "GIT_COMMIT ${env.GIT_COMMIT}"
-                                                                       echo "TEST_ENV ${env.TEST_ENV}"
-                                                                       echo "TEST_ENV_LABEL ${env.TEST_ENV_LABEL}"
-                                                                       echo "JOB_NAME ${env.JOB_NAME}"
-                                                                       echo "JOB ${env.Job}"
-                                                                       echo "GIT_BRANCH ${env.GIT_BRANCH}"
-                                                                       echo "Build Number ${env.BUILD_NUMBER}"
-                                                                       echo "Print All ENV ----- ${env}"
-                                                             """
-                                                    }
-                                              }
+
         stage('Analysis Tool') {
             when {
                 allOf {
