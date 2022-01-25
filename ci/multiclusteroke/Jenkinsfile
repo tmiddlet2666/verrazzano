@@ -565,7 +565,7 @@ pipeline {
         }
 
     
-        stage('Verify Upgrade') {
+        /*stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
             steps {
                 verifyUpgrade()
@@ -577,7 +577,7 @@ pipeline {
                     }
                 }
             }
-        }
+        }*/
         
         
         /*stage('Acceptance Tests') {
