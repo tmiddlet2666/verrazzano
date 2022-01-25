@@ -19,7 +19,13 @@ port=$8
 #exit 0
 
 rm $KUBECONFIG
-#oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaq2qg35j4h7tvzronojvfqrbg524o5be67uv4ncc64c4j3use3j7q
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaag22w3hm6dlk2sfrx5ubxwuxsgw5a2cis6ipor53dzcqugc7fhbaa
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaah2t2q5ht4jfvizwkwrxo7ygpap52bdcsa2id3j4mlcseuhtzb5hq
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaaufnshh7bcnmekjv3h236wmq7no6zfvkpyjiifyetqcwgd3l6bu6q
+oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaajrvel64ujiruzjz7vp5phk6iboxrmit2l6rknio66c57zbnjoiua
+
+
+
 
 oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaari2opwkhfvgvwxph6bnyras7p7y6hbp66zsmmiixej3vstnnggq
 oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaafu25usyjekxx35rwpd3cwzofzhfha2rbl3je3rvzws3izoimif5q

@@ -544,7 +544,7 @@ pipeline {
                         runGinkgoRandomize('metrics/syscomponents')
                     }
                 }
-                /*stage("upgrade-platform-operator") {
+                stage("upgrade-platform-operator") {
                     steps {
                         upgradePlatformOperator()
                     }
@@ -553,7 +553,7 @@ pipeline {
                     steps {
                         upgradeVerrazzano()
                     }
-                }*/
+                }
             }
             post {
                 failure {
@@ -564,7 +564,7 @@ pipeline {
             }
         }
 
-    /*
+    
         stage('Verify Upgrade') {
             // Rerun some stages to verify the upgrade
             steps {
@@ -577,7 +577,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         
         
         /*stage('Acceptance Tests') {
@@ -1492,9 +1492,9 @@ def runConsoleTests() {
 def verifyUpgrade() {
     script {
         def verifyUpgradeStages = [:]
-        verifyUpgradeStages["Verify Register"] = verifyRegisterManagedClusters()
-        verifyUpgradeStages["Verify Managed Cluster Permissions"] = verifyManagedClusterPermissions()
-        verifyUpgradeStages["Verify Metrics"] = runGinkgoRandomize('metrics/syscomponents')
+        verifyUpgradeStages["Verify Register"] = { verifyRegisterManagedClusters() }
+        verifyUpgradeStages["Verify Managed Cluster Permissions"] = { verifyManagedClusterPermissions() }
+        verifyUpgradeStages["Verify Metrics"] = { runGinkgoRandomize('metrics/syscomponents') }
         parallel verifyUpgradeStages
     }
     /*parallel {
