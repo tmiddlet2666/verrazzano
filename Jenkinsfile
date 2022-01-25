@@ -196,7 +196,6 @@ pipeline {
                 }
             }
         }
-
                                               stage('Environment Variables Test Stage1') {
                                                     steps {
                                                            sh """
@@ -214,7 +213,6 @@ pipeline {
                                                              """
                                                     }
                                                 }
-
         stage('Analysis Tool') {
             when {
                 allOf {
