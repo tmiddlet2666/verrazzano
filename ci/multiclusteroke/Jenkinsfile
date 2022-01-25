@@ -722,7 +722,7 @@ pipeline {
                 }
                 dumpUninstallLogs()
             }
-            archiveArtifacts artifacts: '**/*-operator.yaml,**/install-verrazzano.yaml,**/kube_config,**/coverage.html,**/logs/**,**/build/resources/**,**/verrazzano_images.txt,**/*-cluster-dump*/**,**/test-cluster-dumps/**,**/*cluster-dump*/**', allowEmptyArchive: true
+            archiveArtifacts artifacts: '**/*-operator.yaml,**/install-verrazzano.yaml,**/kube_config*,**/coverage.html,**/logs/**,**/build/resources/**,**/verrazzano_images.txt,**/*-cluster-dump*/**,**/test-cluster-dumps/**,**/*cluster-dump*/**', allowEmptyArchive: true
             junit testResults: '**/*test-result.xml', allowEmptyResults: true
 
             script {
@@ -1570,12 +1570,11 @@ def createPFSessionLB() {
 def verifyInstall() {
     script {
         def verifyInstallStages = [:]
-        verifyInstallStages["multicluster/verify-install"] = runGinkgoRandomize('multicluster/verify-install')
-        verifyInstallStages["verify-install"] = runGinkgoRandomize('verify-install')
-        verifyInstallStages["verify-scripts"] = runGinkgoRandomize('scripts')
-        verifyInstallStages["verify-infra restapi"] = runGinkgoRandomize('verify-infra/restapi')
-        verifyInstallStages["verify-infra oam"] = runGinkgoRandomize('verify-infra/oam')
-        verifyInstallStages.failFast = true
+        verifyInstallStages["multicluster/verify-install"] = { runGinkgoRandomize('multicluster/verify-install') }
+        verifyInstallStages["verify-install"] = { runGinkgoRandomize('verify-install') }
+        verifyInstallStages["verify-scripts"] = { runGinkgoRandomize('scripts') }
+        verifyInstallStages["verify-infra restapi"] = { runGinkgoRandomize('verify-infra/restapi') }
+        verifyInstallStages["verify-infra oam"] = { runGinkgoRandomize('verify-infra/oam') }
         //verifyInstallStages["verify-infra vmi"] = runGinkgoRandomize('verify-infra/vmi')
         parallel verifyInstallStages
     }
