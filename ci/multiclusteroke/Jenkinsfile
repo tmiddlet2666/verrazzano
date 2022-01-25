@@ -1567,11 +1567,12 @@ def createPFSessionLB() {
 def verifyInstall() {
     script {
         def verifyInstallStages = [:]
-        //verifyInstallStages["multicluster/verify-install"] = runGinkgoRandomize('multicluster/verify-install')
+        verifyInstallStages["multicluster/verify-install"] = runGinkgoRandomize('multicluster/verify-install')
         verifyInstallStages["verify-install"] = runGinkgoRandomize('verify-install')
         verifyInstallStages["verify-scripts"] = runGinkgoRandomize('scripts')
         verifyInstallStages["verify-infra restapi"] = runGinkgoRandomize('verify-infra/restapi')
         verifyInstallStages["verify-infra oam"] = runGinkgoRandomize('verify-infra/oam')
+        verifyInstallStages.failFast = true
         //verifyInstallStages["verify-infra vmi"] = runGinkgoRandomize('verify-infra/vmi')
         parallel verifyInstallStages
     }
