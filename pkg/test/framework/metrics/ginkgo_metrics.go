@@ -144,11 +144,14 @@ func configureLoggerWithJenkinsEnv(log *zap.SugaredLogger) *zap.SugaredLogger {
 		jenkinsJob := branchName + "/" + buildNumber
 		log = log.With("build_url", buildURL).With("jenkins_job", jenkinsJob)
 	}
+	
 
 	gitCommit := os.Getenv("GIT_COMMIT")
 	if gitCommit != "" {
-		log = log.With("commit_hash", gitCommit)
+		gitCommitAndBranch := branchName + "/"+ gitCommit
+		log = log.With("commit_hash", gitCommitAndBranch)
 	}
+
 
 	testEnv := os.Getenv("TEST_ENV")
 	if testEnv != "" {
@@ -186,7 +189,6 @@ func Emit(log *zap.SugaredLogger) {
 		log = log.With(Status, spec.State)
 	}
 	t := spec.FullText()
-
 	log.With(attempts, spec.NumAttempts).
 		With(test, t).
 		Info()

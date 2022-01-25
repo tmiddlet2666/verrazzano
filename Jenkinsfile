@@ -58,7 +58,6 @@ pipeline {
     environment {
         CLEAN_BRANCH_NAME = "${env.BRANCH_NAME.replace("/", "%2F")}"
         IS_PERIODIC_PIPELINE = "false"
-
         DOCKER_ANALYSIS_CI_IMAGE_NAME = 'verrazzano-analysis-jenkins'
         DOCKER_ANALYSIS_PUBLISH_IMAGE_NAME = 'verrazzano-analysis'
         DOCKER_ANALYSIS_IMAGE_NAME = "${env.BRANCH_NAME ==~ /^release-.*/ || env.BRANCH_NAME == 'master' ? env.DOCKER_ANALYSIS_PUBLISH_IMAGE_NAME : env.DOCKER_ANALYSIS_CI_IMAGE_NAME}"
@@ -121,9 +120,11 @@ pipeline {
         OCIR_SCAN_REGISTRY = credentials('ocir-scan-registry')
         OCIR_SCAN_REPOSITORY_PATH = credentials('ocir-scan-repository-path')
         DOCKER_SCAN_CREDS = credentials('v8odev-ocir')
+
     }
 
     stages {
+
         stage('Clean workspace and checkout') {
             steps {
                 sh """
@@ -195,7 +196,23 @@ pipeline {
                 }
             }
         }
-
+                                              stage('Environment Variables Test Stage1') {
+                                                    steps {
+                                                           sh """
+                                                                       echo "K8S Cluster Version ${env.KUBERNETES_CLUSTER_VERSION}"
+                                                                       echo "Build URL ${env.BUILD_URL}"
+                                                                       echo "BRANCH_NAME ${env.BRANCH_NAME}"
+                                                                       echo "GIT_COMMIT ${env.GIT_COMMIT}"
+                                                                       echo "TEST_ENV ${env.TEST_ENV}"
+                                                                       echo "TEST_ENV_LABEL ${env.TEST_ENV_LABEL}"
+                                                                       echo "JOB_NAME ${env.JOB_NAME}"
+                                                                       echo "JOB ${env.Job}"
+                                                                       echo "GIT_BRANCH ${env.GIT_BRANCH}"
+                                                                       echo "Jenkins job ${env.JOB}"
+                                                                       echo "Print All ENV ----- ${env}"
+                                                             """
+                                                    }
+                                                }
         stage('Analysis Tool') {
             when {
                 allOf {
@@ -381,7 +398,7 @@ pipeline {
             }
         }
 
-        stage('Scan Image') {
+/*         stage('Scan Image') {
             when { not { buildingTag() } }
             steps {
                 script {
@@ -400,10 +417,10 @@ pipeline {
                     }
                 }
                 always {
-                    archiveArtifacts artifacts: '**/scanning-report*.json', allowEmptyArchive: true
+                    archiveArtifacts artifacts: '**//* scanning-report*.json', allowEmptyArchive: true
                 }
             }
-        }
+        } */
 
         stage('Integration Tests') {
             when { not { buildingTag() } }
@@ -496,6 +513,24 @@ pipeline {
                 }
             }
         }
+                                      stage('Environment Variables Test Stage') {
+                                            steps {
+                                                   sh """
+                                                               echo "K8S Cluster Version ${env.KUBERNETES_CLUSTER_VERSION}"
+                                                               echo "Build URL ${env.BUILD_URL}"
+                                                               echo "BRANCH_NAME ${env.BRANCH_NAME}"
+                                                               echo "GIT_COMMIT ${env.GIT_COMMIT}"
+                                                               echo "TEST_ENV ${env.TEST_ENV}"
+                                                               echo "TEST_ENV_LABEL ${env.TEST_ENV_LABEL}"
+                                                               echo "JOB_NAME ${env.JOB_NAME}"
+                                                               echo "JOB ${env.Job}"
+                                                               echo "GIT_BRANCH ${env.GIT_BRANCH}"
+                                                               echo "Jenkins job ${env.JOB}"
+                                                               echo "Print All ENV ----- ${env}"
+
+                                                     """
+                                            }
+                                        }
 
         stage('Triggered Tests') {
             when {
@@ -851,7 +886,7 @@ def getSuspectList(commitList, userMappings) {
                 returnStdout: true
             ).trim()
             if (gitAuthor != null) {
-                def author = trimIfGithubNoreplyUser(gitAuthor)
+                def author = tr imIfGithubNoreplyUser(gitAuthor)
                 echo "DEBUG: author: ${gitAuthor}, ${author}, id: ${id}"
                 if (userMappings.containsKey(author)) {
                     def slackUser = userMappings.get(author)
