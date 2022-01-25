@@ -51,3 +51,5 @@ rm -rf /tmp/hosts
 sudo iptables -t nat -A OUTPUT -p tcp --dport 443 -d $private_ip -j DNAT --to-destination 127.0.0.1:$port
 
 sleep 5
+
+while :; do curl -k -v https://$private_ip | echo "failed ping";sleep 30;done > "${port}_ping.out" 2>&1 &
