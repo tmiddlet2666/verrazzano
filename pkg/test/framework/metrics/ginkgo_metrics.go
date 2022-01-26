@@ -32,8 +32,8 @@ const (
 	KubernetesVersion = "kubernetes_version"
 	TestEnv           = "test_env"
 
-	MetricsIndex     = "metrics"
-	TestLogIndex     = "testlogs"
+	MetricsIndex     = "metricsv1"
+	TestLogIndex     = "testlogsv1"
 	searchWriterKey  = "searchWriter"
 	timeFormatString = "2006.01.02"
 	searchURL        = "SEARCH_HTTP_ENDPOINT"
