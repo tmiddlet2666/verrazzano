@@ -1177,6 +1177,9 @@ func getKeycloakClients(ctx spi.ComponentContext) (KeycloakClients, error) {
 	out, err := cmd.Output()
 	if err != nil {
 		ctx.Log().Errorf("getKeycloakClients: Error retrieving clients: %s", err)
+		if out != nil {
+			ctx.Log().Infof(string(out))
+		}
 		return nil, err
 	}
 	if len(string(out)) == 0 {
