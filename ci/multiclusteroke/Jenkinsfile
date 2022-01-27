@@ -544,6 +544,17 @@ pipeline {
                         runGinkgoRandomize('metrics/syscomponents')
                     }
                 }
+            }
+            post {
+                failure {
+                    script {
+                        dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-install")
+                    }
+                }
+            }
+        }    
+        stage('Upgrade Verrazzano') {
+            stages {
                 stage("upgrade-platform-operator") {
                     steps {
                         upgradePlatformOperator()
@@ -554,21 +565,11 @@ pipeline {
                         upgradeVerrazzano()
                     }
                 }
-            }
-            post {
-                failure {
-                    script {
-                        dumpK8sCluster("${WORKSPACE}/multicluster-acceptance-tests-cluster-install")
+                stage("verify upgrade") {
+                    steps {
+                        verifyUpgrade()
                     }
                 }
-            }
-        }
-
-    
-        /*stage('Verify Upgrade') {
-            // Rerun some stages to verify the upgrade
-            steps {
-                verifyUpgrade()
             }
             post {
                 failure {
@@ -577,7 +578,7 @@ pipeline {
                     }
                 }
             }
-        }*/
+        }
         
         
         /*stage('Acceptance Tests') {
