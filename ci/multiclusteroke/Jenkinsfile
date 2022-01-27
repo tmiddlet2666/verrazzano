@@ -4,7 +4,9 @@
 def DOCKER_IMAGE_TAG
 def SKIP_ACCEPTANCE_TESTS = false
 def EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS = false
-def availableRegions = [ "ap-tokyo-1"]
+def availableRegions = [ "ap-tokyo-1", "ap-chuncheon-1", "ap-hyderabad-1", "ap-melbourne-1", "ap-mumbai-1", "ap-osaka-1", "ap-seoul-1", "ap-sydney-1",
+                          "ca-montreal-1", "ca-toronto-1", "eu-amsterdam-1", "eu-frankfurt-1", "eu-zurich-1", "me-jeddah-1",
+                          "sa-saopaulo-1", "uk-london-1" ]
 def acmeEnvironments = [ "staging", "production" ]
 def zoneId = UUID.randomUUID().toString().substring(0,6).replace('-','')
 def dns_zone_ocid = 'dummy'
@@ -94,37 +96,7 @@ pipeline {
                 defaultValue: 'multi-cluster-vcn',
                 description: 'Name of the multi cluster vcn',
                 trim: true)
-        string (name: 'MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL',
-                defaultValue: '',
-                description: 'url of the multi cluster provisioning code repo',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_PROVISIONING_CODE_BRANCH',
-                defaultValue: '',
-                description: 'Name of the multi cluster provisioning code branch/tag or commit',
-                trim: true)
         booleanParam (description: 'Whether to create a mc cluster', name: 'CREATE_MULTI_CLUSTER_CLUSTER', defaultValue: false)
-        string (name: 'MULTI_CLUSTER_APISERVER_SUBNET_ID',
-                description: 'apiserver_subnet_id',
-                trim: true)
-        booleanParam (description: 'Whether the lb subnet is private', name: 'LB_SUBNET_PRIVATE', defaultValue: false)
-        string (name: 'MULTI_CLUSTER_LB_SUBNET_ID',
-                description: 'loadbalancer_subnet_id',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_WORKER_NODE_SUBNET_ID',
-                description: 'workernode_subnet_id',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_VCN_ID',
-                description: 'vcn_id',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_CLUSTER_NAME',
-                description: 'cluster_name',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_BASTION_NAME',
-                description: 'bastion_name',
-                trim: true)
-        string (name: 'MULTI_CLUSTER_LB_BASTION_NAME',
-                description: 'LB bastion_name',
-                trim: true)
         string (name: 'MULTI_CLUSTER_SEC_LIST_ID',
                 description: 'sec_list_id',
                 trim: true)
@@ -225,6 +197,8 @@ pipeline {
         // used by ToDoList example test
         WEBLOGIC_PSW = credentials('weblogic-example-domain-password')
         DATABASE_PSW = credentials('todo-mysql-password')
+
+        MC_OKE_VARS = credentials('mc-oke-vars')
     }
 
     stages {
@@ -312,6 +286,38 @@ pipeline {
                     currentBuild.description = SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + params.GIT_COMMIT_TO_USE
 
                     OKE_CLUSTER_PREFIX = sh(returnStdout: true, script: "${GO_REPO_PATH}/verrazzano/ci/scripts/derive_oke_cluster_name.sh").trim()
+                    MULTI_CLUSTER_APISERVER_SUBNET_ID_KEY = "MULTI_CLUSTER_APISERVER_SUBNET_ID_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_LB_SUBNET_ID_KEY = "MULTI_CLUSTER_LB_SUBNET_ID_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_KEY = "MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_VCN_ID_KEY = "MULTI_CLUSTER_VCN_ID_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_BASTION_NAME_KEY = "MULTI_CLUSTER_BASTION_NAME_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_LB_BASTION_NAME_KEY = "MULTI_CLUSTER_LB_BASTION_NAME_" + toUpperCase("${params.OKE_CLUSTER_REGION}")
+                    readProperties(file: "${MC_OKE_VARS}").each {key, value -> {
+                            switch(key) {
+                            case "${MULTI_CLUSTER_APISERVER_SUBNET_ID_KEY}":
+                                env["MULTI_CLUSTER_APISERVER_SUBNET_ID"] = value
+                                break
+                            case "${MULTI_CLUSTER_LB_SUBNET_ID_KEY}":
+                                env["MULTI_CLUSTER_LB_SUBNET_ID"] = value
+                                break
+                            case "${MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_KEY}":
+                                env["MULTI_CLUSTER_WORKER_NODE_SUBNET_ID"] = value
+                                break
+                            case "${MULTI_CLUSTER_VCN_ID_KEY}":
+                                env["MULTI_CLUSTER_VCN_ID"] = value
+                                break
+                            case "${MULTI_CLUSTER_BASTION_NAME_KEY}":
+                                env["MULTI_CLUSTER_BASTION_NAME"] = value
+                                break
+                            case "${MULTI_CLUSTER_LB_BASTION_NAME_KEY}":
+                                env["MULTI_CLUSTER_LB_BASTION_NAME"] = value
+                                break
+                            default:
+                                env[key] = value
+                                break
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -342,7 +348,7 @@ pipeline {
                             steps {
                                 script {
                                     sh """
-                                        git clone -b "${params.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${params.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
+                                        git clone -b "${env.MULTI_CLUSTER_PROVISIONING_CODE_BRANCH}" "${env.MULTI_CLUSTER_PROVISIONING_CODE_REPO_URL}"
                                     """
                                 }
                             }
@@ -376,10 +382,10 @@ pipeline {
                                 } 
                             }
                             environment {
-                                TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}"
-                                TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}"
-                                TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
-                                TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                                TF_VAR_apiserver_subnet_id="${MULTI_CLUSTER_APISERVER_SUBNET_ID}"
+                                TF_VAR_loadbalancer_subnet_id="${MULTI_CLUSTER_LB_SUBNET_ID}"
+                                TF_VAR_workernode_subnet_id="${MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}"
+                                TF_VAR_vcn_id="${MULTI_CLUSTER_VCN_ID}"
                                 TF_VAR_compartment_ocid="${TF_VAR_compartment_id}"
                                 TF_VAR_fingerprint="${TF_VAR_api_fingerprint}"
                                 TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}"
@@ -411,8 +417,8 @@ pipeline {
                         }
                         stage('Create Port forwarding session') {
                             environment {
-                                bastion_name="${params.MULTI_CLUSTER_BASTION_NAME}"
-                                vcn_id="${params.MULTI_CLUSTER_VCN_ID}"
+                                bastion_name="${MULTI_CLUSTER_BASTION_NAME}"
+                                vcn_id="${MULTI_CLUSTER_VCN_ID}"
                                 sec_list_id="${params.MULTI_CLUSTER_SEC_LIST_ID}"
                             }
                             steps {
@@ -505,7 +511,7 @@ pipeline {
                 stage('Create Port forwarding session for ingress') {
                     when { expression { return params.LB_SUBNET_PRIVATE == true } }
                     environment {
-                        bastion_name="${params.MULTI_CLUSTER_LB_BASTION_NAME}"
+                        bastion_name="${MULTI_CLUSTER_LB_BASTION_NAME}"
                     }
                     steps {
                         script {
@@ -749,7 +755,7 @@ pipeline {
                 for(int count=1; count<=clusterCount; count++) {
                     sh """
                         echo "deleting multi cluster cluster"
-                        TF_VAR_apiserver_subnet_id="${params.MULTI_CLUSTER_APISERVER_SUBNET_ID}" TF_VAR_loadbalancer_subnet_id="${params.MULTI_CLUSTER_LB_SUBNET_ID}" TF_VAR_workernode_subnet_id="${params.MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}" TF_VAR_vcn_id="${params.MULTI_CLUSTER_VCN_ID}" TF_VAR_compartment_ocid="${TF_VAR_compartment_id}" TF_VAR_fingerprint="${TF_VAR_api_fingerprint}" TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}" TF_VAR_user_ocid="${TF_VAR_user_id}" TF_VAR_private_key_path="${TF_VAR_api_private_key_path}" TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}" TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${OKE_CLUSTER_PREFIX}-$count
+                        TF_VAR_apiserver_subnet_id="${MULTI_CLUSTER_APISERVER_SUBNET_ID}" TF_VAR_loadbalancer_subnet_id="${MULTI_CLUSTER_LB_SUBNET_ID}" TF_VAR_workernode_subnet_id="${MULTI_CLUSTER_WORKER_NODE_SUBNET_ID}" TF_VAR_vcn_id="${MULTI_CLUSTER_VCN_ID}" TF_VAR_compartment_ocid="${TF_VAR_compartment_id}" TF_VAR_fingerprint="${TF_VAR_api_fingerprint}" TF_VAR_tenancy_ocid="${TF_VAR_tenancy_id}" TF_VAR_user_ocid="${TF_VAR_user_id}" TF_VAR_private_key_path="${TF_VAR_api_private_key_path}" TF_VAR_label_prefix="${OKE_CLUSTER_PREFIX}" TF_VAR_cluster_name=${OKE_CLUSTER_PREFIX}-$count TF_VAR_node_pool_name=${OKE_CLUSTER_PREFIX}-$count-np ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/delete-mc-cluster.sh ${WORKSPACE}/continuous-verrazzano-environment/deployments/cluster_deployment ${OKE_CLUSTER_PREFIX}-$count
                     """
                 }
 
@@ -1130,7 +1136,7 @@ def configureVerrazzanoInstallers(installResourceTemplate, configProcessorScript
                 # Copy the template config over for the mgd cluster profile configuration
                 cp $installResourceTemplate $destinationPath
                 VZ_ENVIRONMENT_NAME="${envName}" INSTALL_PROFILE=$installProfile $configProcessorScript $destinationPath $allArgs
-                sed -i.bak "s/OCI_LOAD_BALANCER_SUBNET/${params.MULTI_CLUSTER_LB_SUBNET_ID}/g" $destinationPath
+                sed -i.bak "s/OCI_LOAD_BALANCER_SUBNET/${MULTI_CLUSTER_LB_SUBNET_ID}/g" $destinationPath
             """
         }
     }
@@ -1564,7 +1570,7 @@ def createPFSessionLB() {
             sh """
                 echo "Creating LB port forwarding session"
                 mkdir -p "${KUBECONFIG_DIR}/$count"
-                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession-lb.sh $TF_VAR_compartment_id $bastion_name ${KUBECONFIG_DIR}/$count/kube_config /tmp/sshkey.pub /tmp/sshkey $port ${params.MULTI_CLUSTER_LB_SUBNET_ID}
+                ${WORKSPACE}/tests/e2e/config/scripts/terraform/cluster/create-pfsession-lb.sh $TF_VAR_compartment_id $bastion_name ${KUBECONFIG_DIR}/$count/kube_config /tmp/sshkey.pub /tmp/sshkey $port ${MULTI_CLUSTER_LB_SUBNET_ID}
             """
         }
     }
