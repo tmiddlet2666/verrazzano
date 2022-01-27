@@ -286,12 +286,12 @@ pipeline {
                     currentBuild.description = SHORT_COMMIT_HASH + " : " + env.GIT_COMMIT + " : " + params.GIT_COMMIT_TO_USE
 
                     OKE_CLUSTER_PREFIX = sh(returnStdout: true, script: "${GO_REPO_PATH}/verrazzano/ci/scripts/derive_oke_cluster_name.sh").trim()
-                    MULTI_CLUSTER_APISERVER_SUBNET_ID_KEY = "MULTI_CLUSTER_APISERVER_SUBNET_ID_" + "${params.OKE_CLUSTER_REGION}")
+                    MULTI_CLUSTER_APISERVER_SUBNET_ID_KEY = "MULTI_CLUSTER_APISERVER_SUBNET_ID_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
                     MULTI_CLUSTER_LB_SUBNET_ID_KEY = "MULTI_CLUSTER_LB_SUBNET_ID_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
-                    MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_KEY = "MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_" + "${params.OKE_CLUSTER_REGION}").toUpperCase()
-                    MULTI_CLUSTER_VCN_ID_KEY = "MULTI_CLUSTER_VCN_ID_" + "${params.OKE_CLUSTER_REGION}").toUpperCase()
-                    MULTI_CLUSTER_BASTION_NAME_KEY = "MULTI_CLUSTER_BASTION_NAME_" + "${params.OKE_CLUSTER_REGION}").toUpperCase()
-                    MULTI_CLUSTER_LB_BASTION_NAME_KEY = "MULTI_CLUSTER_LB_BASTION_NAME_" + "${params.OKE_CLUSTER_REGION}").toUpperCase()
+                    MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_KEY = "MULTI_CLUSTER_WORKER_NODE_SUBNET_ID_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
+                    MULTI_CLUSTER_VCN_ID_KEY = "MULTI_CLUSTER_VCN_ID_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
+                    MULTI_CLUSTER_BASTION_NAME_KEY = "MULTI_CLUSTER_BASTION_NAME_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
+                    MULTI_CLUSTER_LB_BASTION_NAME_KEY = "MULTI_CLUSTER_LB_BASTION_NAME_" + "${params.OKE_CLUSTER_REGION}".toUpperCase()
                     readProperties(file: "${MC_OKE_VARS}").each{key, value ->
                     switch(key) {
                         case "${MULTI_CLUSTER_APISERVER_SUBNET_ID_KEY}":
