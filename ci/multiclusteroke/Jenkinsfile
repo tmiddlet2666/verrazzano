@@ -313,7 +313,7 @@ pipeline {
                             env.MULTI_CLUSTER_LB_BASTION_NAME = value
                             break
                         default:
-                            env.key = value
+                            env."${key}" = value
                             break
                         }
                     }
