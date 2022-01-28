@@ -22,7 +22,16 @@ rm $KUBECONFIG
 #oci ce cluster delete --force --cluster-id=ocid1.cluster.oc1.ap-tokyo-1.aaaaaaaag22w3hm6dlk2sfrx5ubxwuxsgw5a2cis6ipor53dzcqugc7fhbaa
 
 
-#oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa3oj732nwy5fvg5xbumnnf7snd7ogof6l6t6e46kltcsf64krav4q
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaa56tzkeuofj5y66mhb2imaui5rq7v6zljivzedrdporbhiwxe55la
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaakprdyfqacjgtrckyzgss7jrzmn7m43u5d3fda44rixvkstttceda
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaao2uiozznrapc6alcvq6ocp53canyi64nglsdsnunyqli5hgox7hq
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaovfztz4wirqa3ek5vvasuro2ip6bz5gxblynbreihkjv3jlkcraa
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaoxp25uyuah6evgz4jrjmtn7vxdeagr7l2ydwwyuyezrmp7l7z24q
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaaoy7ft3htjeplfu7ptokgzrekq6teo32tjbuqi3z7ucktswijtyfa
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaap35dreduj3fai3btdgu6ro4sam6aqijy3kucl4txphnpf3fsdxga
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaap72z5s4miuuuy6x6ipzc5ntwbkytz3lp2mpuyodblbipkfwi2fma
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaapp2u7k5il6chmjsloahobmi3pzcxfgpl3s66gjh5coz4bkngpu2q
+oci lb load-balancer delete --force --load-balancer-id=ocid1.loadbalancer.oc1.ap-tokyo-1.aaaaaaaapzysvzevexg5nvxzwvdf7yo7zn4rdrol3lzln36o4ace5wymlppa
 oci ce cluster list -c $compartment_id
 #exit 0
 oci lb load-balancer list --compartment-id=$compartment_id
