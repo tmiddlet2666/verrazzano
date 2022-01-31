@@ -96,7 +96,8 @@ pipeline {
                 defaultValue: 'multi-cluster-vcn',
                 description: 'Name of the multi cluster vcn',
                 trim: true)
-        booleanParam (description: 'Whether to create a mc cluster', name: 'CREATE_MULTI_CLUSTER_CLUSTER', defaultValue: false)
+        booleanParam (description: 'Whether to create a mc cluster', name: 'CREATE_MULTI_CLUSTER_CLUSTER', defaultValue: true)
+        booleanParam (description: 'Whether lodbalanacer subnet is private', name: 'LB_SUBNET_PRIVATE', defaultValue: true)
         string (name: 'MULTI_CLUSTER_SEC_LIST_ID',
                 description: 'sec_list_id',
                 trim: true)
