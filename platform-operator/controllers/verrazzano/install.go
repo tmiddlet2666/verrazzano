@@ -53,8 +53,13 @@ func (r *Reconciler) reconcileComponents(_ context.Context, spiCtx spi.Component
 		case vzapi.Ready:
 			// For delete, we should look at the VZ resource delete timestamp and shift into Quiescing/Uninstalling state
 			compLog.Oncef("Component %s is ready", compName)
+			compLog.Oncef("AAMITRA here !!! Compa Name = %v ", compName)
 			if err := comp.Reconcile(spiCtx); err != nil {
 				return newRequeueWithDelay(), err
+			}
+
+			if err := r.updateComponentStatus(compContext, "Component is Ready", vzapi.InstallComplete); err != nil {
+				return ctrl.Result{Requeue: true}, err
 			}
 			continue
 		case vzapi.Disabled:

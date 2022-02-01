@@ -174,7 +174,7 @@ func (r *Reconciler) ProcReadyState(spiCtx spi.ComponentContext) (ctrl.Result, e
 	log := spiCtx.Log()
 	actualCR := spiCtx.ActualCR()
 
-	log.Debugf("Entering ProcReadyState")
+	log.Info("Entering ProcReadyState")
 	ctx := context.TODO()
 
 	// Check if Verrazzano resource is being deleted
@@ -563,7 +563,7 @@ func (r *Reconciler) updateStatus(log vzlog.VerrazzanoLogger, cr *installv1alpha
 
 	// Set the state of resource
 	cr.Status.State = checkCondtitionType(conditionType)
-	log.Debugf("Setting Verrazzano resource condition and state: %v/%v", condition.Type, cr.Status.State)
+	log.Infof("Setting Verrazzano resource condition and state: %v/%v", condition.Type, cr.Status.State)
 
 	// Update the status
 	return r.updateVerrazzanoStatus(log, cr)
@@ -605,6 +605,12 @@ func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, mes
 		cr.Status.Components[componentName] = componentStatus
 	}
 	if conditionType == installv1alpha1.InstallComplete {
+		// update version as well
+		bomSemVer, err := installv1alpha1.GetCurrentBomVersion()
+		if err != nil {
+			return err
+		}
+		cr.Status.Version = bomSemVer.ToString()
 		cr.Status.VerrazzanoInstance = vzinstance.GetInstanceInfo(compContext)
 	}
 	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
@@ -627,6 +633,7 @@ func appendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *installv
 }
 
 func checkCondtitionType(currentCondition installv1alpha1.ConditionType) installv1alpha1.StateType {
+	fmt.Printf("AAMITRA Condition = %v",currentCondition)
 	switch currentCondition {
 	case installv1alpha1.PreInstall:
 		return installv1alpha1.PreInstalling
