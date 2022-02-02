@@ -195,8 +195,10 @@
               "helmFullImageKey": "verrazzanoOperator.nodeExporterImage"
             },
             {
-              "image": "verrazzano-monitoring-operator",
-              "tag": "1.2.0-20211216213535-ce59978",
+              "image": "verrazzano-monitoring-operator-dev",
+              "registry": "iad.ocir.io/odsbuilddev",
+              "repository": "aamitra/dev",
+              "tag": "0.0.1",
               "helmFullImageKey": "monitoringOperator.imageName",
               "helmTagKey": "monitoringOperator.imageVersion"
             },
