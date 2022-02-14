@@ -5,6 +5,9 @@ package verrazzano
 
 import (
 	"context"
+	"strings"
+
+	vzlog "github.com/verrazzano/verrazzano/pkg/log/vzlog"
 
 	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
 	"github.com/verrazzano/verrazzano/pkg/semver"
@@ -13,7 +16,6 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/registry"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 
-	"go.uber.org/zap"
 	ctrl "sigs.k8s.io/controller-runtime"
 )
 
@@ -25,96 +27,97 @@ import (
 //    where update status fails, in which case we exit the function and requeue
 //    immediately.
 func (r *Reconciler) reconcileComponents(_ context.Context, spiCtx spi.ComponentContext) (ctrl.Result, error) {
-	log := spiCtx.Log()
 	cr := spiCtx.ActualCR()
-	log.Debug("Reconciling components for installation")
+	spiCtx.Log().Progress("Reconciling components for Verrazzano installation")
 
 	var requeue bool
 
 	// Loop through all of the Verrazzano components and upgrade each one sequentially for now; will parallelize later
 	for _, comp := range registry.GetComponents() {
 		compName := comp.Name()
-		compContext := spiCtx.For(compName).Operation(vzconst.InstallOperation)
-		log.Debugf("Processing install for %s", compName)
+		compContext := spiCtx.Init(compName).Operation(vzconst.InstallOperation)
+		compLog := compContext.Log()
+
+		compLog.Oncef("Component %s is being reconciled", compName)
 
 		if !comp.IsOperatorInstallSupported() {
-			log.Debugf("Component based install not supported for %s", compName)
+			compLog.Debugf("Component based install not supported for %s", compName)
 			continue
 		}
 		componentStatus, ok := cr.Status.Components[comp.Name()]
 		if !ok {
-			log.Debugf("Did not find status details in map for component %s", comp.Name())
+			compLog.Debugf("Did not find status details in map for component %s", comp.Name())
 			continue
 		}
 		switch componentStatus.State {
-		case vzapi.Ready:
+		case vzapi.CompStateReady:
 			// For delete, we should look at the VZ resource delete timestamp and shift into Quiescing/Uninstalling state
-			log.Debugf("Component %s is ready", compName)
+			compLog.Oncef("Component %s is ready", compName)
 			if err := comp.Reconcile(spiCtx); err != nil {
 				return newRequeueWithDelay(), err
 			}
 			continue
-		case vzapi.Disabled:
+		case vzapi.CompStateDisabled:
 			if !comp.IsEnabled(compContext) {
-				log.Debugf("Component %s is disabled, skipping install", compName)
+				compLog.Oncef("Component %s is disabled, skipping install", compName)
 				// User has disabled component in Verrazzano CR, don't install
 				continue
 			}
-			if !isVersionOk(log, comp.GetMinVerrazzanoVersion(), cr.Status.Version) {
+			if !isVersionOk(compLog, comp.GetMinVerrazzanoVersion(), cr.Status.Version) {
 				// User needs to do upgrade before this component can be installed
-				log.Debugf("Component %s cannot be installed until Verrazzano is upgrade to at least version %s",
+				compLog.Progressf("Component %s cannot be installed until Verrazzano is upgraded to at least version %s",
 					comp.Name(), comp.GetMinVerrazzanoVersion())
 				continue
 			}
-			if err := r.updateComponentStatus(compContext, "PreInstall started", vzapi.PreInstall); err != nil {
+			if err := r.updateComponentStatus(compContext, "PreInstall started", vzapi.CondPreInstall); err != nil {
 				return ctrl.Result{Requeue: true}, err
 			}
 			requeue = true
 
-		case vzapi.PreInstalling:
-			log.Debugf("PreInstalling component %s", comp.Name())
+		case vzapi.CompStatePreInstalling:
 			if !registry.ComponentDependenciesMet(comp, compContext) {
-				log.Debugf("Dependencies not met for %s: %v", comp.Name(), comp.GetDependencies())
+				compLog.Progressf("Component %s waiting for dependencies %v to be ready", comp.Name(), comp.GetDependencies())
 				requeue = true
 				continue
 			}
+			compLog.Progressf("Component %s pre-install is running ", compName)
 			if err := comp.PreInstall(compContext); err != nil {
-				handleError(log, err)
+				handleError(compLog, err)
 				requeue = true
 				continue
 			}
 			// If component is not installed,install it
+			compLog.Oncef("Component %s install started ", compName)
 			if err := comp.Install(compContext); err != nil {
-				handleError(log, err)
+				handleError(compLog, err)
 				requeue = true
 				continue
 			}
-			if err := r.updateComponentStatus(compContext, "Install started", vzapi.InstallStarted); err != nil {
+			if err := r.updateComponentStatus(compContext, "Install started", vzapi.CondInstallStarted); err != nil {
 				return ctrl.Result{Requeue: true}, err
 			}
 			// Install started requeue to check status
 			requeue = true
-		case vzapi.Installing:
-			log.Debugf("Checking if %s is ready", compName)
+		case vzapi.CompStateInstalling:
 			// For delete, we should look at the VZ resource delete timestamp and shift into Quiescing/Uninstalling state
 			// If component is enabled -- need to replicate scripts' config merging logic here
 			// If component is in deployed state, continue
 			if comp.IsReady(compContext) {
-				log.Debugf("Component %s is ready", compName)
-
+				compLog.Progressf("Component %s post-install is running ", compName)
 				if err := comp.PostInstall(compContext); err != nil {
-					handleError(log, err)
+					handleError(compLog, err)
 					requeue = true
 					continue
 				}
-				log.Infof("Successfully installed component %s", comp.Name())
-				if err := r.updateComponentStatus(compContext, "Install complete", vzapi.InstallComplete); err != nil {
+				compLog.Oncef("Component %s successfully installed", comp.Name())
+				if err := r.updateComponentStatus(compContext, "Install complete", vzapi.CondInstallComplete); err != nil {
 					return ctrl.Result{Requeue: true}, err
 				}
 				// Don't requeue because of this component, it is done install
 				continue
 			}
 			// Install of this component is not done, requeue to check status
+			compLog.Progressf("Component %s waiting to finish installing", compName)
 			requeue = true
 		}
 	}
@@ -126,18 +129,18 @@ func (r *Reconciler) reconcileComponents(_ context.Context, spiCtx spi.Component
 
 // Check if the component can be installed in this Verrazzano installation based on version
 // Components might require a specific a minimum version of Verrazzano > 1.0.0
-func isVersionOk(log *zap.SugaredLogger, compVersion string, vzVersion string) bool {
+func isVersionOk(log vzlog.VerrazzanoLogger, compVersion string, vzVersion string) bool {
 	if len(vzVersion) == 0 {
 		return true
 	}
 	vzSemver, err := semver.NewSemVersion(vzVersion)
 	if err != nil {
-		log.Errorf("Unexpected error getting semver from status")
+		log.Errorf("Failed getting semver from status: %v", err)
 		return false
 	}
 	compSemver, err := semver.NewSemVersion(compVersion)
 	if err != nil {
-		log.Errorf("Unexpected error getting semver from component")
+		log.Errorf("Failed creating new semver for component: %v", err)
 		return false
 	}
 
@@ -146,13 +149,17 @@ func isVersionOk(log *zap.SugaredLogger, compVersion string, vzVersion string) b
 }
 
 // handleError - detects if a an error is a RetryableError; if it is, logs it appropriately and
-func handleError(log *zap.SugaredLogger, err error) {
+func handleError(log vzlog.VerrazzanoLogger, err error) {
 	switch actualErr := err.(type) {
 	case ctrlerrors.RetryableError:
 		if actualErr.HasCause() {
-			log.Errorf("Retryable error occurred, %s", actualErr.Error())
-		} else {
-			log.Debugf("Retryable error returned: %s", actualErr.Error())
+			cause := actualErr.Cause
+			if ctrlerrors.IsUpdateConflict(cause) ||
+				strings.Contains(cause.Error(), "failed calling webhook") {
+				log.Debugf("Failed during install: %v", cause)
+				return
+			}
+			log.Errorf("Failed during install: %v", actualErr.Error())
 		}
 	default:
 		log.Errorf("Unexpected error occurred during install/upgrade: %s", actualErr.Error())

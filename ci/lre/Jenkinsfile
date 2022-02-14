@@ -17,6 +17,7 @@ pipeline {
     }
 
     environment {
+        TEST_ENV = "LRE"
         DOCKER_CREDS = credentials('github-packages-credentials-rw')
         DOCKER_EMAIL = credentials('github-packages-email')
         DOCKER_REPO = 'ghcr.io'
@@ -73,21 +74,6 @@ pipeline {
                             sleep(30)
                             sh """
                     echo "${DOCKER_CREDS_PSW}" | docker login ${env.DOCKER_REPO} -u ${DOCKER_CREDS_USR} --password-stdin
-                            """
-                        }
-                    }
-                }
-                script {
-                    try {
-                        sh """
-                    echo "${OCR_CREDS_PSW}" | docker login -u ${OCR_CREDS_USR} ${OCR_REPO} --password-stdin
-                        """
-                    } catch(error) {
-                        echo "OCR docker login failed, retrying after sleep"
-                        retry(4) {
-                            sleep(30)
-                            sh """
-                    echo "${OCR_CREDS_PSW}" | docker login -u ${OCR_CREDS_USR} ${OCR_REPO} --password-stdin
                             """
                         }
                     }
@@ -244,14 +230,16 @@ pipeline {
                         runGinkgo('examples/helidonconfig')
                     }
                 }
-                stage('examples socks') {
-                    steps {
-                        runGinkgo('examples/socks')
-                    }
-                }
                 stage('examples springboot') {
                     steps {
                         runGinkgo('examples/springboot')
+                    }
+                }
+		        stage('examples socks') {
+                    steps {
+                        runSocksVariant('helidon')
+                        runSocksVariant('micronaut')
+                        runSocksVariant('spring')
                     }
                 }
                 stage('examples todo') {
@@ -291,6 +279,15 @@ def runGinkgo(testSuitePath) {
                 sleep 60
             """
         }
+    }
+}
+
+def runSocksVariant(variant) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            SOCKS_SHOP_VARIANT=${variant} ginkgo -v --keep-going --no-color examples/socks/...
+        """
     }
 }
 

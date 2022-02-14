@@ -28,10 +28,10 @@ spec:
       elasticsearchURL: https://myes.mycorp.com
       elasticsearchSecret: mysecret
       extraVolumeMounts:
-      - source: /u01/datarw
-        readOnly: false
-      - source: /u01/dataro
-        readOnly: true
+        - source: /u01/datarw
+          readOnly: false
+        - source: /u01/dataro
+          readOnly: true
     grafana:
       enabled: true
     ingress:
@@ -53,5 +53,8 @@ spec:
       enabled: true
     verrazzano:
       enabled: true
+      installArgs:
+        - name: api.replicas
+          value: "2"
     weblogicOperator:
       enabled: true

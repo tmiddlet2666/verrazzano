@@ -119,7 +119,6 @@ pipeline {
         TF_VAR_ssh_public_key_path = credentials('oci-tf-pub-ssh-key')
         TF_VAR_compartment_id = credentials('oci-tiburon-dev-compartment-ocid')
 
-
         OCI_CLI_TENANCY = credentials('oci-tenancy')
         OCI_CLI_USER = credentials('oci-user-ocid')
         OCI_CLI_FINGERPRINT = credentials('oci-api-key-fingerprint')
@@ -176,7 +175,6 @@ pipeline {
         PROMETHEUS_GW_URL = credentials('prometheus-dev-url')
         PROMETHEUS_CREDENTIALS = credentials('prometheus-credentials')
         TEST_ENV_LABEL = "${params.TEST_ENV}"
-        K8S_VERSION_LABEL = "${params.OKE_CLUSTER_VERSION}"
     }
 
     stages {
@@ -229,6 +227,8 @@ pipeline {
                         // derive the prefix for the OKE cluster
                         OKE_CLUSTER_PREFIX = sh(returnStdout: true, script: "${WORKSPACE}/ci/scripts/derive_oke_cluster_name.sh").trim()
                     }
+                    // Derive Kubernetes version, which is used to set the value for a label in the metrics emitted by the tests
+                    env.K8S_VERSION_LABEL = sh(returnStdout: true, script: "${WORKSPACE}/ci/scripts/derive_kubernetes_version.sh ${params.OKE_CLUSTER_VERSION}").trim()
                 }
             }
         }
@@ -483,7 +483,8 @@ pipeline {
                 SEARCH_PASSWORD = "${PROMETHEUS_CREDENTIALS_PSW}"
                 SEARCH_USERNAME = "${PROMETHEUS_CREDENTIALS_USR}"
             }
-            parallel {
+
+            stages {
                 stage('verify-install') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -494,115 +495,121 @@ pipeline {
                         }
                     }
                 }
-                stage('metrics') {
-                    steps {
-                        script {
-                            runGinkgo('metrics/syscomponents')
+
+                stage('run-acceptance-tests') {
+                    parallel {
+                        stage('metrics') {
+                            steps {
+                                script {
+                                    runGinkgo('metrics/syscomponents')
+                                }
+                            }
+                        }
+                        stage('hello-helidon') {
+                            environment {
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-hello-helidon"
+                            }
+                            steps {
+                                script {
+                                    runGinkgoFailFast('examples/helidon')
+                                }
+                            }
+                        }
+                        stage('restapi') {
+                            steps {
+                                script {
+                                    runGinkgo('verify-infra/restapi')
+                                }
+                            }
+                        }
+                        stage('vmi') {
+                            steps {
+                                script {
+                                    runGinkgo('verify-infra/vmi')
+                                }
+                            }
+                        }
+                        stage('oam') {
+                            steps {
+                                script {
+                                    runGinkgo('verify-infra/oam')
+                                }
+                            }
+                        }
+                        stage('lift-and-shift') {
+                            environment {
+                                DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/lift-and-shift-test.log"
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-lift-and-shift"
+                            }
+                            steps {
+                                script {
+                                    runGinkgoFailFast('examples/todo')
+                                }
+                            }
+                        }
+                        stage('istio authorization policy') {
+                            environment {
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-istio-auth-policy"
+                            }
+                            steps {
+                                runGinkgo('istio/authz')
+                            }
+                        }
+                        stage('security role based access') {
+                            environment {
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-rbac"
+                            }
+                            steps {
+                                runGinkgo('security/rbac')
+                            }
+                        }
+                        stage('bobs-books') {
+                            environment {
+                                DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/bobs-book-test.log"
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-bobs-books-dump"
+                            }
+                            steps {
+                                script {
+                                    runGinkgoFailFast('examples/bobsbooks')
+                                }
+                                sh """
+                                    ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh bob >> ${IMG_LIST_FILE}
+                                    ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh bobby >> ${IMG_LIST_FILE}
+                                    ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh robert >> ${IMG_LIST_FILE}
+                                """
+                            }
+                            post {
+                                always {
+                                    dumpBobObjects()
+                                    dumpBobLogs()
+                                }
+                            }
+                        }
+                        stage('socks') {
+                            environment {
+                                DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/socks-test.log"
+                                DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-socks"
+                            }
+                            steps {
+                                script {
+                                    runGinkgo('examples/socks')
+                                }
+                                sh """
+                                    ${WORKSPACE}/tests/e2e/config/scripts/create_verrazzano_image_list.sh ${IMG_LIST_FILE}
+                                    # make necessary substitutions
+                                    sed -i 's/example-hello-world-helidon/example-helidon-greet-app-v1/' ${IMG_LIST_FILE}
+                                    sed -i 's/example-bobs-books-order-manager/example-bobs-bookstore-order-manager/' ${IMG_LIST_FILE}
+                                """
+                           }
+                           post {
+                              always {
+                                    dumpSockObjects()
+                                    dumpSockLogs()
+                              }
+                           }
                         }
                     }
-                }
-                stage('hello-helidon') {
-                    environment {
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-hello-helidon"
-                    }
-                    steps {
-                        script {
-                            runGinkgoFailFast('examples/helidon')
-                        }
-                    }
-                }
-                stage('restapi') {
-                    steps {
-                        script {
-                            runGinkgo('verify-infra/restapi')
-                        }
-                    }
-                }
-                stage('vmi') {
-                    steps {
-                        script {
-                            runGinkgo('verify-infra/vmi')
-                        }
-                    }
-                }
-                stage('oam') {
-                    steps {
-                        script {
-                            runGinkgo('verify-infra/oam')
-                        }
-                    }
-                }
-                stage('lift-and-shift') {
-                    environment {
-                        DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/lift-and-shift-test.log"
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-lift-and-shift"
-                    }
-                    steps {
-                        script {
-                            runGinkgoFailFast('examples/todo')
-                        }
-                    }
-                }
-                stage('istio authorization policy') {
-                    environment {
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-istio-auth-policy"
-                    }
-                    steps {
-                        runGinkgo('istio/authz')
-                    }
-                }
-                stage('security role based access') {
-                    environment {
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-rbac"
-                    }
-                    steps {
-                        runGinkgo('security/rbac')
-                    }
-                }
-                stage('bobs-books') {
-                    environment {
-                        DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/bobs-book-test.log"
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-bobs-books-dump"
-                    }
-                    steps {
-                        script {
-                            runGinkgoFailFast('examples/bobsbooks')
-                        }
-                        sh """
-                            ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh bob >> ${IMG_LIST_FILE}
-                            ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh bobby >> ${IMG_LIST_FILE}
-                            ${WORKSPACE}/tests/e2e/config/scripts/get_verrazzano_image.sh robert >> ${IMG_LIST_FILE}
-                        """
-                    }
-                    post {
-                        always {
-                            dumpBobObjects()
-                            dumpBobLogs()
-                        }
-                    }
-                }
-                stage('socks') {
-                    environment {
-                        DIAGNOSTIC_LOG="${WORKSPACE}/platform-operator/scripts/install/build/logs/socks-test.log"
-                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/examples-socks"
-                    }
-                    steps {
-                        script {
-                            runGinkgo('examples/socks')
-                        }
-                        sh """
-                            ${WORKSPACE}/tests/e2e/config/scripts/create_verrazzano_image_list.sh ${IMG_LIST_FILE}
-                            # make necessary substitutions
-                            sed -i 's/example-hello-world-helidon/example-helidon-greet-app-v1/' ${IMG_LIST_FILE}
-                            sed -i 's/example-bobs-books-order-manager/example-bobs-bookstore-order-manager/' ${IMG_LIST_FILE}
-                        """
-                   }
-                    post {
-                        always {
-                            dumpSockObjects()
-                            dumpSockLogs()
-                        }
-                    }
+
                 }
             }
         }

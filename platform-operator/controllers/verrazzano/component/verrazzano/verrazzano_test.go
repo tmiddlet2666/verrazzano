@@ -18,8 +18,9 @@ import (
 	"text/template"
 	"time"
 
+	vzlog "github.com/verrazzano/verrazzano/pkg/log/vzlog"
+
 	"github.com/stretchr/testify/assert"
-	"go.uber.org/zap"
 	istioclinet "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istioclisec "istio.io/client-go/pkg/apis/security/v1beta1"
 	appsv1 "k8s.io/api/apps/v1"
@@ -89,8 +90,7 @@ func TestFixupFluentdDaemonset(t *testing.T) {
 	appsv1.AddToScheme(scheme)
 	corev1.AddToScheme(scheme)
 	client := fake.NewFakeClientWithScheme(scheme)
-	logger, _ := zap.NewProduction()
-	log := logger.Sugar()
+	log := vzlog.DefaultLogger()
 
 	ns := corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
@@ -138,7 +138,7 @@ func TestFixupFluentdDaemonset(t *testing.T) {
 
 	// should return error that fluentd container is missing
 	err = fixupFluentdDaemonset(log, client, defNs)
-	assert.EqualError(err, "fluentd container not found in fluentd daemonset: fluentd")
+	assert.Contains(err.Error(), "fluentd container not found in fluentd daemonset: fluentd")
 
 	daemonSet.Spec.Template.Spec.Containers[0].Name = "fluentd"
 	err = client.Update(context.TODO(), &daemonSet)
@@ -554,6 +554,7 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 			description:  "Test basic managed-cluster no user overrides",
 			actualCR:     vzapi.Verrazzano{Spec: vzapi.VerrazzanoSpec{Profile: "managed-cluster"}},
 			expectedYAML: "testdata/vzOverridesManagedClusterDefault.yaml",
+			numKeyValues: 3,
 		},
 		{
 			name:        "DevWithOverrides",
@@ -768,8 +769,8 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 			//t.Logf("Num kvs: %d", actualNumKvs)
 			expectedNumKvs := test.numKeyValues
 			if expectedNumKvs == 0 {
-				// default is 3, 1 file override + 2 custom image overrides
-				expectedNumKvs = 3
+				// default is 4, 2 file override + 2 custom image overrides
+				expectedNumKvs = 4
 			}
 			assert.Equal(expectedNumKvs, actualNumKvs)
 			// Check Temp file
