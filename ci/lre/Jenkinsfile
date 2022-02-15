@@ -247,6 +247,16 @@ pipeline {
                         runGinkgo('examples/todo')
                     }
                 }
+                stage('istio authorization policy') {
+                    steps {
+                        runGinkgo('istio/authz')
+                    }
+                }
+                stage('security role based access') {
+                    steps {
+                        runGinkgo('security/rbac')
+                    }
+                }
             }
             post {
                 always {
