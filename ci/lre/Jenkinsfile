@@ -298,7 +298,7 @@ pipeline {
                     steps {
                         runGinkgo('metricsbinding')
                     }
-                }`
+                }
             }
             post {
                 always {
