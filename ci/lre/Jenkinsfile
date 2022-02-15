@@ -207,9 +207,9 @@ pipeline {
 
         stage('Run Tests') {
             parallel {
-                stage('helidon workload') {
+                stage('weblogic workload') {
                     steps {
-                        runGinkgo('loggingtrait/helidonworkload')
+                        runGinkgo('loggingtrait/weblogicworkload')
                     }
                 }
             }
