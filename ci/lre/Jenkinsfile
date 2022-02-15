@@ -207,6 +207,73 @@ pipeline {
 
         stage('Run Tests') {
             parallel {
+                stage('verify-infra oam') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/oam')
+                    }
+                }
+                stage('verify-infra restapi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/restapi')
+                    }
+                }
+                stage('verify-infra vmi') {
+                    steps {
+                        runGinkgoRandomize('verify-infra/vmi')
+                    }
+                }
+                stage('examples bobs books') {
+                    steps {
+                        runGinkgo('examples/bobsbooks')
+                    }
+                }
+                stage('examples helidon') {
+                    steps {
+                        runGinkgo('examples/helidon')
+                    }
+                }
+                stage('examples helidon config') {
+                    steps {
+                        runGinkgo('examples/helidonconfig')
+                    }
+                }
+                stage('examples springboot') {
+                    steps {
+                        runGinkgo('examples/springboot')
+                    }
+                }
+		        stage('examples socks') {
+                    steps {
+                        runSocksVariant('helidon')
+                        runSocksVariant('micronaut')
+                        runSocksVariant('spring')
+                    }
+                }
+                stage('examples todo') {
+                    steps {
+                        runGinkgo('examples/todo')
+                    }
+                }
+                stage('istio authorization policy') {
+                    steps {
+                        runGinkgo('istio/authz')
+                    }
+                }
+                stage('security role based access') {
+                    steps {
+                        runGinkgo('security/rbac')
+                    }
+                }
+                stage('system logging') {
+                    steps {
+                        runGinkgo('logging/system')
+                    }
+                }
+                stage('examples logging helidon') {
+                    steps {
+                        runGinkgo('logging/helidon')
+                    }
+                }
                 stage('examples coherence workload') {
                     steps {
                         runGinkgo('loggingtrait/coherenceworkload')
