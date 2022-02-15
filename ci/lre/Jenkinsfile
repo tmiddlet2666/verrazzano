@@ -257,6 +257,16 @@ pipeline {
                         runGinkgo('security/rbac')
                     }
                 }
+                stage('system logging') {
+                    steps {
+                        runGinkgo('logging/system')
+                    }
+                }
+                stage('examples logging helidon') {
+                    steps {
+                        runGinkgo('logging/helidon')
+                    }
+                }
             }
             post {
                 always {
