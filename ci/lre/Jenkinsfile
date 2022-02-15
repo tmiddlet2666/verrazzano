@@ -267,6 +267,21 @@ pipeline {
                         runGinkgo('logging/helidon')
                     }
                 }
+                stage('logging trait WebLogic workload') {
+                    steps {
+                        runGinkgo('loggingtrait/weblogicworkload')
+                    }
+                }
+                stage('logging trait Helidon workload') {
+                    steps {
+                        runGinkgo('loggingtrait/helidonworkload')
+                    }
+                }
+                stage('logging trait Coherence workload') {
+                    steps {
+                        runGinkgo('loggingtrait/coherenceworkload')
+                    }
+                }`
             }
             post {
                 always {
