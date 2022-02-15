@@ -1,6 +1,13 @@
 // Copyright (c) 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
+//properties([[$class: 'ThrottleJobProperty', categories: [], limitOneJobWithMatchingParams: true, maxConcurrentPerNode: 1,
+//                    maxConcurrentTotal: 1, paramsToUseForLimit: '', throttleEnabled: true, throttleOption: 'project'],
+//               [$class: 'BuildDiscarderProperty',
+//                strategy: [$class: 'LogRotator', numToKeepStr: '10']],
+//                pipelineTriggers([cron('H/5 * * * *')]),
+//           ])
+
 pipeline {
     options {
         skipDefaultCheckout true
@@ -280,6 +287,16 @@ pipeline {
                 stage('logging trait Coherence workload') {
                     steps {
                         runGinkgo('loggingtrait/coherenceworkload')
+                    }
+                }
+                stage('k8s deployment workload metrics') {
+                    steps {
+                        runGinkgo('metrics/deploymetrics')
+                    }
+                }
+                stage('poko metricsbinding') {
+                    steps {
+                        runGinkgo('metricsbinding')
                     }
                 }`
             }
