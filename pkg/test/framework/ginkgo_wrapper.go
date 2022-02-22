@@ -80,7 +80,7 @@ func (t *TestFramework) It(text string, args ...interface{}) bool {
 		ginkgo.Fail("Unsupported body type - expected function")
 	}
 	f := func() {
-		metrics.Emit(t.Metrics.With(metrics.Status, metrics.Started)) // Starting point metric
+		metrics.Emit(t.Metrics) // Starting point metric
 		reflect.ValueOf(body).Call([]reflect.Value{})
 	}
 
@@ -99,7 +99,7 @@ func (t *TestFramework) Describe(text string, args ...interface{}) bool {
 		ginkgo.Fail("Unsupported body type - expected function")
 	}
 	f := func() {
-		metrics.Emit(t.Metrics.With(metrics.Status, metrics.Started))
+		metrics.Emit(t.Metrics)
 		reflect.ValueOf(body).Call([]reflect.Value{})
 		metrics.Emit(t.Metrics.With(metrics.Duration, metrics.DurationMillis()))
 	}
@@ -135,7 +135,7 @@ func (t *TestFramework) BeforeSuite(body func()) bool {
 	}
 
 	f := func() {
-		metrics.Emit(t.Metrics.With(metrics.Status, metrics.Started))
+		metrics.Emit(t.Metrics)
 		reflect.ValueOf(body).Call([]reflect.Value{})
 	}
 	return ginkgo.BeforeSuite(f)
