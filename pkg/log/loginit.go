@@ -4,6 +4,8 @@
 package log
 
 import (
+	"time"
+
 	vzctrl "github.com/verrazzano/verrazzano/pkg/controller"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -11,7 +13,6 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime/pkg/log"
 	kzap "sigs.k8s.io/controller-runtime/pkg/log/zap"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"time"
 )
 
 const timeFormat = "2006-01-02T15:04:05.000Z"
@@ -27,7 +28,7 @@ func InitLogs(opts kzap.Options) {
 	if opts.Level != nil {
 		config.Level = opts.Level.(zap.AtomicLevel)
 	} else {
-		config.Level.SetLevel(zapcore.InfoLevel)
+		config.Level.SetLevel(zapcore.DebugLevel)
 	}
 	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(timeFormat)
 	config.EncoderConfig.TimeKey = "@timestamp"
@@ -95,7 +96,7 @@ func IgnoreConflictWithLog(message string, err error, log *zap.SugaredLogger) (r
 // BuildZapLogger initializes zap logger
 func BuildZapLogger(callerSkip int) (*zap.SugaredLogger, error) {
 	config := zap.NewProductionConfig()
-	config.Level.SetLevel(zapcore.InfoLevel)
+	config.Level.SetLevel(zapcore.DebugLevel)
 
 	config.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(timeFormat)
 	config.EncoderConfig.TimeKey = "@timestamp"
