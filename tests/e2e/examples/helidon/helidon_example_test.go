@@ -5,7 +5,6 @@ package helidon
 
 import (
 	"fmt"
-	"github.com/hashicorp/go-retryablehttp"
 	"io/ioutil"
 	"net/http"
 	"strings"
@@ -118,7 +117,7 @@ var _ = t.Describe("Hello Helidon OAM App test", Label("f:app-lcm.oam",
 		})
 	})
 
-	t.Context("Logging.", Label("f:observability.logging.es"), FlakeAttempts(5), func() {
+	t.Context("Logging.", Label("f:observability.logging.es"), FlakeAttempts(2), func() {
 
 		indexName := "verrazzano-namespace-" + namespace
 
@@ -128,7 +127,7 @@ var _ = t.Describe("Hello Helidon OAM App test", Label("f:app-lcm.oam",
 		t.It("Verify Elasticsearch index exists", func() {
 			Eventually(func() bool {
 				return pkg.LogIndexFound(indexName)
-			}, longWaitTimeout, longPollingInterval).Should(BeTrue(), "Expected to find log index for hello helidon")
+			}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "Expected to find log index for hello helidon")
 		})
 
 		// GIVEN an application with logging enabled
