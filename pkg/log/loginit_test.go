@@ -5,10 +5,11 @@ package log
 
 import (
 	"fmt"
+	"testing"
+
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"sigs.k8s.io/controller-runtime/pkg/reconcile"
-	"testing"
 
 	kzap "sigs.k8s.io/controller-runtime/pkg/log/zap"
 
@@ -27,7 +28,7 @@ func TestInitLogsDefaultInfo(t *testing.T) {
 	msg = "ErrorLevel is enabled"
 	assert.NotNil(t, zap.L().Check(zapcore.ErrorLevel, msg), msg)
 	msg = "DebugLevel is disabled"
-	assert.Nil(t, zap.L().Check(zapcore.DebugLevel, msg), msg)
+	assert.NotNil(t, zap.L().Check(zapcore.DebugLevel, msg), msg)
 }
 
 func TestInitLogsNonDefaultInfo(t *testing.T) {
