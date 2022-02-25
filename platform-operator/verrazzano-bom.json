@@ -132,20 +132,12 @@
             {
               "image": "rancher-agent",
               "tag": "v2.5.9-20211209021347-2e57ce2a4"
-            },
-            {
-              "image": "rancher-operator",
-              "tag": "20220222093330-0467fe8"
-            },
-            {
-              "image": "rancher-webhook",
-              "tag": "20220222094126-c3777cc"
             }
           ]
         },
         {
-          "registry": "docker.io",
-          "repository": "rancher",
+          "registry": "ghcr.io",
+          "repository": "verrazzano/rancher",
           "name": "additional-rancher",
           "images": [
             {
@@ -155,6 +147,10 @@
             {
               "image": "kubectl",
               "tag": "v1.20.2"
+            },
+            {
+              "image": "rancher-webhook",
+              "tag": "v0.1.2"
             },
             {
               "image": "fleet-agent",
@@ -167,6 +163,10 @@
             {
               "image": "gitjob",
               "tag": "v0.1.15"
+            },
+            {
+              "image": "rancher-operator",
+              "tag": "v0.1.4"
             },
             {
               "image": "local-path-provisioner",
