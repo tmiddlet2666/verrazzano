@@ -5,8 +5,6 @@ package rancher
 
 import (
 	"errors"
-	"fmt"
-	"os"
 	"path/filepath"
 	"strconv"
 
@@ -76,21 +74,10 @@ func AppendOverrides(ctx spi.ComponentContext, _ string, _ string, _ string, kvs
 
 //appendRegistryOverrides appends overrides if a custom registry is being used
 func appendRegistryOverrides(kvs []bom.KeyValue) []bom.KeyValue {
-	// If using external registry, add registry overrides to Rancher
-	registry := os.Getenv(constants.RegistryOverrideEnvVar)
-	if registry != "" {
-		imageRepo := os.Getenv(constants.ImageRepoOverrideEnvVar)
-		var rancherRegistry string
-		if imageRepo == "" {
-			rancherRegistry = registry
-		} else {
-			rancherRegistry = fmt.Sprintf("%s/%s", registry, imageRepo)
-		}
-		kvs = append(kvs, bom.KeyValue{
-			Key:   systemDefaultRegistryKey,
-			Value: rancherRegistry,
-		})
-	}
+	kvs = append(kvs, bom.KeyValue{
+		Key:   systemDefaultRegistryKey,
+		Value: "ghcr.io/verrazzano/rancher",
+	})
 	return kvs
 }
 
