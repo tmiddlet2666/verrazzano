@@ -74,6 +74,10 @@ spec:
             - name: IMAGE_PULL_SECRETS
               value: {{ join "," .Values.global.imagePullSecrets }}
             {{- end }}
+            {{- if .Values.global.rancherSystemDefaultRegistry }}
+            - name: RANCHER_SYSTEM_DEFAULT_REGISTRY
+              value: {{ .Values.global.rancherSystemDefaultRegistry }}
+            {{- end }}
           volumeMounts:
             - name: webhook-certs
               mountPath: /etc/webhook/certs

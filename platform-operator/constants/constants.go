@@ -145,3 +145,6 @@ const InitializeOperation = "initialize"
 
 // ReconcileLoopRequeueInterval is the interval before reconcile gets called again.
 const ReconcileLoopRequeueInterval = 3 * time.Minute
+
+// RancherSystemDefaultRegistryEnvVar is the environment variable name used to set the default image repository for rancher
+const RancherSystemDefaultRegistryEnvVar = "RANCHER_SYSTEM_DEFAULT_REGISTRY"

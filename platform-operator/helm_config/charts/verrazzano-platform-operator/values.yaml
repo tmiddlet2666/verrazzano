@@ -5,6 +5,7 @@ namespace: verrazzano-install
 
 global:
   imagePullSecrets: []
+  rancherSystemDefaultRegistry: "ghcr.io/verrazzano/rancher"
 
 
 # NOTE: The image value gets set in the bill of materials file (verrazzano-bom.json) during the

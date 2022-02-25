@@ -5,6 +5,12 @@ package rancher
 
 import (
 	"fmt"
+	"io"
+	"net/http"
+	"os"
+	"strings"
+	"testing"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	spi2 "github.com/verrazzano/verrazzano/pkg/controller/errors"
@@ -14,17 +20,12 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"io"
 	appsv1 "k8s.io/api/apps/v1"
 	v1 "k8s.io/api/networking/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/rest"
-	"net/http"
-	"os"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	"strings"
-	"testing"
 )
 
 func getValue(kvs []bom.KeyValue, key string) (string, bool) {
@@ -59,6 +60,15 @@ func TestAppendRegistryOverrides(t *testing.T) {
 	v, ok = getValue(kvs, systemDefaultRegistryKey)
 	assert.True(t, ok)
 	assert.Equal(t, fmt.Sprintf("%s/%s", registry, imageRepo), v)
+
+	rancherImageRepo := "dummy/registry"
+	_ = os.Setenv(constants.RancherSystemDefaultRegistryEnvVar, rancherImageRepo)
+	kvs, _ = AppendOverrides(ctx, "", "", "", []bom.KeyValue{})
+	assert.Equal(t, 8, len(kvs))
+	v, ok = getValue(kvs, systemDefaultRegistryKey)
+	assert.True(t, ok)
+	assert.Equal(t, rancherImageRepo, v)
+
 }
 
 // TestAppendCAOverrides verifies that CA overrides are added as appropriate for private CAs
