@@ -277,8 +277,9 @@ pipeline {
                 }
                 stage('istio authorization policy') {
                     steps {
-                        //String[] tests = [ 'istio/authz', 'security/rbac' ]
-                        runGinkgoTests('istio/authz', 'security/rbac')
+                        tests = [ 'istio/authz', 'security/rbac' ]
+                        //runGinkgoTests('istio/authz', 'security/rbac')
+                        runGinkgoTests(tests)
                     }
                 }
                 //stage('security role based access') {
