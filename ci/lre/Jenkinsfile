@@ -370,9 +370,10 @@ def runGinkgoTests(list) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh """
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
-            list.eachWithIndex { v, i ->
+            //list.eachWithIndex { v, i ->
+            for (int i = 0; i < list.size(); i++) {
                 echo test to run ${v}
-                ginkgo -v --keep-going --no-color ${v}/...
+                ginkgo -v --keep-going --no-color ${list[i]}/...
             }
         """
     }
