@@ -373,7 +373,7 @@ def runGinkgoTests(list) {
         for (int i = 0; i < list.size(); i++) {
             sh """
                 //list.each {v ->
-                echo test to run ${v}
+                echo test to run ${list[i]}
                 //ginkgo -v -p --keep-going --no-color ${list[i]}/...
             """
         }
