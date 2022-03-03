@@ -370,6 +370,7 @@ def runGinkgoTests(list) {
     echo In runGinkgoTests
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh """
+            echo In runGinkgoTests
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
             list.each { v ->
             //for (int i = 0; i < list.size(); i++) {
