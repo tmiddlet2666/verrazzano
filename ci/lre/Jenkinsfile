@@ -276,11 +276,11 @@ pipeline {
                     }
                 }
                 stage('istio authorization policy') {
-                    steps {
-                        tests = [ 'istio/authz', 'security/rbac' ]
-                        //runGinkgoTests('istio/authz', 'security/rbac')
-                        runGinkgoTests(tests)
-                    }
+                    //steps {
+                    //tests = [ 'istio/authz', 'security/rbac' ]
+                    runGinkgoTests('istio/authz', 'security/rbac')
+                    //runGinkgoTests(tests)
+                    //}
                 }
                 //stage('security role based access') {
                 //    steps {
