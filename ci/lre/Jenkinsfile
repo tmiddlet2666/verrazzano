@@ -277,7 +277,8 @@ pipeline {
                 }
                 stage('istio authorization policy') {
                     steps {
-                        runGinkgo('istio/authz')
+                        String[] tests = [ 'istio/authz', 'security/rbac' ]
+                        runGinkgoTest(tests)
                     }
                 }
                 stage('security role based access') {
@@ -361,6 +362,16 @@ def runGinkgo(testSuitePath) {
         sh """
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
             ginkgo -v --keep-going --no-color ${testSuitePath}/...
+        """
+    }
+}
+
+def runGinkgoTests(tests) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            tests.eachWithIndex { v, i ->
+                ginkgo -v --keep-going --no-color ${v}/...
         """
     }
 }
