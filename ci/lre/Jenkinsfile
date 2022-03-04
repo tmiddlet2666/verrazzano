@@ -376,11 +376,13 @@ def runGinkgoTests(list) {
     //    }
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         for (int i = 0; i < list.size(); i++) {
-            sh """
-                echo test to run ${list[i]}
-                cd ${GO_REPO_PATH}/verrazzano/tests/e2e
-                ginkgo -v -p --keep-going --no-color ${list[i]}/...
-            """
+            stage(list[i]) {
+                sh """
+                    echo test to run ${list[i]}
+                    cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+                    ginkgo -v --keep-going --no-color ${list[i]}/...
+                """
+            }
         }
     }
 }
