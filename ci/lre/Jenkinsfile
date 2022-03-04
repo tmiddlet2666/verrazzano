@@ -371,9 +371,7 @@ def runGinkgoTests(list) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         for (int i = 0; i < list.size(); i++) {
             sh """
-                //list.each {v ->
                 echo test to run ${list[i]}
-                //ginkgo -v -p --keep-going --no-color ${list[i]}/...
             """
         }
     //catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
