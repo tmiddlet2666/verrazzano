@@ -368,7 +368,6 @@ def runGinkgo(testSuitePath) {
 }
 
 def runGinkgoTests(list) {
-    echo In runGinkgoTests
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         for (int i = 0; i < list.size(); i++) {
             sh """
