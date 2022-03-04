@@ -379,7 +379,9 @@ def runGinkgoTests(list) {
             echo In runGinkgoTests
             cd ${GO_REPO_PATH}/verrazzano/tests/e2e
             for (int i = 0; i < list.size(); i++) {
-                ginkgo -v -p --keep-going --no-color ${list[i]}/...
+                testSuitePath = ${list[i]}
+                echo Test to run ${testSuitePath}
+                ginkgo -v -p --keep-going --no-color ${testSuitePath}/...
             }
         """
     }
