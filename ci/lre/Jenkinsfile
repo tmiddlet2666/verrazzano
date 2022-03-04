@@ -377,7 +377,7 @@ def runGinkgoTests(list) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         sh """
             echo In runGinkgoTests
-            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            cd /home/opc/go/src/github.com/verrazzano/verrazzano/tests/e2e
             for (int i = 0; i < list.size(); i++) {
                 echo test to run ${list[i]}
                 ginkgo -v -p --keep-going --no-color ${list[i]}/...
