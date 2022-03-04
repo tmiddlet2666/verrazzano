@@ -264,7 +264,7 @@ pipeline {
             parallel {
                 stage('verify-infra tests') {
                     steps {
-                        runGinkgoRandomize(['verify-infra/restapi', 'verify-infra/vmi')
+                        runGinkgoRandomize(['verify-infra/restapi', 'verify-infra/vmi'])
                     }
                 }
                 stage('Tests') {
