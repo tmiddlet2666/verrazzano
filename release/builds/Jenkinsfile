@@ -253,6 +253,25 @@ pipeline {
                     // by the time the images are pushed to OCR (next build stage), and the release stage2, which uses
                     // these objects, is run.
                     sh """
+                        # Get the commit file from the last clean periodic test and verify that it is the same as the
+                        # one we are using - if it is not, then another clean periodic has run between identifying a
+                        # release candidate and releasing it. The user needs to start with a different release candidate.
+                        oci --region ${OCI_OS_REGION} os object get --namespace ${OCI_OS_NAMESPACE} \
+                          -bn ${OCI_OS_BUCKET} --name ${PERIODIC_JOB_OBJECT_PREFIX}/verrazzano_periodic-commit.txt \
+                          --file verrazzano_periodic-commit.txt
+                    """
+                    def props = readProperties file: "verrazzano_periodic-commit.txt"
+                    PERIODIC_COMMIT = props['git-commit']
+                    if (PERIODIC_COMMIT != env.GIT_COMMIT) {
+                        sh """
+                            echo The commit from the last clean periodic test, ${PERIODIC_COMMIT} does not match the \
+                              commit you want to release ${env.GIT_COMMIT}. If you are doing an 'existing candidate' \
+                              release, and the last clean periodic test is marked as releasable, then you can re-run \
+                              the "existing candidate" job.
+                        """
+                    }
+                    sh """
+
                         oci --region ${OCI_OS_REGION} os object copy --namespace ${OCI_OS_NAMESPACE} \
                           -bn ${OCI_OS_BUCKET} --destination-bucket ${OCI_OS_BUCKET} \
                           --source-object-name ${PERIODIC_JOB_OBJECT_PREFIX}/${PERIODIC_PRODUCT_ZIP_OBJECT_NAME} \
