@@ -34,11 +34,10 @@ var imagePullPollingInterval = 30 * time.Second
 
 var t = framework.NewTestFramework("deploymetrics")
 
-var _ = t.BeforeSuite(func() {
+var clusterDump = pkg.NewClusterDumpWrapper()
+var _ = clusterDump.BeforeSuite(func() {
 	deployMetricsApplication()
 })
-
-var clusterDump = pkg.NewClusterDumpWrapper()
 var _ = clusterDump.AfterEach(func() {}) // Dump cluster if spec fails
 var _ = clusterDump.AfterSuite(func() {  // Dump cluster if aftersuite fails
 	undeployMetricsApplication()
@@ -94,6 +93,11 @@ func undeployMetricsApplication() {
 	Eventually(func() error {
 		return pkg.DeleteResourceFromFile("testdata/deploymetrics/deploymetrics-comp.yaml")
 	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+	pkg.Log(pkg.Info, "Wait for pods to terminate")
+	Eventually(func() bool {
+		podsNotRunning, _ := pkg.PodsNotRunning(testNamespace, expectedPodsDeploymetricsApp)
+		return podsNotRunning
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
 
 	Eventually(func() bool {
 		return pkg.IsAppInPromConfig(promConfigJobName)
@@ -103,6 +107,11 @@ func undeployMetricsApplication() {
 	Eventually(func() error {
 		return pkg.DeleteNamespace(testNamespace)
 	}, longWaitTimeout, longPollingInterval).ShouldNot(HaveOccurred())
+
+	pkg.Log(pkg.Info, "Wait for Finalizer to be removed")
+	Eventually(func() bool {
+		return pkg.CheckNamespaceFinalizerRemoved(testNamespace)
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
 
 	pkg.Log(pkg.Info, "Waiting for namespace deletion")
 	Eventually(func() bool {
