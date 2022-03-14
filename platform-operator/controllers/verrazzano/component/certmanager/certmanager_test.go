@@ -61,7 +61,7 @@ var fakeComponent = certManagerComponent{}
 func TestIsCertManagerEnabled(t *testing.T) {
 	localvz := vz.DeepCopy()
 	localvz.Spec.Components.CertManager.Enabled = getBoolPtr(true)
-	assert.True(t, fakeComponent.IsEnabled(spi.NewFakeContext(nil, localvz, false)))
+	assert.True(t, fakeComponent.IsEnabled(spi.NewFakeContext(nil, localvz, false).EffectiveCR()))
 }
 
 // TestIsOCIDNS tests whether the Effective CR is using OCI DNS
@@ -127,7 +127,7 @@ func TestCleanTempFiles(t *testing.T) {
 func TestIsCertManagerDisabled(t *testing.T) {
 	localvz := vz.DeepCopy()
 	localvz.Spec.Components.CertManager.Enabled = getBoolPtr(false)
-	assert.False(t, fakeComponent.IsEnabled(spi.NewFakeContext(nil, localvz, false)))
+	assert.False(t, fakeComponent.IsEnabled(spi.NewFakeContext(nil, localvz, false).EffectiveCR()))
 }
 
 // TestAppendCertManagerOverrides tests the AppendOverrides fn
@@ -183,9 +183,9 @@ func TestCertManagerPreInstall(t *testing.T) {
 // THEN true is returned
 func TestIsCertManagerReady(t *testing.T) {
 	client := fake.NewFakeClientWithScheme(k8scheme.Scheme,
-		newDeployment(certManagerDeploymentName, true),
-		newDeployment(cainjectorDeploymentName, true),
-		newDeployment(webhookDeploymentName, true),
+		newDeployment(certManagerDeploymentName, map[string]string{"app": certManagerDeploymentName}, true),
+		newDeployment(cainjectorDeploymentName, map[string]string{"app": "cainjector"}, true),
+		newDeployment(webhookDeploymentName, map[string]string{"app": "webhook"}, true),
 	)
 	assert.True(t, isCertManagerReady(spi.NewFakeContext(client, nil, false)))
 }
@@ -196,9 +196,9 @@ func TestIsCertManagerReady(t *testing.T) {
 // THEN false is returned
 func TestIsCertManagerNotReady(t *testing.T) {
 	client := fake.NewFakeClientWithScheme(k8scheme.Scheme,
-		newDeployment(certManagerDeploymentName, false),
-		newDeployment(cainjectorDeploymentName, false),
-		newDeployment(webhookDeploymentName, false),
+		newDeployment(certManagerDeploymentName, map[string]string{"app": certManagerDeploymentName}, false),
+		newDeployment(cainjectorDeploymentName, map[string]string{"app": "cainjector"}, false),
+		newDeployment(webhookDeploymentName, map[string]string{"app": "webhook"}, false),
 	)
 	assert.False(t, isCertManagerReady(spi.NewFakeContext(client, nil, false)))
 }
@@ -392,26 +392,25 @@ func fakeBash(_ ...string) (string, string, error) {
 }
 
 // Create a new deployment object for testing
-func newDeployment(name string, ready bool) *appsv1.Deployment {
+func newDeployment(name string, labels map[string]string, updated bool) *appsv1.Deployment {
 	deployment := &appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ComponentNamespace,
 			Name:      name,
+			Labels:    labels,
 		},
 		Status: appsv1.DeploymentStatus{
-			Replicas:            1,
-			ReadyReplicas:       1,
-			AvailableReplicas:   1,
-			UnavailableReplicas: 0,
+			Replicas:          1,
+			AvailableReplicas: 1,
+			UpdatedReplicas:   1,
 		},
 	}
 
-	if !ready {
+	if !updated {
 		deployment.Status = appsv1.DeploymentStatus{
-			Replicas:            1,
-			ReadyReplicas:       0,
-			AvailableReplicas:   0,
-			UnavailableReplicas: 1,
+			Replicas:          1,
+			AvailableReplicas: 1,
+			UpdatedReplicas:   0,
 		}
 	}
 	return deployment

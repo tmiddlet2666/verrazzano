@@ -133,7 +133,7 @@ func TestIsEnabled(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.testName, func(t *testing.T) {
 			r := NewComponent()
-			assert.Equal(t, tt.enabled, r.IsEnabled(tt.ctx))
+			assert.Equal(t, tt.enabled, r.IsEnabled(tt.ctx.EffectiveCR()))
 		})
 	}
 }
@@ -150,23 +150,142 @@ func TestPreInstall(t *testing.T) {
 //  WHEN IsReady is called
 //  THEN IsReady should return true
 func TestIsReady(t *testing.T) {
-	deploy := appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: common.CattleSystem,
-			Name:      common.RancherName,
+	readyClient := fake.NewFakeClientWithScheme(getScheme(),
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: ComponentNamespace,
+				Name:      ComponentName,
+				Labels:    map[string]string{"app": ComponentName},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
 		},
-		Status: appsv1.DeploymentStatus{
-			AvailableReplicas: 1,
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: ComponentNamespace,
+				Name:      rancherWebhookDeployment,
+				Labels:    map[string]string{"app": rancherWebhookDeployment},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
 		},
-	}
-	unreadyDeploy := appsv1.Deployment{
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: common.CattleSystem,
-			Name:      common.RancherName,
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: OperatorNamespace,
+				Name:      rancherOperatorDeployment,
+				Labels:    map[string]string{"app": rancherOperatorDeployment},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
 		},
-	}
-	readyClient := fake.NewFakeClientWithScheme(getScheme(), &deploy)
-	unreadyDeployClient := fake.NewFakeClientWithScheme(getScheme(), &unreadyDeploy)
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      fleetAgentDeployment,
+				Labels:    map[string]string{"app": fleetAgentDeployment},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      fleetControllerDeployment,
+				Labels:    map[string]string{"app": fleetControllerDeployment},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      gitjobDeployment,
+				Labels:    map[string]string{"app": gitjobDeployment},
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 1,
+				Replicas:          1,
+				UpdatedReplicas:   1,
+			},
+		},
+	)
+	unreadyDeployClient := fake.NewFakeClientWithScheme(getScheme(),
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: ComponentNamespace,
+				Name:      ComponentName,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: ComponentNamespace,
+				Name:      rancherWebhookDeployment,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: OperatorNamespace,
+				Name:      rancherOperatorDeployment,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      fleetAgentDeployment,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      fleetControllerDeployment,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+		&appsv1.Deployment{
+			ObjectMeta: metav1.ObjectMeta{
+				Namespace: fleetSystemNamespace,
+				Name:      gitjobDeployment,
+			},
+			Status: appsv1.DeploymentStatus{
+				AvailableReplicas: 0,
+				Replicas:          1,
+			},
+		},
+	)
 
 	var tests = []struct {
 		testName string
@@ -201,7 +320,7 @@ func TestPostInstall(t *testing.T) {
 	caSecret := createCASecret()
 	rootCASecret := createRootCASecret()
 	adminSecret := createAdminSecret()
-	rancherPodList := createRancherPodList()
+	rancherPodList := createRancherPodListWithAllRunning()
 	ingress := v1.Ingress{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: common.CattleSystem,
@@ -240,4 +359,57 @@ func TestPostInstall(t *testing.T) {
 	component := NewComponent()
 	assert.IsType(t, spi2.RetryableError{}, component.PostInstall(ctxWithoutIngress))
 	assert.Nil(t, component.PostInstall(ctxWithIngress))
+}
+
+func Test_rancherComponent_ValidateUpdate(t *testing.T) {
+	disabled := false
+	tests := []struct {
+		name    string
+		old     *vzapi.Verrazzano
+		new     *vzapi.Verrazzano
+		wantErr bool
+	}{
+		{
+			name: "enable",
+			old: &vzapi.Verrazzano{
+				Spec: vzapi.VerrazzanoSpec{
+					Components: vzapi.ComponentSpec{
+						Rancher: &vzapi.RancherComponent{
+							Enabled: &disabled,
+						},
+					},
+				},
+			},
+			new:     &vzapi.Verrazzano{},
+			wantErr: false,
+		},
+		{
+			name: "disable",
+			old:  &vzapi.Verrazzano{},
+			new: &vzapi.Verrazzano{
+				Spec: vzapi.VerrazzanoSpec{
+					Components: vzapi.ComponentSpec{
+						Rancher: &vzapi.RancherComponent{
+							Enabled: &disabled,
+						},
+					},
+				},
+			},
+			wantErr: true,
+		},
+		{
+			name:    "no change",
+			old:     &vzapi.Verrazzano{},
+			new:     &vzapi.Verrazzano{},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := NewComponent()
+			if err := c.ValidateUpdate(tt.old, tt.new); (err != nil) != tt.wantErr {
+				t.Errorf("ValidateUpdate() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
 }

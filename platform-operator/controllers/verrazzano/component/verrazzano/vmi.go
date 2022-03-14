@@ -6,11 +6,13 @@ package verrazzano
 import (
 	"context"
 	"fmt"
+
 	vmov1 "github.com/verrazzano/verrazzano-monitoring-operator/pkg/apis/vmcontroller/v1"
 	globalconst "github.com/verrazzano/verrazzano/pkg/constants"
 	"github.com/verrazzano/verrazzano/pkg/security/password"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	controllerruntime "sigs.k8s.io/controller-runtime"
@@ -25,7 +27,7 @@ const (
 
 //createVMI instantiates the VMI resource and the Grafana Dashboards configmap
 func createVMI(ctx spi.ComponentContext) error {
-	if !isVMOEnabled(ctx.EffectiveCR()) {
+	if !vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
 		return nil
 	}
 
@@ -42,7 +44,11 @@ func createVMI(ctx spi.ComponentContext) error {
 	}
 	vmi := newVMI()
 	_, err = controllerutil.CreateOrUpdate(context.TODO(), ctx.Client(), vmi, func() error {
-		existingVMI := vmi.DeepCopy()
+		var existingVMI *vmov1.VerrazzanoMonitoringInstance = nil
+		if len(vmi.Spec.URI) > 0 {
+			existingVMI = vmi.DeepCopy()
+		}
+
 		vmi.Labels = map[string]string{
 			"k8s-app":            "verrazzano.io",
 			"verrazzano.binding": system,
@@ -93,12 +99,9 @@ func newGrafana(cr *vzapi.Verrazzano, storage *resourceRequestValues, vmi *vmov1
 		},
 		Storage: vmov1.Storage{},
 	}
+	setStorageSize(storage, &grafana.Storage)
 	if vmi != nil {
-		grafana.Storage.PvcNames = vmi.Spec.Grafana.Storage.PvcNames
-	}
-
-	if storage != nil {
-		grafana.Storage.Size = storage.Storage
+		grafana.Storage = vmi.Spec.Grafana.Storage
 	}
 
 	return grafana
@@ -116,16 +119,20 @@ func newPrometheus(cr *vzapi.Verrazzano, storage *resourceRequestValues, vmi *vm
 		},
 		Storage: vmov1.Storage{},
 	}
-
+	setStorageSize(storage, &prometheus.Storage)
 	if vmi != nil {
-		prometheus.Storage.PvcNames = vmi.Spec.Prometheus.Storage.PvcNames
-	}
-
-	if storage != nil {
-		prometheus.Storage.Size = storage.Storage
+		prometheus.Storage = vmi.Spec.Prometheus.Storage
 	}
 
 	return prometheus
+}
+
+func setStorageSize(storage *resourceRequestValues, storageObject *vmov1.Storage) {
+	if storage == nil {
+		storageObject.Size = "50Gi"
+	} else {
+		storageObject.Size = storage.Storage
+	}
 }
 
 func newOpenSearch(cr *vzapi.Verrazzano, storage *resourceRequestValues, vmi *vmov1.VerrazzanoMonitoringInstance) (*vmov1.Elasticsearch, error) {
@@ -151,12 +158,11 @@ func newOpenSearch(cr *vzapi.Verrazzano, storage *resourceRequestValues, vmi *vm
 		},
 	}
 
-	if storage != nil {
+	if storage != nil && len(storage.Storage) > 0 {
 		opensearch.Storage.Size = storage.Storage
 	}
-
 	if vmi != nil {
-		opensearch.Storage.PvcNames = vmi.Spec.Elasticsearch.Storage.PvcNames
+		opensearch.Storage = vmi.Spec.Elasticsearch.Storage
 	}
 
 	intSetter := func(val *int32, arg vzapi.InstallArgs) error {

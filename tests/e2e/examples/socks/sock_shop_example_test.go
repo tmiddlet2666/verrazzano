@@ -42,10 +42,11 @@ var username, password string
 var (
 	t                  = framework.NewTestFramework("socks")
 	generatedNamespace = pkg.GenerateNamespace("sockshop")
+	clusterDump        = pkg.NewClusterDumpWrapper()
 )
 
 // creates the sockshop namespace and applies the components and application yaml
-var _ = t.BeforeSuite(func() {
+var _ = clusterDump.BeforeSuite(func() {
 	username = "username" + strconv.FormatInt(time.Now().Unix(), 10)
 	password = b64.StdEncoding.EncodeToString([]byte(time.Now().String()))
 	sockShop = NewSockShop(username, password, pkg.Ingress())
@@ -267,7 +268,6 @@ var _ = t.Describe("Sock Shop test", Label("f:app-lcm.oam",
 
 })
 
-var clusterDump = pkg.NewClusterDumpWrapper()
 var _ = clusterDump.AfterEach(func() {})
 
 // undeploys the application, components, and namespace
@@ -303,6 +303,11 @@ var _ = clusterDump.AfterSuite(func() {
 		Eventually(func() error {
 			return pkg.DeleteNamespace(namespace)
 		}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+
+		pkg.Log(pkg.Info, "Wait for namespace finalizer to be removed")
+		Eventually(func() bool {
+			return pkg.CheckNamespaceFinalizerRemoved(namespace)
+		}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
 
 		pkg.Log(pkg.Info, "Wait for sockshop namespace to be deleted")
 		Eventually(func() bool {

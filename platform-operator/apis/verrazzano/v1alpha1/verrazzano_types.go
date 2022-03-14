@@ -162,6 +162,8 @@ type ComponentStatusDetails struct {
 	State CompStateType `json:"state,omitempty"`
 	// The version of Verrazzano that is installed
 	Version string `json:"version,omitempty"`
+	// The generation of the last VZ resource the Component was reconciled against
+	LastReconciledGeneration int64 `json:"lastReconciledGeneration,omitempty"`
 }
 
 // ConditionType identifies the condition of the install/uninstall/upgrade which can be checked with kubectl wait
@@ -271,6 +273,10 @@ type ComponentSpec struct {
 	// CoherenceOperator configuration
 	// +optional
 	CoherenceOperator *CoherenceOperatorComponent `json:"coherenceOperator,omitempty"`
+
+	// Alertmanager configuration
+	// +optional
+	Alertmanager *AlertmanagerComponent `json:"alertmanager,omitempty"`
 
 	// ApplicationOperator configuration
 	// +optional
@@ -388,6 +394,21 @@ type CertManagerComponent struct {
 type CoherenceOperatorComponent struct {
 	// +optional
 	Enabled *bool `json:"enabled,omitempty"`
+}
+
+// AlertmanagerComponent specifies the Alertmanager configuration
+type AlertmanagerComponent struct {
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
+	// Location of the Alertmanager ConfigMap
+	// +optional
+	AlertmanagerConfigMap *NamespaceName `json:"alertmanagerConfigMap,omitempty"`
+	// Location of the Prometheus rule ConfigMap
+	// +optional
+	RuleConfigMap *NamespaceName `json:"ruleConfigMap,omitempty"`
+	// Location of the Alertmanager receiver template ConfigMap
+	// +optional
+	ReceiverTemplateConfigMap *NamespaceName `json:"receiverTemplateConfigMap,omitempty"`
 }
 
 // ApplicationOperatorComponent specifies the Application Operator configuration
@@ -572,6 +593,14 @@ type InstallArgs struct {
 	// +optional
 	// +patchStrategy=replace
 	ValueList []string `json:"valueList,omitempty" patchStrategy:"replace"`
+}
+
+// NamespaceName Identifies a Namespace and Name pair for a resource
+type NamespaceName struct {
+	// Namespace of a resource
+	Namespace string `json:"namespace"`
+	// Name of a resource
+	Name string `json:"name"`
 }
 
 // VolumeMount defines a hostPath type Volume mount

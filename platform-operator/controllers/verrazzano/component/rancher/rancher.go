@@ -11,17 +11,24 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/status"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 // Constants for Kubernetes resource names
 const (
-	OperatorNamespace      = "rancher-operator-system"
-	defaultSecretNamespace = "cert-manager"
-	namespaceLabelKey      = "verrazzano.io/namespace"
-	rancherTLSSecretName   = "tls-ca"
-	defaultVerrazzanoName  = "verrazzano-ca-certificate-secret"
+	fleetSystemNamespace      = "fleet-system"
+	OperatorNamespace         = "rancher-operator-system"
+	defaultSecretNamespace    = "cert-manager"
+	namespaceLabelKey         = "verrazzano.io/namespace"
+	rancherTLSSecretName      = "tls-ca"
+	defaultVerrazzanoName     = "verrazzano-ca-certificate-secret"
+	fleetAgentDeployment      = "fleet-agent"
+	fleetControllerDeployment = "fleet-controller"
+	gitjobDeployment          = "gitjob"
+	rancherWebhookDeployment  = "rancher-webhook"
+	rancherOperatorDeployment = "rancher-operator"
 )
 
 // Helm Chart setter keys
@@ -67,12 +74,51 @@ func getRancherHostname(c client.Client, vz *vzapi.Verrazzano) (string, error) {
 func isRancherReady(ctx spi.ComponentContext) bool {
 	log := ctx.Log()
 	c := ctx.Client()
-	rancherDeploy := []types.NamespacedName{
+	deployments := []status.PodReadyCheck{
 		{
-			Name:      common.RancherName,
-			Namespace: common.CattleSystem,
+			NamespacedName: types.NamespacedName{
+				Name:      ComponentName,
+				Namespace: ComponentNamespace,
+			},
+			LabelSelector: labels.Set{"app": ComponentName}.AsSelector(),
+		},
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      rancherWebhookDeployment,
+				Namespace: ComponentNamespace,
+			},
+			LabelSelector: labels.Set{"app": rancherWebhookDeployment}.AsSelector(),
+		},
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      rancherOperatorDeployment,
+				Namespace: OperatorNamespace,
+			},
+			LabelSelector: labels.Set{"app": rancherOperatorDeployment}.AsSelector(),
+		},
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      fleetAgentDeployment,
+				Namespace: fleetSystemNamespace,
+			},
+			LabelSelector: labels.Set{"app": fleetAgentDeployment}.AsSelector(),
+		},
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      fleetControllerDeployment,
+				Namespace: fleetSystemNamespace,
+			},
+			LabelSelector: labels.Set{"app": fleetControllerDeployment}.AsSelector(),
+		},
+		{
+			NamespacedName: types.NamespacedName{
+				Name:      gitjobDeployment,
+				Namespace: fleetSystemNamespace,
+			},
+			LabelSelector: labels.Set{"app": gitjobDeployment}.AsSelector(),
 		},
 	}
+
 	prefix := fmt.Sprintf("Component %s", ctx.GetComponent())
-	return status.DeploymentsReady(log, c, rancherDeploy, 1, prefix)
+	return status.DeploymentsAreReady(log, c, deployments, 1, prefix)
 }

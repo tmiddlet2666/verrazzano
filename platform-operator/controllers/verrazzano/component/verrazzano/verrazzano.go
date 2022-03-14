@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os/exec"
+	"strconv"
 	"strings"
 	"time"
 
@@ -27,6 +28,7 @@ import (
 	rbacv1 "k8s.io/api/rbac/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/labels"
 	"k8s.io/apimachinery/pkg/types"
 	controllerruntime "sigs.k8s.io/controller-runtime"
 	clipkg "sigs.k8s.io/controller-runtime/pkg/client"
@@ -47,6 +49,19 @@ const (
 	tmpSuffix            = "yaml"
 	tmpFileCreatePattern = tmpFilePrefix + "*." + tmpSuffix
 	tmpFileCleanPattern  = tmpFilePrefix + ".*\\." + tmpSuffix
+
+	fluentDaemonset       = "fluentd"
+	nodeExporterDaemonset = "node-exporter"
+
+	esDataDeployment            = "vmi-system-es-data"
+	esIngestDeployment          = "vmi-system-es-ingest"
+	grafanaDeployment           = "vmi-system-grafana"
+	kibanaDeployment            = "vmi-system-kibana"
+	prometheusDeployment        = "vmi-system-prometheus-0"
+	verrazzanoConsoleDeployment = "verrazzano-console"
+	vmoDeployment               = "verrazzano-monitoring-operator"
+
+	esMasterStatefulset = "vmi-system-es-master"
 )
 
 var (
@@ -67,18 +82,154 @@ func resolveVerrazzanoNamespace(ns string) string {
 	return globalconst.VerrazzanoSystemNamespace
 }
 
-// isVerrazzanoReady Verrazzano component ready-check
+// isVerrazzanoReady Verrazzano components ready-check
 func isVerrazzanoReady(ctx spi.ComponentContext) bool {
-	var deployments []types.NamespacedName
-	if isVMOEnabled(ctx.EffectiveCR()) {
-		deployments = append(deployments, []types.NamespacedName{
-			{Name: "verrazzano-monitoring-operator", Namespace: globalconst.VerrazzanoSystemNamespace},
-		}...)
-	}
 	prefix := fmt.Sprintf("Component %s", ctx.GetComponent())
-	if !status.DeploymentsReady(ctx.Log(), ctx.Client(), deployments, 1, prefix) {
+
+	// First, check deployments
+	var deployments []status.PodReadyCheck
+	if vzconfig.IsConsoleEnabled(ctx.EffectiveCR()) {
+		deployments = append(deployments,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      verrazzanoConsoleDeployment,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"app": verrazzanoConsoleDeployment}.AsSelector(),
+			})
+	}
+	if vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
+		deployments = append(deployments,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      vmoDeployment,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"k8s-app": vmoDeployment}.AsSelector(),
+			})
+	}
+	if vzconfig.IsGrafanaEnabled(ctx.EffectiveCR()) {
+		deployments = append(deployments,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      grafanaDeployment,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"app": "system-grafana"}.AsSelector(),
+			})
+	}
+	if vzconfig.IsKibanaEnabled(ctx.EffectiveCR()) {
+		deployments = append(deployments,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      kibanaDeployment,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"app": "system-kibana"}.AsSelector(),
+			})
+	}
+	if vzconfig.IsPrometheusEnabled(ctx.EffectiveCR()) {
+		deployments = append(deployments,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      prometheusDeployment,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"app": "system-prometheus"}.AsSelector(),
+			})
+	}
+	if vzconfig.IsElasticsearchEnabled(ctx.EffectiveCR()) {
+		if ctx.EffectiveCR().Spec.Components.Elasticsearch != nil {
+			esInstallArgs := ctx.EffectiveCR().Spec.Components.Elasticsearch.ESInstallArgs
+			for _, args := range esInstallArgs {
+				if args.Name == "nodes.data.replicas" {
+					replicas, _ := strconv.Atoi(args.Value)
+					for i := 0; replicas > 0 && i < replicas; i++ {
+						deployments = append(deployments,
+							status.PodReadyCheck{
+								NamespacedName: types.NamespacedName{
+									Name:      fmt.Sprintf("%s-%d", esDataDeployment, i),
+									Namespace: ComponentNamespace,
+								},
+								LabelSelector: labels.Set{"app": "system-es-data", "index": fmt.Sprintf("%d", i)}.AsSelector(),
+							})
+					}
+					continue
+				}
+				if args.Name == "nodes.ingest.replicas" {
+					replicas, _ := strconv.Atoi(args.Value)
+					if replicas > 0 {
+						deployments = append(deployments,
+							status.PodReadyCheck{
+								NamespacedName: types.NamespacedName{
+									Name:      esIngestDeployment,
+									Namespace: ComponentNamespace,
+								},
+								LabelSelector: labels.Set{"app": "system-es-ingest"}.AsSelector(),
+							})
+					}
+				}
+			}
+		}
+	}
+
+	if !status.DeploymentsAreReady(ctx.Log(), ctx.Client(), deployments, 1, prefix) {
 		return false
 	}
+
+	// Next, check statefulsets
+	if vzconfig.IsElasticsearchEnabled(ctx.EffectiveCR()) {
+		if ctx.EffectiveCR().Spec.Components.Elasticsearch != nil {
+			esInstallArgs := ctx.EffectiveCR().Spec.Components.Elasticsearch.ESInstallArgs
+			for _, args := range esInstallArgs {
+				if args.Name == "nodes.master.replicas" {
+					var statefulsets []status.PodReadyCheck
+					replicas, _ := strconv.Atoi(args.Value)
+					if replicas > 0 {
+						statefulsets = append(statefulsets,
+							status.PodReadyCheck{
+								NamespacedName: types.NamespacedName{
+									Name:      esMasterStatefulset,
+									Namespace: ComponentNamespace,
+								},
+								LabelSelector: labels.Set{"app": "system-es-master"}.AsSelector(),
+							})
+						if !status.StatefulSetsAreReady(ctx.Log(), ctx.Client(), statefulsets, 1, prefix) {
+							return false
+						}
+					}
+					break
+				}
+			}
+		}
+	}
+
+	// Finally, check daemonsets
+	var daemonsets []status.PodReadyCheck
+	if vzconfig.IsPrometheusEnabled(ctx.EffectiveCR()) {
+		daemonsets = append(daemonsets,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      nodeExporterDaemonset,
+					Namespace: globalconst.VerrazzanoMonitoringNamespace,
+				},
+				LabelSelector: labels.Set{"app": nodeExporterDaemonset}.AsSelector(),
+			})
+	}
+	if vzconfig.IsFluentdEnabled(ctx.EffectiveCR()) && getProfile(ctx.EffectiveCR()) != vzapi.ManagedCluster {
+		daemonsets = append(daemonsets,
+			status.PodReadyCheck{
+				NamespacedName: types.NamespacedName{
+					Name:      fluentDaemonset,
+					Namespace: ComponentNamespace,
+				},
+				LabelSelector: labels.Set{"app": fluentDaemonset}.AsSelector(),
+			})
+	}
+	if !status.DaemonSetsAreReady(ctx.Log(), ctx.Client(), daemonsets, 1, prefix) {
+		return false
+	}
+
 	return isVerrazzanoSecretReady(ctx)
 }
 
@@ -115,10 +266,6 @@ func findStorageOverride(effectiveCR *vzapi.Verrazzano) (*resourceRequestValues,
 		}, nil
 	}
 	return nil, fmt.Errorf("Failed, unsupported volume source: %v", defaultVolumeSource)
-}
-
-func isVMOEnabled(vz *vzapi.Verrazzano) bool {
-	return vzconfig.IsPrometheusEnabled(vz) || vzconfig.IsKibanaEnabled(vz) || vzconfig.IsElasticsearchEnabled(vz) || vzconfig.IsGrafanaEnabled(vz)
 }
 
 // This function is used to fixup the fluentd daemonset on a managed cluster so that helm upgrade of Verrazzano does
@@ -214,7 +361,7 @@ func createAndLabelNamespaces(ctx spi.ComponentContext) error {
 	if err := namespace.CreateVerrazzanoMultiClusterNamespace(ctx.Client()); err != nil {
 		return err
 	}
-	if isVMOEnabled(ctx.EffectiveCR()) {
+	if vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
 		// If the monitoring operator is enabled, create the monitoring namespace and copy the image pull secret
 		if err := namespace.CreateVerrazzanoMonitoringNamespace(ctx.Client()); err != nil {
 			return ctx.Log().ErrorfNewErr("Failed creating Verrazzano Monitoring namespace: %v", err)
@@ -500,4 +647,13 @@ func importHelmObject(cli clipkg.Client, obj controllerutil.Object, namespacedNa
 	labels["app.kubernetes.io/managed-by"] = "Helm"
 	obj.SetLabels(labels)
 	return obj, cli.Patch(context.TODO(), obj, objMerge)
+}
+
+// GetProfile Returns the configured profile name, or "prod" if not specified in the configuration
+func getProfile(vz *vzapi.Verrazzano) vzapi.ProfileType {
+	profile := vz.Spec.Profile
+	if len(profile) == 0 {
+		profile = vzapi.Prod
+	}
+	return profile
 }
