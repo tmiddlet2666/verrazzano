@@ -125,13 +125,14 @@
           "images": [
             {
               "image": "rancher",
-              "tag": "v2.5.9-20220228142012-806336795",
+              "tag": "20220314110656-24bf7939d",
               "helmFullImageKey": "rancherImage",
               "helmTagKey": "rancherImageTag"
             },
             {
               "image": "rancher-agent",
-              "tag": "v2.5.9-20220228142012-806336795"
+              "tag": "20220314110656-24bf7939d",
+              "helmFullImageKey":"agentImage"
             }
           ]
         },
@@ -141,8 +142,9 @@
           "name": "additional-rancher",
           "images": [
             {
-              "image": "shell",
-              "tag": "v0.1.6"
+              "image": "rancher/shell",
+              "tag": "v0.1.6",
+              "helmFullImageKey":"shellImage"
             },
             {
               "image": "kubectl",
@@ -150,23 +152,28 @@
             },
             {
               "image": "rancher-webhook",
-              "tag": "v0.1.3"
+              "tag": "20220302131015-c3777cc",
+              "helmTagKey": "rancherWebhookImageTag"
             },
             {
               "image": "fleet-agent",
-              "tag": "v0.3.5"
+              "tag": "v0.3.5",
+              "helmTagKey": "rancherFleetAgentImageTag"
             },
             {
               "image": "fleet",
-              "tag": "v0.3.5"
+              "tag": "v0.3.5",
+              "helmTagKey": "rancherFleetImageTag"
             },
             {
               "image": "gitjob",
-              "tag": "v0.1.15"
+              "tag": "v0.1.15",
+              "helmTagKey": "rancherGitjobImageTag"
             },
             {
               "image": "rancher-operator",
-              "tag": "v0.1.4"
+              "tag": "20220222093330-0467fe8",
+              "helmTagKey": "rancherOperatorImageTag"
             },
             {
               "image": "local-path-provisioner",

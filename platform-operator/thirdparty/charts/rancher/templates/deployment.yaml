@@ -105,6 +105,34 @@ spec:
         - name: CATTLE_RESTRICTED_DEFAULT_ADMIN
           value: "true"
 {{- end}}
+{{- if .Values.rancherOperatorImageTag }}
+        - name: RANCHER_OPERATOR_IMAGE_TAG
+          value: {{ .Values.rancherOperatorImageTag }}
+{{- end}}
+{{- if .Values.rancherWebhookImageTag }}
+        - name: RANCHER_WEBHOOK_IMAGE_TAG
+          value: {{ .Values.rancherWebhookImageTag }}
+{{- end}}
+{{- if .Values.rancherFleetImageTag }}
+        - name: RANCHER_FLEET_IMAGE_TAG
+          value: {{ .Values.rancherFleetImageTag }}
+{{- end}}
+{{- if .Values.rancherFleetAgentImageTag }}
+        - name: RANCHER_FLEET_AGENT_IMAGE_TAG
+          value: {{ .Values.rancherFleetAgentImageTag }}
+{{- end}}
+{{- if .Values.rancherGitjobImageTag }}
+        - name: RANCHER_GITJOB_IMAGE_TAG
+          value: {{ .Values.rancherGitjobImageTag }}
+{{- end}}
+{{- if .Values.shellImage }}
+        - name: SHELL_IMAGE
+          value: {{ .Values.shellImage }}
+{{- end}}
+{{- if .Values.agentImage }}
+        - name: AGENT_IMAGE
+          value: {{ .Values.agentImage }}
+{{- end}}
 {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv | indent 8}}
 {{- end }}
