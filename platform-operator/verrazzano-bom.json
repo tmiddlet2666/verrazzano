@@ -120,6 +120,7 @@
       "name": "rancher",
       "subcomponents": [
         {
+          "registry": "ghcr.io",
           "repository": "verrazzano",
           "name": "rancher",
           "images": [
@@ -133,50 +134,43 @@
               "image": "rancher-agent",
               "tag": "20220314110656-24bf7939d",
               "helmFullImageKey":"agentImage"
-            }
-          ]
-        },
-        {
-          "registry": "ghcr.io",
-          "repository": "verrazzano/rancher",
-          "name": "additional-rancher",
-          "images": [
+            },
             {
               "image": "rancher/shell",
               "tag": "v0.1.6",
               "helmFullImageKey":"shellImage"
             },
             {
-              "image": "kubectl",
+              "image": "rancher/kubectl",
               "tag": "v1.20.2"
             },
             {
-              "image": "rancher-webhook",
+              "image": "rancher/rancher-webhook",
               "tag": "20220302131015-c3777cc",
               "helmTagKey": "rancherWebhookImageTag"
             },
             {
-              "image": "fleet-agent",
+              "image": "rancher/fleet-agent",
               "tag": "v0.3.5",
               "helmTagKey": "rancherFleetAgentImageTag"
             },
             {
-              "image": "fleet",
+              "image": "rancher/fleet",
               "tag": "v0.3.5",
               "helmTagKey": "rancherFleetImageTag"
             },
             {
-              "image": "gitjob",
+              "image": "rancher/gitjob",
               "tag": "v0.1.15",
               "helmTagKey": "rancherGitjobImageTag"
             },
             {
-              "image": "rancher-operator",
+              "image": "rancher/rancher-operator",
               "tag": "20220222093330-0467fe8",
               "helmTagKey": "rancherOperatorImageTag"
             },
             {
-              "image": "local-path-provisioner",
+              "image": "rancher/local-path-provisioner",
               "tag": "v0.0.14"
             }
           ]
