@@ -133,6 +133,12 @@ spec:
         - name: AGENT_IMAGE
           value: {{ .Values.agentImage }}
 {{- end}}
+        - name: CATTLE_FLEET_MIN_VERSION
+          value: ""
+        - name: CATTLE_RANCHER_OPERATOR_MIN_VERSION
+          value: ""
+        - name: CATTLE_RANCHER_WEBHOOK_MIN_VERSION
+          value: ""
 {{- if .Values.extraEnv }}
 {{ toYaml .Values.extraEnv | indent 8}}
 {{- end }}
