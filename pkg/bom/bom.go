@@ -109,6 +109,10 @@ type BomImage struct {
 	// HelmRegistryAndRepoKey is the helm Key which identifies the registry/repo string,
 	// for example  global.hub = ghcr.io/verrazzano
 	HelmRegistryAndRepoKey string `json:"helmRegistryAndRepoKey"`
+
+	// HelmImageAndTagKey is the helm Key which identifies the image:tag string,
+	// for example  myImage = imageName:imageTag
+	HelmImageAndTagKey string `json:"helmImageAndTagKey"`
 }
 
 // keyVal defines the Key, Value pair used to override a single helm Value
