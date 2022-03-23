@@ -106,31 +106,31 @@ spec:
           value: "true"
 {{- end}}
 {{- if .Values.rancherOperatorImageTag }}
-        - name: RANCHER_OPERATOR_IMAGE_TAG
+        - name: CATTLE_RANCHER_OPERATOR_IMAGE_TAG
           value: {{ .Values.rancherOperatorImageTag }}
 {{- end}}
 {{- if .Values.rancherWebhookImageTag }}
-        - name: RANCHER_WEBHOOK_IMAGE_TAG
+        - name: CATTLE_RANCHER_WEBHOOK_IMAGE_TAG
           value: {{ .Values.rancherWebhookImageTag }}
 {{- end}}
 {{- if .Values.rancherFleetImageTag }}
-        - name: RANCHER_FLEET_IMAGE_TAG
+        - name: CATTLE_RANCHER_FLEET_IMAGE_TAG
           value: {{ .Values.rancherFleetImageTag }}
 {{- end}}
 {{- if .Values.rancherFleetAgentImageTag }}
-        - name: RANCHER_FLEET_AGENT_IMAGE_TAG
+        - name: CATTLE_RANCHER_FLEET_AGENT_IMAGE_TAG
           value: {{ .Values.rancherFleetAgentImageTag }}
 {{- end}}
 {{- if .Values.rancherGitjobImageTag }}
-        - name: RANCHER_GITJOB_IMAGE_TAG
+        - name: CATTLE_RANCHER_GITJOB_IMAGE_TAG
           value: {{ .Values.rancherGitjobImageTag }}
 {{- end}}
 {{- if .Values.shellImage }}
-        - name: SHELL_IMAGE
+        - name: CATTLE_SHELL_IMAGE
           value: {{ .Values.shellImage }}
 {{- end}}
 {{- if .Values.agentImage }}
-        - name: AGENT_IMAGE
+        - name: CATTLE_AGENT_IMAGE
           value: {{ .Values.agentImage }}
 {{- end}}
         - name: CATTLE_FLEET_MIN_VERSION
