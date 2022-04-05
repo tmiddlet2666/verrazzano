@@ -1,10 +1,11 @@
-## Verrazzano Examples
 
-This repository contains example applications for use with Verrazzano.
+## Hello World Helidon Application
 
-The example applications include:
+This example application provides a simple Hello World REST service written with [Helidon](https://helidon.io).
 
-* [Bob's Books](https://github.com/verrazzano/examples/blob/master/bobs-books/README.md)
-* [Hello World Helidon](https://github.com/verrazzano/examples/blob/master/hello-helidon/README.md)
-* [ToDo List](https://github.com/verrazzano/examples/blob/master/todo-list/README.md)
-* [Spring Boot Example](https://github.com/verrazzano/examples/blob/master/springboot-app/README.md)
+### Install the example application
+
+This Hello World Helidon example application has two endpoints:
+
+- `/greet`, which uses a microprofile properties file as a configuration source. For installation instructions, see [hello-helidon](https://verrazzano.io/docs/samples/hello-helidon/).
+- `/config`, which uses a Kubernetes ConfigMap as a configuration source. For installation instructions, see [helidon-config](https://verrazzano.io/docs/samples/helidon-config/).
