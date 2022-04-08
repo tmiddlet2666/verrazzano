@@ -33,8 +33,10 @@
               "helmTagKey": "controller.image.tag"
             },
             {
-              "image": "defaultbackend-amd64",
-              "tag": "1.5",
+              "registry": "ghcr.io",
+              "repository": "verrazzano",
+              "image": "nginx-ingress-default-backend",
+              "tag": "0.46.0-20220316222923-c2764d860",
               "helmFullImageKey": "defaultBackend.image.repository",
               "helmTagKey": "defaultBackend.image.tag"
             }
