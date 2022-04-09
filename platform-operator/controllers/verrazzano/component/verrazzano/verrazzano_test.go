@@ -18,6 +18,7 @@ import (
 	"text/template"
 	"time"
 
+	certv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
 	"github.com/stretchr/testify/assert"
 	vmov1 "github.com/verrazzano/verrazzano-monitoring-operator/pkg/apis/vmcontroller/v1"
 	"github.com/verrazzano/verrazzano/pkg/bom"
@@ -60,7 +61,8 @@ var (
 		{Key: "elasticSearch.nodes.ingest.requests.memory", Value: "2.5Gi"},
 		{Key: "elasticSearch.nodes.data.replicas", Value: "3"},
 		{Key: "elasticSearch.nodes.data.requests.memory", Value: "4.8Gi"},
-		{Key: "elasticSearch.nodes.data.requests.storage", Value: "50Gi"}}
+		{Key: "elasticSearch.nodes.data.requests.storage", Value: "50Gi"},
+		{Key: "elasticSearch.nodes.master.requests.storage", Value: "50Gi"}}
 )
 
 func init() {
@@ -71,7 +73,7 @@ func init() {
 
 	_ = istioclinet.AddToScheme(testScheme)
 	_ = istioclisec.AddToScheme(testScheme)
-
+	_ = certv1.AddToScheme(testScheme)
 	// +kubebuilder:scaffold:testScheme
 }
 
@@ -255,7 +257,7 @@ func Test_appendVerrazzanoValues(t *testing.T) {
 		},
 		{
 			name:         "BasicDevVerrazzanoNoOverrides",
-			description:  "Test basic prod no user overrides",
+			description:  "Test basic dev no user overrides",
 			actualCR:     vzapi.Verrazzano{Spec: vzapi.VerrazzanoSpec{Profile: "dev"}},
 			expectedYAML: "testdata/vzValuesDevNoOverrides.yaml",
 			expectedErr:  nil,
@@ -275,14 +277,16 @@ func Test_appendVerrazzanoValues(t *testing.T) {
 					Profile:         "dev",
 					EnvironmentName: "myenv",
 					Components: vzapi.ComponentSpec{
-						Console:       &vzapi.ConsoleComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Prometheus:    &vzapi.PrometheusComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Kibana:        &vzapi.KibanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Elasticsearch: &vzapi.ElasticsearchComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Grafana:       &vzapi.GrafanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Keycloak:      &vzapi.KeycloakComponent{Enabled: &falseValue},
-						Rancher:       &vzapi.RancherComponent{Enabled: &falseValue},
-						DNS:           &vzapi.DNSComponent{Wildcard: &vzapi.Wildcard{Domain: "xip.io"}},
+						Console:            &vzapi.ConsoleComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Prometheus:         &vzapi.PrometheusComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Kibana:             &vzapi.KibanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Elasticsearch:      &vzapi.ElasticsearchComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Grafana:            &vzapi.GrafanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Keycloak:           &vzapi.KeycloakComponent{Enabled: &falseValue},
+						Rancher:            &vzapi.RancherComponent{Enabled: &falseValue},
+						DNS:                &vzapi.DNSComponent{Wildcard: &vzapi.Wildcard{Domain: "xip.io"}},
+						PrometheusOperator: &vzapi.PrometheusOperatorComponent{Enabled: &falseValue},
+						PrometheusAdapter:  &vzapi.PrometheusAdapterComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
 					},
 				},
 			},
@@ -291,7 +295,7 @@ func Test_appendVerrazzanoValues(t *testing.T) {
 		},
 		{
 			name:        "ProdWithExternaDNSEnabled",
-			description: "Test prod with OCI DNS enabled, should enable exeteran-dns component",
+			description: "Test prod with OCI DNS enabled, should enable external-dns component",
 			actualCR: vzapi.Verrazzano{
 				Spec: vzapi.VerrazzanoSpec{
 					Components: vzapi.ComponentSpec{
@@ -480,6 +484,7 @@ func Test_appendVMIValues(t *testing.T) {
 				{Key: "elasticSearch.nodes.data.replicas", Value: "16"},
 				{Key: "elasticSearch.nodes.data.requests.memory", Value: "32G"},
 				{Key: "elasticSearch.nodes.data.requests.storage", Value: "50Gi"},
+				{Key: "elasticSearch.nodes.master.requests.storage", Value: "50Gi"},
 			},
 			expectedYAML: "testdata/vzValuesVMIProdWithESInstallArgs.yaml",
 			expectedErr:  nil,
@@ -573,14 +578,16 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 					Profile:         "dev",
 					EnvironmentName: "myenv",
 					Components: vzapi.ComponentSpec{
-						Console:       &vzapi.ConsoleComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Prometheus:    &vzapi.PrometheusComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Kibana:        &vzapi.KibanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Elasticsearch: &vzapi.ElasticsearchComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Grafana:       &vzapi.GrafanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
-						Keycloak:      &vzapi.KeycloakComponent{Enabled: &falseValue},
-						Rancher:       &vzapi.RancherComponent{Enabled: &falseValue},
-						DNS:           &vzapi.DNSComponent{Wildcard: &vzapi.Wildcard{Domain: "xip.io"}},
+						Console:            &vzapi.ConsoleComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Prometheus:         &vzapi.PrometheusComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Kibana:             &vzapi.KibanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Elasticsearch:      &vzapi.ElasticsearchComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Grafana:            &vzapi.GrafanaComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
+						Keycloak:           &vzapi.KeycloakComponent{Enabled: &falseValue},
+						Rancher:            &vzapi.RancherComponent{Enabled: &falseValue},
+						DNS:                &vzapi.DNSComponent{Wildcard: &vzapi.Wildcard{Domain: "xip.io"}},
+						PrometheusOperator: &vzapi.PrometheusOperatorComponent{Enabled: &falseValue},
+						PrometheusAdapter:  &vzapi.PrometheusAdapterComponent{MonitoringComponent: vzapi.MonitoringComponent{Enabled: &falseValue}},
 					},
 				},
 			},
@@ -589,7 +596,7 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 		},
 		{
 			name:        "ProdWithExternaDNSEnabled",
-			description: "Test prod with OCI DNS enabled, should enable exeteran-dns component",
+			description: "Test prod with OCI DNS enabled, should enable external-dns component",
 			actualCR: vzapi.Verrazzano{
 				Spec: vzapi.VerrazzanoSpec{
 					Components: vzapi.ComponentSpec{
@@ -759,9 +766,10 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 				expectedValues := verrazzanoValues{}
 				err = yaml.Unmarshal(expectedData, &expectedValues)
 				assert.NoError(err)
-
+				assert.Equal(expectedValues.Logging.ConfigHash, HashSum(fakeContext.EffectiveCR().Spec.Components.Fluentd))
 				// Compare the actual and expected values objects
 				assert.Equal(expectedValues, actualValues)
+				assert.Equal(HashSum(expectedValues), HashSum(actualValues))
 				return nil
 			}
 
@@ -778,8 +786,8 @@ func Test_appendVerrazzanoOverrides(t *testing.T) {
 			//t.Logf("Num kvs: %d", actualNumKvs)
 			expectedNumKvs := test.numKeyValues
 			if expectedNumKvs == 0 {
-				// default is 10, 2 file override + 1 custom image overrides + 7 ES
-				expectedNumKvs = 10
+				// default is 11, 2 file override + 1 custom image overrides + 8 ES
+				expectedNumKvs = 11
 			}
 			assert.Equal(expectedNumKvs, actualNumKvs)
 			// Check Temp file
@@ -1465,11 +1473,11 @@ func createObjectFromTemplate(obj runtime.Object, template string, data interfac
 	return runtime.DefaultUnstructuredConverter.FromUnstructured(uns.Object, obj)
 }
 
-// TestImportHelmObject tests labelling/annotating objects that will be imported to a helm chart
+// TestAssociateHelmObjectToThisRelease tests labelling/annotating objects that will be imported to a helm chart
 // GIVEN an unmanaged object
-//  WHEN I call importHelmObject
+//  WHEN I call associateHelmObjectToThisRelease
 //  THEN the object is managed by helm
-func TestImportHelmObject(t *testing.T) {
+func TestAssociateHelmObjectToThisRelease(t *testing.T) {
 	namespacedName := types.NamespacedName{
 		Name:      ComponentName,
 		Namespace: ComponentNamespace,
@@ -1482,11 +1490,36 @@ func TestImportHelmObject(t *testing.T) {
 	}
 
 	c := fake.NewFakeClientWithScheme(testScheme, obj)
-	_, err := importHelmObject(c, obj, namespacedName)
+	_, err := associateHelmObjectToThisRelease(c, obj, namespacedName)
 	assert.NoError(t, err)
 	assert.Equal(t, obj.Annotations["meta.helm.sh/release-name"], ComponentName)
 	assert.Equal(t, obj.Annotations["meta.helm.sh/release-namespace"], globalconst.VerrazzanoSystemNamespace)
 	assert.Equal(t, obj.Labels["app.kubernetes.io/managed-by"], "Helm")
+}
+
+// TestAssociateHelmObjectAndKeep tests labelling/annotating objects that will be associated to a helm chart
+// GIVEN an unmanaged object
+//  WHEN I call associateHelmObject with keep set to true
+//  THEN the object is managed by helm and is labeled with a resource policy of "keep"
+func TestAssociateHelmObjectAndKeep(t *testing.T) {
+	namespacedName := types.NamespacedName{
+		Name:      ComponentName,
+		Namespace: ComponentNamespace,
+	}
+	obj := &corev1.ServiceAccount{
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      ComponentName,
+			Namespace: ComponentNamespace,
+		},
+	}
+
+	c := fake.NewFakeClientWithScheme(testScheme, obj)
+	_, err := associateHelmObject(c, obj, namespacedName, namespacedName, true)
+	assert.NoError(t, err)
+	assert.Equal(t, ComponentName, obj.Annotations["meta.helm.sh/release-name"])
+	assert.Equal(t, globalconst.VerrazzanoSystemNamespace, obj.Annotations["meta.helm.sh/release-namespace"])
+	assert.Equal(t, "keep", obj.Annotations["helm.sh/resource-policy"])
+	assert.Equal(t, "Helm", obj.Labels["app.kubernetes.io/managed-by"])
 }
 
 // TestIsReadySecretNotReady tests the Verrazzano isVerrazzanoReady call
@@ -1728,4 +1761,25 @@ func TestIsReadyDeploymentVMIDisabled(t *testing.T) {
 	}
 	ctx := spi.NewFakeContext(client, vz, false)
 	assert.True(t, isVerrazzanoReady(ctx))
+}
+
+func TestConfigHashSum(t *testing.T) {
+	defaultAppLogID := "test-defaultAppLogId"
+	systemLogID := "test-systemLogId"
+	apiSec := "test-my-apiSec"
+	b := true
+	f1 := vzapi.FluentdComponent{
+		OCI: &vzapi.OciLoggingConfiguration{DefaultAppLogID: defaultAppLogID,
+			SystemLogID: systemLogID, APISecret: apiSec,
+		}}
+	f2 := vzapi.FluentdComponent{OCI: &vzapi.OciLoggingConfiguration{
+		APISecret:       apiSec,
+		DefaultAppLogID: defaultAppLogID,
+		SystemLogID:     systemLogID,
+	}}
+	assert.Equal(t, HashSum(f1), HashSum(f2))
+	f1.Enabled = &b
+	assert.NotEqual(t, HashSum(f1), HashSum(f2))
+	f2.Enabled = &b
+	assert.Equal(t, HashSum(f1), HashSum(f2))
 }

@@ -7,6 +7,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/transform"
+
 	"k8s.io/apimachinery/pkg/selection"
 
 	vzconst "github.com/verrazzano/verrazzano/platform-operator/constants"
@@ -41,6 +43,9 @@ const (
 
 	// vzStateUpgradeDone is the state when upgrade is done
 	vzStateUpgradeDone VerrazzanoUpgradeState = "vzUpgradeDone"
+
+	// vzStateRestartApps is the state when the apps are being restarted
+	vzStateRestartApps VerrazzanoUpgradeState = "vzRestartApps"
 
 	// vzStateEnd is the terminal state
 	vzStateEnd VerrazzanoUpgradeState = "vzStateEnd"
@@ -93,7 +98,7 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 		case vzStatePostUpgrade:
 			// Invoke the global post upgrade function after all components are upgraded.
 			log.Once("Doing Verrazzano post-upgrade processing")
-			err := postVerrazzanoUpgrade(log, r)
+			err := postVerrazzanoUpgrade(log, r, cr)
 			if err != nil {
 				log.Errorf("Error running Verrazzano system-level post-upgrade")
 				return newRequeueWithDelay(), err
@@ -121,16 +126,26 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 				log.Oncef("Component %s is ready after post-upgrade", compName)
 
 			}
+			tracker.vzState = vzStateRestartApps
+
+		case vzStateRestartApps:
+			log.Once("Doing Verrazzano post-upgrade application restarts if needed")
+			err := istio.RestartApps(log, r, cr.Generation)
+			if err != nil {
+				log.Errorf("Error running Verrazzano post-upgrade application restarts")
+				return newRequeueWithDelay(), err
+			}
 			tracker.vzState = vzStateUpgradeDone
 
 		case vzStateUpgradeDone:
 			msg := fmt.Sprintf("Verrazzano successfully upgraded to version %s", cr.Spec.Version)
 			log.Once(msg)
 			cr.Status.Version = targetVersion
+			effectiveCR, _ := transform.GetEffectiveCR(cr)
 			for _, comp := range registry.GetComponents() {
 				compName := comp.Name()
 				componentStatus := cr.Status.Components[compName]
-				if componentStatus != nil {
+				if componentStatus != nil && (effectiveCR != nil && comp.IsEnabled(effectiveCR)) {
 					log.Oncef("Component %s has been upgraded from generation %v to %v %v", compName, componentStatus.LastReconciledGeneration, cr.Generation, componentStatus.State)
 					componentStatus.LastReconciledGeneration = cr.Generation
 				}
@@ -150,9 +165,10 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 // resolvePendingUpgrdes will delete any helm secrets with a status other than "deployed" for the given component
 func (r *Reconciler) resolvePendingUpgrades(compName string, compLog vzlog.VerrazzanoLogger) {
 	nameReq, _ := kblabels.NewRequirement("name", selection.Equals, []string{compName})
-	statusReq, _ := kblabels.NewRequirement("status", selection.NotEquals, []string{"deployed"})
+	notDeployedReq, _ := kblabels.NewRequirement("status", selection.NotEquals, []string{"deployed"})
+	notSupersededReq, _ := kblabels.NewRequirement("status", selection.NotEquals, []string{"superseded"})
 	labelSelector := kblabels.NewSelector()
-	labelSelector = labelSelector.Add(*nameReq, *statusReq)
+	labelSelector = labelSelector.Add(*nameReq, *notDeployedReq, *notSupersededReq)
 	helmSecrets := v1.SecretList{}
 	err := r.Client.List(context.TODO(), &helmSecrets, &clipkg.ListOptions{LabelSelector: labelSelector})
 	if err != nil {
@@ -164,6 +180,10 @@ func (r *Reconciler) resolvePendingUpgrades(compName string, compLog vzlog.Verra
 	}
 	// remove any pending upgrade secrets
 	for i := range helmSecrets.Items {
+		compLog.Debugf("%s labels:", helmSecrets.Items[i].Name)
+		for k, v := range helmSecrets.Items[i].Labels {
+			compLog.Debugf("key: %s, value: %s", k, v)
+		}
 		err := r.Client.Delete(context.TODO(), &helmSecrets.Items[i], &clipkg.DeleteOptions{})
 		if err != nil {
 			compLog.Errorf("Unable to remove pending upgrade helm secret for component %s: %v", compName, err)
@@ -193,9 +213,9 @@ func isLastCondition(st installv1alpha1.VerrazzanoStatus, conditionType installv
 }
 
 // postVerrazzanoUpgrade restarts pods with old Istio sidecar proxies
-func postVerrazzanoUpgrade(log vzlog.VerrazzanoLogger, client clipkg.Client) error {
+func postVerrazzanoUpgrade(log vzlog.VerrazzanoLogger, client clipkg.Client, cr *installv1alpha1.Verrazzano) error {
 	log.Oncef("Checking if any pods with Istio sidecars need to be restarted to pick up the new version of the Istio proxy")
-	return istio.RestartComponents(log, config.GetInjectedSystemNamespaces(), client)
+	return istio.RestartComponents(log, config.GetInjectedSystemNamespaces(), cr.Generation)
 }
 
 // getNSNKey gets the key for the verrazzano resource

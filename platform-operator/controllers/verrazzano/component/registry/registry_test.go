@@ -6,6 +6,8 @@ package registry
 import (
 	"testing"
 
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
+
 	"github.com/stretchr/testify/assert"
 	"github.com/verrazzano/verrazzano/pkg/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
@@ -21,10 +23,11 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/mysql"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/oam"
+	promadapter "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/adapter"
+	promoperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/operator"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/rancher"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/verrazzano"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 	appsv1 "k8s.io/api/apps/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
@@ -48,11 +51,11 @@ func TestGetComponents(t *testing.T) {
 	assert := assert.New(t)
 	comps := GetComponents()
 
-	assert.Len(comps, 14, "Wrong number of components")
+	assert.Len(comps, 16, "Wrong number of components")
 	assert.Equal(comps[0].Name(), oam.ComponentName)
-	assert.Equal(comps[1].Name(), weblogic.ComponentName)
-	assert.Equal(comps[2].Name(), appoper.ComponentName)
-	assert.Equal(comps[3].Name(), istio.ComponentName)
+	assert.Equal(comps[1].Name(), appoper.ComponentName)
+	assert.Equal(comps[2].Name(), istio.ComponentName)
+	assert.Equal(comps[3].Name(), weblogic.ComponentName)
 	assert.Equal(comps[4].Name(), nginx.ComponentName)
 	assert.Equal(comps[5].Name(), certmanager.ComponentName)
 	assert.Equal(comps[6].Name(), externaldns.ComponentName)
@@ -63,6 +66,8 @@ func TestGetComponents(t *testing.T) {
 	assert.Equal(comps[11].Name(), mysql.ComponentName)
 	assert.Equal(comps[12].Name(), keycloak.ComponentName)
 	assert.Equal(comps[13].Name(), kiali.ComponentName)
+	assert.Equal(comps[14].Name(), promoperator.ComponentName)
+	assert.Equal(comps[15].Name(), promadapter.ComponentName)
 }
 
 // TestFindComponent tests FindComponent
@@ -455,6 +460,10 @@ func (f fakeComponent) Name() string {
 	return f.name
 }
 
+func (f fakeComponent) GetJSONName() string {
+	return f.name
+}
+
 func (f fakeComponent) GetDependencies() []string {
 	return f.dependencies
 }
@@ -463,7 +472,7 @@ func (f fakeComponent) IsReady(_ spi.ComponentContext) bool {
 	return true
 }
 
-func (f fakeComponent) IsEnabled(_ spi.ComponentContext) bool {
+func (f fakeComponent) IsEnabled(effectiveCR *v1alpha1.Verrazzano) bool {
 	return f.enabled
 }
 
@@ -508,5 +517,17 @@ func (f fakeComponent) Reconcile(_ spi.ComponentContext) error {
 }
 
 func (f fakeComponent) GetIngressNames(_ spi.ComponentContext) []types.NamespacedName {
+	return []types.NamespacedName{}
+}
+
+func (f fakeComponent) ValidateInstall(vz *v1alpha1.Verrazzano) error {
+	return nil
+}
+
+func (f fakeComponent) ValidateUpdate(old *v1alpha1.Verrazzano, new *v1alpha1.Verrazzano) error {
+	return nil
+}
+
+func (f fakeComponent) GetCertificateNames(_ spi.ComponentContext) []types.NamespacedName {
 	return []types.NamespacedName{}
 }

@@ -38,6 +38,8 @@ type verrazzanoValues struct {
 	Security           *securityRoleBindingValues `json:"security,omitempty"`
 	Kubernetes         *kubernetesValues          `json:"kubernetes,omitempty"`
 	Externaldns        *externalDNSValues         `json:"externaldns,omitempty"`
+	PrometheusOperator *prometheusOperatorValues  `json:"prometheusOperator,omitempty"`
+	PrometheusAdapter  *prometheusAdapterValues   `json:"prometheusAdapter,omitempty"`
 }
 
 type subject struct {
@@ -138,6 +140,7 @@ type loggingValues struct {
 	Name                string `json:"name,omitempty"`
 	ElasticsearchURL    string `json:"elasticsearchURL,omitempty"`
 	ElasticsearchSecret string `json:"elasticsearchSecret,omitempty"`
+	ConfigHash          string `json:"configHash,omitempty"`
 }
 
 type fluentdValues struct {
@@ -204,4 +207,12 @@ type ociLoggingSettings struct {
 	DefaultAppLogID string `json:"defaultAppLogId"`
 	SystemLogID     string `json:"systemLogId"`
 	APISecret       string `json:"apiSecret,omitempty"`
+}
+
+type prometheusOperatorValues struct {
+	Enabled bool `json:"enabled"` // Always write
+}
+
+type prometheusAdapterValues struct {
+	Enabled bool `json:"enabled"` // Always write
 }

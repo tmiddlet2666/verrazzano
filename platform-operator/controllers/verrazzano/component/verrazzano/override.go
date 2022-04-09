@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"io/fs"
 	"os"
+	"strconv"
 
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	globalconst "github.com/verrazzano/verrazzano/pkg/constants"
@@ -114,6 +115,19 @@ func appendVerrazzanoValues(ctx spi.ComponentContext, overrides *verrazzanoValue
 		}
 	}
 
+	ingressType, err := vzconfig.GetServiceType(effectiveCR)
+	if err != nil {
+		return nil
+	}
+	switch ingressType {
+	case vzapi.NodePort:
+		for _, ports := range effectiveCR.Spec.Components.Ingress.Ports {
+			if ports.Port == 443 {
+				dnsSuffix = fmt.Sprintf("%s:%s", dnsSuffix, strconv.Itoa(int(ports.NodePort)))
+			}
+		}
+	}
+
 	envName := vzconfig.GetEnvName(effectiveCR)
 	overrides.Config = &configValues{
 		EnvName:   envName,
@@ -125,6 +139,8 @@ func appendVerrazzanoValues(ctx spi.ComponentContext, overrides *verrazzanoValue
 	overrides.Console = &consoleValues{Enabled: vzconfig.IsConsoleEnabled(effectiveCR)}
 	overrides.VerrazzanoOperator = &voValues{Enabled: vzconfig.IsVMOEnabled(effectiveCR)}
 	overrides.MonitoringOperator = &vmoValues{Enabled: vzconfig.IsVMOEnabled(effectiveCR)}
+	overrides.PrometheusOperator = &prometheusOperatorValues{Enabled: vzconfig.IsPrometheusOperatorEnabled(effectiveCR)}
+	overrides.PrometheusAdapter = &prometheusAdapterValues{Enabled: vzconfig.IsPrometheusAdapterEnabled(effectiveCR)}
 	return nil
 }
 
@@ -229,7 +245,7 @@ func appendFluentdOverrides(effectiveCR *vzapi.Verrazzano, overrides *verrazzano
 
 	fluentd := effectiveCR.Spec.Components.Fluentd
 	if fluentd != nil {
-		overrides.Logging = &loggingValues{}
+		overrides.Logging = &loggingValues{ConfigHash: HashSum(fluentd)}
 		if len(fluentd.ElasticsearchURL) > 0 {
 			overrides.Logging.ElasticsearchURL = fluentd.ElasticsearchURL
 		}
