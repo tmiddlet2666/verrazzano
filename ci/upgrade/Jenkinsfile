@@ -255,10 +255,10 @@ pipeline {
                     }
                 }
             }
-            stage ('Verify Register') {
-                steps {
-                    verifyRegisterAdminCluster()
-                }
+        }
+        stage ('Verify Register') {
+            steps {
+                verifyRegisterAdminCluster()
             }
         }
         stage("Upgrade Platform Operator") {
