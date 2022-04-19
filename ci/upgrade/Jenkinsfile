@@ -57,6 +57,10 @@ pipeline {
                 defaultValue: '_excluded_test',
                 description: 'A regex matching any fully qualified test file that should not be executed (e.g. multicluster/|_excluded_test). Default: _excluded_test',
                 trim: true)
+        string (name: 'CONSOLE_REPO_BRANCH',
+                defaultValue: '',
+                description: 'The branch to check out after cloning the console repository.',
+                trim: true)
     }
 
     environment {
@@ -97,6 +101,13 @@ pipeline {
         NEW_PODS_FILE2="${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-new-vpo-app-pods-2.out"
         APP_NAMEPACES="'todo-list bobs-books hello-helidon springboot sockshop'"
 
+        KUBECONFIG_DIR = "${WORKSPACE}/kubeconfig"
+        ADMIN_KUBECONFIG="${KUBECONFIG_DIR}/1/kube_config"
+
+        SAMPLE_APP_NAME="hello-helidon-appconf"
+        SAMPLE_APP_NAMESPACE="hello-helidon-sample"
+        SAMPLE_APP_COMPONENT="hello-helidon-component"
+
         // used to emit metrics
          PROMETHEUS_GW_URL = credentials('prometheus-dev-url')
          PROMETHEUS_CREDENTIALS = credentials('prometheus-credentials')
@@ -111,6 +122,7 @@ pipeline {
          TEST_REPORT = "test-report.xml"
          GINKGO_REPORT_ARGS = "--junit-report=${TEST_REPORT} --keep-separate-reports=true"
          TEST_REPORT_DIR = "${WORKSPACE}/tests/e2e"
+         TEST_DUMP_ROOT="${WORKSPACE}/test-cluster-dumps"
     }
 
     stages {
@@ -240,33 +252,12 @@ pipeline {
                                 runGinkgoNamespace('examples/helidon', "false", "true", "hello-helidon")
                             }
                         }
-                        // Re-enable this stage when a mechanism is in place to deploy different comp and app yamls based on VZ version
-//                         stage('examples socks') {
-//                             steps {
-//                                 runGinkgoNamespace('examples/socks', "false", "true", "sockshop")
-//                             }
-//                         }
                     }
-                    post {
-                        always {
-                            archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
-                            junit testResults: '**/*test-result.xml', allowEmptyResults: true
-                        }
-                        failure {
-                            script {
-                                if ( fileExists(env.TESTS_EXECUTED_FILE) ) {
-                                    dumpK8sCluster('pre-upgrade-tests-cluster-dump')
-                                }
-                            }
-                        }
-                        success {
-                            script {
-                                if (params.DUMP_K8S_CLUSTER_ON_SUCCESS == true && fileExists(env.TESTS_EXECUTED_FILE) ) {
-                                    dumpK8sCluster('install-success-cluster-dump')
-                                }
-                            }
-                        }
-                    }
+                }
+            }
+            stage ('Verify Register') {
+                steps {
+                    verifyRegisterAdminCluster()
                 }
             }
         }
@@ -426,6 +417,26 @@ pipeline {
                                 runGinkgoRandomize('verify-infra/vmi')
                             }
                         }
+                        stage('verify-scripts') {
+                            steps {
+                                runGinkgoRandomize('scripts')
+                            }
+                        }
+                        stage ('Verify Register') {
+                            steps {
+                                verifyRegisterAdminCluster()
+                            }
+                        }
+                        stage ('Verify Managed Cluster Permissions') {
+                            steps {
+                                verifyAdminClusterPermissions()
+                            }
+                        }
+                        stage ('Verify Metrics') {
+                            steps {
+                                verifyMetricsAdminCluster()
+                            }
+                        }
                         stage('verify-upgrade post-upgrade') {
                             steps {
                                 runGinkgoRandomize('upgrade/post-upgrade/verify')
@@ -454,6 +465,16 @@ pipeline {
                         stage('coherence workload') {
                             steps {
                                 runGinkgoNamespace('workloads/coherence', "false", "true", "hello-coherence")
+                            }
+                        }
+                        stage ('Console') {
+                            steps {
+                                runConsoleTests()
+                            }
+                            post {
+                                always {
+                                    sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_screenshots.sh"
+                                }
                             }
                         }
                     }
@@ -611,6 +632,72 @@ pipeline {
             deleteDir()
         }
     }
+}
+
+// Verify the register of the admin cluster
+def verifyRegisterAdminCluster() {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        script {
+            sh """
+                export MANAGED_CLUSTER_NAME="managed${count-1}"
+                cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+                ginkgo -p --randomize-all -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/verify-registeradmin/...
+            """
+        }
+    }
+}
+
+// Run a test suite against all clusters
+def verifyMetricsAdminCluster() {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        script {
+                clusterName="admin"
+                sh """
+                    export KUBECONFIG="${KUBECONFIG_DIR}/1/kube_config"
+                    export ADMIN_KUBECONFIG="${KUBECONFIG_DIR}/1/kube_config"
+                    export CLUSTER_NAME="${clusterName}"
+                    cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+                    ginkgo -p --randomize-all -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" metrics/syscomponents/...
+                """
+            }
+        }
+    }
+}
+
+def verifyAdminClusterPermissions() {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        script {
+            sh """
+                export MANAGED_CLUSTER_NAME="managed-1"
+                cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+                ginkgo -v -stream --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/verify-permissionsadmin/...
+            """
+        }
+    }
+}
+
+def runConsoleTests() {
+    // Set app information used by the application page UI tests to assert for app info
+    // Console runs on admin cluster and the KUBECONFIG is pointed at it (which is cluster 1)
+    // Make sure that application page tests are also run by setting RUN_APP_TESTS=true since we deployed
+    // a sample app for that purpose
+    sh """
+        export DUMP_DIRECTORY="${TEST_DUMP_ROOT}/console"
+        export CONSOLE_REPO_BRANCH="${params.CONSOLE_REPO_BRANCH}"
+        export CONSOLE_APP_NAME="${SAMPLE_APP_NAME}"
+        export CONSOLE_APP_NAMESPACE="${SAMPLE_APP_NAMESPACE}"
+        export CONSOLE_APP_CLUSTER="managed1"
+        export CONSOLE_APP_COMP="${SAMPLE_APP_COMPONENT}"
+        KUBECONFIG=${ADMIN_KUBECONFIG} RUN_APP_TESTS=true ${GO_REPO_PATH}/verrazzano/ci/scripts/run_console_tests.sh
+   """
+}
+
+def runAdminclusterVerifyApi() {
+        sh """
+          export ADMIN_KUBECONFIG="${KUBECONFIG_DIR}/1/kube_config"
+          cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+          ginkgo -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/verify-apiadmin/...
+        """
 }
 
 def runGinkgoRandomize(testSuitePath) {
