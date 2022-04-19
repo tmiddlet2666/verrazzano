@@ -639,7 +639,7 @@ def verifyRegisterAdminCluster() {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
         script {
             sh """
-                export MANAGED_CLUSTER_NAME="managed${count-1}"
+                export MANAGED_CLUSTER_NAME="managed-1"
                 cd ${GO_REPO_PATH}/verrazzano/tests/e2e
                 ginkgo -p --randomize-all -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/verify-registeradmin/...
             """
