@@ -131,8 +131,8 @@ func PodsRunning(namespace string, namePrefixes []string) (bool, error) {
 func PodsRunningInCluster(namespace string, namePrefixes []string, kubeconfigPath string) (bool, error) {
 	clientset, err := GetKubernetesClientsetForCluster(kubeconfigPath)
 	if err != nil {
-		Log(Error, fmt.Sprintf("Error getting clientset for cluster, error: %v", err))
-		return false, fmt.Errorf("error getting clientset for cluster, error: %v", err)
+		Log(Error, fmt.Sprintf("Error getting clientset for cluster,namespace: %s, error: %v", namespace, err))
+		return false, fmt.Errorf("error getting clientset for cluster,namespace: %s, error: %v", namespace, err)
 	}
 	pods, err := ListPodsInCluster(namespace, clientset)
 	if err != nil {
