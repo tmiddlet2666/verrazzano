@@ -234,9 +234,9 @@ pipeline {
             stages {
                 stage('Run Acceptance Tests Before Upgrade') {
                     parallel {
-                        stage('examples spring') {
+                        stage('coherence workload') {
                             steps {
-                                runGinkgoNamespace('examples/springboot', "false", "true", "springboot")
+                                runGinkgoNamespace('workloads/coherence', "false", "true", "hello-coherence")
                             }
                         }
                         stage('examples helidon') {
