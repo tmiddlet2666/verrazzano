@@ -235,7 +235,7 @@ pipeline {
                         }
                         stage('examples helidon') {
                             steps {
-                                runGinkgoNamespace('examples/helidon', "false", "true", "hello-helidon")
+                                runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
                             }
                         }
                         // Re-enable this stage when a mechanism is in place to deploy different comp and app yamls based on VZ version
@@ -431,7 +431,7 @@ pipeline {
                         }
                         stage('examples helidon') {
                             steps {
-                                runGinkgoNamespace('examples/helidon', "true", "false", "hello-helidon")
+                                runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                             }
                         }
                         stage('workloads coherence') {
