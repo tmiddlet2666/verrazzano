@@ -228,9 +228,9 @@ pipeline {
             stages {
                 stage('Run Acceptance Tests Before Upgrade') {
                     parallel {
-                        stage('examples spring') {
+                        stage('workloads coherence') {
                             steps {
-                                runGinkgoNamespace('examples/springboot', "false", "true", "springboot")
+                                runGinkgoVerify('workloads/coherence', "false", "true", "true", "hello-coherence")
                             }
                         }
                         stage('examples helidon') {
@@ -449,9 +449,9 @@ pipeline {
                                 runGinkgoNamespace('workloads/weblogic', "false", "true", "hello-wls")
                             }
                         }
-                        stage('coherence workload') {
+                        stage('workloads coherence') {
                             steps {
-                                runGinkgoNamespace('workloads/coherence', "false", "true", "hello-coherence")
+                                runGinkgoVerify('workloads/coherence', "true", "false", "false", "hello-coherence")
                             }
                         }
                     }
@@ -637,6 +637,16 @@ def runGinkgoNamespace(testSuitePath, skipDeploy, skipUndeploy, namespace) {
         """
     }
 }
+
+def runGinkgoVerify(testSuitePath, skipDeploy, skipUndeploy, skipVerify, namespace) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            ginkgo -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/... -- --skipDeploy=${skipDeploy} --skipUndeploy=${skipUndeploy} --skipVerify=${skipVerify} --namespace=${namespace}
+        """
+    }
+}
+
 
 def dumpK8sCluster(dumpDirectory) {
     sh """
