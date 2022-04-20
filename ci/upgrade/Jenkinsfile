@@ -429,24 +429,9 @@ pipeline {
                                 runGinkgoRandomize('upgrade/post-upgrade/verify')
                             }
                         }
-                        stage('examples socks') {
-                            steps {
-                                runGinkgoNamespace('examples/socks', "false", "false", "sockshop")
-                            }
-                        }
-                        stage('examples spring') {
-                            steps {
-                                runGinkgoNamespace('examples/springboot', "true", "false", "springboot")
-                            }
-                        }
                         stage('examples helidon') {
                             steps {
                                 runGinkgoNamespace('examples/helidon', "true", "false", "hello-helidon")
-                            }
-                        }
-                        stage('weblogic workload') {
-                            steps {
-                                runGinkgoNamespace('workloads/weblogic', "false", "true", "hello-wls")
                             }
                         }
                         stage('workloads coherence') {
