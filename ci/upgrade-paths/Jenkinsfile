@@ -1393,18 +1393,18 @@ def modifyHelloHelidonApp(newNamespace, newProjName) {
 }
 
 def deploySampleApp() {
+    // deploy helidon app in managed clusters only
+    runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
     // deploy helidon app in admin cluster only
     runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
-    // deploy helidon app in managed clusters only
-    // runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
 
-    modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
+/*     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/verrazzano-project.yaml
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
-    """
+    """ */
 }
 
 def undeploySampleApp() {
