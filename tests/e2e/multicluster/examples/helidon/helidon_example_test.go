@@ -38,7 +38,7 @@ var managedKubeconfig = os.Getenv("MANAGED_KUBECONFIG")
 var failed = false
 var beforeSuitePassed = false
 var skipUndeploy = false
-var skipDeploy = true
+//var skipDeploy = true
 var skipVerify = false
 var t = framework.NewTestFramework("mchelidon")
 
@@ -49,23 +49,21 @@ var _ = t.AfterEach(func() {
 
 // set the kubeconfig to use the admin cluster kubeconfig and deploy the example resources
 var _ = t.BeforeSuite(func() {
-	if !skipDeploy {
-		// deploy the VerrazzanoProject
-		start := time.Now()
-		Eventually(func() error {
-			return examples.DeployHelloHelidonProject(adminKubeconfig, sourceDir)
-		}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
+	// deploy the VerrazzanoProject
+	start := time.Now()
+	Eventually(func() error {
+		return examples.DeployHelloHelidonProject(adminKubeconfig, sourceDir)
+	}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
 
-		// wait for the namespace to be created on the cluster before deploying app
-		Eventually(func() bool {
-			return examples.HelidonNamespaceExists(adminKubeconfig, sourceDir)
-		}, waitTimeout, pollingInterval).Should(BeTrue())
+	// wait for the namespace to be created on the cluster before deploying app
+	Eventually(func() bool {
+		return examples.HelidonNamespaceExists(adminKubeconfig, sourceDir)
+	}, waitTimeout, pollingInterval).Should(BeTrue())
 
-		Eventually(func() error {
-			return examples.DeployHelloHelidonApp(adminKubeconfig, sourceDir)
-		}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
-		metrics.Emit(t.Metrics.With("deployment_elapsed_time", time.Since(start).Milliseconds()))
-	}
+	Eventually(func() error {
+		return examples.DeployHelloHelidonApp(adminKubeconfig, sourceDir)
+	}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
+	metrics.Emit(t.Metrics.With("deployment_elapsed_time", time.Since(start).Milliseconds()))
 	beforeSuitePassed = true
 })
 
