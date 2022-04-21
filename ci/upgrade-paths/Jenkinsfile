@@ -417,21 +417,17 @@ pipeline {
                         stage ('Deploy Sample Application') {
                             steps {
                                 deploySampleApp()
-                                verifyHelidon(1)
-                                verifyHelidon(2)
                             }
                         }
                     }
                 }
                 stage('examples helidon admin') {
                     steps {
-                        verifyHelidon(1)
                         runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                     }
                 }
                 stage ('examples helidon managed') {
                     steps {
-                        verifyHelidon(2)
                         runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
                     }
                 }
@@ -961,15 +957,6 @@ def verifyManagedClusterPermissions() {
     }
 }
 
-def verifyHelidon(count) {
-    script {
-        sh """
-            export KUBECONFIG="${KUBECONFIG_DIR}/${count}/kube_config"
-            kubectl get pods -n hello-helidon
-        """
-    }
-}
-
 // Run ginkgo test suites
 def runGinkgo(testSuitePath, clusterDumpDirectory) {
     script {
@@ -1409,8 +1396,8 @@ def deploySampleApp() {
     // deploy helidon app in admin cluster only
     runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
     // deploy helidon app in managed clusters only
-    runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
-    /*
+    // runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
+
     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
@@ -1418,7 +1405,6 @@ def deploySampleApp() {
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
     """
-    */
 }
 
 def undeploySampleApp() {
