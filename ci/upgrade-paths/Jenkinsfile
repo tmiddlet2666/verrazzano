@@ -428,7 +428,7 @@ pipeline {
                 }
                 stage('examples helidon admin') {
                     steps {
-                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
+                        runGinkgoVerify('examples/helidon', "false", "false", "false", "hello-helidon")
                     }
                 }
                 stage("upgrade-platform-operator") {
@@ -1393,10 +1393,10 @@ def modifyHelloHelidonApp(newNamespace, newProjName) {
 }
 
 def deploySampleApp() {
+    // deploy helidon app in admin cluster only
+    runGinkgoVerify('examples/helidon', "false", "true", "false", "hello-helidon")
     // deploy helidon app in managed clusters only
     runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
-    // deploy helidon app in admin cluster only
-    runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
 
 /*     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
