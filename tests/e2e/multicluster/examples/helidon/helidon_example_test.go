@@ -46,7 +46,7 @@ var _ = t.AfterEach(func() {
 
 // set the kubeconfig to use the admin cluster kubeconfig and deploy the example resources
 var _ = t.BeforeSuite(func() {
-	fmt.Println(skipDeploy, skipUndeploy, skipVerify)
+	fmt.Println(skipDeploy, skipUndeploy, skipVerify, adminKubeconfig)
 	if !skipDeploy {
 		// deploy the VerrazzanoProject
 		start := time.Now()
