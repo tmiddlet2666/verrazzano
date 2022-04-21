@@ -227,14 +227,14 @@ pipeline {
             stages {
                 stage('Run Acceptance Tests Before Upgrade') {
                     parallel {
-                        stage('examples spring') {
+                        stage('workloads coherence') {
                             steps {
-                                runGinkgoNamespace('examples/springboot', "false", "true", "springboot")
+                                runGinkgoVerify('workloads/coherence', "false", "true", "true", "hello-coherence")
                             }
                         }
                         stage('examples helidon') {
                             steps {
-                                runGinkgoNamespace('examples/helidon', "false", "true", "hello-helidon")
+                                runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
                             }
                         }
                         stage('pre-upgrade verify') {
@@ -433,29 +433,14 @@ pipeline {
                                 runGinkgoRandomize('upgrade/post-upgrade/verify')
                             }
                         }
-                        stage('examples socks') {
-                            steps {
-                                runGinkgoNamespace('examples/socks', "false", "false", "sockshop")
-                            }
-                        }
-                        stage('examples spring') {
-                            steps {
-                                runGinkgoNamespace('examples/springboot', "true", "false", "springboot")
-                            }
-                        }
                         stage('examples helidon') {
                             steps {
-                                runGinkgoNamespace('examples/helidon', "true", "false", "hello-helidon")
+                                runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                             }
                         }
-                        stage('weblogic workload') {
+                        stage('workloads coherence') {
                             steps {
-                                runGinkgoNamespace('workloads/weblogic', "false", "true", "hello-wls")
-                            }
-                        }
-                        stage('coherence workload') {
-                            steps {
-                                runGinkgoNamespace('workloads/coherence', "false", "true", "hello-coherence")
+                                runGinkgoVerify('workloads/coherence', "true", "false", "false", "hello-coherence")
                             }
                         }
                     }
@@ -641,6 +626,16 @@ def runGinkgoNamespace(testSuitePath, skipDeploy, skipUndeploy, namespace) {
         """
     }
 }
+
+def runGinkgoVerify(testSuitePath, skipDeploy, skipUndeploy, skipVerify, namespace) {
+    catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+        sh """
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            ginkgo -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/... -- --skipDeploy=${skipDeploy} --skipUndeploy=${skipUndeploy} --skipVerify=${skipVerify} --namespace=${namespace}
+        """
+    }
+}
+
 
 def dumpK8sCluster(dumpDirectory) {
     sh """
