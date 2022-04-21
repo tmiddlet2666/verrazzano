@@ -420,6 +420,26 @@ pipeline {
                                 runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
                             }
                         }
+                        stage ('Console') {
+                            steps {
+                                runConsoleTests()
+                            }
+                            post {
+                                always {
+                                    sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_screenshots.sh"
+                                }
+                            }
+                        }
+                        stage ('Verify Example Apps') {
+                            parallel {
+                                stage ('Examples Helidon') {
+                                    steps {
+                                        runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                                    }
+                                }
+                            }
+                        }
+
                     }
                 }
                 stage("upgrade-platform-operator") {
@@ -531,9 +551,13 @@ pipeline {
                         }
                     }
                 }
-                stage ('Verify Examples Helidon') {
-                    steps {
-                        runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                stage ('Verify Example Apps') {
+                    parallel {
+                        stage ('Examples Helidon') {
+                            steps {
+                                runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                            }
+                        }
                     }
                 }
                 /* stage ('Undeploy Sample Application') {
@@ -852,7 +876,7 @@ def upgradeVerrazzano() {
 
                 # Get the install job in verrazzano-install namespace
                 kubectl -n verrazzano-install get job -o yaml --selector=job-name=verrazzano-install-my-verrazzano > ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-pre-upgrade-job.out
-                  
+
                 echo "Upgrading the Verrazzano installation to version" $VERRAZZANO_DEV_VERSION
                 # Modify the version field in the Verrazzano CR file to be this new Verrazzano version
                 cd ${GO_REPO_PATH}/verrazzano
@@ -864,10 +888,10 @@ def upgradeVerrazzano() {
                 kubectl apply -f ${v8oUpgradeFile}
                 # wait for the upgrade to complete
                 kubectl wait --timeout=25m --for=condition=UpgradeComplete verrazzano/my-verrazzano
-                            
+
                 # Get the install job(s) and mke sure the it matches pre-install.  If there is more than 1 job or the job changed, then it won't match
                 kubectl -n verrazzano-install get job -o yaml --selector=job-name=verrazzano-install-my-verrazzano > ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-post-upgrade-job.out
-             
+
                 echo "Ensuring that the install job(s) in verrazzzano-system are identical pre and post install"
                 cmp -s ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-pre-upgrade-job.out ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-post-upgrade-job.out
 
@@ -1389,7 +1413,6 @@ def modifyHelloHelidonApp(newNamespace, newProjName) {
 }
 
 def deploySampleApp() {
-    /*
     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
@@ -1397,7 +1420,6 @@ def deploySampleApp() {
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
     """
-    */
 }
 
 def undeploySampleApp() {
