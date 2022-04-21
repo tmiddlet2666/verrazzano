@@ -190,7 +190,7 @@ pipeline {
 
         // sample app deployed before upgrade and UI console tests
         SAMPLE_APP_NAME="hello-helidon-appconf"
-        SAMPLE_APP_NAMESPACE="hello-helidon-sample"
+        SAMPLE_APP_NAMESPACE="hello-helidon"
         SAMPLE_APP_PROJECT="hello-helidon-sample-proj"
         SAMPLE_APP_COMPONENT="hello-helidon-component"
 
@@ -420,26 +420,6 @@ pipeline {
                                 runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
                             }
                         }
-                        stage ('Console') {
-                            steps {
-                                runConsoleTests()
-                            }
-                            post {
-                                always {
-                                    sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_screenshots.sh"
-                                }
-                            }
-                        }
-                        stage ('Verify Example Apps') {
-                            parallel {
-                                stage ('Examples Helidon') {
-                                    steps {
-                                        runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
-                                    }
-                                }
-                            }
-                        }
-
                     }
                 }
                 stage("upgrade-platform-operator") {
