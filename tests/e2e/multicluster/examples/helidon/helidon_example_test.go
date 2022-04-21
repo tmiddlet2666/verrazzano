@@ -37,9 +37,9 @@ var managedKubeconfig = os.Getenv("MANAGED_KUBECONFIG")
 // failed indicates whether any of the tests has failed
 var failed = false
 var beforeSuitePassed = false
-var skipUndeploy = false
+var skipUndeploy = true
 //var skipDeploy = true
-var skipVerify = false
+var skipVerify = true
 var t = framework.NewTestFramework("mchelidon")
 
 var _ = t.AfterEach(func() {
