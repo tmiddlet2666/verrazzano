@@ -423,7 +423,7 @@ pipeline {
                 }
                 stage('examples helidon admin') {
                     steps {
-                        runGinkgoVerify('examples/helidon', "true", "false", "true", "hello-helidon")
+                        runGinkgoVerify('examples/helidon', "true", "true", "false", "hello-helidon")
                     }
                 }
                 stage ('examples helidon managed') {
