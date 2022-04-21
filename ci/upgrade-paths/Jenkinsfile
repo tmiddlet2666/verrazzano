@@ -482,6 +482,16 @@ pipeline {
                         runGinkgoRandomize('multicluster/verify-install')
                     }
                 }
+                stage('examples helidon admin') {
+                    steps {
+                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
+                    }
+                }
+                stage ('examples helidon managed') {
+                    steps {
+                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
+                    }
+                }
             }
         }
 
