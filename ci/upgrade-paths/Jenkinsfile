@@ -520,25 +520,18 @@ pipeline {
 
         stage('Acceptance Tests') {
             stages {
-                stage ('Example apps') {
-                    parallel {
-                        stage ('Examples Helidon') {
-                            steps {
-                                runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
-                            }
-                        }
-                        stage ('WebLogic Workload') {
-                            steps {
-                                runGinkgo("multicluster/workloads/mcweblogic", "${TEST_DUMP_ROOT}/weblogic-workload")
-                            }
-                        }
-                        stage ('Coherence Workload') {
-                            steps {
-                                runGinkgo("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/coherence-workload")
-                            }
-                        }
+                stage('examples helidon admin') {
+                    steps {
+                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                     }
                 }
+
+                stage ('examples helidon managed') {
+                    steps {
+                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
+                    }
+                }
+
                 stage ('Console') {
                     steps {
                         runConsoleTests()
