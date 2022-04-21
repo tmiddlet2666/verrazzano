@@ -302,7 +302,7 @@ var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multiclust
 	}
 	if !skipUndeploy {
 		t.Context("Delete resources", func() {
-			/*t.It("Delete resources on admin cluster", func() {
+			t.It("Delete resources on admin cluster", func() {
 				Eventually(func() error {
 					return cleanUp(adminKubeconfig)
 				}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
@@ -312,7 +312,7 @@ var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multiclust
 				Eventually(func() bool {
 					return examples.VerifyHelloHelidonDeletedAdminCluster(adminKubeconfig, false, testNamespace, testProjectName)
 				}, waitTimeout, pollingInterval).Should(BeTrue())
-			})*/
+			})
 
 			t.It("Verify automatic deletion on managed cluster", func() {
 				Eventually(func() bool {
@@ -326,11 +326,11 @@ var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multiclust
 				}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
 			})
 
-			/*t.It("Delete test namespace on admin cluster", func() {
+			t.It("Delete test namespace on admin cluster", func() {
 				Eventually(func() error {
 					return pkg.DeleteNamespaceInCluster(examples.TestNamespace, adminKubeconfig)
 				}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
-			})*/
+			})
 		})
 	} else {
 		t.Context("Skipped Deletion", Label("f:skip.undeploy"), func() {
