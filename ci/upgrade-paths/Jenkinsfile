@@ -421,14 +421,14 @@ pipeline {
                         }
                     }
                 }
-                stage('examples helidon admin') {
-                    steps {
-                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
-                    }
-                }
                 stage ('examples helidon managed') {
                     steps {
                         runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                    }
+                }
+                stage('examples helidon admin') {
+                    steps {
+                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                     }
                 }
                 stage("upgrade-platform-operator") {
