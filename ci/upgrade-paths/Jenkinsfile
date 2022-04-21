@@ -417,18 +417,21 @@ pipeline {
                         stage ('Deploy Sample Application') {
                             steps {
                                 deploySampleApp()
+                                verifyHelidon(1)
+                                verifyHelidon(2)
                             }
                         }
                     }
                 }
                 stage('examples helidon admin') {
                     steps {
+                        verifyHelidon(1)
                         runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
                     }
                 }
-
                 stage ('examples helidon managed') {
                     steps {
+                        verifyHelidon(2)
                         runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
                     }
                 }
@@ -955,6 +958,15 @@ def verifyManagedClusterPermissions() {
                 """
             }
         }
+    }
+}
+
+def verifyHelidon(count) {
+    script {
+        sh """
+            export KUBECONFIG="${KUBECONFIG_DIR}/${count}/kube_config"
+            kubectl get pods -n hello-helidon
+        """
     }
 }
 
