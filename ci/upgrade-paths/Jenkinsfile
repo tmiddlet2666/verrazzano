@@ -432,7 +432,7 @@ pipeline {
                 stage ('examples helidon managed') {
                     steps {
                         verifyHelidon(2)
-                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
+                        runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
                     }
                 }
                 stage("upgrade-platform-operator") {
@@ -986,6 +986,22 @@ def runGinkgo(testSuitePath, clusterDumpDirectory) {
     }
 }
 
+// Run ginkgo test suites
+def runGinkgoVerifyManaged(testSuitePath, clusterDumpDirectory, skipDeploy, skipUndeploy, skipVerify) {
+    script {
+        int clusterCount = params.TOTAL_CLUSTERS.toInteger()
+        sh """
+            export MANAGED_CLUSTER_NAME="managed1"
+            export MANAGED_KUBECONFIG="${KUBECONFIG_DIR}/2/kube_config"
+            export CLUSTER_COUNT=$clusterCount
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            export DUMP_KUBECONFIG="${KUBECONFIG_DIR}/2/kube_config"
+            export DUMP_DIRECTORY="${clusterDumpDirectory}"
+            ginkgo -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" -- --skipDeploy=${skipDeploy} --skipUndeploy=${skipUndeploy} --skipVerify=${skipVerify} --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/...
+        """
+    }
+}
+
 // Run a test suite against all clusters
 def runGinkgoRandomize(testSuitePath) {
     catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
@@ -1391,9 +1407,9 @@ def modifyHelloHelidonApp(newNamespace, newProjName) {
 
 def deploySampleApp() {
     // deploy helidon app in admin cluster only
-    // runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
+    runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
     // deploy helidon app in managed clusters only
-    runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
+    runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
     /*
     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
