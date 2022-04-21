@@ -531,9 +531,13 @@ pipeline {
                         }
                     }
                 }
-                stage ('Verify Examples Helidon') {
-                    steps {
-                        runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                stage ('Verify Example Apps') {
+                    parallel {
+                        stage ('Examples Helidon') {
+                            steps {
+                                runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                            }
+                        }
                     }
                 }
                 /* stage ('Undeploy Sample Application') {
@@ -1389,7 +1393,6 @@ def modifyHelloHelidonApp(newNamespace, newProjName) {
 }
 
 def deploySampleApp() {
-    /*
     modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
     sh """
       export KUBECONFIG=$ADMIN_KUBECONFIG
@@ -1397,7 +1400,6 @@ def deploySampleApp() {
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
       kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
     """
-    */
 }
 
 def undeploySampleApp() {

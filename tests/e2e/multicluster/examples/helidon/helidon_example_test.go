@@ -46,7 +46,6 @@ var _ = t.AfterEach(func() {
 
 // set the kubeconfig to use the admin cluster kubeconfig and deploy the example resources
 var _ = t.BeforeSuite(func() {
-	fmt.Println(skipDeploy, skipUndeploy, skipVerify, adminKubeconfig)
 	if !skipDeploy {
 		// deploy the VerrazzanoProject
 		start := time.Now()
@@ -68,7 +67,6 @@ var _ = t.BeforeSuite(func() {
 })
 
 var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multicluster.mc-app-lcm"), func() {
-	fmt.Println(skipDeploy, skipUndeploy, skipVerify)
 	if !skipVerify {
 		t.Context("Admin Cluster", func() {
 			// GIVEN an admin cluster and at least one managed cluster
