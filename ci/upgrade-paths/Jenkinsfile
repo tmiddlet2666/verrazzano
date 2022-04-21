@@ -421,6 +421,17 @@ pipeline {
                         }
                     }
                 }
+                stage('examples helidon admin') {
+                    steps {
+                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
+                    }
+                }
+
+                stage ('examples helidon managed') {
+                    steps {
+                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
+                    }
+                }
                 stage("upgrade-platform-operator") {
                     steps {
                         upgradePlatformOperator()
@@ -482,16 +493,6 @@ pipeline {
                         runGinkgoRandomize('multicluster/verify-install')
                     }
                 }
-                stage('examples helidon admin') {
-                    steps {
-                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
-                    }
-                }
-                stage ('examples helidon managed') {
-                    steps {
-                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
-                    }
-                }
             }
         }
 
@@ -530,18 +531,6 @@ pipeline {
 
         stage('Acceptance Tests') {
             stages {
-                stage('examples helidon admin') {
-                    steps {
-                        runGinkgoVerify('examples/helidon', "true", "false", "false", "hello-helidon")
-                    }
-                }
-
-                stage ('examples helidon managed') {
-                    steps {
-                        runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
-                    }
-                }
-
                 stage ('Console') {
                     steps {
                         runConsoleTests()
