@@ -429,8 +429,17 @@ pipeline {
                         }
                         stage ('Deploy Examples Helidon') {
                             steps {
-                                runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
-                                runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
+                                runGinkgoVerify('workloads/coherence', "false", "true", "true", "hello-coherence")
+                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/coherence-workload", "false", "true", "true")
+                                //runGinkgoVerify('examples/helidon', "false", "true", "true", "hello-helidon")
+                                //runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true")
+
+                            }
+                        }
+                        stage ('Examples Helidon') {
+                            steps {
+                                //runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload", "true", "false", "false")
+                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/coherence-workload", "true", "false", "false")
                             }
                         }
                     }
@@ -544,7 +553,7 @@ pipeline {
                         }
                     }
                 }
-                stage ('Verify Example Apps') {
+                /* stage ('Verify Example Apps') {
                     parallel {
                         stage ('Examples Helidon') {
                             steps {
@@ -552,7 +561,7 @@ pipeline {
                             }
                         }
                     }
-                }
+                } */
                 stage ('Multi-cluster Verify Api') {
                     steps {
                         catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
