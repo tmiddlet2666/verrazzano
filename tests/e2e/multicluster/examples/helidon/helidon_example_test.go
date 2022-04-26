@@ -293,8 +293,14 @@ var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multiclust
 			})
 		})
 	} else{
-		// skipped verifications of example app
-		Skip("Skipped Verifications")
+		t.Context("Skipped Verifications", Label("f:skip.verify"), func() {
+			t.It("Skip Verifications", func() {
+				// this function is empty
+				// execution of beforesuite must have atleast 1 context specifications
+				// skipped verifications of example app
+				Skip("Skip Verifications")
+			})
+		})
 	}
 	if !skipUndeploy {
 		t.Context("Delete resources", func() {
@@ -328,9 +334,15 @@ var _ = t.Describe("In Multi-cluster, verify hello-helidon", Label("f:multiclust
 				}, waitTimeout, pollingInterval).ShouldNot(HaveOccurred())
 			})
 		})
-	} else{
-		// skipped deletion of example app
-		Skip("Skipped Deletion")
+	} else {
+		t.Context("Skipped Deletion", Label("f:skip.undeploy"), func() {
+			t.It("Skip Deletion", func() {
+				// this function is empty
+				// execution of beforesuite must have atleast 1 context specifications
+				// skipped undeployment of example app
+				Skip("Skip Deletion")
+			})
+		})
 	}
 })
 

@@ -162,8 +162,11 @@ var _ = t.Describe("Hello Helidon OAM App test", Label("f:app-lcm.oam",
 			})
 		})
 	}else{
-		// skipped verifications of example app
-		Skip("Skipped Verifications")
+		t.Context("Skipped Verifications", Label("f:skip.verify"), func() {
+			t.It("Skip Verifications", func() {
+				Skip("Skip Verifications")
+			})
+		})
 	}
 })
 
