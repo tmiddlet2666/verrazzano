@@ -245,9 +245,11 @@ func (r rancherComponent) PostInstall(ctx spi.ComponentContext) error {
 
 	rest, err := common.NewClient(c, rancherHostName, password)
 	if err != nil {
+		ctx.Log().Errorf("Error creating client", err.Error())
 		return err
 	}
 	if err := rest.SetAccessToken(); err != nil {
+		ctx.Log().Errorf("Error setting access token", err.Error())
 		return err
 	}
 
