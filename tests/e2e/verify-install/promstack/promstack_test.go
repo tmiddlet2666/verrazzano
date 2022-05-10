@@ -19,7 +19,7 @@ import (
 
 const (
 	verrazzanoMonitoringNamespace   = "verrazzano-monitoring"
-	waitTimeout                     = 3 * time.Minute
+	waitTimeout                     = 6 * time.Minute
 	pollingInterval                 = 10 * time.Second
 	prometheusTLSSecret             = "prometheus-operator-kube-p-admission"
 	prometheusOperatorDeployment    = "prometheus-operator-kube-p-operator"
