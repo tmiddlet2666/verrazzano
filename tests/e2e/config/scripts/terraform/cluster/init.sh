@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Copyright (c) 2020, 2021, Oracle and/or its affiliates.
+# Copyright (c) 2020, 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 #
 
@@ -16,9 +16,9 @@ done
 #download terraform
 if [ ! -f $SCRIPT_DIR/terraform ];
 then
-  curl https://releases.hashicorp.com/terraform/0.14.10/terraform_0.14.10_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64.zip -o $SCRIPT_DIR/terraform_0.14.10.zip
-  unzip $SCRIPT_DIR/terraform_0.14.10.zip -d $SCRIPT_DIR/
-  rm $SCRIPT_DIR/terraform_0.14.10.zip
+  curl https://releases.hashicorp.com/terraform/1.1.9/terraform_1.1.9_$(uname -s | tr '[:upper:]' '[:lower:]')_amd64.zip -o $SCRIPT_DIR/terraform_1.1.9.zip
+  unzip $SCRIPT_DIR/terraform_1.1.9.zip -d $SCRIPT_DIR/
+  rm $SCRIPT_DIR/terraform_1.1.9.zip
 fi
 
 if [ ! -f $SCRIPT_DIR/terraform ];
