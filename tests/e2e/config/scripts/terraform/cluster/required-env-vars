@@ -5,7 +5,8 @@ TF_VAR_tenancy_id
 TF_VAR_user_id
 TF_VAR_api_fingerprint
 TF_VAR_region
+TF_VAR_home_region
 TF_VAR_label_prefix
 TF_VAR_kubernetes_version
-TF_VAR_calico_enabled
+TF_VAR_enable_calico
 TF_VAR_calico_version

@@ -26,10 +26,10 @@ variable "kubernetes_version" {
 variable "allow_worker_ssh_access" {
   default = false
 }
-variable "worker_mode" {
+variable "worker_type" {
   default = "private"
 }
-variable "cluster_access" {
+variable "control_plane_type" {
   default = "public"
 }
 variable "ssh_public_key_path" {
@@ -44,12 +44,12 @@ variable "node_pools" {
 variable "allow_node_port_access" {
   default = false
 }
-variable "bastion_enabled" {
+variable "create_bastion_host" {
   default = false
 }
-variable "operator_enabled" {
+variable "create_operator" {
   default = false
 }
 variable "node_pool_image_id" {}
-variable "calico_enabled" {}
+variable "enable_calico" {}
 variable "calico_version" {}

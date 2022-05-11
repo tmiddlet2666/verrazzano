@@ -8,6 +8,7 @@ module "oke" {
   tenancy_id = var.tenancy_id
   user_id = var.user_id
   region = var.region
+  home_region = var.home_region
   api_fingerprint = var.api_fingerprint
   api_private_key_path =var.api_private_key_path
 
@@ -15,17 +16,17 @@ module "oke" {
   compartment_id = var.compartment_id
   kubernetes_version = var.kubernetes_version
   allow_worker_ssh_access = var.allow_worker_ssh_access
-  worker_mode = var.worker_mode
-  cluster_access = var.cluster_access
+  worker_type = var.worker_type
+  control_plane_type = var.control_plane_type
   ssh_private_key_path = var.ssh_private_key_path
   ssh_public_key_path = var.ssh_public_key_path
   node_pools =var.node_pools
   allow_node_port_access = var.allow_node_port_access
-  operator_enabled = var.operator_enabled
-  bastion_enabled = var.bastion_enabled
+  create_operator = var.create_operator
+  create_bastion_host = var.create_bastion_host
   username = var.username
 
-  calico_enabled = var.calico_enabled
+  enable_calico = var.enable_calico
   calico_version = var.calico_version
 
   vcn_name = "${var.cluster_name}-vcn"
