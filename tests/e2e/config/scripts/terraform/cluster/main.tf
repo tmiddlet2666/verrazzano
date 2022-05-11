@@ -18,8 +18,6 @@ module "oke" {
   allow_worker_ssh_access = var.allow_worker_ssh_access
   worker_type = var.worker_type
   control_plane_type = var.control_plane_type
-  ssh_private_key_path = var.ssh_private_key_path
-  ssh_public_key_path = var.ssh_public_key_path
   node_pools =var.node_pools
   allow_node_port_access = var.allow_node_port_access
   create_operator = var.create_operator
