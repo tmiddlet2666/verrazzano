@@ -117,6 +117,3 @@ const WorkloadTypeGeneric = "generic"
 
 // VerrazzanoIngressTLSSecret is the name of the secret in a cluster that contains the cluster's ca bundle
 const VerrazzanoIngressTLSSecret = "verrazzano-tls" //nolint:gosec //#gosec G101
-
-// VerrazzanoLocalCABundleSecret is the name of the secret in the verrazzano-mc namespace on an admin cluster that contains the cluster's ca bundle
-const VerrazzanoLocalCABundleSecret = "verrazzano-local-ca-bundle" //nolint:gosec //#gosec G101
