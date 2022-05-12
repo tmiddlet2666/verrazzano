@@ -77,6 +77,7 @@ SEC_LIST_ID=$(oci network security-list list \
 
 if [ -z "$SEC_LIST_ID" ]; then
     echo "Failed to get the id for security-list ${TF_VAR_label_prefix}-workers"
+    oci network security-list list --compartment-id "${TF_VAR_compartment_id}" --display-name "${TF_VAR_label_prefix}-workers" --vcn-id "${VCN_ID}"
     exit 0
 fi
 
@@ -89,6 +90,7 @@ LB_SUBNET_CIDR=$(oci network subnet list \
 
 if [ -z "$LB_SUBNET_CIDR" ]; then
     echo "Failed to get the cidr-block for subnet ${TF_VAR_label_prefix}-pub_lb"
+    oci network subnet list --compartment-id "${TF_VAR_compartment_id}" --display-name "${TF_VAR_label_prefix}-pub_lb" --vcn-id "${VCN_ID}"
     exit 0
 fi
 
@@ -99,6 +101,7 @@ if [ $? -eq 0 ]; then
   cat ingress-security-rules.json
 else
   echo "Failed to retrieve the ingress-security-rules for security-list ${TF_VAR_label_prefix}-private-workers"
+  oci network security-list get --security-list-id "${SEC_LIST_ID}"
   exit 0
 fi
 

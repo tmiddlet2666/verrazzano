@@ -78,7 +78,7 @@ echo "Create cluster completed at $(date)"
 if [ ${status_code:-1} -eq 0 ]; then
 
     # if the cluster has been created with private endpoints then setup the ssh tunnel through the bastion host
-    if [ "$TF_VAR_bastion_enabled" = true ] ; then
+    if [ "$TF_VAR_create_bastion_host" = true ] ; then
       echo "Setting up ssh tunnel through bastion host."
       ../../setup_ssh_tunnel.sh
       if [ $? -ne 0 ]; then

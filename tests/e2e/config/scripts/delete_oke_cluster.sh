@@ -74,7 +74,7 @@ do
   fi
 
   # Set Calico related mandatory variables
-  export TF_VAR_calico_enabled="${INSTALL_CALICO}"
+  export TF_VAR_enable_calico="${INSTALL_CALICO}"
   export TF_VAR_calico_version="$(grep 'calico-version=' ${SCRIPT_DIR}/../../../../.third-party-test-versions | sed 's/calico-version=//g')"
 
   ./delete-cluster.sh
