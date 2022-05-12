@@ -21,8 +21,13 @@ module "oke" {
   node_pools =var.node_pools
   allow_node_port_access = var.allow_node_port_access
   create_operator = var.create_operator
-  create_bastion_host = var.create_bastion_host
   username = var.username
+
+  create_bastion_host = var.create_bastion_host
+  bastion_shape = { shape="VM.Standard.E3.Flex", ocpus=1, memory=4, boot_volume_size=50 }
+  bastion_timezone = "UTC"
+  bastion_notification_enabled = false
+  bastion_notification_endpoint = ""
 
   enable_calico = var.enable_calico
   calico_version = var.calico_version
