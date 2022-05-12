@@ -26,7 +26,8 @@ import (
 const (
 	clusterRegSecretPath       = "testdata/clusterca-clusterregsecret.yaml"
 	adminRegSecretPath         = "testdata/clusterca-adminregsecret.yaml"
-	adminRegNewSecretPath      = "testdata/clusterca-adminregsecret-new.yaml"
+	adminRegNewCASecretPath    = "testdata/clusterca-adminregsecret-newcaonly.yaml"
+	adminRegNewSecretPath      = "testdata/clusterca-adminregsecret-newreginfo.yaml"
 	mcCASecretPath             = "testdata/clusterca-mccasecret.yaml"
 	vzTLSSecretPathNew         = "testdata/clusterca-mctlssecret-new.yaml"
 	vzTLSSecretPath            = "testdata/clusterca-mctlssecret.yaml"
@@ -38,6 +39,7 @@ const (
 	sampleMCCAReadErrMsg       = "failed to read sample MC CA Secret"
 	sampleVMCReadErrMsg        = "failed to read sample VMC"
 	regSecChangedErrMsg        = "registration secret was changed"
+	regSecNewCAsNotMatchedErr  = "registration secret does not match new CAs"
 	mcCASecChangedErrMsg       = "MC CA secret was changed"
 )
 
@@ -50,8 +52,6 @@ func TestSyncCACertsNoDifference(t *testing.T) {
 	log := zap.S().With("test")
 
 	// Test data
-	testAdminCASecret, err := getSampleSecret("testdata/clusterca-admincasecret.yaml")
-	assert.NoError(err, sampleAdminCAReadErrMsg)
 
 	testAdminRegSecret, err := getSampleSecret(adminRegSecretPath)
 	assert.NoError(err, sampleAdminRegReadErrMsg)
@@ -69,11 +69,12 @@ func TestSyncCACertsNoDifference(t *testing.T) {
 	assert.NoError(err, sampleVMCReadErrMsg)
 
 	origRegCA := testClusterRegSecret.Data[mcconstants.AdminCaBundleKey]
+	origESCA := testClusterRegSecret.Data[mcconstants.ESCaBundleKey]
 	origMCCA := testMCCASecret.Data[keyCaCrtNoDot]
 
 	adminClient := fake.NewClientBuilder().
 		WithScheme(newClusterCAScheme()).
-		WithRuntimeObjects(&testAdminCASecret, &testMCCASecret, &testVMC, &testAdminRegSecret).
+		WithRuntimeObjects(&testMCCASecret, &testVMC, &testAdminRegSecret).
 		Build()
 
 	localClient := fake.NewClientBuilder().
@@ -98,18 +99,19 @@ func TestSyncCACertsNoDifference(t *testing.T) {
 	assert.Equal(controllerutil.OperationResultNone, localClusterResult)
 
 	// Verify the CA secrets were not updated
-	localSecret := &corev1.Secret{}
-	err = s.LocalClient.Get(s.Context, types.NamespacedName{Name: testClusterRegSecret.Name, Namespace: testClusterRegSecret.Namespace}, localSecret)
-	assert.NoError(err)
-	assert.Equal(origRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
-
 	adminSecret := &corev1.Secret{}
 	err = s.AdminClient.Get(s.Context, types.NamespacedName{Name: testMCCASecret.Name, Namespace: testMCCASecret.Namespace}, adminSecret)
 	assert.NoError(err)
 	assert.Equal(origMCCA, adminSecret.Data[keyCaCrtNoDot], mcCASecChangedErrMsg)
 
-	// The registration info should not have been changed since the admin secret had the same info
-	// as the existing managed cluster registration secret
+	localSecret := &corev1.Secret{}
+	err = s.LocalClient.Get(s.Context, types.NamespacedName{Name: testClusterRegSecret.Name, Namespace: testClusterRegSecret.Namespace}, localSecret)
+	assert.NoError(err)
+	assert.Equal(origRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
+	assert.Equal(origESCA, localSecret.Data[mcconstants.ESCaBundleKey], regSecChangedErrMsg)
+
+	// The registration info on managed cluster should not have been changed since the admin secret
+	// had the same info as the existing managed cluster registration secret
 	assertRegistrationInfoEqual(t, localSecret, testClusterRegSecret)
 }
 
@@ -122,10 +124,7 @@ func TestSyncCACertsAreDifferent(t *testing.T) {
 	log := zap.S().With("test")
 
 	// Test data
-	testAdminCASecret, err := getSampleSecret("testdata/clusterca-admincasecret-new.yaml")
-	assert.NoError(err, sampleAdminCAReadErrMsg)
-
-	testAdminRegSecret, err := getSampleSecret(adminRegSecretPath)
+	testAdminRegSecret, err := getSampleSecret(adminRegNewCASecretPath)
 	assert.NoError(err, sampleAdminRegReadErrMsg)
 
 	testClusterRegSecret, err := getSampleSecret(clusterRegSecretPath)
@@ -140,12 +139,13 @@ func TestSyncCACertsAreDifferent(t *testing.T) {
 	testVMC, err := getSampleClusterCAVMC(vmcPath)
 	assert.NoError(err, sampleVMCReadErrMsg)
 
-	newRegCA := testAdminCASecret.Data[mcconstants.AdminCaBundleKey]
+	newRegCA := testAdminRegSecret.Data[mcconstants.AdminCaBundleKey]
+	newRegESCA := testAdminRegSecret.Data[mcconstants.ESCaBundleKey]
 	newMCCA := testMCTLSSecret.Data[mcconstants.CaCrtKey]
 
 	adminClient := fake.NewClientBuilder().
 		WithScheme(newClusterCAScheme()).
-		WithRuntimeObjects(&testAdminCASecret, &testMCCASecret, &testVMC, &testAdminRegSecret).
+		WithRuntimeObjects(&testMCCASecret, &testVMC, &testAdminRegSecret).
 		Build()
 
 	localClient := fake.NewClientBuilder().
@@ -173,7 +173,8 @@ func TestSyncCACertsAreDifferent(t *testing.T) {
 	localSecret := &corev1.Secret{}
 	err = s.LocalClient.Get(s.Context, types.NamespacedName{Name: testClusterRegSecret.Name, Namespace: testClusterRegSecret.Namespace}, localSecret)
 	assert.NoError(err)
-	assert.Equal(newRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
+	assert.Equal(newRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecNewCAsNotMatchedErr)
+	assert.Equal(newRegESCA, localSecret.Data[mcconstants.ESCaBundleKey], regSecNewCAsNotMatchedErr)
 
 	adminSecret := &corev1.Secret{}
 	err = s.AdminClient.Get(s.Context, types.NamespacedName{Name: testMCCASecret.Name, Namespace: testMCCASecret.Namespace}, adminSecret)
@@ -192,9 +193,6 @@ func TestSyncCACertsAdditionalTLSPresent(t *testing.T) {
 	log := zap.S().With("test")
 
 	// Test data
-	testAdminCASecret, err := getSampleSecret("testdata/clusterca-admincasecret-new.yaml")
-	assert.NoError(err, sampleAdminCAReadErrMsg)
-
 	testAdminRegSecret, err := getSampleSecret(adminRegSecretPath)
 	assert.NoError(err, sampleAdminRegReadErrMsg)
 
@@ -215,13 +213,14 @@ func TestSyncCACertsAdditionalTLSPresent(t *testing.T) {
 	testVMC, err := getSampleClusterCAVMC(vmcPath)
 	assert.NoError(err, sampleVMCReadErrMsg)
 
-	newRegCA := testAdminCASecret.Data[mcconstants.AdminCaBundleKey]
+	newRegCA := testAdminRegSecret.Data[mcconstants.AdminCaBundleKey]
+	newESCA := testAdminRegSecret.Data[mcconstants.ESCaBundleKey]
 	// Managed cluster additional TLS secret is the one to sync to admin cluster
 	newMCCA := testMCAdditionalTLSSecret.Data[constants.AdditionalTLSCAKey]
 
 	adminClient := fake.NewClientBuilder().
 		WithScheme(newClusterCAScheme()).
-		WithRuntimeObjects(&testAdminCASecret, &testMCCASecret, &testVMC, &testAdminRegSecret).
+		WithRuntimeObjects(&testMCCASecret, &testVMC, &testAdminRegSecret).
 		Build()
 
 	localClient := fake.NewClientBuilder().
@@ -242,14 +241,15 @@ func TestSyncCACertsAdditionalTLSPresent(t *testing.T) {
 	// Validate the results
 	assert.NoError(err)
 
-	// assert there was a change on local cluster
-	assert.NotEqual(controllerutil.OperationResultNone, localClusterResult)
+	// assert there was NO change on local cluster - only admin cluster should have been updated
+	assert.Equal(controllerutil.OperationResultNone, localClusterResult)
 
-	// Verify the CA secrets were updated
+	// Verify the CA secrets were not updated
 	localSecret := &corev1.Secret{}
 	err = s.LocalClient.Get(s.Context, types.NamespacedName{Name: testClusterRegSecret.Name, Namespace: testClusterRegSecret.Namespace}, localSecret)
 	assert.NoError(err)
 	assert.Equal(newRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
+	assert.Equal(newESCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
 
 	adminSecret := &corev1.Secret{}
 	err = s.AdminClient.Get(s.Context, types.NamespacedName{Name: testMCCASecret.Name, Namespace: testMCCASecret.Namespace}, adminSecret)
@@ -270,10 +270,6 @@ func TestSyncRegistrationInfoDifferent(t *testing.T) {
 
 	// Test data
 
-	// Admin CA secret is the unchanged one
-	testAdminCASecret, err := getSampleSecret("testdata/clusterca-admincasecret.yaml")
-	assert.NoError(err, sampleAdminCAReadErrMsg)
-
 	// Use the "updated" admin registration data to simulate admin cluster reg secret changed
 	testAdminRegSecret, err := getSampleSecret(adminRegNewSecretPath)
 	assert.NoError(err, sampleAdminRegReadErrMsg)
@@ -291,12 +287,13 @@ func TestSyncRegistrationInfoDifferent(t *testing.T) {
 	assert.NoError(err, sampleVMCReadErrMsg)
 
 	origRegCA := testClusterRegSecret.Data[mcconstants.AdminCaBundleKey]
+	origESCA := testClusterRegSecret.Data[mcconstants.ESCaBundleKey]
 	origMCCA := testMCCASecret.Data[keyCaCrtNoDot]
 	newRegSecret := testAdminRegSecret
 
 	adminClient := fake.NewClientBuilder().
 		WithScheme(newClusterCAScheme()).
-		WithRuntimeObjects(&testAdminCASecret, &testMCCASecret, &testVMC, &testAdminRegSecret).
+		WithRuntimeObjects(&testMCCASecret, &testVMC, &testAdminRegSecret).
 		Build()
 
 	localClient := fake.NewClientBuilder().
@@ -325,14 +322,15 @@ func TestSyncRegistrationInfoDifferent(t *testing.T) {
 	err = s.LocalClient.Get(s.Context, types.NamespacedName{Name: testClusterRegSecret.Name, Namespace: testClusterRegSecret.Namespace}, localSecret)
 	assert.NoError(err)
 	assert.Equal(origRegCA, localSecret.Data[mcconstants.AdminCaBundleKey], regSecChangedErrMsg)
+	assert.Equal(origESCA, localSecret.Data[mcconstants.ESCaBundleKey], regSecChangedErrMsg)
 
 	adminSecret := &corev1.Secret{}
 	err = s.AdminClient.Get(s.Context, types.NamespacedName{Name: testMCCASecret.Name, Namespace: testMCCASecret.Namespace}, adminSecret)
 	assert.NoError(err)
 	assert.Equal(origMCCA, adminSecret.Data[keyCaCrtNoDot], mcCASecChangedErrMsg)
 
-	// The registration info SHOULD have been changed since the admin secret had different info
-	// from the existing managed cluster registration secret
+	// The registration info SHOULD have been changed to what's in newRegSecret, since the admin
+	// secret had different info from the existing managed cluster registration secret
 	assertRegistrationInfoEqual(t, localSecret, newRegSecret)
 }
 
@@ -365,5 +363,4 @@ func assertRegistrationInfoEqual(t *testing.T, regSecret1 *corev1.Secret, regSec
 	asserts.Equal(t, regSecret1.Data[mcconstants.KeycloakURLKey], regSecret2.Data[mcconstants.KeycloakURLKey], "Keycloak URL is different")
 	asserts.Equal(t, regSecret1.Data[mcconstants.RegistrationUsernameKey], regSecret2.Data[mcconstants.RegistrationUsernameKey], "Registration Username is different")
 	asserts.Equal(t, regSecret1.Data[mcconstants.RegistrationPasswordKey], regSecret2.Data[mcconstants.RegistrationPasswordKey], "Registration Password is different")
-	asserts.Equal(t, regSecret1.Data[mcconstants.ESCaBundleKey], regSecret2.Data[mcconstants.ESCaBundleKey], "Registration Password is different")
 }

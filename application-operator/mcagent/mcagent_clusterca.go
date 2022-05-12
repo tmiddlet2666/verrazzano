@@ -38,21 +38,11 @@ func (s *Syncer) syncClusterCAs() (controllerutil.OperationResult, error) {
 func (s *Syncer) syncRegistrationFromAdminCluster() (controllerutil.OperationResult, error) {
 
 	opResult := controllerutil.OperationResultNone
-	// Get the cluster CA secret from the admin cluster - for the CA secret, this is considered
-	// the source of truth
-	adminCASecret := corev1.Secret{}
-	err := s.AdminClient.Get(s.Context, client.ObjectKey{
-		Namespace: constants.VerrazzanoMultiClusterNamespace,
-		Name:      constants.VerrazzanoLocalCABundleSecret,
-	}, &adminCASecret)
-	if err != nil {
-		return opResult, err
-	}
 
 	// Get the managed cluster registration secret for THIS managed cluster, from the admin cluster.
 	// This will be used to sync registration information here on the managed cluster.
 	adminRegistrationSecret := corev1.Secret{}
-	err = s.AdminClient.Get(s.Context, client.ObjectKey{
+	err := s.AdminClient.Get(s.Context, client.ObjectKey{
 		Namespace: constants.VerrazzanoMultiClusterNamespace,
 		Name:      getRegistrationSecretName(s.ManagedClusterName),
 	}, &adminRegistrationSecret)
@@ -70,24 +60,22 @@ func (s *Syncer) syncRegistrationFromAdminCluster() (controllerutil.OperationRes
 		return opResult, err
 	}
 
-	// Update the local cluster registration secret if the admin CA certs are different, or if
-	// any of the registration info on admin cluster is different
-	if !byteSlicesEqualTrimmedWhitespace(registrationSecret.Data[mcconstants.AdminCaBundleKey], adminCASecret.Data[mcconstants.AdminCaBundleKey]) ||
-		!registrationInfoEqual(registrationSecret, adminRegistrationSecret) {
+	// Update the local cluster registration secret if any of the registration info on admin
+	// cluster's registration secret for this managed cluster, is different
+	// (such as admin CA certs, ES URL etc)
+	if !registrationInfoEqual(registrationSecret, adminRegistrationSecret) {
 		opResult, err = controllerutil.CreateOrUpdate(s.Context, s.LocalClient, &registrationSecret, func() error {
-			// Get CA info from admin CA secret
-			registrationSecret.Data[mcconstants.AdminCaBundleKey] = adminCASecret.Data[mcconstants.AdminCaBundleKey]
-
-			// Get other registration info from admin registration secret for this managed cluster
+			// Get CA bundles and other registration info from admin registration secret for this managed cluster
+			registrationSecret.Data[mcconstants.AdminCaBundleKey] = adminRegistrationSecret.Data[mcconstants.AdminCaBundleKey]
+			registrationSecret.Data[mcconstants.ESCaBundleKey] = adminRegistrationSecret.Data[mcconstants.ESCaBundleKey]
 			registrationSecret.Data[mcconstants.ESURLKey] = adminRegistrationSecret.Data[mcconstants.ESURLKey]
 			registrationSecret.Data[mcconstants.RegistrationUsernameKey] = adminRegistrationSecret.Data[mcconstants.RegistrationUsernameKey]
 			registrationSecret.Data[mcconstants.RegistrationPasswordKey] = adminRegistrationSecret.Data[mcconstants.RegistrationPasswordKey]
 			registrationSecret.Data[mcconstants.KeycloakURLKey] = adminRegistrationSecret.Data[mcconstants.KeycloakURLKey]
-			registrationSecret.Data[mcconstants.ESCaBundleKey] = adminRegistrationSecret.Data[mcconstants.ESCaBundleKey]
 			return nil
 		})
 		if err != nil {
-			s.Log.Errorw(fmt.Sprintf("Failed syncing admin CA certificate: %v", err),
+			s.Log.Errorw(fmt.Sprintf("Failed syncing registration information from admin cluster: %v", err),
 				"Secret", registrationSecret.Name)
 		} else {
 			s.Log.Infof("Updated local cluster registration secret, result was: %v", opResult)
@@ -98,16 +86,18 @@ func (s *Syncer) syncRegistrationFromAdminCluster() (controllerutil.OperationRes
 }
 
 func registrationInfoEqual(regSecret1 corev1.Secret, regSecret2 corev1.Secret) bool {
-	return byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.ESURLKey],
-		regSecret2.Data[mcconstants.ESURLKey]) &&
+	return byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.AdminCaBundleKey],
+		regSecret2.Data[mcconstants.AdminCaBundleKey]) &&
+		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.ESCaBundleKey],
+			regSecret2.Data[mcconstants.ESCaBundleKey]) &&
+		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.ESURLKey],
+			regSecret2.Data[mcconstants.ESURLKey]) &&
 		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.KeycloakURLKey],
 			regSecret2.Data[mcconstants.KeycloakURLKey]) &&
 		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.RegistrationUsernameKey],
 			regSecret2.Data[mcconstants.RegistrationUsernameKey]) &&
 		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.RegistrationPasswordKey],
-			regSecret2.Data[mcconstants.RegistrationPasswordKey]) &&
-		byteSlicesEqualTrimmedWhitespace(regSecret1.Data[mcconstants.ESCaBundleKey],
-			regSecret2.Data[mcconstants.ESCaBundleKey])
+			regSecret2.Data[mcconstants.RegistrationPasswordKey])
 }
 
 // syncLocalClusterCA - synchronize the local cluster CA cert -- update admin copy if local CA changes
