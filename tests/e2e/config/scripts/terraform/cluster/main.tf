@@ -26,7 +26,7 @@ module "oke" {
   create_bastion_host = var.create_bastion_host
   bastion_shape = { shape="VM.Standard.E3.Flex", ocpus=1, memory=4, boot_volume_size=50 }
   bastion_timezone = "UTC"
-  bastion_notification_enabled = false
+  enable_bastion_notification = false
   bastion_notification_endpoint = ""
 
   enable_calico = var.enable_calico
