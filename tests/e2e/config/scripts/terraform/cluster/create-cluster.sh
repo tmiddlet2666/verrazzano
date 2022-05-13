@@ -11,6 +11,9 @@ $SCRIPT_DIR/terraform init -no-color -reconfigure
 
 set -o pipefail
 
+export TF_LOG=DEBUG
+export OCI_GO_SDK_DEBUG=v
+
 # retry 3 times, 30 seconds apart
 tries=0
 MAX_TRIES=3
