@@ -32,7 +32,6 @@ const (
 	vzTLSSecretPathNew         = "testdata/clusterca-mctlssecret-new.yaml"
 	vzTLSSecretPath            = "testdata/clusterca-mctlssecret.yaml"
 	vmcPath                    = "testdata/clusterca-vmc.yaml"
-	sampleAdminCAReadErrMsg    = "failed to read sample Admin CA Secret"
 	sampleClusterRegReadErrMsg = "failed to read sample Managed Cluster Registration Secret"
 	sampleAdminRegReadErrMsg   = "failed to read sample Admin Cluster Registration Secret for the managed cluster"
 	sampleMCTLSReadErrMsg      = "failed to read sample MC TLS Secret"
