@@ -579,6 +579,8 @@ type IstioComponent struct {
 	// +patchStrategy=merge,retainKeys
 	IstioInstallArgs []InstallArgs `json:"istioInstallArgs,omitempty" patchStrategy:"merge,retainKeys" patchMergeKey:"name"`
 	// +optional
+	HelmValueOverrides `json:",inline"`
+	// +optional
 	Enabled *bool `json:"enabled,omitempty"`
 	// +optional
 	InjectionEnabled *bool `json:"injectionEnabled,omitempty"`
