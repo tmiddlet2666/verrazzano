@@ -5,6 +5,9 @@ package secrets
 
 import (
 	"context"
+	os2 "github.com/verrazzano/verrazzano/pkg/os"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
+	"os"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
@@ -77,6 +80,55 @@ func (r *VerrazzanoSecretsReconciler) Reconcile(ctx context.Context, req ctrl.Re
 
 	return ctrl.Result{}, nil
 
+}
+
+// GetInstallOverridesFromSecret takes the list of Overrides and returns a list of key value pairs
+func GetInstallOverridesFromSecret(ctx spi.ComponentContext, overrides []installv1alpha1.Overrides) ([]string, error) {
+	var file *os.File
+	var files []string
+
+	for _, override := range overrides {
+		// Check if SecretRef is populated and gather helm file
+		if override.SecretRef != nil {
+			// Get the Secret
+			sec := &corev1.Secret{}
+			selector := override.SecretRef
+			nsn := types.NamespacedName{Name: selector.Name, Namespace: ctx.EffectiveCR().Namespace}
+			optional := selector.Optional
+			err := ctx.Client().Get(context.TODO(), nsn, sec)
+			if err != nil {
+				if optional == nil || !*optional {
+					err := ctx.Log().ErrorfNewErr("Could not get Secret %s from namespace %s: %v", nsn.Name, nsn.Namespace, err)
+					return files, err
+				}
+				ctx.Log().Debugf("Optional Secret %s from namespace %s not found", nsn.Name, nsn.Namespace)
+				continue
+			}
+
+			dataStrings := map[string]string{}
+			for key, val := range sec.Data {
+				dataStrings[key] = string(val)
+			}
+
+			// Get resource data
+			fieldData, ok := dataStrings[selector.Key]
+			if !ok {
+				if optional == nil || !*optional {
+					err := ctx.Log().ErrorfNewErr("Could not get Data field %s from Resource %s from namespace %s", selector.Key, nsn.Name, nsn.Namespace)
+					return files, err
+				}
+				ctx.Log().Debugf("Optional Resource %s from namespace %s missing Data key %s", nsn.Name, nsn.Namespace, selector.Key)
+			}
+
+			// Create the temp file for the data
+			file, err = os2.CreateTempFile(ctx.Log(), "install-overrides-*.yaml", []byte(fieldData))
+			if err != nil {
+				return files, err
+			}
+			files = append(files, file.Name())
+		}
+	}
+	return files, nil
 }
 
 // initialize secret logger

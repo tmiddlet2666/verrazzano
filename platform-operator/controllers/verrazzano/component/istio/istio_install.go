@@ -5,7 +5,6 @@ package istio
 
 import (
 	"context"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -235,10 +234,10 @@ func (i istioComponent) Install(compContext spi.ComponentContext) error {
 		}
 
 		// create install overrides
-		kvs, err := controllers.RetrieveInstallOverrideResources(compContext, i.GetOverrides(compContext))
-		for _, kv := range kvs {
-			files = append(files, kv.Value)
-		}
+		//kvs, err := controllers.RetrieveInstallOverrideResources(compContext, i.GetOverrides(compContext))
+		//for _, kv := range kvs {
+		//	files = append(files, kv.Value)
+		//}
 	}
 
 	overrideStrings, err := getOverridesString(compContext)

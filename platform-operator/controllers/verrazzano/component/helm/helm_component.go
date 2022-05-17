@@ -5,7 +5,8 @@ package helm
 
 import (
 	"fmt"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/configmaps"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/secrets"
 	"os"
 
 	"github.com/verrazzano/verrazzano/pkg/bom"
@@ -379,9 +380,25 @@ func (h HelmComponent) buildCustomHelmOverrides(context spi.ComponentContext, na
 
 	// Sort the kvs list by priority (0th term has the highest priority)
 	// Getting user defined install overrides as the highest priority
-	kvs, err = controllers.RetrieveInstallOverrideResources(context, h.GetOverrides(context))
+	//kvs, err = controllers.RetrieveInstallOverrideResources(context, h.GetOverrides(context))
+	//if err != nil {
+	//	return overrides, err
+	//}
+
+	configMapFiles, err := configmaps.GetInstallOverridesFromConfigMap(context, h.GetOverrides(context))
 	if err != nil {
 		return overrides, err
+	}
+	for _, configMapFile := range configMapFiles {
+		kvs = append(kvs, bom.KeyValue{Value: configMapFile, IsFile: true})
+	}
+
+	secretFiles, err := secrets.GetInstallOverridesFromSecret(context, h.GetOverrides(context))
+	if err != nil {
+		return overrides, err
+	}
+	for _, secretFile := range secretFiles {
+		kvs = append(kvs, bom.KeyValue{Value: secretFile, IsFile: true})
 	}
 
 	// Create files from the Verrazzano Helm values
