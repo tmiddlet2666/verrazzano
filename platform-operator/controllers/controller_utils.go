@@ -6,8 +6,13 @@ package controllers
 import (
 	"context"
 	"fmt"
+	"github.com/verrazzano/verrazzano/pkg/bom"
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
+	os2 "github.com/verrazzano/verrazzano/pkg/os"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
+	"os"
 
 	installv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/registry"
@@ -82,4 +87,89 @@ func ProcDeletedOverride(c client.Client, vz *installv1alpha1.Verrazzano, object
 		return err
 	}
 	return nil
+}
+
+// RetrieveInstallOverrideResources takes the list of Overrides and returns a list of key value pairs
+func RetrieveInstallOverrideResources(ctx spi.ComponentContext, overrides []installv1alpha1.Overrides) ([]bom.KeyValue, error) {
+	var kvs []bom.KeyValue
+	for _, override := range overrides {
+		// Check if ConfigMapRef is populated and gather helm file
+		if override.ConfigMapRef != nil {
+			// Get the ConfigMap
+			configMap := &v1.ConfigMap{}
+			selector := override.ConfigMapRef
+			nsn := types.NamespacedName{Name: selector.Name, Namespace: ctx.EffectiveCR().Namespace}
+			optional := selector.Optional
+			err := ctx.Client().Get(context.TODO(), nsn, configMap)
+			if err != nil {
+				if optional == nil || !*optional {
+					err := ctx.Log().ErrorfNewErr("Could not get Configmap %s from namespace %s: %v", nsn.Name, nsn.Namespace, err)
+					return kvs, err
+				}
+				ctx.Log().Debugf("Optional Configmap %s from namespace %s not found", nsn.Name, nsn.Namespace)
+				continue
+			}
+
+			tmpFile, err := createInstallOverrideFile(ctx, nsn, configMap.Data, selector.Key, selector.Optional)
+			if err != nil {
+				return kvs, err
+			}
+			if tmpFile != nil {
+				kvs = append(kvs, bom.KeyValue{Value: tmpFile.Name(), IsFile: true})
+			}
+		}
+		// Check if SecretRef is populated and gather helm file
+		if override.SecretRef != nil {
+			// Get the Secret
+			sec := &v1.Secret{}
+			selector := override.SecretRef
+			nsn := types.NamespacedName{Name: selector.Name, Namespace: ctx.EffectiveCR().Namespace}
+			optional := selector.Optional
+			err := ctx.Client().Get(context.TODO(), nsn, sec)
+			if err != nil {
+				if optional == nil || !*optional {
+					err := ctx.Log().ErrorfNewErr("Could not get Secret %s from namespace %s: %v", nsn.Name, nsn.Namespace, err)
+					return kvs, err
+				}
+				ctx.Log().Debugf("Optional Secret %s from namespace %s not found", nsn.Name, nsn.Namespace)
+				continue
+			}
+
+			dataStrings := map[string]string{}
+			for key, val := range sec.Data {
+				dataStrings[key] = string(val)
+			}
+			tmpFile, err := createInstallOverrideFile(ctx, nsn, dataStrings, selector.Key, selector.Optional)
+			if err != nil {
+				return kvs, err
+			}
+			if tmpFile != nil {
+				kvs = append(kvs, bom.KeyValue{Value: tmpFile.Name(), IsFile: true})
+			}
+		}
+	}
+	return kvs, nil
+}
+
+// createInstallOverrideFile takes in the data from a kubernetes resource and creates a temporary file for helm install
+func createInstallOverrideFile(ctx spi.ComponentContext, nsn types.NamespacedName, data map[string]string, dataKey string, optional *bool) (*os.File, error) {
+	var file *os.File
+
+	// Get resource data
+	fieldData, ok := data[dataKey]
+	if !ok {
+		if optional == nil || !*optional {
+			err := ctx.Log().ErrorfNewErr("Could not get Data field %s from Resource %s from namespace %s", dataKey, nsn.Name, nsn.Namespace)
+			return file, err
+		}
+		ctx.Log().Debugf("Optional Resource %s from namespace %s missing Data key %s", nsn.Name, nsn.Namespace, dataKey)
+		return file, nil
+	}
+
+	// Create the temp file for the data
+	file, err := os2.CreateTempFile(ctx.Log(), "helm-overrides-*.yaml", []byte(fieldData))
+	if err != nil {
+		return file, err
+	}
+	return file, nil
 }
