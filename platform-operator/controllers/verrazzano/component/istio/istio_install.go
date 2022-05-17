@@ -5,6 +5,7 @@ package istio
 
 import (
 	"context"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -206,11 +207,10 @@ func (i istioComponent) Install(compContext spi.ComponentContext) error {
 	cr := compContext.EffectiveCR()
 	log := compContext.Log()
 
+	files := []string{i.ValuesFile}
+
 	// Only create override file if the CR has an Istio component
 	if cr.Spec.Components.Istio != nil {
-		// create install overrides
-		//kvs, err := controllers.RetrieveInstallOverrideResources(compContext, i.GetOverrides(compContext))
-
 		// create operator YAML
 		istioOperatorYaml, err := BuildIstioOperatorYaml(compContext, cr.Spec.Components.Istio)
 		if err != nil {
@@ -229,6 +229,16 @@ func (i istioComponent) Install(compContext spi.ComponentContext) error {
 			return log.ErrorfNewErr("Failed to close temporary file: %v", err)
 		}
 		log.Debugf("Created values file from Istio install args: %s", userFileCR.Name())
+		// append Operator YAML
+		if userFileCR != nil {
+			files = append(files, userFileCR.Name())
+		}
+
+		// create install overrides
+		kvs, err := controllers.RetrieveInstallOverrideResources(compContext, i.GetOverrides(compContext))
+		for _, kv := range kvs {
+			files = append(files, kv.Value)
+		}
 	}
 
 	overrideStrings, err := getOverridesString(compContext)
@@ -236,10 +246,6 @@ func (i istioComponent) Install(compContext spi.ComponentContext) error {
 		return err
 	}
 
-	files := []string{i.ValuesFile}
-	if userFileCR != nil {
-		files = append(files, userFileCR.Name())
-	}
 	return forkInstallFunc(compContext, i.monitor, overrideStrings, files)
 }
 

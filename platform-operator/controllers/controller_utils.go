@@ -167,7 +167,7 @@ func createInstallOverrideFile(ctx spi.ComponentContext, nsn types.NamespacedNam
 	}
 
 	// Create the temp file for the data
-	file, err := os2.CreateTempFile(ctx.Log(), "helm-overrides-*.yaml", []byte(fieldData))
+	file, err := os2.CreateTempFile(ctx.Log(), "install-overrides-*.yaml", []byte(fieldData))
 	if err != nil {
 		return file, err
 	}
