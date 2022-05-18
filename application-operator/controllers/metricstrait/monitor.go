@@ -15,6 +15,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
+// TODO we need to solve the problem of what to do for a different trait.spec.scraper value (other
+// than vz system/vmi-system-prometheus-0 or the new one we pick (vz monitoring/<prometheus name>)
+// i.e. an external prometheus
+// Today we are looking at the config-volume mount and editing that config map - see
+// findPrometheusScrapeConfigMapNameFromDeployment in scrape_config.go
+// NOTE: One possible way to distinguish an external prometheus using operator vs config map is:
+//    operator creates a statefulset and puts the label app.kubernetes.io/managed-by: prometheus-operator
+//    in its PodSpec
 const podMonitorSpec = `
 apiVersion: monitoring.coreos.com/v1
 kind: PodMonitor
@@ -27,8 +35,9 @@ spec:
   selector:
     matchLabels:
       app: "` + appNameHolder + `"
-  podMetricsEndpoints:
-  - port: http
+  podMetricsEndpoints:` +
+	// TODO port probably should be a separate template if you want to keep the templates
+	`  - port: http
     scheme: https
     tlsConfig:
       ca:
@@ -118,16 +127,19 @@ func (r *Reconciler) updatePodMonitor(ctx context.Context, trait *vzapi.MetricsT
 }
 
 func mutatePodMonitorFromTrait(podMonitor *promoperapi.PodMonitor, trait *vzapi.MetricsTrait, traitDefaults *vzapi.MetricsTraitSpec) {
+	// TODO "Translate" from createScrapeConfigFromTrait function
 	if podMonitor.ObjectMeta.Labels == nil {
 		podMonitor.ObjectMeta.Labels = map[string]string{}
 	}
 	podMonitor.ObjectMeta.Labels["name"] = trait.Labels[appObjectMetaLabel]
+	// TODO determine useHTTPSForScrapeTarget()
 	ports := getPortSpecs(trait, traitDefaults)
 	for _, port := range ports {
 		// TODO create a PodMetricsEndpoint for each port
 		// TODO question: How do we currently get port specs from (e.g.) helidon metrics trait when
 		//  the trait has no ports or path at all in its spec?
 		//  getPortSpecs doesn't seem to do this. (ports = []vzapi.PortSpec{{Port: trait.Spec.Port, Path: trait.Spec.Path}})
+		// Fred: There is a webhook for metrics trait - this may be the answer to above
 		findPodMetricsEndpoint(port.Path)
 		// podMonitor.Spec.PodMetricsEndpoints
 	}
