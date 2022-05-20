@@ -16,8 +16,9 @@ def storeLocation=""
 echo "${JENKINS_REGIONS}"
 def jenkinsRegionsCsv = "${JENKINS_REGIONS}"
 echo jenkinsRegionsCsv
-def fallbackOkeRegionsCsv = "${FALLBACK_OKE_REGIONS}"
-def jenkinsRegions = Collections.shuffle(jenkinsRegionsCsv.tokenize(','))
+def jenkinsRegions = jenkinsRegionsCsv.tokenize(',')
+echo jenkinsRegions
+Collections.shuffle(jenkinsRegions)
 echo jenkinsRegions
 def fallbackOkeRegions = Collections.shuffle(fallbackOkeRegionsCsv.tokenize(','))
 
