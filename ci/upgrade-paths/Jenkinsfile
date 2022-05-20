@@ -223,7 +223,9 @@ pipeline {
         }
 
         stage('Install and Configure') {
-            installAndConfigure().call()
+            steps {
+                installAndConfigure().call()
+            }
         }
 
         stage('Verify Upgrade') {
