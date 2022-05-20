@@ -6,12 +6,10 @@ package operator
 import (
 	"context"
 	"fmt"
-	"path"
 	"strconv"
 
 	vmoconst "github.com/verrazzano/verrazzano-monitoring-operator/pkg/constants"
 	"github.com/verrazzano/verrazzano/pkg/bom"
-	"github.com/verrazzano/verrazzano/pkg/k8sutil"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
@@ -65,7 +63,7 @@ func preInstall(ctx spi.ComponentContext) error {
 func AppendOverrides(ctx spi.ComponentContext, _ string, _ string, _ string, kvs []bom.KeyValue) ([]bom.KeyValue, error) {
 	// Append custom images from the subcomponents in the bom
 	ctx.Log().Debug("Appending the image overrides for the Prometheus Operator components")
-	subcomponents := []string{"prometheus-config-reloader", "alertmanager"}
+	subcomponents := []string{"prometheus-config-reloader", "alertmanager", "prometheus"}
 	kvs, err := appendCustomImageOverrides(ctx, kvs, subcomponents)
 	if err != nil {
 		return kvs, err
@@ -236,20 +234,4 @@ func GetOverrides(ctx spi.ComponentContext) []vzapi.Overrides {
 		return ctx.EffectiveCR().Spec.Components.PrometheusOperator.ValueOverrides
 	}
 	return []vzapi.Overrides{}
-}
-
-// applySystemMonitors applies templatized PodMonitor and ServiceMonitor custom resources for Verrazzano system
-// components to the cluster
-func applySystemMonitors(ctx spi.ComponentContext) error {
-	// create template key/value map
-	args := make(map[string]interface{})
-	args["systemNamespace"] = constants.VerrazzanoSystemNamespace
-	args["monitoringNamespace"] = constants.VerrazzanoMonitoringNamespace
-	args["nginxNamespace"] = constants.IngressNginxNamespace
-	args["istioNamespace"] = constants.IstioSystemNamespace
-
-	// substitute template values to all files in the directory and apply the resulting YAML
-	dir := path.Join(config.GetThirdPartyManifestsDir(), "prometheus-operator")
-	yamlApplier := k8sutil.NewYAMLApplier(ctx.Client(), "")
-	return yamlApplier.ApplyDT(dir, args)
 }
