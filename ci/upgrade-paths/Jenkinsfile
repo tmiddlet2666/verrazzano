@@ -1487,24 +1487,18 @@ def performSourceCodeCheckout() {
 }
 
 def cleanWorkspaceAndCheckout() {
-    return {
-
+    script {
         printNodeLabels()
-
         performSourceCodeCheckout()
-
         performNetRCOperations()
-
         performDockerLogin()
-
         performVerrazzanoDirectoryOperations()
-
         setInitValues()
     }
 }
 
 def installAndConfigure() {
-    return {
+    script {
         when {
             allOf {
                 not { buildingTag() }
