@@ -3,8 +3,9 @@
 
 def DOCKER_IMAGE_TAG
 def SKIP_ACCEPTANCE_TESTS = false
-def availableRegions = env.JOB_NAME.contains('master') ? [ "us-phoenix-1" ] : [  "us-phoenix-1", "us-ashburn-1", "eu-frankfurt-1", "uk-london-1" ]
-Collections.shuffle(availableRegions)
+def jenkinsRegionsCsv = "${JENKINS_REGIONS}"
+def jenkinsRegions = jenkinsRegionsCsv.tokenize(',')
+Collections.shuffle(jenkinsRegions)
 def zoneId = UUID.randomUUID().toString().substring(0,6).replace('-','')
 def dns_zone_ocid = 'dummy'
 def OKE_CLUSTER_PREFIX = ""
@@ -26,7 +27,7 @@ pipeline {
     }
 
     parameters {
-        choice (description: 'OCI region to run Jenkins agent and OKE clusters in', name: 'LOCK_REGION', choices: availableRegions)
+        choice (description: 'OCI region to run Jenkins agent and OKE clusters in', name: 'LOCK_REGION', choices: jenkinsRegions)
         choice (description: 'Verrazzano Test Environment', name: 'TEST_ENV',
                 choices: ["kind", "magicdns_oke", "ocidns_oke"])
         choice (description: 'OKE node pool configuration', name: 'OKE_NODE_POOL',

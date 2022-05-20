@@ -1,8 +1,9 @@
 // Copyright (c) 2020, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-def availableRegions = env.JOB_NAME.contains('master') ? [ "us-phoenix-1" ] : [  "us-phoenix-1", "us-ashburn-1", "eu-frankfurt-1", "uk-london-1" ]
-Collections.shuffle(availableRegions)
+def jenkinsRegionsCsv = "${JENKINS_REGIONS}"
+def jenkinsRegions = jenkinsRegionsCsv.tokenize(',')
+Collections.shuffle(jenkinsRegions)
 
 pipeline {
     options {
@@ -29,7 +30,7 @@ pipeline {
     //           operator image was built already (from master, or your branch) and only want to run the tests using it without running the full build. This is not a super likely situation (more likely individual test jobs
     //           will be manually kicked off rather than all of them). To accomplish this, specify GIT_COMMIT_TO_USE=NONE, and VERRAZZANO_OPERATOR_IMAGE=image-to-use
     parameters {
-        choice (description: 'OCI region to run Jenkins agent and OKE clusters in', name: 'LOCK_REGION', choices: availableRegions)
+        choice (description: 'OCI region to run Jenkins agent and OKE clusters in', name: 'LOCK_REGION', choices: jenkinsRegions)
         string (name: 'GIT_COMMIT_TO_USE',
                         defaultValue: 'NONE',
                         description: 'This is the full git commit hash from the source build to be used for all jobs. A full pipeline specifies a valid commit hash here. NONE can be used for manually triggered jobs, however even for those a commit hash value is preferred to be supplied',
@@ -59,6 +60,10 @@ pipeline {
                 defaultValue: '',
                 description: 'The branch to check out after cloning the console repository.',
                 trim: true)
+        string (name: 'PROMOTE_COMMIT',
+                defaultValue '',
+                description 'This will skip all testing and promote the specified FULL commit value as the last stable commit for the branch. For master and release-* branches only do this if you have permission to do so',
+                trim: true )
     }
 
     environment {
@@ -127,11 +132,18 @@ pipeline {
                         SUSPECT_LIST = getSuspectList(commitList, userMappings)
                         echo "Suspect list: ${SUSPECT_LIST}"
                     }
+
                 }
             }
         }
 
         stage ('Kick off parallel tests') {
+            when {
+                allOf {
+                    not { buildingTag();
+                    expression {params.PROMOTE_COMMIT == ''};
+                }
+            }
             parallel {
                 stage('Multi Cluster Tests') {
                     steps {
