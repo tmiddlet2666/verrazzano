@@ -10,17 +10,11 @@ def VERRAZZANO_DEV_VERSION = ""
 def tarfilePrefix=""
 def storeLocation=""
 
-// On master, we will use PHX for other branches we shuffle from the list of available regions
 // The region selected will be used for the Jenkins agent as well as for OKE clusters.
 // This region is propagated to all other jobs explicitly. Though there may be special case tests which will ignore this
-echo "${JENKINS_REGIONS}"
 def jenkinsRegionsCsv = "${JENKINS_REGIONS}"
-echo jenkinsRegionsCsv
 def jenkinsRegions = jenkinsRegionsCsv.tokenize(',')
-echo jenkinsRegions
 Collections.shuffle(jenkinsRegions)
-echo jenkinsRegions
-def fallbackOkeRegions = Collections.shuffle(fallbackOkeRegionsCsv.tokenize(','))
 
 pipeline {
     options {
