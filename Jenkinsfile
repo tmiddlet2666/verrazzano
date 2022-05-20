@@ -13,8 +13,10 @@ def storeLocation=""
 // On master, we will use PHX for other branches we shuffle from the list of available regions
 // The region selected will be used for the Jenkins agent as well as for OKE clusters.
 // This region is propagated to all other jobs explicitly. Though there may be special case tests which will ignore this
-def jenkinsRegions = Collections.shuffle("${JENKINS_REGIONS}".tokenize(','))
-def fallbackOkeRegions = Collections.shuffle("${FALLBACK_OKE_REGIONS}".tokenize(','))
+def jenkinsRegionsCsv = "${JENKINS_REGIONS}"
+def fallbackOkeRegionsCsv = "${FALLBACK_OKE_REGIONS}"
+def jenkinsRegions = Collections.shuffle(jenkinsRegionsCsv.tokenize(','))
+def fallbackOkeRegions = Collections.shuffle(fallbackOkeRegionsCsv.tokenize(','))
 
 pipeline {
     options {
