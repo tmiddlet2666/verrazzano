@@ -1487,13 +1487,15 @@ def performSourceCodeCheckout() {
 }
 
 def cleanWorkspaceAndCheckout() {
-    script {
-        printNodeLabels()
-        performSourceCodeCheckout()
-        performNetRCOperations()
-        performDockerLogin()
-        performVerrazzanoDirectoryOperations()
-        setInitValues()
+    return {
+        script {
+            printNodeLabels()
+            performSourceCodeCheckout()
+            performNetRCOperations()
+            performDockerLogin()
+            performVerrazzanoDirectoryOperations()
+            setInitValues()
+        }
     }
 }
 
