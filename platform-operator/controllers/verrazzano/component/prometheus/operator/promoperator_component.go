@@ -5,6 +5,8 @@ package operator
 
 import (
 	"fmt"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
+	"k8s.io/apimachinery/pkg/types"
 	"path/filepath"
 
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
@@ -44,8 +46,27 @@ func NewComponent() spi.Component {
 			Dependencies:            []string{},
 			AppendOverridesFunc:     AppendOverrides,
 			GetInstallOverridesFunc: GetOverrides,
+			IngressNames: []types.NamespacedName{
+				{
+					Namespace: constants.VerrazzanoSystemNamespace,
+					Name:      constants.PrometheusOperatorIngress,
+				},
+			},
 		},
 	}
+}
+
+// createOrUpdatePrometheusOperatorResources create or update related Prometheus resources
+func (c prometheusComponent) createOrUpdatePrometheusOperatorResources(ctx spi.ComponentContext) error {
+	if vzconfig.IsNGINXEnabled(ctx.EffectiveCR()) {
+		if err := createOrUpdatePrometheusOperatorIngress(ctx, constants.VerrazzanoSystemNamespace); err != nil {
+			return err
+		}
+	}
+	if err := createOrUpdateAuthPolicy(ctx); err != nil {
+		return err
+	}
+	return nil
 }
 
 // IsEnabled returns true if the Prometheus Operator is enabled or if the component is not specified
@@ -82,9 +103,10 @@ func (c prometheusComponent) PreInstall(ctx spi.ComponentContext) error {
 	return preInstall(ctx)
 }
 
-// PostInstall applies monitor resources for Verrazzano system components
+// PostInstall Prometheus-post-install processing, create or update the Prometheus ingress
 func (c prometheusComponent) PostInstall(ctx spi.ComponentContext) error {
-	if err := applySystemMonitors(ctx); err != nil {
+	ctx.Log().Debugf("Prometheus Operator post-install")
+	if err := c.createOrUpdatePrometheusOperatorResources(ctx); err != nil {
 		return err
 	}
 	return c.HelmComponent.PostInstall(ctx)
@@ -103,7 +125,7 @@ func (c prometheusComponent) ValidateInstall(vz *vzapi.Verrazzano) error {
 	return c.validatePrometheusOperator(vz)
 }
 
-// ValidateUpgrade verifies the upgrade of the Verrazzano object
+// ValidateUpdate verifies the upgrade of the Verrazzano object
 func (c prometheusComponent) ValidateUpdate(old *vzapi.Verrazzano, new *vzapi.Verrazzano) error {
 	if c.IsEnabled(old) && !c.IsEnabled(new) {
 		return fmt.Errorf("Disabling component %s is not allowed", ComponentJSONName)

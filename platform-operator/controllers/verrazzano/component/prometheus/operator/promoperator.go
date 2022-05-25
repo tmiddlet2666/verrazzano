@@ -7,6 +7,14 @@ import (
 	"context"
 	"fmt"
 	"path"
+
+	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
+	securityv1beta1 "istio.io/api/security/v1beta1"
+	istiov1beta1 "istio.io/api/type/v1beta1"
+	istioclisec "istio.io/client-go/pkg/apis/security/v1beta1"
+	v1 "k8s.io/api/networking/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
 	"strconv"
 
 	vmoconst "github.com/verrazzano/verrazzano-monitoring-operator/pkg/constants"
@@ -22,14 +30,17 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/types"
 	controllerruntime "sigs.k8s.io/controller-runtime"
 )
 
 const (
-	deploymentName  = "prometheus-operator-kube-p-operator"
-	istioVolumeName = "istio-certs-dir"
+	deploymentName                = "prometheus-operator-kube-p-operator"
+	istioVolumeName               = "istio-certs-dir"
+	prometheusOperatorHostName    = "prometheus.vmi.system"
+	prometheusOperatorSystemName  = "vmi-system-prometheus"
+	prometheusOperatorServicePort = "20001"
+	prometheusOperatorMetricsPort = "9090"
 )
 
 // isPrometheusOperatorReady checks if the Prometheus operator deployment is ready
@@ -298,4 +309,134 @@ func applySystemMonitors(ctx spi.ComponentContext) error {
 	dir := path.Join(config.GetThirdPartyManifestsDir(), "prometheus-operator")
 	yamlApplier := k8sutil.NewYAMLApplier(ctx.Client(), "")
 	return yamlApplier.ApplyDT(dir, args)
+}
+
+// createOrUpdatePrometheusOperatorngress Creates or updates the PrometheusOperator authproxy ingress
+func createOrUpdatePrometheusOperatorIngress(ctx spi.ComponentContext, namespace string) error {
+	ingress := v1.Ingress{
+		ObjectMeta: metav1.ObjectMeta{Name: prometheusOperatorSystemName, Namespace: namespace},
+	}
+	_, err := controllerruntime.CreateOrUpdate(context.TODO(), ctx.Client(), &ingress, func() error {
+		dnsSubDomain, err := vzconfig.BuildDNSDomain(ctx.Client(), ctx.EffectiveCR())
+		if err != nil {
+			return ctx.Log().ErrorfNewErr("Failed building DNS domain name: %v", err)
+		}
+		ingressTarget := fmt.Sprintf("verrazzano-ingress.%s", dnsSubDomain)
+
+		prometheusOperatorHostName := buildPrometheusOperatorForDomain(dnsSubDomain)
+
+		// Overwrite the existing PrometheusOperator service definition to point to the Verrazzano authproxy
+		pathType := v1.PathTypeImplementationSpecific
+		ingRule := v1.IngressRule{
+			Host: prometheusOperatorHostName,
+			IngressRuleValue: v1.IngressRuleValue{
+				HTTP: &v1.HTTPIngressRuleValue{
+					Paths: []v1.HTTPIngressPath{
+						{
+							Path:     "/()(.*)",
+							PathType: &pathType,
+							Backend: v1.IngressBackend{
+								Service: &v1.IngressServiceBackend{
+									Name: constants.VerrazzanoAuthProxyServiceName,
+									Port: v1.ServiceBackendPort{
+										Number: constants.VerrazzanoAuthProxyServicePort,
+									},
+								},
+								Resource: nil,
+							},
+						},
+					},
+				},
+			},
+		}
+		ingress.Spec.TLS = []v1.IngressTLS{
+			{
+				Hosts:      []string{prometheusOperatorHostName},
+				SecretName: "system-tls-prometheus-operator",
+			},
+		}
+		ingress.Spec.Rules = []v1.IngressRule{ingRule}
+
+		if ingress.Annotations == nil {
+			ingress.Annotations = make(map[string]string)
+		}
+		ingress.Annotations["kubernetes.io/tls-acme"] = "true"
+		ingress.Annotations["nginx.ingress.kubernetes.io/proxy-body-size"] = "6M"
+		ingress.Annotations["nginx.ingress.kubernetes.io/rewrite-target"] = "/$2"
+		ingress.Annotations["nginx.ingress.kubernetes.io/secure-backends"] = "false"
+		ingress.Annotations["nginx.ingress.kubernetes.io/backend-protocol"] = "HTTP"
+		ingress.Annotations["nginx.ingress.kubernetes.io/service-upstream"] = "true"
+		ingress.Annotations["nginx.ingress.kubernetes.io/upstream-vhost"] = "prometheus-operator-kube-p-prometheus.verrazzano-monitoring.svc.cluster.local"
+		ingress.Annotations["cert-manager.io/common-name"] = prometheusOperatorHostName
+		if vzconfig.IsExternalDNSEnabled(ctx.EffectiveCR()) {
+			ingress.Annotations["external-dns.alpha.kubernetes.io/target"] = ingressTarget
+			ingress.Annotations["external-dns.alpha.kubernetes.io/ttl"] = "60"
+		}
+		return nil
+	})
+	if ctrlerrors.ShouldLogKubenetesAPIError(err) {
+		return ctx.Log().ErrorfNewErr("Failed create/update Prometheus operator ingress: %v", err)
+	}
+	return err
+}
+
+func createOrUpdateAuthPolicy(ctx spi.ComponentContext) error {
+	authPol := istioclisec.AuthorizationPolicy{
+		ObjectMeta: metav1.ObjectMeta{Namespace: constants.VerrazzanoMonitoringNamespace, Name: "system-prometheus-authzpol"},
+	}
+	_, err := controllerruntime.CreateOrUpdate(context.TODO(), ctx.Client(), &authPol, func() error {
+		authPol.Spec = securityv1beta1.AuthorizationPolicy{
+			Selector: &istiov1beta1.WorkloadSelector{
+				MatchLabels: map[string]string{
+					"prometheus": "prometheus-operator-kube-p-prometheus",
+				},
+			},
+			Action: securityv1beta1.AuthorizationPolicy_ALLOW,
+			Rules: []*securityv1beta1.Rule{
+				{
+					From: []*securityv1beta1.Rule_From{{
+						Source: &securityv1beta1.Source{
+							Principals: []string{fmt.Sprintf("cluster.local/ns/%s/sa/verrazzano-authproxy", constants.VerrazzanoSystemNamespace)},
+							Namespaces: []string{constants.VerrazzanoSystemNamespace},
+						},
+					}},
+					To: []*securityv1beta1.Rule_To{{
+						Operation: &securityv1beta1.Operation{
+							Ports: []string{prometheusOperatorServicePort},
+						},
+					}},
+				},
+				{
+					From: []*securityv1beta1.Rule_From{{
+						Source: &securityv1beta1.Source{
+							Principals: []string{fmt.Sprintf("cluster.local/ns/%s/sa/verrazzano-monitoring-operator", constants.VerrazzanoSystemNamespace)},
+							Namespaces: []string{constants.VerrazzanoSystemNamespace},
+						},
+					}},
+					To: []*securityv1beta1.Rule_To{{
+						Operation: &securityv1beta1.Operation{
+							Ports: []string{prometheusOperatorServicePort},
+						},
+					}},
+				},
+			},
+		}
+		return nil
+	})
+	if ctrlerrors.ShouldLogKubenetesAPIError(err) {
+		return ctx.Log().ErrorfNewErr("Failed create/update prometheus operator auth policy: %v", err)
+	}
+	return err
+}
+
+func getPrometheusOperatorHostName(context spi.ComponentContext) (string, error) {
+	dnsDomain, err := vzconfig.BuildDNSDomain(context.Client(), context.EffectiveCR())
+	if err != nil {
+		return "", err
+	}
+	return buildPrometheusOperatorForDomain(dnsDomain), nil
+}
+
+func buildPrometheusOperatorForDomain(dnsDomain string) string {
+	return fmt.Sprintf("%s.%s", prometheusOperatorHostName, dnsDomain)
 }

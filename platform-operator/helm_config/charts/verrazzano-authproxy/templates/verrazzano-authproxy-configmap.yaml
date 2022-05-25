@@ -488,6 +488,10 @@ data:
     function me.makeVmiBackendUrl(backend, port)
         return 'http://vmi-system-'..backend..'.verrazzano-system.svc.cluster.local'..':'..port
     end
+    
+    function me.makeCustomBackendUrl(backend, port)
+        return 'http://prometheus-operator-kube-p-'..backend..'.verrazzano-monitoring.svc.cluster.local'..':'..port
+    end
 
     function me.getBackendServerUrlFromName(backend)
         local serverUrl = nil
@@ -501,7 +505,9 @@ data:
         elseif backend == 'grafana' then
             serverUrl = me.makeVmiBackendUrl(backend, '3000')
         elseif backend == 'prometheus' then
-            serverUrl = me.makeVmiBackendUrl(backend, '9090')
+            serverUrl = me.makeCustomBackendUrl(backend, '9090')
+        elseif backend == 'prometheusOperator' then
+            serverUrl = me.makeCustomBackendUrl(backend, '9090')    
         elseif backend == 'kibana' then
             serverUrl = me.makeVmiBackendUrl(backend, '5601')
         elseif backend == 'elasticsearch' then
@@ -1179,6 +1185,8 @@ data:
             allowedOrigins = os.getenv("VZ_GRAFANA_ALLOWED_ORIGINS")
         elseif backend == 'prometheus' then
             allowedOrigins = os.getenv("VZ_PROMETHEUS_ALLOWED_ORIGINS")
+        elseif backend == 'prometheusOperator' then
+            allowedOrigins = os.getenv("VZ_PROMETHEUS_OPERATOR_ALLOWED_ORIGINS")    
         elseif backend == 'kibana' then
             allowedOrigins = os.getenv("VZ_KIBANA_ALLOWED_ORIGINS")
         elseif backend == 'elasticsearch' then
@@ -1221,6 +1229,7 @@ data:
     env VZ_CONSOLE_ALLOWED_ORIGINS;
     env VZ_GRAFANA_ALLOWED_ORIGINS;
     env VZ_PROMETHEUS_ALLOWED_ORIGINS;
+    env VZ_PROMETHEUS_OPERATOR_ALLOWED_ORIGINS;
     env VZ_KIBANA_ALLOWED_ORIGINS;
     env VZ_ES_ALLOWED_ORIGINS;
     env VZ_KIALI_ALLOWED_ORIGINS;

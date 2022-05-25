@@ -149,7 +149,7 @@ spec:
     - from:
         - source:
             namespaces: ["{{ .Release.Namespace }}"]
-            principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.monitoringOperator.name }}"]
+            principals: ["cluster.local/ns/verrazzano-system/sa/{{ .Values.monitoringOperator.name }}"]
       to:
         - operation:
             ports: ["15090"]
@@ -198,11 +198,12 @@ apiVersion: security.istio.io/v1beta1
 kind: AuthorizationPolicy
 metadata:
   name: vmi-system-prometheus-authzpol
-  namespace: {{ .Release.Namespace }}
+  # JMR: remove hard coded ns
+  namespace: verrazzano-monitoring
 spec:
   selector:
     matchLabels:
-      app: system-prometheus
+      prometheus: prometheus-operator-kube-p-prometheus
   action: ALLOW
   rules:
     # vmi-system-prometheus:9090 <- verrazzano-authproxy
@@ -222,7 +223,7 @@ spec:
     - from:
         - source:
             namespaces: ["{{ .Release.Namespace }}"]
-            principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.monitoringOperator.name }}"]
+            principals: ["cluster.local/ns/verrazzano-system/sa/{{ .Values.monitoringOperator.name }}"]
       to:
         - operation:
             ports: ["15090"]
@@ -256,7 +257,7 @@ spec:
     - from:
         - source:
             namespaces: ["{{ .Release.Namespace }}"]
-            principals: ["cluster.local/ns/{{ .Release.Namespace }}/sa/{{ .Values.monitoringOperator.name }}"]
+            principals: ["cluster.local/ns/verrazzano-system/sa/{{ .Values.monitoringOperator.name }}"]
       to:
         - operation:
             ports: ["15090"]
