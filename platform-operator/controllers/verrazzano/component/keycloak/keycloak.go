@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"text/template"
 
@@ -1009,19 +1008,6 @@ func createOrUpdateVerrazzanoPkceClient(ctx spi.ComponentContext, cfg *restclien
 		return err
 	}
 	ctx.Log().Debugf("createOrUpdateVerrazzanoPkceClient: DNSDomain returned %s", dnsSubDomain)
-	cr := ctx.EffectiveCR()
-	ingressType, err := vzconfig.GetServiceType(cr)
-	if err != nil {
-		return nil
-	}
-	switch ingressType {
-	case vzapi.NodePort:
-		for _, ports := range cr.Spec.Components.Ingress.Ports {
-			if ports.Port == 443 {
-				dnsSubDomain = fmt.Sprintf("%s:%s", dnsSubDomain, strconv.Itoa(int(ports.NodePort)))
-			}
-		}
-	}
 
 	data.DNSSubDomain = dnsSubDomain
 
@@ -1307,4 +1293,12 @@ func isPodReady(pod *v1.Pod) bool {
 		}
 	}
 	return false
+}
+
+// GetOverrides gets the install overrides
+func GetOverrides(effectiveCR *vzapi.Verrazzano) []vzapi.Overrides {
+	if effectiveCR.Spec.Components.Keycloak != nil {
+		return effectiveCR.Spec.Components.Keycloak.ValueOverrides
+	}
+	return []vzapi.Overrides{}
 }

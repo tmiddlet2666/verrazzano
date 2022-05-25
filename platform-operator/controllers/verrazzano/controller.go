@@ -6,8 +6,11 @@ package verrazzano
 import (
 	"context"
 	"fmt"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"os"
 	"strings"
+	"sync"
 	"time"
 
 	vzctrl "github.com/verrazzano/verrazzano/pkg/controller"
@@ -46,9 +49,11 @@ import (
 // Reconciler reconciles a Verrazzano object
 type Reconciler struct {
 	client.Client
-	Scheme     *runtime.Scheme
-	Controller controller.Controller
-	DryRun     bool
+	Scheme            *runtime.Scheme
+	Controller        controller.Controller
+	DryRun            bool
+	WatchedComponents map[string]bool
+	WatchMutex        *sync.RWMutex
 }
 
 // Name of finalizer
@@ -70,10 +75,13 @@ var unitTesting bool
 // +kubebuilder:rbac:groups=install.verrazzano.io,resources=verrazzanos,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=install.verrazzano.io,resources=verrazzanos/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=batch,resources=jobs,verbs=get;watch;list;create;update;delete
-func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	// Get the Verrazzano resource
+	if ctx == nil {
+		ctx = context.TODO()
+	}
 	vz := &installv1alpha1.Verrazzano{}
-	if err := r.Get(context.TODO(), req.NamespacedName, vz); err != nil {
+	if err := r.Get(ctx, req.NamespacedName, vz); err != nil {
 		// If the resource is not found, that means all of the finalizers have been removed,
 		// and the Verrazzano resource has been deleted, so there is nothing left to do.
 		if errors.IsNotFound(err) {
@@ -96,7 +104,7 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	}
 
 	log.Oncef("Reconciling Verrazzano resource %v, generation %v, version %s", req.NamespacedName, vz.Generation, vz.Status.Version)
-	res, err := r.doReconcile(log, vz)
+	res, err := r.doReconcile(ctx, log, vz)
 	if vzctrl.ShouldRequeue(res) {
 		return res, nil
 	}
@@ -112,8 +120,7 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 }
 
 // doReconcile the Verrazzano CR
-func (r *Reconciler) doReconcile(log vzlog.VerrazzanoLogger, vz *installv1alpha1.Verrazzano) (ctrl.Result, error) {
-	ctx := context.TODO()
+func (r *Reconciler) doReconcile(ctx context.Context, log vzlog.VerrazzanoLogger, vz *installv1alpha1.Verrazzano) (ctrl.Result, error) {
 
 	// Initialize once for this Verrazzano resource when the operator starts
 	result, err := r.initForVzResource(vz, log)
@@ -141,7 +148,7 @@ func (r *Reconciler) doReconcile(log vzlog.VerrazzanoLogger, vz *installv1alpha1
 		return reconcile.Result{Requeue: true}, nil
 	}
 
-	vzctx, err := vzcontext.NewVerrazzanoContext(log, r, vz, r.DryRun)
+	vzctx, err := vzcontext.NewVerrazzanoContext(log, r.Client, vz, r.DryRun)
 	if err != nil {
 		log.Errorf("Failed to create component context: %v", err)
 		return newRequeueWithDelay(), err
@@ -189,16 +196,10 @@ func (r *Reconciler) ProcReadyState(vzctx vzcontext.VerrazzanoContext) (ctrl.Res
 
 	// If Verrazzano is installed see if upgrade is needed
 	if isInstalled(actualCR.Status) {
-		// If the version is specified and different from the current version of the installation
-		// then proceed with upgrade
 		if len(actualCR.Spec.Version) > 0 && actualCR.Spec.Version != actualCR.Status.Version {
-			result, err := r.reconcileUpgrade(log, actualCR)
-			// Keep retrying the upgrade until it completes.
-			if err != nil {
-				return newRequeueWithDelay(), err
-			} else if vzctrl.ShouldRequeue(result) {
-				return result, nil
-			}
+			// Transition to upgrade state
+			r.updateVzState(log, actualCR, installv1alpha1.VzStateUpgrading)
+			return newRequeueWithDelay(), err
 		}
 		// Keep retrying to reconcile components until it completes
 		if result, err := r.reconcileComponents(vzctx); err != nil {
@@ -220,7 +221,7 @@ func (r *Reconciler) ProcReadyState(vzctx vzcontext.VerrazzanoContext) (ctrl.Res
 
 	// Pre-create the Verrazzano System namespace if it doesn't already exist, before kicking off the install job,
 	// since it is needed for the subsequent step to syncLocalRegistration secret.
-	if err := r.createVerrazzanoSystemNamespace(ctx, log); err != nil {
+	if err := r.createVerrazzanoSystemNamespace(ctx, actualCR, log); err != nil {
 		return newRequeueWithDelay(), err
 	}
 
@@ -295,34 +296,49 @@ func (r *Reconciler) ProcUninstallingState(vzctx vzcontext.VerrazzanoContext) (c
 
 // ProcUpgradingState processes the CR while in the upgrading state
 func (r *Reconciler) ProcUpgradingState(vzctx vzcontext.VerrazzanoContext) (ctrl.Result, error) {
-	vz := vzctx.ActualCR
+	actualCR := vzctx.ActualCR
 	log := vzctx.Log
 	log.Debug("Entering ProcUpgradingState")
 
 	// Check if Verrazzano resource is being deleted
-	if !vz.ObjectMeta.DeletionTimestamp.IsZero() {
-		return r.procDelete(context.TODO(), log, vz)
+	if !actualCR.ObjectMeta.DeletionTimestamp.IsZero() {
+		return r.procDelete(context.TODO(), log, actualCR)
 	}
 
 	// check for need to pause the upgrade due to VPO update
-	if bomVersion, isNewer := isOperatorNewerVersionThanCR(vz.Spec.Version); isNewer {
+	if bomVersion, isNewer := isOperatorNewerVersionThanCR(actualCR.Spec.Version); isNewer {
 		// upgrade needs to be restarted due to newer operator
 		log.Progressf("Upgrade is being paused pending Verrazzano version update to version %s", bomVersion)
 
-		err := r.updateStatus(log, vz,
-			fmt.Sprintf("Verrazzano upgrade to version %s paused. Upgrade will be performed when version is updated to %s", vz.Spec.Version, bomVersion),
+		err := r.updateStatus(log, actualCR,
+			fmt.Sprintf("Verrazzano upgrade to version %s paused. Upgrade will be performed when version is updated to %s", actualCR.Spec.Version, bomVersion),
 			installv1alpha1.CondUpgradePaused)
 		return newRequeueWithDelay(), err
 	}
 
-	if result, err := r.reconcileUpgrade(log, vz); err != nil {
+	// Only upgrade if Version has changed.  When upgrade completes, it will update the status version, see upgrade.go
+	if len(actualCR.Spec.Version) > 0 && actualCR.Spec.Version != actualCR.Status.Version {
+		if result, err := r.reconcileUpgrade(log, actualCR); err != nil {
+			return newRequeueWithDelay(), err
+		} else if vzctrl.ShouldRequeue(result) {
+			return result, nil
+		}
+	}
+
+	// Install any new components and do any updates to existing components
+	if result, err := r.reconcileComponents(vzctx); err != nil {
 		return newRequeueWithDelay(), err
 	} else if vzctrl.ShouldRequeue(result) {
 		return result, nil
 	}
-	// Upgrade should always requeue to ensure that reconciler runs post upgrade to install
-	// components that may have been waiting for upgrade
-	return newRequeueWithDelay(), nil
+
+	// Upgrade done along with any post-upgrade installations of new components that are enabled by default.
+	msg := fmt.Sprintf("Verrazzano successfully upgraded to version %s", actualCR.Spec.Version)
+	log.Once(msg)
+	if err := r.updateStatus(log, actualCR, msg, installv1alpha1.CondUpgradeComplete); err != nil {
+		return newRequeueWithDelay(), err
+	}
+	return ctrl.Result{}, nil
 }
 
 // ProcPausedUpgradeState processes the CR while in the paused upgrade state
@@ -786,7 +802,7 @@ func (r *Reconciler) checkComponentReadyState(vzctx vzcontext.VerrazzanoContext)
 
 	// Return false if any enabled component is not ready
 	for _, comp := range registry.GetComponents() {
-		spiCtx, err := spi.NewContext(vzctx.Log, r, vzctx.ActualCR, r.DryRun)
+		spiCtx, err := spi.NewContext(vzctx.Log, r.Client, vzctx.ActualCR, r.DryRun)
 		if err != nil {
 			spiCtx.Log().Errorf("Failed to create component context: %v", err)
 			return false, err
@@ -806,7 +822,7 @@ func (r *Reconciler) initializeComponentStatus(log vzlog.VerrazzanoLogger, cr *i
 		cr.Status.Components = make(map[string]*installv1alpha1.ComponentStatusDetails)
 	}
 
-	newContext, err := spi.NewContext(log, r, cr, r.DryRun)
+	newContext, err := spi.NewContext(log, r.Client, cr, r.DryRun)
 	if err != nil {
 		return newRequeueWithDelay(), err
 	}
@@ -907,17 +923,26 @@ func (r *Reconciler) getInternalConfigMap(ctx context.Context, vz *installv1alph
 }
 
 // createVerrazzanoSystemNamespace creates the Verrazzano system namespace if it does not already exist
-func (r *Reconciler) createVerrazzanoSystemNamespace(ctx context.Context, log vzlog.VerrazzanoLogger) error {
+func (r *Reconciler) createVerrazzanoSystemNamespace(ctx context.Context, cr *installv1alpha1.Verrazzano, log vzlog.VerrazzanoLogger) error {
+	// remove injection label if disabled
+	istio := cr.Spec.Components.Istio
+	if istio != nil && !istio.IsInjectionEnabled() {
+		log.Infof("Disabling istio sidecar injection for Verrazzano system components")
+		systemNamespaceLabels["istio-injection"] = "disabled"
+	}
+	log.Debugf("Verrazzano system namespace labels: %v", systemNamespaceLabels)
 	// First check if VZ system namespace exists. If not, create it.
 	var vzSystemNS corev1.Namespace
 	err := r.Get(ctx, types.NamespacedName{Name: vzconst.VerrazzanoSystemNamespace}, &vzSystemNS)
 	if err != nil {
+		log.Debugf("Creating Verrazzano system namespace")
 		if !errors.IsNotFound(err) {
 			log.Errorf("Failed to get namespace %s: %v", vzconst.VerrazzanoSystemNamespace, err)
 			return err
 		}
 		vzSystemNS.Name = vzconst.VerrazzanoSystemNamespace
 		vzSystemNS.Labels, _ = mergeMaps(nil, systemNamespaceLabels)
+		log.Oncef("Creating Verrazzano system namespace. Labels: %v", vzSystemNS.Labels)
 		if err := r.Create(ctx, &vzSystemNS); err != nil {
 			log.Errorf("Failed to create namespace %s: %v", vzconst.VerrazzanoSystemNamespace, err)
 			return err
@@ -925,6 +950,7 @@ func (r *Reconciler) createVerrazzanoSystemNamespace(ctx context.Context, log vz
 		return nil
 	}
 	// Namespace exists, see if we need to add the label
+	log.Oncef("Updating Verrazzano system namespace")
 	var updated bool
 	vzSystemNS.Labels, updated = mergeMaps(vzSystemNS.Labels, systemNamespaceLabels)
 	if !updated {
@@ -945,75 +971,18 @@ func mergeMaps(to map[string]string, from map[string]string) (map[string]string,
 	}
 	var updated bool
 	for k, v := range from {
-		if _, ok := mergedMap[k]; !ok {
+		if existingVal, ok := mergedMap[k]; !ok {
 			mergedMap[k] = v
 			updated = true
+		} else {
+			// check to see if the value changed and, if it has, treat as an update
+			if v != existingVal {
+				mergedMap[k] = v
+				updated = true
+			}
 		}
 	}
 	return mergedMap, updated
-}
-
-// buildDomain Build the DNS Domain from the current install
-func buildDomain(log vzlog.VerrazzanoLogger, c client.Client, vz *installv1alpha1.Verrazzano) (string, error) {
-	subdomain := vz.Spec.EnvironmentName
-	if len(subdomain) == 0 {
-		subdomain = vzconst.DefaultEnvironmentName
-	}
-	baseDomain, err := buildDomainSuffix(log, c, vz)
-	if err != nil {
-		return "", err
-	}
-	domain := subdomain + "." + baseDomain
-	return domain, nil
-}
-
-// buildDomainSuffix Get the configured domain suffix, or compute the nip.io domain
-func buildDomainSuffix(log vzlog.VerrazzanoLogger, c client.Client, vz *installv1alpha1.Verrazzano) (string, error) {
-	dns := vz.Spec.Components.DNS
-	if dns != nil && dns.OCI != nil {
-		return dns.OCI.DNSZoneName, nil
-	}
-	if dns != nil && dns.External != nil {
-		return dns.External.Suffix, nil
-	}
-	ipAddress, err := getIngressIP(log, c)
-	if err != nil {
-		return "", err
-	}
-
-	if dns != nil && dns.Wildcard != nil {
-		return ipAddress + dns.Wildcard.Domain, nil
-	}
-
-	// Default to nip.io
-	return ipAddress + ".nip.io", nil
-}
-
-// getIngressIP get the Ingress IP, used for the wildcard case (magic DNS)
-func getIngressIP(log vzlog.VerrazzanoLogger, c client.Client) (string, error) {
-	const nginxIngressController = "ingress-controller-ingress-nginx-controller"
-	const nginxNamespace = "ingress-nginx"
-	nsn := types.NamespacedName{Name: nginxIngressController, Namespace: nginxNamespace}
-	nginxService := corev1.Service{}
-	err := c.Get(context.TODO(), nsn, &nginxService)
-	if err != nil {
-		log.Errorf("Failed to get service %v: %v", nsn, err)
-		return "", err
-	}
-	if nginxService.Spec.Type == corev1.ServiceTypeLoadBalancer || nginxService.Spec.Type == corev1.ServiceTypeNodePort {
-		nginxIngress := nginxService.Status.LoadBalancer.Ingress
-		if len(nginxIngress) == 0 {
-			// In case of OLCNE, need to obtain the External IP from the Spec
-			if len(nginxService.Spec.ExternalIPs) == 0 {
-				return "", log.ErrorfNewErr("Failed because NGINX service %s is missing External IP address", nginxService.Name)
-			}
-			return nginxService.Spec.ExternalIPs[0], nil
-		}
-		return nginxIngress[0].IP, nil
-	}
-	err = fmt.Errorf("Failed because of unsupported service type %s for NGINX ingress", string(nginxService.Spec.Type))
-	log.Errorf("%v", err)
-	return "", err
 }
 
 func addFluentdExtraVolumeMounts(files []string, vz *installv1alpha1.Verrazzano) *installv1alpha1.Verrazzano {
@@ -1199,18 +1168,6 @@ func newRequeueWithDelay() ctrl.Result {
 // Watch the jobs in the verrazzano-install for this vz resource.  The reconcile loop will be called
 // when a job is updated.
 func (r *Reconciler) watchJobs(namespace string, name string, log vzlog.VerrazzanoLogger) error {
-
-	// Define a mapping to the Verrazzano resource
-	mapFn := handler.ToRequestsFunc(
-		func(a handler.MapObject) []reconcile.Request {
-			return []reconcile.Request{
-				{NamespacedName: types.NamespacedName{
-					Namespace: namespace,
-					Name:      name,
-				}},
-			}
-		})
-
 	// Watch job updates
 	p := predicate.Funcs{
 		UpdateFunc: func(e event.UpdateEvent) bool {
@@ -1226,9 +1183,7 @@ func (r *Reconciler) watchJobs(namespace string, name string, log vzlog.Verrazza
 		&source.Kind{Type: &batchv1.Job{
 			ObjectMeta: metav1.ObjectMeta{Namespace: getInstallNamespace()},
 		}},
-		&handler.EnqueueRequestsFromMapFunc{
-			ToRequests: mapFn,
-		},
+		createReconcileEventHandler(namespace, name),
 		// Comment it if default predicate fun is used.
 		p)
 	if err != nil {
@@ -1242,20 +1197,12 @@ func (r *Reconciler) watchJobs(namespace string, name string, log vzlog.Verrazza
 // Watch the pods in the keycloak namespace for this vz resource.  The loop to reconcile will be called
 // when a pod is created.
 func (r *Reconciler) watchPods(namespace string, name string, log vzlog.VerrazzanoLogger) error {
-	// Define a mapping to the Verrazzano resource
-	mapFn := handler.ToRequestsFunc(
-		func(a handler.MapObject) []reconcile.Request {
-			return []reconcile.Request{
-				{NamespacedName: types.NamespacedName{
-					Namespace: namespace,
-					Name:      name,
-				}},
-			}
-		})
-
-	// Watch pod create
-	predicateFunc := predicate.Funcs{
-		CreateFunc: func(e event.CreateEvent) bool {
+	// Watch pods and trigger reconciles for Verrazzano resources when a pod is created
+	log.Debugf("Watching for pods to activate reconcile for Verrazzano CR %s/%s", namespace, name)
+	return r.Controller.Watch(
+		&source.Kind{Type: &corev1.Pod{}},
+		createReconcileEventHandler(namespace, name),
+		createPredicate(func(e event.CreateEvent) bool {
 			// Cast object to pod
 			pod := e.Object.(*corev1.Pod)
 
@@ -1269,37 +1216,51 @@ func (r *Reconciler) watchPods(namespace string, name string, log vzlog.Verrazza
 				return false
 			}
 			log.Debugf("Pod %s in namespace %s created", pod.Name, pod.Namespace)
+			r.AddWatch(keycloak.ComponentJSONName)
 			return true
-		},
-	}
+		}))
+}
 
-	// Watch pods and trigger reconciles for Verrazzano resources when a pod is created
-	err := r.Controller.Watch(
-		&source.Kind{Type: &corev1.Pod{}},
-		&handler.EnqueueRequestsFromMapFunc{
-			ToRequests: mapFn,
-		},
-		predicateFunc)
-	if err != nil {
-		return err
+func (r *Reconciler) watchJaegerService(namespace string, name string, log vzlog.VerrazzanoLogger) error {
+	// Watch services and trigger reconciles for Verrazzano resources when the Jaeger collector service is created
+	log.Debugf("Watching for services to activate reconcile for Verrazzano CR %s/%s", namespace, name)
+	return r.Controller.Watch(
+		&source.Kind{Type: &corev1.Service{}},
+		createReconcileEventHandler(namespace, name),
+		createPredicate(func(e event.CreateEvent) bool {
+			// Cast object to service
+			service := e.Object.(*corev1.Service)
+			if service.Labels[vzconst.KubernetesAppLabel] == vzconst.JaegerCollectorService {
+				log.Debugf("Jaeger service %s/%s created", service.Namespace, service.Name)
+				r.AddWatch(istio.ComponentJSONName)
+				return true
+			}
+			return false
+		}))
+}
+
+func createReconcileEventHandler(namespace, name string) handler.EventHandler {
+	return handler.EnqueueRequestsFromMapFunc(
+		func(a client.Object) []reconcile.Request {
+			return []reconcile.Request{
+				{NamespacedName: types.NamespacedName{
+					Namespace: namespace,
+					Name:      name,
+				}},
+			}
+		})
+}
+
+func createPredicate(f func(e event.CreateEvent) bool) predicate.Funcs {
+	return predicate.Funcs{
+		CreateFunc: f,
 	}
-	log.Debugf("Watching for pods to activate reconcile for Verrazzano CR %s/%s", namespace, name)
-	return nil
 }
 
 // initForVzResource will do initialization for the given Verrazzano resource.
 // Clean up old resources from a 1.0 release where jobs, etc were in the default namespace
 // Add a watch for each Verrazzano resource
 func (r *Reconciler) initForVzResource(vz *installv1alpha1.Verrazzano, log vzlog.VerrazzanoLogger) (ctrl.Result, error) {
-	if unitTesting {
-		return ctrl.Result{}, nil
-	}
-
-	// Check if init done for this resource
-	_, ok := initializedSet[vz.Name]
-	if ok {
-		return ctrl.Result{}, nil
-	}
 
 	// Add our finalizer if not already added
 	if !vzstring.SliceContainsString(vz.ObjectMeta.Finalizers, finalizerName) {
@@ -1308,6 +1269,16 @@ func (r *Reconciler) initForVzResource(vz *installv1alpha1.Verrazzano, log vzlog
 		if err := r.Update(context.TODO(), vz); err != nil {
 			return newRequeueWithDelay(), err
 		}
+	}
+
+	if unitTesting {
+		return ctrl.Result{}, nil
+	}
+
+	// Check if init done for this resource
+	_, ok := initializedSet[vz.Name]
+	if ok {
+		return ctrl.Result{}, nil
 	}
 
 	// Cleanup old resources that might be left around when the install used to be done
@@ -1325,6 +1296,11 @@ func (r *Reconciler) initForVzResource(vz *installv1alpha1.Verrazzano, log vzlog
 	// Watch pods in the keycloak namespace to handle recycle of the MySQL pod
 	if err := r.watchPods(vz.Namespace, vz.Name, log); err != nil {
 		log.Errorf("Failed to set Pod watch for Verrazzano CR %s: %v", vz.Name, err)
+		return newRequeueWithDelay(), err
+	}
+
+	if err := r.watchJaegerService(vz.Namespace, vz.Name, log); err != nil {
+		log.Errorf("Failed to set Service watch for Jaeger Collector service: %v", err)
 		return newRequeueWithDelay(), err
 	}
 
@@ -1364,4 +1340,24 @@ func (r *Reconciler) updateVerrazzanoStatus(log vzlog.VerrazzanoLogger, vz *inst
 	}
 	// Return error so that reconcile gets called again
 	return err
+}
+
+//AddWatch adds a component to the watched set
+func (r *Reconciler) AddWatch(name string) {
+	r.WatchMutex.Lock()
+	defer r.WatchMutex.Unlock()
+	r.WatchedComponents[name] = true
+}
+
+func (r *Reconciler) ClearWatch(name string) {
+	r.WatchMutex.Lock()
+	defer r.WatchMutex.Unlock()
+	delete(r.WatchedComponents, name)
+}
+
+//IsWatchedComponent checks if a component is watched or not
+func (r *Reconciler) IsWatchedComponent(compName string) bool {
+	r.WatchMutex.RLock()
+	defer r.WatchMutex.RUnlock()
+	return r.WatchedComponents[compName]
 }

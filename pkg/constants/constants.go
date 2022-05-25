@@ -47,14 +47,14 @@ const VerrazzanoSystemNamespace = "verrazzano-system"
 // VerrazzanoMultiClusterNamespace is the multi-cluster namespace for Verrazzano
 const VerrazzanoMultiClusterNamespace = "verrazzano-mc"
 
+// CertManagerNamespace - the CertManager namespace
+const CertManagerNamespace = "cert-manager"
+
 // KeycloakNamespace - the keycloak namespace
 const KeycloakNamespace = "keycloak"
 
 // RancherSystemNamespace - the Rancher cattle-system namespace
 const RancherSystemNamespace = "cattle-system"
-
-// RancherOperatorSystemNamespace - the Rancher operator system namespace
-const RancherOperatorSystemNamespace = "rancher-operator-system"
 
 // VerrazzanoMonitoringNamespace - the keycloak namespace
 const VerrazzanoMonitoringNamespace = "monitoring"
@@ -83,6 +83,9 @@ const VerrazzanoPromInternal = "verrazzano-prom-internal"
 // AdditionalTLS is an optional tls secret that contains additional CA
 const AdditionalTLS = "tls-ca-additional"
 
+// AdditionalTLSCAKey is the key containing the CA in the secret specified by the AdditionalTLS constant
+const AdditionalTLSCAKey = "ca-additional.pem"
+
 // VMCAgentPollingTimeInterval - The time interval at which mcagent polls Verrazzano Managed CLuster resource on the admin cluster.
 const VMCAgentPollingTimeInterval = 60 * time.Second
 
@@ -94,3 +97,19 @@ const FluentdDaemonSetName = "fluentd"
 
 // KubeSystem - The name of the kube-system namespace
 const KubeSystem = "kube-system"
+
+// DefaultVerrazzanoCASecretName Default self-signed CA secret name
+// #nosec
+const DefaultVerrazzanoCASecretName = "verrazzano-ca-certificate-secret"
+
+// VmiPromConfigName - The name of the prometheus config map
+const VmiPromConfigName string = "vmi-system-prometheus-config"
+
+// TestPrometheusJobScrapeInterval - The string 0s representing a test only prometheus config scrape interval
+const TestPrometheusJobScrapeInterval = "0s"
+
+// TestPrometheusJob - Name of a test prometheus scraper job
+const TestPrometheusScrapeJob = "test_job"
+
+// Default Opensearch URL
+const DefaultOpensearchURL = "http://verrazzano-authproxy-elasticsearch:8775"

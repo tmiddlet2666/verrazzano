@@ -9,17 +9,25 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/externaldns"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/grafana"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
+	jaegeroperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/jaeger/operator"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/kiali"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/mysql"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/oam"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/opensearch"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/opensearchdashboards"
 	promadapter "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/adapter"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/kubestatemetrics"
+	promnodeexporter "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/nodeexporter"
 	promoperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/operator"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/pushgateway"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/rancher"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/verrazzano"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/vmo"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 )
 
@@ -59,6 +67,10 @@ func getComponents() []spi.Component {
 			externaldns.NewComponent(),
 			rancher.NewComponent(),
 			verrazzano.NewComponent(),
+			vmo.NewComponent(),
+			opensearch.NewComponent(),
+			opensearchdashboards.NewComponent(),
+			grafana.NewComponent(),
 			authproxy.NewComponent(),
 			coherence.NewComponent(),
 			mysql.NewComponent(),
@@ -66,6 +78,10 @@ func getComponents() []spi.Component {
 			kiali.NewComponent(),
 			promoperator.NewComponent(),
 			promadapter.NewComponent(),
+			kubestatemetrics.NewComponent(),
+			pushgateway.NewComponent(),
+			promnodeexporter.NewComponent(),
+			jaegeroperator.NewComponent(),
 		}
 	}
 	return componentsRegistry
@@ -126,7 +142,8 @@ func checkDependencies(c spi.Component, context spi.ComponentContext, visited ma
 		if trace, err := checkDependencies(dependency, context, visited, stateMap); err != nil {
 			return trace, err
 		}
-		if !dependency.IsReady(context) {
+		// Only check if dependency is ready when the dependency is enabled
+		if dependency.IsEnabled(context.EffectiveCR()) && !dependency.IsReady(context) {
 			stateMap[dependencyName] = false // dependency is not ready
 			continue
 		}

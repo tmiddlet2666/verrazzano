@@ -4,21 +4,29 @@
 package verrazzano
 
 import (
+	"context"
 	"fmt"
 	"path/filepath"
-	"reflect"
 
+	globalconst "github.com/verrazzano/verrazzano/pkg/constants"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
+	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
+	clientgoscheme "k8s.io/client-go/kubernetes/scheme"
+	ctrl "sigs.k8s.io/controller-runtime"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -33,21 +41,18 @@ const (
 
 	// Certificate names
 	verrazzanoCertificateName = "verrazzano-tls"
-	osCertificateName         = "system-tls-es-ingest"
-	grafanaCertificateName    = "system-tls-grafana"
-	osdCertificateName        = "system-tls-kibana"
+
 	prometheusCertificateName = "system-tls-prometheus"
 
-	verrazzanoBackupScrtName   = "verrazzano-backup"
-	objectstoreAccessKey       = "object_store_access_key"
-	objectstoreAccessSecretKey = "object_store_secret_key"
-
-	// Grafana admin secret data
-	grafanaScrtName = "grafana-admin"
+	// ES secret keys
+	esUsernameKey = "username"
+	esPasswordKey = "password"
 )
 
 // ComponentJSONName is the josn name of the verrazzano component in CRD
 const ComponentJSONName = "verrazzano"
+
+var getControllerRuntimeClient = getClient
 
 type verrazzanoComponent struct {
 	helm.HelmComponent
@@ -66,6 +71,7 @@ func NewComponent() spi.Component {
 			ImagePullSecretKeyname:  vzImagePullSecretKeyName,
 			SupportsOperatorInstall: true,
 			Dependencies:            []string{istio.ComponentName, nginx.ComponentName, certmanager.ComponentName, authproxy.ComponentName},
+			GetInstallOverridesFunc: GetOverrides,
 		},
 	}
 }
@@ -73,7 +79,19 @@ func NewComponent() spi.Component {
 // PreInstall Verrazzano component pre-install processing; create and label required namespaces, copy any
 // required secrets
 func (c verrazzanoComponent) PreInstall(ctx spi.ComponentContext) error {
-	if err := setupSharedVMIResources(ctx); err != nil {
+	if vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
+		// Make sure the VMI CRD is installed since the Verrazzano component may create/update
+		// a VMI CR
+		if err := common.ApplyCRDYaml(ctx, config.GetHelmVMOChartsDir()); err != nil {
+			return err
+		}
+	}
+	// create or update  VMI secret
+	if err := common.EnsureVMISecret(ctx.Client()); err != nil {
+		return err
+	}
+	// create or update  backup secret
+	if err := common.EnsureBackupSecret(ctx.Client()); err != nil {
 		return err
 	}
 	ctx.Log().Debug("Verrazzano pre-install")
@@ -91,20 +109,28 @@ func (c verrazzanoComponent) Install(ctx spi.ComponentContext) error {
 	if err := c.HelmComponent.Install(ctx); err != nil {
 		return err
 	}
-	return createVMI(ctx)
+	return common.CreateOrUpdateVMI(ctx, updateFunc)
 }
 
 // PreUpgrade Verrazzano component pre-upgrade processing
 func (c verrazzanoComponent) PreUpgrade(ctx spi.ComponentContext) error {
+	if vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
+		if err := common.ExportVMOHelmChart(ctx); err != nil {
+			return err
+		}
+		if err := common.ApplyCRDYaml(ctx, config.GetHelmVMOChartsDir()); err != nil {
+			return err
+		}
+	}
 	return verrazzanoPreUpgrade(ctx, ComponentNamespace)
 }
 
-// InstallUpgrade Verrazzano component upgrade processing
+// Upgrade Verrazzano component upgrade processing
 func (c verrazzanoComponent) Upgrade(ctx spi.ComponentContext) error {
 	if err := c.HelmComponent.Upgrade(ctx); err != nil {
 		return err
 	}
-	return createVMI(ctx)
+	return common.CreateOrUpdateVMI(ctx, updateFunc)
 }
 
 // IsReady component check
@@ -113,6 +139,15 @@ func (c verrazzanoComponent) IsReady(ctx spi.ComponentContext) bool {
 		return isVerrazzanoReady(ctx)
 	}
 	return false
+}
+
+// IsInstalled component check
+func (c verrazzanoComponent) IsInstalled(ctx spi.ComponentContext) (bool, error) {
+	installed, _ := c.HelmComponent.IsInstalled(ctx)
+	if installed {
+		return doesPromExist(ctx), nil
+	}
+	return false, nil
 }
 
 // PostInstall - post-install, clean up temp files
@@ -127,21 +162,15 @@ func (c verrazzanoComponent) PostInstall(ctx spi.ComponentContext) error {
 // PostUpgrade Verrazzano-post-upgrade processing
 func (c verrazzanoComponent) PostUpgrade(ctx spi.ComponentContext) error {
 	ctx.Log().Debugf("Verrazzano component post-upgrade")
+	cleanTempFiles(ctx)
 	c.HelmComponent.IngressNames = c.GetIngressNames(ctx)
 	c.HelmComponent.Certificates = c.GetCertificateNames(ctx)
-	if err := c.HelmComponent.PostUpgrade(ctx); err != nil {
-		return err
+	if vzconfig.IsVMOEnabled(ctx.EffectiveCR()) {
+		if err := common.ReassociateVMOResources(ctx); err != nil {
+			return err
+		}
 	}
-	cleanTempFiles(ctx)
-	return c.updateElasticsearchResources(ctx)
-}
-
-// updateElasticsearchResources updates elasticsearch resources
-func (c verrazzanoComponent) updateElasticsearchResources(ctx spi.ComponentContext) error {
-	if err := fixupElasticSearchReplicaCount(ctx, resolveVerrazzanoNamespace(c.ChartNamespace)); err != nil {
-		return err
-	}
-	return nil
+	return c.HelmComponent.PostUpgrade(ctx)
 }
 
 // IsEnabled verrazzano-specific enabled check for installation
@@ -161,13 +190,13 @@ func (c verrazzanoComponent) ValidateUpdate(old *vzapi.Verrazzano, new *vzapi.Ve
 	}
 	// Reject any other edits except InstallArgs
 	// Do not allow any updates to storage settings via the volumeClaimSpecTemplates/defaultVolumeSource
-	if err := compareStorageOverrides(old, new); err != nil {
+	if err := common.CompareStorageOverrides(old, new, ComponentJSONName); err != nil {
 		return err
 	}
 	if err := validateFluentd(new); err != nil {
 		return err
 	}
-	return nil
+	return c.HelmComponent.ValidateUpdate(old, new)
 }
 
 // ValidateInstall checks if the specified Verrazzano CR is valid for this component to be installed
@@ -175,23 +204,7 @@ func (c verrazzanoComponent) ValidateInstall(vz *vzapi.Verrazzano) error {
 	if err := validateFluentd(vz); err != nil {
 		return err
 	}
-	return nil
-}
-
-func compareStorageOverrides(old *vzapi.Verrazzano, new *vzapi.Verrazzano) error {
-	// compare the storage overrides and reject if the type or size is different
-	oldSetting, err := findStorageOverride(old)
-	if err != nil {
-		return err
-	}
-	newSetting, err := findStorageOverride(new)
-	if err != nil {
-		return err
-	}
-	if !reflect.DeepEqual(oldSetting, newSetting) {
-		return fmt.Errorf("Can not change volume settings for %s", ComponentJSONName)
-	}
-	return nil
+	return c.HelmComponent.ValidateInstall(vz)
 }
 
 // existing Fluentd mount paths can be found at platform-operator/helm_config/charts/verrazzano/templates/verrazzano-logging.yaml
@@ -201,18 +214,14 @@ var existingFluentdMountPaths = [7]string{
 
 func validateFluentd(vz *vzapi.Verrazzano) error {
 	fluentd := vz.Spec.Components.Fluentd
-	if fluentd != nil && len(fluentd.ExtraVolumeMounts) > 0 {
-		for _, vm := range fluentd.ExtraVolumeMounts {
-			mountPath := vm.Source
-			if vm.Destination != "" {
-				mountPath = vm.Destination
-			}
-			for _, existing := range existingFluentdMountPaths {
-				if mountPath == existing {
-					return fmt.Errorf("duplicate mount path found: %s; Fluentd by default has mount paths: %v", mountPath, existingFluentdMountPaths)
-				}
-			}
-		}
+	if fluentd == nil {
+		return nil
+	}
+	if err := validateExtraVolumeMounts(fluentd); err != nil {
+		return err
+	}
+	if err := validateLogCollector(fluentd); err != nil {
+		return err
 	}
 	return nil
 }
@@ -225,17 +234,8 @@ func (c verrazzanoComponent) checkEnabled(old *vzapi.Verrazzano, new *vzapi.Verr
 	if vzconfig.IsConsoleEnabled(old) && !vzconfig.IsConsoleEnabled(new) {
 		return fmt.Errorf("Disabling component console not allowed")
 	}
-	if vzconfig.IsElasticsearchEnabled(old) && !vzconfig.IsElasticsearchEnabled(new) {
-		return fmt.Errorf("Disabling component elasticsearch not allowed")
-	}
-	if vzconfig.IsGrafanaEnabled(old) && !vzconfig.IsGrafanaEnabled(new) {
-		return fmt.Errorf("Disabling component grafana not allowed")
-	}
 	if vzconfig.IsPrometheusEnabled(old) && !vzconfig.IsPrometheusEnabled(new) {
 		return fmt.Errorf("Disabling component prometheus not allowed")
-	}
-	if vzconfig.IsKibanaEnabled(old) && !vzconfig.IsKibanaEnabled(new) {
-		return fmt.Errorf("Disabling component kibana not allowed")
 	}
 	return nil
 }
@@ -243,27 +243,6 @@ func (c verrazzanoComponent) checkEnabled(old *vzapi.Verrazzano, new *vzapi.Verr
 // GetIngressNames - gets the names of the ingresses associated with this component
 func (c verrazzanoComponent) GetIngressNames(ctx spi.ComponentContext) []types.NamespacedName {
 	var ingressNames []types.NamespacedName
-
-	if vzconfig.IsElasticsearchEnabled(ctx.EffectiveCR()) {
-		ingressNames = append(ingressNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      constants.ElasticsearchIngress,
-		})
-	}
-
-	if vzconfig.IsGrafanaEnabled(ctx.EffectiveCR()) {
-		ingressNames = append(ingressNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      constants.GrafanaIngress,
-		})
-	}
-
-	if vzconfig.IsKibanaEnabled(ctx.EffectiveCR()) {
-		ingressNames = append(ingressNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      constants.KibanaIngress,
-		})
-	}
 
 	if vzconfig.IsPrometheusEnabled(ctx.EffectiveCR()) {
 		ingressNames = append(ingressNames, types.NamespacedName{
@@ -284,27 +263,6 @@ func (c verrazzanoComponent) GetCertificateNames(ctx spi.ComponentContext) []typ
 		Name:      verrazzanoCertificateName,
 	})
 
-	if vzconfig.IsElasticsearchEnabled(ctx.EffectiveCR()) {
-		certificateNames = append(certificateNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      osCertificateName,
-		})
-	}
-
-	if vzconfig.IsGrafanaEnabled(ctx.EffectiveCR()) {
-		certificateNames = append(certificateNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      grafanaCertificateName,
-		})
-	}
-
-	if vzconfig.IsKibanaEnabled(ctx.EffectiveCR()) {
-		certificateNames = append(certificateNames, types.NamespacedName{
-			Namespace: ComponentNamespace,
-			Name:      osdCertificateName,
-		})
-	}
-
 	if vzconfig.IsPrometheusEnabled(ctx.EffectiveCR()) {
 		certificateNames = append(certificateNames, types.NamespacedName{
 			Namespace: ComponentNamespace,
@@ -313,4 +271,97 @@ func (c verrazzanoComponent) GetCertificateNames(ctx spi.ComponentContext) []typ
 	}
 
 	return certificateNames
+}
+
+// getClient returns a controller runtime client for the Verrazzano resource
+func getClient() (client.Client, error) {
+	config, err := ctrl.GetConfig()
+	if err != nil {
+		return nil, err
+	}
+	return client.New(config, client.Options{Scheme: newScheme()})
+}
+
+// newScheme creates a new scheme that includes this package's object for use by client
+func newScheme() *runtime.Scheme {
+	scheme := runtime.NewScheme()
+	vzapi.AddToScheme(scheme)
+	clientgoscheme.AddToScheme(scheme)
+	return scheme
+}
+
+func getInstallSecret(client client.Client, secretName string, secret *corev1.Secret) error {
+	err := client.Get(context.TODO(), types.NamespacedName{Name: secretName, Namespace: constants.VerrazzanoInstallNamespace}, secret)
+	if err != nil {
+		if k8serrors.IsNotFound(err) {
+			return fmt.Errorf("secret \"%s\" must be created in the \"%s\" namespace", secretName, constants.VerrazzanoInstallNamespace)
+		}
+		return err
+	}
+	return nil
+}
+
+func validateExtraVolumeMounts(fluentd *vzapi.FluentdComponent) error {
+	if len(fluentd.ExtraVolumeMounts) > 0 {
+		for _, vm := range fluentd.ExtraVolumeMounts {
+			mountPath := vm.Source
+			if vm.Destination != "" {
+				mountPath = vm.Destination
+			}
+			for _, existing := range existingFluentdMountPaths {
+				if mountPath == existing {
+					return fmt.Errorf("duplicate mount path found: %s; Fluentd by default has mount paths: %v", mountPath, existingFluentdMountPaths)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func validateLogCollector(fluentd *vzapi.FluentdComponent) error {
+	if fluentd.OCI != nil && fluentd.ElasticsearchURL != globalconst.DefaultOpensearchURL && fluentd.ElasticsearchURL != "" {
+		return fmt.Errorf("fluentd config does not allow both OCI %v and external Opensearch %v", fluentd.OCI, fluentd.ElasticsearchURL)
+	}
+	if err := validateLogCollectorSecret(fluentd); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateLogCollectorSecret(fluentd *vzapi.FluentdComponent) error {
+	if len(fluentd.ElasticsearchSecret) > 0 && fluentd.ElasticsearchSecret != globalconst.VerrazzanoESInternal {
+		cli, err := getControllerRuntimeClient()
+		if err != nil {
+			return err
+		}
+		secret := &corev1.Secret{}
+		if err := getInstallSecret(cli, fluentd.ElasticsearchSecret, secret); err != nil {
+			return err
+		}
+		if err := validateEntryExist(secret, esUsernameKey); err != nil {
+			return err
+		}
+		return validateEntryExist(secret, esPasswordKey)
+	}
+	return nil
+}
+
+func validateEntryExist(secret *corev1.Secret, entry string) error {
+	secretName := secret.Name
+	_, ok := secret.Data[entry]
+	if !ok {
+		return fmt.Errorf("invalid Fluentd configuration, missing %s entry in secret \"%s\"", entry, secretName)
+	}
+	return nil
+}
+
+// MonitorOverrides checks whether monitoring of install overrides is enabled or not
+func (c verrazzanoComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
+	if ctx.EffectiveCR().Spec.Components.Verrazzano != nil {
+		if ctx.EffectiveCR().Spec.Components.Verrazzano.MonitorChanges != nil {
+			return *ctx.EffectiveCR().Spec.Components.Verrazzano.MonitorChanges
+		}
+		return true
+	}
+	return false
 }

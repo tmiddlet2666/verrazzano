@@ -6,6 +6,11 @@ package vzinstance
 import (
 	"context"
 	"fmt"
+
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/grafana"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/opensearch"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/opensearchdashboards"
+
 	"github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
@@ -18,7 +23,6 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 	"go.uber.org/zap"
 	networkingv1 "k8s.io/api/networking/v1"
-	"strconv"
 )
 
 // GetInstanceInfo returns the instance info for the local install.
@@ -47,9 +51,9 @@ func GetInstanceInfo(ctx spi.ComponentContext) *v1alpha1.InstanceInfo {
 		ConsoleURL:    consoleURL,
 		RancherURL:    getComponentIngressURL(ingressList.Items, ctx, rancher.ComponentName, constants.RancherIngress),
 		KeyCloakURL:   getComponentIngressURL(ingressList.Items, ctx, keycloak.ComponentName, constants.KeycloakIngress),
-		ElasticURL:    getComponentIngressURL(ingressList.Items, ctx, verrazzano.ComponentName, constants.ElasticsearchIngress),
-		KibanaURL:     getComponentIngressURL(ingressList.Items, ctx, verrazzano.ComponentName, constants.KibanaIngress),
-		GrafanaURL:    getComponentIngressURL(ingressList.Items, ctx, verrazzano.ComponentName, constants.GrafanaIngress),
+		ElasticURL:    getComponentIngressURL(ingressList.Items, ctx, opensearch.ComponentName, constants.ElasticsearchIngress),
+		KibanaURL:     getComponentIngressURL(ingressList.Items, ctx, opensearchdashboards.ComponentName, constants.KibanaIngress),
+		GrafanaURL:    getComponentIngressURL(ingressList.Items, ctx, grafana.ComponentName, constants.GrafanaIngress),
 		PrometheusURL: getComponentIngressURL(ingressList.Items, ctx, verrazzano.ComponentName, constants.PrometheusIngress),
 		KialiURL:      getComponentIngressURL(ingressList.Items, ctx, kiali.ComponentName, constants.KialiIngress),
 	}
@@ -73,26 +77,11 @@ func getComponentIngressURL(ingresses []networkingv1.Ingress, compContext spi.Co
 
 func getSystemIngressURL(ingresses []networkingv1.Ingress, compContext spi.ComponentContext, namespace string, name string) *string {
 	var ingress = findIngress(ingresses, namespace, name)
-	var url string
 	if ingress == nil {
 		zap.S().Debugf("No ingress found for %s/%s", namespace, name)
 		return nil
 	}
-	cr := compContext.EffectiveCR()
-	ingressType, err := vzconfig.GetServiceType(cr)
-	if err != nil {
-		return nil
-	}
-	switch ingressType {
-	case v1alpha1.LoadBalancer:
-		url = fmt.Sprintf("https://%s", ingress.Spec.Rules[0].Host)
-	case v1alpha1.NodePort:
-		for _, ports := range cr.Spec.Components.Ingress.Ports {
-			if ports.Port == 443 {
-				url = fmt.Sprintf("https://%s:%s", ingress.Spec.Rules[0].Host, strconv.Itoa(int(ports.NodePort)))
-			}
-		}
-	}
+	url := fmt.Sprintf("https://%s", ingress.Spec.Rules[0].Host)
 	return &url
 }
 

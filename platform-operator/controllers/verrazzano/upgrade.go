@@ -6,6 +6,7 @@ package verrazzano
 import (
 	"context"
 	"fmt"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/transform"
 
@@ -74,7 +75,8 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 	targetVersion := cr.Spec.Version
 
 	tracker := getUpgradeTracker(cr)
-	for tracker.vzState != vzStateEnd {
+	done := false
+	for !done {
 		switch tracker.vzState {
 		case vzStateStart:
 			// Only write the upgrade started message once
@@ -98,7 +100,7 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 		case vzStatePostUpgrade:
 			// Invoke the global post upgrade function after all components are upgraded.
 			log.Once("Doing Verrazzano post-upgrade processing")
-			err := postVerrazzanoUpgrade(log, r, cr)
+			err := postVerrazzanoUpgrade(log, r.Client, cr)
 			if err != nil {
 				log.Errorf("Error running Verrazzano system-level post-upgrade")
 				return newRequeueWithDelay(), err
@@ -107,7 +109,7 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 
 		case vzStateWaitPostUpgradeDone:
 			log.Progress("Post-upgrade is waiting for all components to be ready")
-			spiCtx, err := spi.NewContext(log, r, cr, r.DryRun)
+			spiCtx, err := spi.NewContext(log, r.Client, cr, r.DryRun)
 			if err != nil {
 				return newRequeueWithDelay(), err
 			}
@@ -129,33 +131,40 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 			tracker.vzState = vzStateRestartApps
 
 		case vzStateRestartApps:
-			log.Once("Doing Verrazzano post-upgrade application restarts if needed")
-			err := istio.RestartApps(log, r, cr.Generation)
-			if err != nil {
-				log.Errorf("Error running Verrazzano post-upgrade application restarts")
-				return newRequeueWithDelay(), err
+			if vzconfig.IsApplicationOperatorEnabled(cr) && vzconfig.IsIstioEnabled(cr) {
+				log.Once("Doing Verrazzano post-upgrade application restarts if needed")
+				err := istio.RestartApps(log, r.Client, cr.Generation)
+				if err != nil {
+					log.Errorf("Error running Verrazzano post-upgrade application restarts")
+					return newRequeueWithDelay(), err
+				}
 			}
 			tracker.vzState = vzStateUpgradeDone
 
 		case vzStateUpgradeDone:
-			msg := fmt.Sprintf("Verrazzano successfully upgraded to version %s", cr.Spec.Version)
-			log.Once(msg)
-			cr.Status.Version = targetVersion
+			log.Once("Verrazzano successfully upgraded all existing components and will now install any new components")
 			effectiveCR, _ := transform.GetEffectiveCR(cr)
 			for _, comp := range registry.GetComponents() {
 				compName := comp.Name()
 				componentStatus := cr.Status.Components[compName]
 				if componentStatus != nil && (effectiveCR != nil && comp.IsEnabled(effectiveCR)) {
-					log.Oncef("Component %s has been upgraded from generation %v to %v %v", compName, componentStatus.LastReconciledGeneration, cr.Generation, componentStatus.State)
 					componentStatus.LastReconciledGeneration = cr.Generation
 				}
 			}
-			if err := r.updateStatus(log, cr, msg, installv1alpha1.CondUpgradeComplete); err != nil {
+			// Update the status with the new version and component generations
+			cr.Status.Version = targetVersion
+			if err := r.updateVerrazzanoStatus(log, cr); err != nil {
 				return newRequeueWithDelay(), err
 			}
+			tracker.vzState = vzStateEnd
+
+			// Requeue since the status was just updated, want a fresh copy from controller-runtime cache
+			return newRequeueWithDelay(), nil
+
+		case vzStateEnd:
+			done = true
 			// Upgrade completely done
 			deleteUpgradeTracker(cr)
-			tracker.vzState = vzStateEnd
 		}
 	}
 	// Upgrade done, no need to requeue

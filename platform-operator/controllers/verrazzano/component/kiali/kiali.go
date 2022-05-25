@@ -6,6 +6,7 @@ package kiali
 import (
 	"context"
 	"fmt"
+	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
@@ -44,15 +45,17 @@ func isKialiReady(ctx spi.ComponentContext) bool {
 
 // AppendOverrides Build the set of Kiali overrides for the helm install
 func AppendOverrides(ctx spi.ComponentContext, _ string, _ string, _ string, kvs []bom.KeyValue) ([]bom.KeyValue, error) {
-	hostName, err := getKialiHostName(ctx)
-	if err != nil {
-		return kvs, err
+	if vzconfig.IsNGINXEnabled(ctx.EffectiveCR()) {
+		hostName, err := getKialiHostName(ctx)
+		if err != nil {
+			return kvs, err
+		}
+		// Service overrides
+		kvs = append(kvs, bom.KeyValue{
+			Key:   webFQDNKey,
+			Value: hostName,
+		})
 	}
-	// Service overrides
-	kvs = append(kvs, bom.KeyValue{
-		Key:   webFQDNKey,
-		Value: hostName,
-	})
 	return kvs, nil
 }
 
@@ -184,4 +187,12 @@ func getKialiHostName(context spi.ComponentContext) (string, error) {
 
 func buildKialiHostnameForDomain(dnsDomain string) string {
 	return fmt.Sprintf("%s.%s", kialiHostName, dnsDomain)
+}
+
+// GetOverrides gets the install overrides
+func GetOverrides(effectiveCR *vzapi.Verrazzano) []vzapi.Overrides {
+	if effectiveCR.Spec.Components.Kiali != nil {
+		return effectiveCR.Spec.Components.Kiali.ValueOverrides
+	}
+	return []vzapi.Overrides{}
 }

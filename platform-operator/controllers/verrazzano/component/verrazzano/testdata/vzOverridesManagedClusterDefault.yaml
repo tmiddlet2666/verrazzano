@@ -28,9 +28,17 @@ prometheus:
   enabled: true
 rancher:
   enabled: false
-verrazzanoOperator:
+nodeExporter:
   enabled: true
 prometheusOperator:
-  enabled: true
+  enabled: false
 prometheusAdapter:
-  enabled: true
+  enabled: false
+kubeStateMetrics:
+  enabled: false
+prometheusPushgateway:
+  enabled: false
+prometheusNodeExporter:
+  enabled: false
+jaegerOperator:
+  enabled: false

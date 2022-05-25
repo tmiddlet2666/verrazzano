@@ -77,7 +77,10 @@ func PreInstall(compContext spi.ComponentContext, name string, namespace string,
 			ns.Labels = make(map[string]string)
 		}
 		ns.Labels["verrazzano.io/namespace"] = "ingress-nginx"
-		ns.Labels["istio-injection"] = "enabled"
+		istio := compContext.EffectiveCR().Spec.Components.Istio
+		if istio != nil && istio.IsInjectionEnabled() {
+			ns.Labels["istio-injection"] = "enabled"
+		}
 		return nil
 	}); err != nil {
 		return err
@@ -123,4 +126,12 @@ func getInstallArgs(cr *vzapi.Verrazzano) []vzapi.InstallArgs {
 	}
 
 	return cr.Spec.Components.Ingress.NGINXInstallArgs
+}
+
+// GetOverrides gets the install overrides
+func GetOverrides(effectiveCR *vzapi.Verrazzano) []vzapi.Overrides {
+	if effectiveCR.Spec.Components.Ingress != nil {
+		return effectiveCR.Spec.Components.Ingress.ValueOverrides
+	}
+	return []vzapi.Overrides{}
 }

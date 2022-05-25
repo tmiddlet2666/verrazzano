@@ -7,14 +7,19 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"reflect"
+	"strings"
+	"time"
+
+	vzctrl "github.com/verrazzano/verrazzano/pkg/controller"
+	vzstring "github.com/verrazzano/verrazzano/pkg/string"
+
 	vzconst "github.com/verrazzano/verrazzano/pkg/constants"
 	vzlogInit "github.com/verrazzano/verrazzano/pkg/log"
-	"reflect"
 	"sigs.k8s.io/controller-runtime/pkg/event"
 	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 	"sigs.k8s.io/controller-runtime/pkg/source"
-	"strings"
 
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 
@@ -67,13 +72,15 @@ const (
 	destinationRuleKind       = "DestinationRule"
 	controllerName            = "ingresstrait"
 	httpsProtocol             = "HTTPS"
+	istioIngressGateway       = "istio-ingressgateway"
+	finalizerName             = "ingresstrait.finalizers.verrazzano.io"
 )
 
 // The port names used by WebLogic operator that do not have http prefix.
 // Reference: https://github.com/oracle/weblogic-kubernetes-operator/blob/main/operator/src/main/resources/scripts/model_wdt_mii_filter.py
 var (
 	weblogicPortNames = []string{"tcp-cbt", "tcp-ldap", "tcp-iiop", "tcp-snmp", "tcp-default", "tls-ldaps",
-		"tls-default", "tls-cbts", "tls-iiops", "tcp-internal-t3"}
+		"tls-default", "tls-cbts", "tls-iiops", "tcp-internal-t3", "internal-t3"}
 )
 
 // Reconciler is used to reconcile an IngressTrait object
@@ -102,7 +109,7 @@ func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) (err error) {
 // This also results in the status of the ingress trait resource being updated.
 // +kubebuilder:rbac:groups=oam.verrazzano.io,resources=ingresstraits,verbs=get;list;watch;create;update;patch;delete
 // +kubebuilder:rbac:groups=oam.verrazzano.io,resources=ingresstraits/status,verbs=get;update;patch
-func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
+func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 
 	// We do not want any resource to get reconciled if it is in namespace kube-system
 	// This is due to a bug found in OKE, it should not affect functionality of any vz operators
@@ -115,12 +122,14 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 	var err error
 	var trait *vzapi.IngressTrait
-	ctx := context.Background()
+	if ctx == nil {
+		ctx = context.Background()
+	}
 	if trait, err = r.fetchTrait(ctx, req.NamespacedName, zap.S()); err != nil {
 		return clusters.IgnoreNotFoundWithLog(err, zap.S())
 	}
-	// If the trait no longer exists or is being deleted then return success.
-	if trait == nil || isTraitBeingDeleted(trait) {
+	// If the trait no longer exists return success.
+	if trait == nil {
 		return reconcile.Result{}, nil
 	}
 	log, err := clusters.GetResourceLogger("ingresstrait", req.NamespacedName, trait)
@@ -147,6 +156,25 @@ func (r *Reconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 
 // doReconcile performs the reconciliation operations for the ingress trait
 func (r *Reconciler) doReconcile(ctx context.Context, trait *vzapi.IngressTrait, log vzlog.VerrazzanoLogger) (ctrl.Result, error) {
+	// If the ingress trait no longer exists or is being deleted then cleanup the associated cert and secret resources
+	if isIngressTraitBeingDeleted(trait) {
+		log.Debugf("Deleting ingress trait %v", trait)
+		if err := cleanup(trait, r.Client, log); err != nil {
+			// Requeue without error to avoid higher level log message
+			return reconcile.Result{Requeue: true}, nil
+		}
+		// resource cleanup has succeeded, remove the finalizer
+		if err := r.removeFinalizerIfRequired(ctx, trait, log); err != nil {
+			return vzctrl.NewRequeueWithDelay(2, 3, time.Second), nil
+		}
+		return reconcile.Result{}, nil
+	}
+
+	// add finalizer
+	if err := r.addFinalizerIfRequired(ctx, trait, log); err != nil {
+		return vzctrl.NewRequeueWithDelay(2, 3, time.Second), nil
+	}
+
 	// Create or update the child resources of the trait and collect the outcomes.
 	status, result, err := r.createOrUpdateChildResources(ctx, trait, log)
 	if err != nil {
@@ -157,6 +185,37 @@ func (r *Reconciler) doReconcile(ctx context.Context, trait *vzapi.IngressTrait,
 
 	// Update the status of the trait resource using the outcomes of the create or update.
 	return r.updateTraitStatus(ctx, trait, status)
+}
+
+// isIngressTraitBeingDeleted determines if the ingress trait is in the process of being deleted.
+// This is done checking for a non-nil deletion timestamp.
+func isIngressTraitBeingDeleted(trait *vzapi.IngressTrait) bool {
+	return trait != nil && trait.GetDeletionTimestamp() != nil
+}
+
+// removeFinalizerIfRequired removes the finalizer from the ingress trait if required
+// The finalizer is only removed if the ingress trait is being deleted and the finalizer had been added
+func (r *Reconciler) removeFinalizerIfRequired(ctx context.Context, trait *vzapi.IngressTrait, log vzlog.VerrazzanoLogger) error {
+	if !trait.DeletionTimestamp.IsZero() && vzstring.SliceContainsString(trait.Finalizers, finalizerName) {
+		log.Debugf("Removing finalizer from ingress trait %s", trait.Name)
+		trait.Finalizers = vzstring.RemoveStringFromSlice(trait.Finalizers, finalizerName)
+		err := r.Update(ctx, trait)
+		return vzlogInit.ConflictWithLog(fmt.Sprintf("Failed to remove finalizer from ingress trait %s", trait.Name), err, zap.S())
+	}
+	return nil
+}
+
+// addFinalizerIfRequired adds the finalizer to the ingress trait if required
+// The finalizer is only added if the ingress trait is not being deleted and the finalizer has not previously been added
+func (r *Reconciler) addFinalizerIfRequired(ctx context.Context, trait *vzapi.IngressTrait, log vzlog.VerrazzanoLogger) error {
+	if trait.GetDeletionTimestamp().IsZero() && !vzstring.SliceContainsString(trait.Finalizers, finalizerName) {
+		log.Debugf("Adding finalizer for ingress trait %s", trait.Name)
+		trait.Finalizers = append(trait.Finalizers, finalizerName)
+		err := r.Update(ctx, trait)
+		_, err = vzlogInit.IgnoreConflictWithLog(fmt.Sprintf("Failed to add finalizer to ingress trait %s", trait.Name), err, zap.S())
+		return err
+	}
+	return nil
 }
 
 // createOrUpdateChildResources creates or updates the Gateway and VirtualService resources that
@@ -174,7 +233,7 @@ func (r *Reconciler) createOrUpdateChildResources(ctx context.Context, trait *vz
 	// Generate the certificate and secret for all hosts in the trait rules
 	secretName := r.createOrUseGatewaySecret(ctx, trait, allHostsForTrait, &status, log)
 	if secretName != "" {
-		gwName, err := getGatewayName(trait)
+		gwName, err := buildGatewayName(trait)
 		if err != nil {
 			status.Errors = append(status.Errors, err)
 		} else {
@@ -195,7 +254,7 @@ func (r *Reconciler) createOrUpdateChildResources(ctx context.Context, trait *vz
 				vsName := fmt.Sprintf("%s-rule-%d-vs", trait.Name, index)
 				drName := fmt.Sprintf("%s-rule-%d-dr", trait.Name, index)
 				r.createOrUpdateVirtualService(ctx, trait, rule, allHostsForTrait, vsName, services, gateway, &status, log)
-				r.createOrUpdateDestinationRule(ctx, trait, rule, drName, &status, log)
+				r.createOrUpdateDestinationRule(ctx, trait, rule, drName, &status, log, services)
 			}
 		}
 	}
@@ -213,15 +272,43 @@ func (r *Reconciler) coallateAllHostsForTrait(trait *vzapi.IngressTrait, status 
 	return allHosts
 }
 
-// getGatewayName will generate a gateway name from the namespace and application name of the provided trait. Returns
+// buildGatewayName will generate a gateway name from the namespace and application name of the provided trait. Returns
 // an error if the app name is not available.
-func getGatewayName(trait *vzapi.IngressTrait) (string, error) {
+func buildGatewayName(trait *vzapi.IngressTrait) (string, error) {
 	appName, ok := trait.Labels[oam.LabelAppName]
 	if !ok {
 		return "", errors.New("OAM app name label missing from metadata, unable to generate gateway name")
 	}
 	gwName := fmt.Sprintf("%s-%s-gw", trait.Namespace, appName)
 	return gwName, nil
+}
+
+// buildCertificateName will construct a cert name from the trait.
+func buildCertificateName(trait *vzapi.IngressTrait) string {
+	return fmt.Sprintf("%s-%s-cert", trait.Namespace, trait.Name)
+}
+
+// buildCertificateSecretName will construct a cert secret name from the trait.
+func buildCertificateSecretName(trait *vzapi.IngressTrait) string {
+	return fmt.Sprintf("%s-%s-cert-secret", trait.Namespace, trait.Name)
+}
+
+// buildLegacyCertificateName will generate a cert name used by older version of Verrazzano
+func buildLegacyCertificateName(trait *vzapi.IngressTrait) string {
+	appName, ok := trait.Labels[oam.LabelAppName]
+	if !ok {
+		return ""
+	}
+	return fmt.Sprintf("%s-%s-cert", trait.Namespace, appName)
+}
+
+// buildLegacyCertificateSecretName will generate a cert secret name used by older version of Verrazzano
+func buildLegacyCertificateSecretName(trait *vzapi.IngressTrait) string {
+	appName, ok := trait.Labels[oam.LabelAppName]
+	if !ok {
+		return ""
+	}
+	return fmt.Sprintf("%s-%s-cert-secret", trait.Namespace, appName)
 }
 
 // updateTraitStatus updates the trait's status conditions and resources if they have changed.
@@ -235,12 +322,6 @@ func (r *Reconciler) updateTraitStatus(ctx context.Context, trait *vzapi.Ingress
 		return reconcile.Result{Requeue: true}, r.Status().Update(ctx, trait)
 	}
 	return reconcile.Result{}, nil
-}
-
-// isTraitBeingDeleted determines if the trait is in the process of being deleted.
-// This is done checking for a non-nil deletion timestamp.
-func isTraitBeingDeleted(trait *vzapi.IngressTrait) bool {
-	return trait != nil && trait.GetDeletionTimestamp() != nil
 }
 
 // fetchTrait attempts to get a trait given a namespaced name.
@@ -348,6 +429,8 @@ func (r *Reconciler) createOrUseGatewaySecret(ctx context.Context, trait *vzapi.
 	if trait.Spec.TLS != (vzapi.IngressSecurity{}) {
 		secretName = r.validateConfiguredSecret(trait, status)
 	} else {
+		cleanupCert(buildLegacyCertificateName(trait), r.Client, log)
+		cleanupSecret(buildLegacyCertificateSecretName(trait), r.Client, log)
 		secretName = r.createGatewayCertificate(ctx, trait, hostsForTrait, status, log)
 	}
 
@@ -360,10 +443,6 @@ func (r *Reconciler) createOrUseGatewaySecret(ctx context.Context, trait *vzapi.
 // application-wide gateway.  This implementation addresses a known Istio traffic management issue
 // (see https://istio.io/v1.7/docs/ops/common-problems/network-issues/#404-errors-occur-when-multiple-gateways-configured-with-same-tls-certificate)
 func (r *Reconciler) createGatewayCertificate(ctx context.Context, trait *vzapi.IngressTrait, hostsForTrait []string, status *reconcileresults.ReconcileResults, log vzlog.VerrazzanoLogger) string {
-	var secretName string
-	var err error
-	var certName string
-
 	//ensure trait does not specify hosts.  should be moved to ingress trait validating webhook
 	for _, rule := range trait.Spec.Rules {
 		if len(rule.Hosts) != 0 {
@@ -373,21 +452,8 @@ func (r *Reconciler) createGatewayCertificate(ctx context.Context, trait *vzapi.
 		}
 	}
 
-	appName, ok := trait.Labels[oam.LabelAppName]
-	if !ok {
-		err = fmt.Errorf("failed to obtain app name from ingress trait")
-		status.Errors = append(status.Errors, err)
-		status.Results = append(status.Results, controllerutil.OperationResultNone)
-		return ""
-	}
-	certName, err = buildCertificateNameFromAppName(types.NamespacedName{Namespace: trait.Namespace, Name: appName})
-	if err != nil {
-		log.Errorf("Failed to create certificate name from ingress trait: %v", err)
-		status.Errors = append(status.Errors, err)
-		status.Results = append(status.Results, controllerutil.OperationResultNone)
-		return ""
-	}
-	secretName = fmt.Sprintf("%s-secret", certName)
+	certName := buildCertificateName(trait)
+	secretName := buildCertificateSecretName(trait)
 	certificate := &certapiv1.Certificate{
 		TypeMeta: metav1.TypeMeta{
 			Kind:       certificateKind,
@@ -616,12 +682,12 @@ func (r *Reconciler) mutateVirtualService(virtualService *istioclient.VirtualSer
 	virtualService.Spec.Http = []*istionet.HTTPRoute{&route}
 
 	// Set the owner reference.
-	controllerutil.SetControllerReference(trait, virtualService, r.Scheme)
+	_ = controllerutil.SetControllerReference(trait, virtualService, r.Scheme)
 	return nil
 }
 
 //createOfUpdateDestinationRule creates or updates the DestinationRule.
-func (r *Reconciler) createOrUpdateDestinationRule(ctx context.Context, trait *vzapi.IngressTrait, rule vzapi.IngressRule, name string, status *reconcileresults.ReconcileResults, log vzlog.VerrazzanoLogger) {
+func (r *Reconciler) createOrUpdateDestinationRule(ctx context.Context, trait *vzapi.IngressTrait, rule vzapi.IngressRule, name string, status *reconcileresults.ReconcileResults, log vzlog.VerrazzanoLogger, services []*corev1.Service) {
 	if rule.Destination.HTTPCookie != nil {
 		destinationRule := &istioclient.DestinationRule{
 			TypeMeta: metav1.TypeMeta{
@@ -631,9 +697,14 @@ func (r *Reconciler) createOrUpdateDestinationRule(ctx context.Context, trait *v
 				Namespace: trait.Namespace,
 				Name:      name},
 		}
+		namespace := &corev1.Namespace{}
+		namespaceErr := r.Client.Get(ctx, client.ObjectKey{Namespace: "", Name: trait.Namespace}, namespace)
+		if namespaceErr != nil {
+			log.Errorf("Failed to retrieve namespace resource: %v", namespaceErr)
+		}
 
 		res, err := controllerutil.CreateOrUpdate(ctx, r.Client, destinationRule, func() error {
-			return r.mutateDestinationRule(destinationRule, trait, rule)
+			return r.mutateDestinationRule(destinationRule, trait, rule, services, namespace)
 		})
 
 		ref := vzapi.QualifiedResourceRelation{APIVersion: destinationRuleAPIVersion, Kind: destinationRuleKind, Name: name, Role: "destinationrule"}
@@ -647,10 +718,24 @@ func (r *Reconciler) createOrUpdateDestinationRule(ctx context.Context, trait *v
 	}
 }
 
-func (r *Reconciler) mutateDestinationRule(destinationRule *istioclient.DestinationRule, trait *vzapi.IngressTrait, rule vzapi.IngressRule) error {
+// mutateDestinationRule changes the destination rule based upon a traits configuration
+func (r *Reconciler) mutateDestinationRule(destinationRule *istioclient.DestinationRule, trait *vzapi.IngressTrait, rule vzapi.IngressRule, services []*corev1.Service, namespace *corev1.Namespace) error {
+	dest, err := createDestinationFromRuleOrService(rule, services)
+	if err != nil {
+		return err
+	}
+
+	mode := istionet.ClientTLSSettings_DISABLE
+	value, ok := namespace.Labels["istio-injection"]
+	if ok && value == "enabled" {
+		mode = istionet.ClientTLSSettings_ISTIO_MUTUAL
+	}
 	destinationRule.Spec = istionet.DestinationRule{
-		Host: rule.Destination.Host,
+		Host: dest.Destination.Host,
 		TrafficPolicy: &istionet.TrafficPolicy{
+			Tls: &istionet.ClientTLSSettings{
+				Mode: mode,
+			},
 			LoadBalancer: &istionet.LoadBalancerSettings{
 				LbPolicy: &istionet.LoadBalancerSettings_ConsistentHash{
 					ConsistentHash: &istionet.LoadBalancerSettings_ConsistentHashLB{
@@ -658,7 +743,7 @@ func (r *Reconciler) mutateDestinationRule(destinationRule *istioclient.Destinat
 							HttpCookie: &istionet.LoadBalancerSettings_ConsistentHashLB_HTTPCookie{
 								Name: rule.Destination.HTTPCookie.Name,
 								Path: rule.Destination.HTTPCookie.Path,
-								Ttl:  ptypes.DurationProto(rule.Destination.HTTPCookie.TTL)},
+								Ttl:  ptypes.DurationProto(rule.Destination.HTTPCookie.TTL * time.Second)},
 						},
 					},
 				},
@@ -672,23 +757,42 @@ func (r *Reconciler) mutateDestinationRule(destinationRule *istioclient.Destinat
 // setupWatches Sets up watches for the IngressTrait controller
 func (r *Reconciler) setupWatches() error {
 	// Set up a watch on the Console/Authproxy ingress to watch for changes in the Domain name;
-	return r.Controller.Watch(
+	err := r.Controller.Watch(
 		&source.Kind{Type: &k8net.Ingress{}},
 		// The handler for the Watch is a map function to map the detected change into requests to reconcile any
 		// existing ingress traits and invoke the IngressTrait Reconciler; this should cause us to update the
 		// VS and GW records for the associated apps.
-		&handler.EnqueueRequestsFromMapFunc{
-			ToRequests: handler.ToRequestsFunc(
-				func(a handler.MapObject) []reconcile.Request {
-					return r.createIngressTraitReconcileRequests()
-				}),
-		},
+		handler.EnqueueRequestsFromMapFunc(func(a client.Object) []reconcile.Request {
+			return r.createIngressTraitReconcileRequests()
+		}),
 		predicate.Funcs{
 			UpdateFunc: func(updateEvent event.UpdateEvent) bool {
 				return r.isConsoleIngressUpdated(updateEvent)
 			},
 		},
 	)
+	if err != nil {
+		return err
+	}
+	// Set up a watch on the istio-ingressgateway service to watch for changes in the address;
+	err = r.Controller.Watch(
+		&source.Kind{Type: &corev1.Service{}},
+		// The handler for the Watch is a map function to map the detected change into requests to reconcile any
+		// existing ingress traits and invoke the IngressTrait Reconciler; this should cause us to update the
+		// VS and GW records for the associated apps.
+		handler.EnqueueRequestsFromMapFunc(func(a client.Object) []reconcile.Request {
+			return r.createIngressTraitReconcileRequests()
+		}),
+		predicate.Funcs{
+			UpdateFunc: func(updateEvent event.UpdateEvent) bool {
+				return r.isIstioIngressGatewayUpdated(updateEvent)
+			},
+		},
+	)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 // isConsoleIngressUpdated Predicate func used by the Ingress watcher, returns true if the TLS settings have changed;
@@ -699,9 +803,26 @@ func (r *Reconciler) isConsoleIngressUpdated(updateEvent event.UpdateEvent) bool
 	if oldIngress.Namespace != vzconst.VerrazzanoSystemNamespace || oldIngress.Name != constants.VzConsoleIngress {
 		return false
 	}
-	r.Log.Debugf("Checking object %s/%s", oldIngress.Namespace, oldIngress.Name)
 	newIngress := updateEvent.ObjectNew.(*k8net.Ingress)
-	return !reflect.DeepEqual(oldIngress.Spec, newIngress.Spec)
+	if !reflect.DeepEqual(oldIngress.Spec, newIngress.Spec) {
+		r.Log.Infof("Ingress %s/%s has changed", oldIngress.Namespace, oldIngress.Name)
+		return true
+	}
+	return false
+}
+
+// isIstioIngressGatewayUpdated Predicate func used by the watcher
+func (r *Reconciler) isIstioIngressGatewayUpdated(updateEvent event.UpdateEvent) bool {
+	oldSvc := updateEvent.ObjectOld.(*corev1.Service)
+	if oldSvc.Namespace != vzconst.IstioSystemNamespace || oldSvc.Name != istioIngressGateway {
+		return false
+	}
+	newSvc := updateEvent.ObjectNew.(*corev1.Service)
+	if !reflect.DeepEqual(oldSvc.Spec, newSvc.Spec) {
+		r.Log.Infof("Service %s/%s has changed", oldSvc.Namespace, oldSvc.Name)
+		return true
+	}
+	return false
 }
 
 //createIngressTraitReconcileRequests Used by the Console ingress watcher to map a detected change in the ingress
@@ -723,6 +844,7 @@ func (r *Reconciler) createIngressTraitReconcileRequests() []reconcile.Request {
 			},
 		})
 	}
+	r.Log.Infof("Requesting ingress trait reconcile: %v", requests)
 	return requests
 }
 
@@ -1107,35 +1229,20 @@ func buildNamespacedDomainName(cli client.Reader, trait *vzapi.IngressTrait) (st
 // buildDomainNameForWildcard generates a domain name in the format of "<IP>.<wildcard-domain>"
 // Get the IP from Istio resources
 func buildDomainNameForWildcard(cli client.Reader, trait *vzapi.IngressTrait, suffix string) (string, error) {
-	const istioIngressGateway = "istio-ingressgateway"
-
 	istio := corev1.Service{}
 	err := cli.Get(context.TODO(), types.NamespacedName{Name: istioIngressGateway, Namespace: constants.IstioSystemNamespace}, &istio)
 	if err != nil {
 		return "", err
 	}
 	var IP string
-	if istio.Spec.Type == corev1.ServiceTypeLoadBalancer {
-		if len(istio.Status.LoadBalancer.Ingress) > 0 {
-			IP = istio.Status.LoadBalancer.Ingress[0].IP
-		} else if len(istio.Spec.ExternalIPs) > 0 {
+	if istio.Spec.Type == corev1.ServiceTypeLoadBalancer || istio.Spec.Type == corev1.ServiceTypeNodePort {
+		if len(istio.Spec.ExternalIPs) > 0 {
 			IP = istio.Spec.ExternalIPs[0]
+		} else if len(istio.Status.LoadBalancer.Ingress) > 0 {
+			IP = istio.Status.LoadBalancer.Ingress[0].IP
 		} else {
 			return "", fmt.Errorf("%s is missing loadbalancer IP", istioIngressGateway)
 		}
-	} else if istio.Spec.Type == corev1.ServiceTypeNodePort {
-		// Do the equiv of the following command to get the IP
-		// kubectl -n istio-system get pods --selector app=istio-ingressgateway,istio=ingressgateway -o jsonpath='{.items[0].status.hostIP}'
-		podList := corev1.PodList{}
-		listOptions := client.MatchingLabels{"app": "istio-ingressgateway", "istio": "ingressgateway"}
-		err := cli.List(context.TODO(), &podList, listOptions)
-		if err != nil {
-			return "", err
-		}
-		if len(podList.Items) == 0 {
-			return "", errors.New("Unable to find Istio ingressway pod")
-		}
-		IP = podList.Items[0].Status.HostIP
 	} else {
 		return "", fmt.Errorf("Unsupported service type %s for istio_ingress", string(istio.Spec.Type))
 	}

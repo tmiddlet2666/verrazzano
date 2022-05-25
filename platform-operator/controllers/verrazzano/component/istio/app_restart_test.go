@@ -81,7 +81,7 @@ func TestWebLogicStopStart(t *testing.T) {
 			initialLifeCycleAction: vzconst.LifecycleActionStop,
 			updatedLifeCycleAction: vzconst.LifecycleActionStart,
 			f: func(mock *mocks.MockClient) error {
-				return StartDomainsStoppedByUpgrade(vzlog.DefaultLogger(), mock, "1")
+				return startDomainsStoppedByUpgrade(vzlog.DefaultLogger(), mock, "1")
 			},
 		},
 		// Test NOT starting WebLogic because workload is missing stop annotation
@@ -91,7 +91,7 @@ func TestWebLogicStopStart(t *testing.T) {
 			expectGetAndUpdate:     true,
 			initialLifeCycleAction: "",
 			f: func(mock *mocks.MockClient) error {
-				return StartDomainsStoppedByUpgrade(vzlog.DefaultLogger(), mock, "1")
+				return startDomainsStoppedByUpgrade(vzlog.DefaultLogger(), mock, "1")
 			},
 		},
 	}
@@ -113,13 +113,13 @@ func TestWebLogicStopStart(t *testing.T) {
 			clientSet := fake.NewSimpleClientset(initFakePodWithLabels(test.image, podLabels), initFakeDeployment(), initFakeStatefulSet(), initFakeDaemonSet())
 			k8sutil.SetFakeClient(clientSet)
 
-			config := testAppConfigInfo{
+			conf := testAppConfigInfo{
 				namespace:     constants.VerrazzanoSystemNamespace,
 				appConfigName: appConfigName,
 				workloadKind:  vzconst.VerrazzanoWebLogicWorkloadKind,
 				workloadName:  wlName,
 			}
-			expectListAppConfigs(t, mock, config)
+			expectListAppConfigs(t, mock, conf)
 			if test.expectGetAndUpdate {
 				expectGetWebLogicWorkload(t, mock, wlName, test.initialLifeCycleAction)
 				expectUpdateWebLogicWorkload(t, mock, wlName, test.updatedLifeCycleAction)
@@ -155,7 +155,7 @@ func TestHelidonStopStart(t *testing.T) {
 			expectGetAndUpdate: true,
 			image:              oldIstioImage,
 			f: func(mock *mocks.MockClient) error {
-				return RestartAllApps(vzlog.DefaultLogger(), mock, "1")
+				return restartAllApps(vzlog.DefaultLogger(), mock, "1")
 			},
 		},
 		// Test restarting Helidon workload because it doesn't have an old Istio image
@@ -164,7 +164,7 @@ func TestHelidonStopStart(t *testing.T) {
 			expectGetAndUpdate: false,
 			image:              "randomImage",
 			f: func(mock *mocks.MockClient) error {
-				return RestartAllApps(vzlog.DefaultLogger(), mock, "1")
+				return restartAllApps(vzlog.DefaultLogger(), mock, "1")
 			},
 		},
 	}
@@ -184,13 +184,13 @@ func TestHelidonStopStart(t *testing.T) {
 			clientSet := fake.NewSimpleClientset(initFakePodWithLabels(test.image, podLabels), initFakeDeployment(), initFakeStatefulSet(), initFakeDaemonSet())
 			k8sutil.SetFakeClient(clientSet)
 
-			config := testAppConfigInfo{
+			conf := testAppConfigInfo{
 				namespace:     constants.VerrazzanoSystemNamespace,
 				appConfigName: appConfigName,
 				workloadKind:  vzconst.VerrazzanoHelidonWorkloadKind,
 				workloadName:  wlName,
 			}
-			expectListAppConfigs(t, mock, config)
+			expectListAppConfigs(t, mock, conf)
 			version := "1"
 			if test.expectGetAndUpdate {
 				expectGetAppConfig(t, mock, appConfigName, vzconst.RestartVersionAnnotation, version)
@@ -244,13 +244,13 @@ func expectGetAppConfig(_ *testing.T, mock *mocks.MockClient, appConfigName stri
 
 func expectUpdateAppConfig(t *testing.T, mock *mocks.MockClient, annotationKey string, annotationVal string) {
 	mock.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, appConfig *oam.ApplicationConfiguration, opts ...client.UpdateOption) error {
 			if len(annotationVal) > 0 {
 				assert.Equal(t, annotationVal, appConfig.Annotations[annotationKey], "Incorrect Appconfig lifecycle annotation")
 			}
 			return nil
-		})
+		}).AnyTimes()
 }
 
 func expectGetWebLogicWorkload(_ *testing.T, mock *mocks.MockClient, wlName string, lifecycleAction string) {
@@ -267,11 +267,11 @@ func expectGetWebLogicWorkload(_ *testing.T, mock *mocks.MockClient, wlName stri
 
 func expectUpdateWebLogicWorkload(t *testing.T, mock *mocks.MockClient, wlName string, lifecycleAction string) {
 	mock.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, wl *vzapp.VerrazzanoWebLogicWorkload, opts ...client.UpdateOption) error {
 			if len(lifecycleAction) > 0 {
 				assert.Equal(t, lifecycleAction, wl.Annotations[vzconst.LifecycleActionAnnotation], "Incorrect WebLogic lifecycle action")
 			}
 			return nil
-		})
+		}).AnyTimes()
 }

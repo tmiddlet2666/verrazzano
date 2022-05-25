@@ -47,6 +47,22 @@ func StatefulSetsAreReady(log vzlog.VerrazzanoLogger, client client.Client, name
 	return true
 }
 
+// DoStatefulSetsExist checks if the named statefulsets exist
+func DoStatefulSetsExist(log vzlog.VerrazzanoLogger, client clipkg.Client, namespacedNames []types.NamespacedName, _ int32, prefix string) bool {
+	for _, namespacedName := range namespacedNames {
+		statuefulset := appsv1.StatefulSet{}
+		if err := client.Get(context.TODO(), namespacedName, &statuefulset); err != nil {
+			if errors.IsNotFound(err) {
+				log.Progressf("%s is waiting for statuefulset %v to exist", prefix, namespacedName)
+				return false
+			}
+			log.Errorf("%s failed getting statuefulset %v: %v", prefix, namespacedName, err)
+			return false
+		}
+	}
+	return true
+}
+
 // podsReadyStatefulSet checks for an expected number of pods to be using the latest controllerRevision resource and are
 // running and ready
 func podsReadyStatefulSet(log vzlog.VerrazzanoLogger, client clipkg.Client, namespacedName types.NamespacedName, selector *metav1.LabelSelector, expectedReplicas int32, prefix string) bool {

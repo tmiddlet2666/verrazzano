@@ -5,22 +5,24 @@ package helm
 
 import (
 	"fmt"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
+	"os"
+
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
 	"github.com/verrazzano/verrazzano/pkg/helm"
 	helmcli "github.com/verrazzano/verrazzano/pkg/helm"
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
+	vzos "github.com/verrazzano/verrazzano/pkg/os"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/status"
-	"io/ioutil"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/yaml"
 	"k8s.io/apimachinery/pkg/types"
-	"os"
 	clipkg "sigs.k8s.io/controller-runtime/pkg/client"
-	"strings"
 )
 
 // HelmComponent struct needed to implement a component
@@ -61,13 +63,16 @@ type HelmComponent struct {
 	// AppendOverridesFunc is an optional function get additional override values
 	AppendOverridesFunc appendOverridesSig
 
+	// GetInstallOverridesFunc is an optional function get install override sources
+	GetInstallOverridesFunc getInstallOverridesSig
+
 	// ResolveNamespaceFunc is an optional function to process the namespace name
 	ResolveNamespaceFunc resolveNamespaceSig
 
 	// SupportsOperatorInstall Indicates whether or not the component supports install via the operator
 	SupportsOperatorInstall bool
 
-	// WaitForInstall Indicates if the operator should wait for helm operationsto complete (synchronous behavior)
+	// WaitForInstall Indicates if the operator should wait for helm operations to complete (synchronous behavior)
 	WaitForInstall bool
 
 	// ImagePullSecretKeyname is the Helm Value Key for the image pull secret for a chart
@@ -105,11 +110,14 @@ type preUpgradeFuncSig func(log vzlog.VerrazzanoLogger, client clipkg.Client, re
 // appendOverridesSig is an optional function called to generate additional overrides.
 type appendOverridesSig func(context spi.ComponentContext, releaseName string, namespace string, chartDir string, kvs []bom.KeyValue) ([]bom.KeyValue, error)
 
+// getInstallOverridesSig is an optional function called to generate additional overrides.
+type getInstallOverridesSig func(vz *vzapi.Verrazzano) []vzapi.Overrides
+
 // resolveNamespaceSig is an optional function called for special namespace processing
 type resolveNamespaceSig func(ns string) string
 
 // upgradeFuncSig is a function needed for unit test override
-type upgradeFuncSig func(log vzlog.VerrazzanoLogger, releaseName string, namespace string, chartDir string, wait bool, dryRun bool, overrides helm.HelmOverrides) (stdout []byte, stderr []byte, err error)
+type upgradeFuncSig func(log vzlog.VerrazzanoLogger, releaseName string, namespace string, chartDir string, wait bool, dryRun bool, overrides []helm.HelmOverrides) (stdout []byte, stderr []byte, err error)
 
 // upgradeFunc is the default upgrade function
 var upgradeFunc upgradeFuncSig = helm.Upgrade
@@ -133,6 +141,14 @@ func (h HelmComponent) Name() string {
 // GetJsonName returns the josn name of the verrazzano component in CRD
 func (h HelmComponent) GetJSONName() string {
 	return h.JSONName
+}
+
+// GetOverrides returns the list of install overrides for a component
+func (h HelmComponent) GetOverrides(cr *vzapi.Verrazzano) []vzapi.Overrides {
+	if h.GetInstallOverridesFunc != nil {
+		return h.GetInstallOverridesFunc(cr)
+	}
+	return []vzapi.Overrides{}
 }
 
 // GetDependencies returns the Dependencies of this component
@@ -203,12 +219,22 @@ func (h HelmComponent) IsEnabled(effectiveCR *vzapi.Verrazzano) bool {
 
 // ValidateInstall checks if the specified Verrazzano CR is valid for this component to be installed
 func (h HelmComponent) ValidateInstall(vz *vzapi.Verrazzano) error {
+	if err := vzapi.ValidateInstallOverrides(h.GetOverrides(vz)); err != nil {
+		return err
+	}
 	return nil
 }
 
 // ValidateUpdate checks if the specified new Verrazzano CR is valid for this component to be updated
 func (h HelmComponent) ValidateUpdate(old *vzapi.Verrazzano, new *vzapi.Verrazzano) error {
+	if err := vzapi.ValidateInstallOverrides(h.GetOverrides(new)); err != nil {
+		return err
+	}
 	return nil
+}
+
+func (h HelmComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
+	return true
 }
 
 // Install installs the component using Helm
@@ -226,6 +252,7 @@ func (h HelmComponent) Install(context spi.ComponentContext) error {
 
 	// vz-specific chart overrides file
 	overrides, err := h.buildCustomHelmOverrides(context, resolvedNamespace, kvs...)
+	defer vzos.RemoveTempFiles(context.Log().GetZapLogger(), `\w*`)
 	if err != nil {
 		return err
 	}
@@ -282,11 +309,11 @@ func (h HelmComponent) Upgrade(context spi.ComponentContext) error {
 		return nil
 	}
 
-	// Resolve the namespace
-	namespace := h.resolveNamespace(context.EffectiveCR().Namespace)
+	// Resolve the resolvedNamespace
+	resolvedNamespace := h.resolveNamespace(context.EffectiveCR().Namespace)
 
 	// Check if the component is installed before trying to upgrade
-	found, err := helm.IsReleaseInstalled(h.ReleaseName, namespace)
+	found, err := helm.IsReleaseInstalled(h.ReleaseName, resolvedNamespace)
 	if err != nil {
 		return err
 	}
@@ -298,45 +325,39 @@ func (h HelmComponent) Upgrade(context spi.ComponentContext) error {
 	// Do the preUpgrade if the function is defined
 	if h.PreUpgradeFunc != nil && UpgradePrehooksEnabled {
 		context.Log().Infof("Running preUpgrade function for %s", h.ReleaseName)
-		err := h.PreUpgradeFunc(context.Log(), context.Client(), h.ReleaseName, namespace, h.ChartDir)
+		err := h.PreUpgradeFunc(context.Log(), context.Client(), h.ReleaseName, resolvedNamespace, h.ChartDir)
 		if err != nil {
 			return err
 		}
 	}
 
-	overrides, err := h.buildCustomHelmOverrides(context, namespace)
+	// check for global image pull secret
+	var kvs []bom.KeyValue
+	kvs, err = secret.AddGlobalImagePullSecretHelmOverride(context.Log(), context.Client(), resolvedNamespace, kvs, h.ImagePullSecretKeyname)
 	if err != nil {
 		return err
 	}
 
-	stdout, err := helm.GetValues(context.Log(), h.ReleaseName, namespace)
+	overrides, err := h.buildCustomHelmOverrides(context, resolvedNamespace, kvs...)
+	defer vzos.RemoveTempFiles(context.Log().GetZapLogger(), `\w*`)
 	if err != nil {
 		return err
 	}
 
-	var tmpFile *os.File
-	tmpFile, err = ioutil.TempFile(os.TempDir(), "values-*.yaml")
+	stdout, err := helm.GetValues(context.Log(), h.ReleaseName, resolvedNamespace)
 	if err != nil {
-		return context.Log().ErrorfNewErr("Failed to create temporary file: %v", err)
+		return err
 	}
 
-	defer os.Remove(tmpFile.Name())
-
-	if _, err = tmpFile.Write(stdout); err != nil {
-		return context.Log().ErrorfNewErr("Failed to write to temporary file: %v", err)
-	}
-
-	// Close the file
-	if err := tmpFile.Close(); err != nil {
-		return context.Log().ErrorfNewErr("Failed to close temporary file: %v", err)
+	tmpFile, err := vzos.CreateTempFile(context.Log(), "values-*.yaml", stdout)
+	if err != nil {
+		return err
 	}
 
 	// Generate a list of override files making helm get values overrides first
-	overrides.FileOverrides = append(overrides.FileOverrides, "")
-	copy(overrides.FileOverrides[1:], overrides.FileOverrides[0:])
-	overrides.FileOverrides[0] = tmpFile.Name()
+	overrides = append([]helm.HelmOverrides{{FileOverride: tmpFile.Name()}}, overrides...)
 
-	_, _, err = upgradeFunc(context.Log(), h.ReleaseName, namespace, h.ChartDir, true, context.IsDryRun(), overrides)
+	_, _, err = upgradeFunc(context.Log(), h.ReleaseName, resolvedNamespace, h.ChartDir, true, context.IsDryRun(), overrides)
 	return err
 }
 
@@ -354,25 +375,64 @@ func (h HelmComponent) Reconcile(_ spi.ComponentContext) error {
 
 // buildCustomHelmOverrides Builds the helm overrides for a release, including image and file, and custom overrides
 // - returns an error and a HelmOverride struct with the field populated
-func (h HelmComponent) buildCustomHelmOverrides(context spi.ComponentContext, namespace string, additionalValues ...bom.KeyValue) (helm.HelmOverrides, error) {
+func (h HelmComponent) buildCustomHelmOverrides(context spi.ComponentContext, namespace string, additionalValues ...bom.KeyValue) ([]helm.HelmOverrides, error) {
 	// Optionally create a second override file.  This will contain both image setOverrides and any additional
 	// setOverrides required by a component.
 	// Get image setOverrides unless opt out
-	overrides := helm.HelmOverrides{}
 	var kvs []bom.KeyValue
 	var err error
-	if !h.IgnoreImageOverrides {
-		kvs, err = getImageOverrides(h.ReleaseName)
+	var overrides []helm.HelmOverrides
+
+	// Sort the kvs list by priority (0th term has the highest priority)
+
+	// Getting user defined Helm overrides as the highest priority
+	overrideStrings, err := common.GetInstallOverridesYAML(context, h.GetOverrides(context.EffectiveCR()))
+	if err != nil {
+		return overrides, err
+	}
+	for _, overrideString := range overrideStrings {
+		file, err := vzos.CreateTempFile(context.Log(), fmt.Sprintf("install-overrides-%s-*.yaml", h.Name()), []byte(overrideString))
 		if err != nil {
 			return overrides, err
 		}
+		kvs = append(kvs, bom.KeyValue{Value: file.Name(), IsFile: true})
+	}
+
+	// Create files from the Verrazzano Helm values
+	newKvs, err := h.filesFromVerrazzanoHelm(context, namespace, additionalValues)
+	if err != nil {
+		return overrides, err
+	}
+	kvs = append(kvs, newKvs...)
+
+	// Add the values file ot the file overrides
+	if len(h.ValuesFile) > 0 {
+		kvs = append(kvs, bom.KeyValue{Value: h.ValuesFile, IsFile: true})
+	}
+
+	// Convert the key value pairs to Helm overrides
+	overrides = h.organizeHelmOverrides(kvs)
+	return overrides, nil
+}
+
+func (h HelmComponent) filesFromVerrazzanoHelm(context spi.ComponentContext, namespace string, additionalValues []bom.KeyValue) ([]bom.KeyValue, error) {
+	var kvs []bom.KeyValue
+	var newKvs []bom.KeyValue
+
+	// Get image overrides if they are specified
+	if !h.IgnoreImageOverrides {
+		imageOverrides, err := getImageOverrides(h.ReleaseName)
+		if err != nil {
+			return newKvs, err
+		}
+		kvs = append(kvs, imageOverrides...)
 	}
 
 	// Append any additional setOverrides for the component (see Keycloak.go for example)
 	if h.AppendOverridesFunc != nil {
 		overrideValues, err := h.AppendOverridesFunc(context, h.ReleaseName, namespace, h.ChartDir, []bom.KeyValue{})
 		if err != nil {
-			return helm.HelmOverrides{}, err
+			return newKvs, err
 		}
 		kvs = append(kvs, overrideValues...)
 	}
@@ -382,43 +442,65 @@ func (h HelmComponent) buildCustomHelmOverrides(context spi.ComponentContext, na
 		kvs = append(kvs, additionalValues...)
 	}
 
-	// Add the values file ot the file overrides
-	fileOverrides := []string{}
-	if len(h.ValuesFile) > 0 {
-		fileOverrides = []string{h.ValuesFile}
-	}
-	if len(kvs) > 0 {
-		// Build comma-separated strings for the --set, --set-string, and --set-file overrides if they are passed in
-		// Add to files overrides if anything is passed in
-		setOverridesBldr := strings.Builder{}
-		setStringOverridesBldr := strings.Builder{}
-		setFileOverridesBldr := strings.Builder{}
-		for _, kv := range kvs {
-			if kv.SetString {
-				if setStringOverridesBldr.Len() > 0 {
-					setStringOverridesBldr.WriteString(",")
-				}
-				setStringOverridesBldr.WriteString(fmt.Sprintf("%s=%s", kv.Key, kv.Value))
-			} else if kv.SetFile {
-				if setFileOverridesBldr.Len() > 0 {
-					setFileOverridesBldr.WriteString(",")
-				}
-				setFileOverridesBldr.WriteString(fmt.Sprintf("%s=%s", kv.Key, kv.Value))
-			} else if kv.IsFile {
-				fileOverrides = append(fileOverrides, kv.Value)
-			} else {
-				if setOverridesBldr.Len() > 0 {
-					setOverridesBldr.WriteString(",")
-				}
-				setOverridesBldr.WriteString(fmt.Sprintf("%s=%s", kv.Key, kv.Value))
-			}
+	// Expand the existing kvs values into expected format
+	var fileValues []bom.KeyValue
+	for _, kv := range kvs {
+		// If the value is a file, add it to the new kvs
+		if kv.IsFile {
+			newKvs = append(newKvs, kv)
+			continue
 		}
-		overrides.SetOverrides = setOverridesBldr.String()
-		overrides.SetStringOverrides = setStringOverridesBldr.String()
-		overrides.SetFileOverrides = setFileOverridesBldr.String()
-		overrides.FileOverrides = fileOverrides
+
+		// If set file, extract the data into the value parameter
+		if kv.SetFile {
+			data, err := os.ReadFile(kv.Value)
+			if err != nil {
+				return newKvs, context.Log().ErrorfNewErr("Could not open file %s: %v", kv.Value, err)
+			}
+			kv.Value = string(data)
+		}
+
+		fileValues = append(fileValues, kv)
 	}
-	return overrides, nil
+
+	// Take the YAML values and construct a YAML file
+	// This uses the Helm YAML formatting
+	fileString, err := yaml.HelmValueFileConstructor(fileValues)
+	if err != nil {
+		return newKvs, context.Log().ErrorfNewErr("Could not create YAML file from key value pairs: %v", err)
+	}
+
+	// Create the file from the string
+	file, err := vzos.CreateTempFile(context.Log(), "helm-overrides-*.yaml", []byte(fileString))
+	if err != nil {
+		return newKvs, err
+	}
+	if file != nil {
+		newKvs = append(newKvs, bom.KeyValue{Value: file.Name(), IsFile: true})
+	}
+	return newKvs, nil
+}
+
+// organizeHelmOverrides creates a list of Helm overrides from key value pairs in reverse precedence (0th value has the lowest precedence)
+// Each key value pair gets its own override object to keep strict precedence
+func (h HelmComponent) organizeHelmOverrides(kvs []bom.KeyValue) []helm.HelmOverrides {
+	var overrides []helm.HelmOverrides
+	for _, kv := range kvs {
+		if kv.SetString {
+			// Append in reverse order because helm precedence is right to left
+			overrides = append([]helm.HelmOverrides{{SetStringOverrides: fmt.Sprintf("%s=%s", kv.Key, kv.Value)}}, overrides...)
+		} else if kv.SetFile {
+			// Append in reverse order because helm precedence is right to left
+			overrides = append([]helm.HelmOverrides{{SetFileOverrides: fmt.Sprintf("%s=%s", kv.Key, kv.Value)}}, overrides...)
+		} else if kv.IsFile {
+			// Append in reverse order because helm precedence is right to left
+			overrides = append([]helm.HelmOverrides{{FileOverride: kv.Value}}, overrides...)
+		} else {
+			// Append in reverse order because helm precedence is right to left
+			overrides = append([]helm.HelmOverrides{{SetOverrides: fmt.Sprintf("%s=%s", kv.Key, kv.Value)}}, overrides...)
+		}
+	}
+	return overrides
 }
 
 // resolveNamespace Resolve/normalize the namespace for a Helm-based component

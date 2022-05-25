@@ -5,10 +5,11 @@ package todo
 
 import (
 	"fmt"
-	"github.com/verrazzano/verrazzano/pkg/test/framework"
-	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
 	"net/http"
 	"time"
+
+	"github.com/verrazzano/verrazzano/pkg/test/framework"
+	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -77,7 +78,7 @@ func deployToDoListExample(namespace string) {
 	Eventually(func() (*v1.Namespace, error) {
 		nsLabels := map[string]string{
 			"verrazzano-managed": "true",
-			"istio-injection":    "enabled"}
+			"istio-injection":    istioInjection}
 		return pkg.CreateNamespace(namespace, nsLabels)
 	}, shortWaitTimeout, shortPollingInterval).ShouldNot(BeNil())
 
@@ -114,50 +115,50 @@ func undeployToDoListExample() {
 	start := time.Now()
 	Eventually(func() error {
 		return pkg.DeleteResourceFromFileInGeneratedNamespace("examples/todo-list/todo-list-application.yaml", namespace)
-	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred(), "deleting todo-list-application")
 
 	t.Logs.Info("Delete components")
 	Eventually(func() error {
 		return pkg.DeleteResourceFromFileInGeneratedNamespace("examples/todo-list/todo-list-components.yaml", namespace)
-	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred(), "deleting todo-list-components")
 
 	t.Logs.Info("Wait for pods to terminate")
 	Eventually(func() bool {
 		podsNotRunning, _ := pkg.PodsNotRunning(namespace, []string{"mysql", "tododomain-adminserver"})
 		return podsNotRunning
-	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "pods deleted")
 
 	t.Logs.Info("Delete namespace")
 	Eventually(func() error {
 		return pkg.DeleteNamespace(namespace)
-	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+	}, shortWaitTimeout, shortPollingInterval).ShouldNot(HaveOccurred(), "deleting namespace")
 
 	t.Logs.Info("Wait for finalizer to be removed")
 	Eventually(func() bool {
 		return pkg.CheckNamespaceFinalizerRemoved(namespace)
-	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "namespace finalizer deleted")
 
 	t.Logs.Info("Deleted namespace check")
 	Eventually(func() bool {
 		_, err := pkg.GetNamespace(namespace)
 		return err != nil && errors.IsNotFound(err)
-	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "namespace deleted")
 
 	// GIVEN the ToDoList app is undeployed
 	// WHEN the app config certificate generated to support secure gateways is fetched
 	// THEN the certificate should have been cleaned up
 	t.Logs.Info("Deleted certificate check")
 	Eventually(func() bool {
-		_, err := pkg.GetCertificate("istio-system", namespace+"-todo-appconf-cert")
+		_, err := pkg.GetCertificate("istio-system", namespace+"-todo-domain-ingress-cert")
 		return err != nil && errors.IsNotFound(err)
-	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "ingress trait cert deleted")
 
 	// GIVEN the ToDoList app is undeployed
 	// WHEN the app config secret generated to support secure gateways is fetched
 	// THEN the secret should have been cleaned up
 	t.Logs.Info("Waiting for secret containing certificate to be deleted")
 	Eventually(func() bool {
-		_, err := pkg.GetSecret("istio-system", namespace+"-todo-appconf-cert-secret")
+		_, err := pkg.GetSecret("istio-system", namespace+"-todo-domain-ingress-cert-secret")
 		if err != nil && errors.IsNotFound(err) {
 			t.Logs.Info("Secret deleted")
 			return true
@@ -166,7 +167,7 @@ func undeployToDoListExample() {
 			t.Logs.Errorf("Error attempting to get secret: %v", err)
 		}
 		return false
-	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "delete ingress trait secret")
+	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue(), "ingress trait cert secret deleted")
 	metrics.Emit(t.Metrics.With("undeployment_elapsed_time", time.Since(start).Milliseconds()))
 }
 
@@ -179,9 +180,9 @@ var _ = t.Describe("ToDo List test", Label("f:app-lcm.oam",
 		// GIVEN the ToDoList app is deployed
 		// WHEN the app config secret generated to support secure gateways is fetched
 		// THEN the secret should exist
-		t.It("Verify 'todo-list-todo-appconf-cert-secret' has been created", Label("f:cert-mgmt"), func() {
+		t.It("Verify cert secret for todo-list has been created", Label("f:cert-mgmt"), func() {
 			Eventually(func() (*v1.Secret, error) {
-				return pkg.GetSecret("istio-system", namespace+"-todo-appconf-cert-secret")
+				return pkg.GetSecret("istio-system", namespace+"-todo-domain-ingress-cert-secret")
 			}, longWaitTimeout, longPollingInterval).ShouldNot(BeNil())
 		})
 		// GIVEN the ToDoList app is deployed
@@ -191,10 +192,17 @@ var _ = t.Describe("ToDo List test", Label("f:app-lcm.oam",
 			Eventually(func() bool {
 				domain, err := weblogic.GetDomain(namespace, "todo-domain")
 				if err != nil {
+					t.Logs.Errorf("Error attempting to get domain: %v", err)
 					return false
 				}
 				healths, err := weblogic.GetHealthOfServers(domain)
-				if err != nil || healths[0] != weblogic.Healthy {
+				if err != nil {
+					t.Logs.Errorf("Error attempting to get health of servers: %v", err)
+					return false
+				}
+
+				if healths[0] != weblogic.Healthy {
+					t.Logs.Errorf("server not healthy")
 					return false
 				}
 				return true
@@ -267,8 +275,8 @@ var _ = t.Describe("ToDo List test", Label("f:app-lcm.oam",
 	})
 
 	t.Context("Logging.", Label("f:observability.logging.es"), func() {
-		indexName := "verrazzano-namespace-" + namespace
-
+		indexName, err := pkg.GetOpenSearchAppIndex(namespace)
+		Expect(err).To(BeNil())
 		// GIVEN a WebLogic application with logging enabled
 		// WHEN the Elasticsearch index is retrieved
 		// THEN verify that it is found

@@ -46,6 +46,22 @@ func DeploymentsAreReady(log vzlog.VerrazzanoLogger, client clipkg.Client, names
 	return true
 }
 
+// DoDeploymentsExist checks if the named deployments exist
+func DoDeploymentsExist(log vzlog.VerrazzanoLogger, client clipkg.Client, namespacedNames []types.NamespacedName, _ int32, prefix string) bool {
+	for _, namespacedName := range namespacedNames {
+		deployment := appsv1.Deployment{}
+		if err := client.Get(context.TODO(), namespacedName, &deployment); err != nil {
+			if errors.IsNotFound(err) {
+				log.Progressf("%s is waiting for deployment %v to exist", prefix, namespacedName)
+				return false
+			}
+			log.Errorf("%s failed getting deployment %v: %v", prefix, namespacedName, err)
+			return false
+		}
+	}
+	return true
+}
+
 // podsReadyDeployment checks for an expected number of pods to be using the latest replicaset revision and are
 // running and ready
 func podsReadyDeployment(log vzlog.VerrazzanoLogger, client clipkg.Client, namespacedName types.NamespacedName, selector *metav1.LabelSelector, expectedReplicas int32, prefix string) bool {

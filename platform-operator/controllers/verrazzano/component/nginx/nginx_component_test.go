@@ -6,10 +6,14 @@ package nginx
 import (
 	"testing"
 
+	"github.com/verrazzano/verrazzano/pkg/test/ip"
+
 	v1 "k8s.io/api/core/v1"
 
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 )
+
+var testExternalIP = ip.RandomIP()
 
 func Test_nginxComponent_ValidateUpdate(t *testing.T) {
 	disabled := false
@@ -48,7 +52,7 @@ func Test_nginxComponent_ValidateUpdate(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "change-type",
+			name: "change-type-to-nodeport-without-externalIPs",
 			old:  &vzapi.Verrazzano{},
 			new: &vzapi.Verrazzano{
 				Spec: vzapi.VerrazzanoSpec{
@@ -60,6 +64,48 @@ func Test_nginxComponent_ValidateUpdate(t *testing.T) {
 				},
 			},
 			wantErr: true,
+		},
+		{
+			name: "change-type-to-nodeport-with-externalIPs",
+			old:  &vzapi.Verrazzano{},
+			new: &vzapi.Verrazzano{
+				Spec: vzapi.VerrazzanoSpec{
+					Components: vzapi.ComponentSpec{
+						Ingress: &vzapi.IngressNginxComponent{
+							Type: vzapi.NodePort,
+							NGINXInstallArgs: []vzapi.InstallArgs{
+								{
+									Name:      nginxExternalIPKey,
+									ValueList: []string{testExternalIP},
+								},
+							},
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "change-type-from-nodeport",
+			old: &vzapi.Verrazzano{
+				Spec: vzapi.VerrazzanoSpec{
+					Components: vzapi.ComponentSpec{
+						Ingress: &vzapi.IngressNginxComponent{
+							Type: vzapi.NodePort,
+						},
+					},
+				},
+			},
+			new: &vzapi.Verrazzano{
+				Spec: vzapi.VerrazzanoSpec{
+					Components: vzapi.ComponentSpec{
+						Ingress: &vzapi.IngressNginxComponent{
+							Type: vzapi.LoadBalancer,
+						},
+					},
+				},
+			},
+			wantErr: false,
 		},
 		{
 			name: "change-install-args",
@@ -135,7 +181,7 @@ func Test_nginxComponent_ValidateInstall(t *testing.T) {
 							NGINXInstallArgs: []vzapi.InstallArgs{
 								{
 									Name:      "foo",
-									ValueList: []string{"1.1.1.1"},
+									ValueList: []string{testExternalIP},
 								},
 							},
 						},
@@ -153,7 +199,7 @@ func Test_nginxComponent_ValidateInstall(t *testing.T) {
 							Type: vzapi.NodePort,
 							NGINXInstallArgs: []vzapi.InstallArgs{
 								{
-									Name:  "controller.service.externalIPs",
+									Name:  nginxExternalIPKey,
 									Value: "1.1.1.1.1",
 								},
 							},
@@ -172,7 +218,7 @@ func Test_nginxComponent_ValidateInstall(t *testing.T) {
 							Type: vzapi.NodePort,
 							NGINXInstallArgs: []vzapi.InstallArgs{
 								{
-									Name:      "controller.service.externalIPs",
+									Name:      nginxExternalIPKey,
 									ValueList: []string{""},
 								},
 							},
@@ -190,8 +236,8 @@ func Test_nginxComponent_ValidateInstall(t *testing.T) {
 						Ingress: &vzapi.IngressNginxComponent{
 							Type: vzapi.NodePort,
 							NGINXInstallArgs: []vzapi.InstallArgs{
-								{Name: "controller.service.externalIPs"},
-								{ValueList: []string{"1.1.1.1.1"}},
+								{Name: nginxExternalIPKey},
+								{ValueList: []string{testExternalIP + ".1"}},
 							},
 						},
 					},
@@ -208,8 +254,8 @@ func Test_nginxComponent_ValidateInstall(t *testing.T) {
 							Type: vzapi.NodePort,
 							NGINXInstallArgs: []vzapi.InstallArgs{
 								{
-									Name:      "controller.service.externalIPs",
-									ValueList: []string{"1.1.1.1"},
+									Name:      nginxExternalIPKey,
+									ValueList: []string{testExternalIP},
 								},
 							},
 						},

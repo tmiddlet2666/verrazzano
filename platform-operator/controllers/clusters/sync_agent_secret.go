@@ -1,4 +1,4 @@
-// Copyright (c) 2021, Oracle and/or its affiliates.
+// Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 package clusters
@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"fmt"
 
+	"github.com/verrazzano/verrazzano/pkg/mcconstants"
 	clusterapi "github.com/verrazzano/verrazzano/platform-operator/apis/clusters/v1alpha1"
 	vzk8s "github.com/verrazzano/verrazzano/platform-operator/internal/k8s"
 
@@ -83,12 +84,12 @@ func (r *VerrazzanoManagedClusterReconciler) syncAgentSecret(vmc *clusterapi.Ver
 	}
 
 	// Load the kubeconfig struct
-	token := secret.Data[TokenKey]
+	token := secret.Data[mcconstants.TokenKey]
 	b64Cert, err := getB64CAData(config)
 	if err != nil {
 		return err
 	}
-	serverURL, err := vzk8s.GetAPIServerURL(r)
+	serverURL, err := vzk8s.GetAPIServerURL(r.Client)
 	if err != nil {
 		return err
 	}
@@ -134,8 +135,8 @@ func (r *VerrazzanoManagedClusterReconciler) createOrUpdateAgentSecret(vmc *clus
 func (r *VerrazzanoManagedClusterReconciler) mutateAgentSecret(secret *corev1.Secret, kubeconfig string, manageClusterName string) error {
 	secret.Type = corev1.SecretTypeOpaque
 	secret.Data = map[string][]byte{
-		KubeconfigKey:         []byte(kubeconfig),
-		ManagedClusterNameKey: []byte(manageClusterName),
+		mcconstants.KubeconfigKey:         []byte(kubeconfig),
+		mcconstants.ManagedClusterNameKey: []byte(manageClusterName),
 	}
 	return nil
 }

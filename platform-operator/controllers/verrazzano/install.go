@@ -23,7 +23,7 @@ import (
 //    where update status fails, in which case we exit the function and requeue
 //    immediately.
 func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctrl.Result, error) {
-	spiCtx, err := spi.NewContext(vzctx.Log, r, vzctx.ActualCR, r.DryRun)
+	spiCtx, err := spi.NewContext(vzctx.Log, r.Client, vzctx.ActualCR, r.DryRun)
 	if err != nil {
 		spiCtx.Log().Errorf("Failed to create component context: %v", err)
 		return newRequeueWithDelay(), err
@@ -71,6 +71,15 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 		}
 		switch componentStatus.State {
 		case vzapi.CompStateReady:
+			// Don't reconcile (updates) during install
+			if !isInstalled(cr.Status) {
+				continue
+			}
+			// If the component config is updated, or the component is watched, it should be reconciled
+			if !checkConfigUpdated(spiCtx, componentStatus, compName) && !r.IsWatchedComponent(comp.GetJSONName()) {
+				continue
+			}
+
 			// For delete, we should look at the VZ resource delete timestamp and shift into Quiescing/Uninstalling state
 			compLog.Oncef("Component %s is ready", compName)
 			if err := comp.Reconcile(compContext); err != nil {
@@ -141,6 +150,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 			compLog.Progressf("Component %s waiting to finish installing", compName)
 			requeue = true
 		}
+		r.ClearWatch(comp.GetJSONName())
 	}
 	if requeue {
 		return newRequeueWithDelay(), nil
@@ -148,7 +158,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 	return ctrl.Result{}, nil
 }
 
-// checkConfigUpdated checks if the component confg in the VZ CR has been updated and the component needs to
+// checkConfigUpdated checks if the component config in the VZ CR has been updated and the component needs to
 // reset the state back to pre-install to re-enter install flow
 func checkConfigUpdated(ctx spi.ComponentContext, componentStatus *vzapi.ComponentStatusDetails, name string) bool {
 	vzState := ctx.ActualCR().Status.State

@@ -6,26 +6,26 @@ package certmanager
 import (
 	"context"
 	"fmt"
-	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
-	v1 "k8s.io/api/core/v1"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"path/filepath"
-	"reflect"
-	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 
+	vzconst "github.com/verrazzano/verrazzano/pkg/constants"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"sigs.k8s.io/controller-runtime/pkg/controller/controllerutil"
 )
 
 // ComponentName is the name of the component
 const ComponentName = "cert-manager"
 
 // ComponentNamespace is the namespace of the component
-const ComponentNamespace = "cert-manager"
+const ComponentNamespace = vzconst.CertManagerNamespace
 
 // ComponentJSONName is the josn name of the verrazzano component in CRD
 const ComponentJSONName = "certManager"
@@ -53,6 +53,7 @@ func NewComponent() spi.Component {
 			AppendOverridesFunc:     AppendOverrides,
 			MinVerrazzanoVersion:    constants.VerrazzanoVersion1_0_0,
 			Dependencies:            []string{},
+			GetInstallOverridesFunc: GetOverrides,
 		},
 	}
 }
@@ -76,16 +77,30 @@ func (c certManagerComponent) ValidateUpdate(old *vzapi.Verrazzano, new *vzapi.V
 	if c.IsEnabled(old) && !c.IsEnabled(new) {
 		return fmt.Errorf("Disabling component %s is not allowed", ComponentJSONName)
 	}
-	if !reflect.DeepEqual(c.getCertificateSettings(old), c.getCertificateSettings(new)) {
-		return fmt.Errorf("Updates to certificate settings not allowed for %s", c.GetJSONName())
+	if _, err := validateConfiguration(new); err != nil {
+		return err
 	}
-	return nil
+	return c.HelmComponent.ValidateUpdate(old, new)
+}
+
+// ValidateInstall checks if the specified new Verrazzano CR is valid for this component to be installed
+func (c certManagerComponent) ValidateInstall(vz *vzapi.Verrazzano) error {
+	// Do not allow any changes except to enable the component post-install
+	if c.IsEnabled(vz) {
+		_, err := validateConfiguration(vz)
+		return err
+	}
+	return c.HelmComponent.ValidateInstall(vz)
 }
 
 // PreInstall runs before cert-manager components are installed
 // The cert-manager namespace is created
 // The cert-manager manifest is patched if needed and applied to create necessary CRDs
 func (c certManagerComponent) PreInstall(compContext spi.ComponentContext) error {
+
+	vz := compContext.EffectiveCR()
+	cli := compContext.Client()
+	log := compContext.Log()
 	// If it is a dry-run, do nothing
 	if compContext.IsDryRun() {
 		compContext.Log().Debug("cert-manager PreInstall dry run")
@@ -93,19 +108,22 @@ func (c certManagerComponent) PreInstall(compContext spi.ComponentContext) error
 	}
 
 	// create cert-manager namespace
-	compContext.Log().Debug("Adding label needed by network policies to cert-manager namespace")
+	log.Debug("Adding label needed by network policies to cert-manager namespace")
 	ns := v1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: ComponentNamespace}}
-	if _, err := controllerutil.CreateOrUpdate(context.TODO(), compContext.Client(), &ns, func() error {
+	if _, err := controllerutil.CreateOrUpdate(context.TODO(), cli, &ns, func() error {
 		return nil
 	}); err != nil {
-		return compContext.Log().ErrorfNewErr("Failed to create or update the cert-manager namespace: %v", err)
+		return log.ErrorfNewErr("Failed to create or update the cert-manager namespace: %v", err)
 	}
 
 	// Apply the cert-manager manifest, patching if needed
-	compContext.Log().Debug("Applying cert-manager crds")
+	log.Debug("Applying cert-manager crds")
 	err := c.applyManifest(compContext)
 	if err != nil {
-		return compContext.Log().ErrorfNewErr("Failed to apply the cert-manager manifest: %v", err)
+		return log.ErrorfNewErr("Failed to apply the cert-manager manifest: %v", err)
+	}
+	if err := common.ProcessAdditionalCertificates(log, cli, vz); err != nil {
+		return err
 	}
 	return nil
 }
@@ -134,10 +152,48 @@ func (c certManagerComponent) PostUpgrade(compContext spi.ComponentContext) erro
 	return c.createOrUpdateClusterIssuer(compContext)
 }
 
-func (c certManagerComponent) getCertificateSettings(vz *vzapi.Verrazzano) vzapi.Certificate {
-	var certSettings vzapi.Certificate
-	if vz.Spec.Components.CertManager != nil {
-		certSettings = vz.Spec.Components.CertManager.Certificate
+func (c certManagerComponent) createOrUpdateClusterIssuer(compContext spi.ComponentContext) error {
+	isCAValue, err := isCA(compContext)
+	if err != nil {
+		return compContext.Log().ErrorfNewErr("Failed to verify the config type: %v", err)
 	}
-	return certSettings
+	var opResult controllerutil.OperationResult
+	if !isCAValue {
+		// Create resources needed for Acme certificates
+		if opResult, err = createOrUpdateAcmeResources(compContext); err != nil {
+			return compContext.Log().ErrorfNewErr("Failed creating Acme resources: %v", err)
+		}
+	} else {
+		// Create resources needed for CA certificates
+		if opResult, err = createOrUpdateCAResources(compContext); err != nil {
+			return compContext.Log().ErrorfNewErr("Failed creating CA resources: %v", err)
+		}
+	}
+	if opResult == controllerutil.OperationResultCreated {
+		// We're in the initial install phase, and created the ClusterIssuer for the first time,
+		// so skip the renewal checks
+		compContext.Log().Oncef("Initial install, skipping certificate renewal checks")
+		return nil
+	}
+	// CertManager configuration was updated, cleanup any old resources from previous configuration
+	// and renew certificates against the new ClusterIssuer
+	if err := cleanupUnusedResources(compContext, isCAValue); err != nil {
+		return err
+	}
+	if err := checkRenewAllCertificates(compContext, isCAValue); err != nil {
+		compContext.Log().Errorf("Error requesting certificate renewal: %s", err.Error())
+		return err
+	}
+	return nil
+}
+
+// MonitorOverrides checks whether monitoring of install overrides is enabled or not
+func (c certManagerComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
+	if ctx.EffectiveCR().Spec.Components.CertManager != nil {
+		if ctx.EffectiveCR().Spec.Components.CertManager.MonitorChanges != nil {
+			return *ctx.EffectiveCR().Spec.Components.CertManager.MonitorChanges
+		}
+		return true
+	}
+	return false
 }

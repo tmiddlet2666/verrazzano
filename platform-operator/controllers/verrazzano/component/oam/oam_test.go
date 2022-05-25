@@ -3,13 +3,16 @@
 package oam
 
 import (
+	"context"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	appsv1 "k8s.io/api/apps/v1"
+	rbacv1 "k8s.io/api/rbac/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/types"
 	k8scheme "k8s.io/client-go/kubernetes/scheme"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
 )
@@ -30,7 +33,7 @@ var crEnabled = vzapi.Verrazzano{
 //  THEN true is returned
 func TestIsOAMOperatorReady(t *testing.T) {
 
-	fakeClient := fake.NewFakeClientWithScheme(k8scheme.Scheme, &appsv1.Deployment{
+	fakeClient := fake.NewClientBuilder().WithScheme(k8scheme.Scheme).WithObjects(&appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ComponentNamespace,
 			Name:      ComponentName,
@@ -41,7 +44,7 @@ func TestIsOAMOperatorReady(t *testing.T) {
 			Replicas:          1,
 			UpdatedReplicas:   1,
 		},
-	})
+	}).Build()
 	assert.True(t, isOAMReady(spi.NewFakeContext(fakeClient, &vzapi.Verrazzano{}, false)))
 }
 
@@ -51,7 +54,7 @@ func TestIsOAMOperatorReady(t *testing.T) {
 //  THEN false is returned
 func TestIsOAMOperatorNotReady(t *testing.T) {
 
-	fakeClient := fake.NewFakeClientWithScheme(k8scheme.Scheme, &appsv1.Deployment{
+	fakeClient := fake.NewClientBuilder().WithScheme(k8scheme.Scheme).WithObjects(&appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ComponentNamespace,
 			Name:      ComponentName,
@@ -61,7 +64,7 @@ func TestIsOAMOperatorNotReady(t *testing.T) {
 			Replicas:          1,
 			UpdatedReplicas:   0,
 		},
-	})
+	}).Build()
 	assert.False(t, isOAMReady(spi.NewFakeContext(fakeClient, &vzapi.Verrazzano{}, false)))
 }
 
@@ -115,4 +118,44 @@ func TestIsDisableExplicit(t *testing.T) {
 
 func getBoolPtr(b bool) *bool {
 	return &b
+}
+
+// TestEnsureClusterRoles tests the ensureClusterRoles function
+func TestEnsureClusterRoles(t *testing.T) {
+	// GIVEN a call to ensureClusterRoles
+	// WHEN the cluster roles do not exist
+	// THEN the cluster roles are created
+	client := fake.NewClientBuilder().WithScheme(testScheme).Build()
+	ctx := spi.NewFakeContext(client, nil, false)
+	ensureClusterRoles(ctx)
+
+	var clusterRole rbacv1.ClusterRole
+	err := client.Get(context.TODO(), types.NamespacedName{Name: pvcClusterRoleName}, &clusterRole)
+	assert.NoError(t, err)
+	assert.Equal(t, "true", clusterRole.Labels[aggregateToControllerLabel])
+
+	// GIVEN a call to ensureClusterRoles
+	// WHEN the cluster roles already exist
+	// THEN the cluster roles are updated
+	client = fake.NewClientBuilder().WithScheme(testScheme).WithObjects(
+		&rbacv1.ClusterRole{
+			ObjectMeta: metav1.ObjectMeta{
+				Name: pvcClusterRoleName,
+			},
+			Rules: []rbacv1.PolicyRule{
+				{
+					Resources: []string{"deployments"},
+				},
+			},
+		},
+	).Build()
+	ctx = spi.NewFakeContext(client, nil, false)
+	ensureClusterRoles(ctx)
+
+	err = client.Get(context.TODO(), types.NamespacedName{Name: pvcClusterRoleName}, &clusterRole)
+	assert.NoError(t, err)
+	assert.Equal(t, "true", clusterRole.Labels[aggregateToControllerLabel])
+	assert.Equal(t, 1, len(clusterRole.Rules))
+	assert.Equal(t, 1, len(clusterRole.Rules[0].Resources))
+	assert.Equal(t, "persistentvolumeclaims", clusterRole.Rules[0].Resources[0])
 }

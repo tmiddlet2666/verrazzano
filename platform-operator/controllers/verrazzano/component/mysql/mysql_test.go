@@ -43,7 +43,7 @@ var crEnabled = vzapi.Verrazzano{
 var pvc100Gi, _ = resource.ParseQuantity("100Gi")
 
 const (
-	minExpectedHelmOverridesCount = 1
+	minExpectedHelmOverridesCount = 2
 	busyboxImageNameKey           = "busybox.image"
 	busyboxImageTagKey            = "busybox.tag"
 	testBomFilePath               = "../../testdata/test_bom.json"
@@ -265,7 +265,7 @@ func TestAppendMySQLOverridesUpgrade(t *testing.T) {
 	ctx := spi.NewFakeContext(mock, vz, false, profilesDir).Init(ComponentName).Operation(vzconst.UpgradeOperation)
 	kvs, err := appendMySQLOverrides(ctx, "", "", "", []bom.KeyValue{})
 	assert.NoError(t, err)
-	assert.Len(t, kvs, 4+minExpectedHelmOverridesCount)
+	assert.Len(t, kvs, 3+minExpectedHelmOverridesCount)
 	assert.Equal(t, "test-root-key", bom.FindKV(kvs, helmRootPwd))
 	assert.Equal(t, "test-key", bom.FindKV(kvs, helmPwd))
 	assert.NotEmpty(t, bom.FindKV(kvs, busyboxImageNameKey))
@@ -277,7 +277,7 @@ func TestAppendMySQLOverridesUpgrade(t *testing.T) {
 //  WHEN the deployment object has enough replicas available
 //  THEN true is returned
 func TestIsMySQLReady(t *testing.T) {
-	fakeClient := fake.NewFakeClientWithScheme(k8scheme.Scheme, &appsv1.Deployment{
+	fakeClient := fake.NewClientBuilder().WithScheme(k8scheme.Scheme).WithObjects(&appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ComponentNamespace,
 			Name:      ComponentName,
@@ -288,7 +288,7 @@ func TestIsMySQLReady(t *testing.T) {
 			Replicas:          1,
 			UpdatedReplicas:   1,
 		},
-	})
+	}).Build()
 	assert.True(t, isMySQLReady(spi.NewFakeContext(fakeClient, nil, false)))
 }
 
@@ -297,7 +297,7 @@ func TestIsMySQLReady(t *testing.T) {
 //  WHEN the deployment object does NOT have enough replicas available
 //  THEN false is returned
 func TestIsMySQLNotReady(t *testing.T) {
-	fakeClient := fake.NewFakeClientWithScheme(k8scheme.Scheme, &appsv1.Deployment{
+	fakeClient := fake.NewClientBuilder().WithScheme(k8scheme.Scheme).WithObjects(&appsv1.Deployment{
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ComponentNamespace,
 			Name:      ComponentName,
@@ -307,7 +307,7 @@ func TestIsMySQLNotReady(t *testing.T) {
 			Replicas:          1,
 			UpdatedReplicas:   0,
 		},
-	})
+	}).Build()
 	assert.False(t, isMySQLReady(spi.NewFakeContext(fakeClient, nil, false)))
 }
 

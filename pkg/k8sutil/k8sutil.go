@@ -11,14 +11,15 @@ import (
 	"os"
 	"path/filepath"
 
+	certmanagerv1 "github.com/jetstack/cert-manager/pkg/client/clientset/versioned/typed/certmanager/v1"
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
-
 	istiov1alpha3 "istio.io/client-go/pkg/apis/networking/v1alpha3"
 	istioClient "istio.io/client-go/pkg/clientset/versioned"
 	v1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/scheme"
+	corev1 "k8s.io/client-go/kubernetes/typed/core/v1"
 	"k8s.io/client-go/rest"
 	restclient "k8s.io/client-go/rest"
 	"k8s.io/client-go/tools/clientcmd"
@@ -117,6 +118,15 @@ func GetKubernetesClientsetWithConfig(config *rest.Config) (*kubernetes.Clientse
 	return clientset, err
 }
 
+//GetCoreV1Client Returns the CoreV1Interface
+func GetCoreV1Client(log ...vzlog.VerrazzanoLogger) (corev1.CoreV1Interface, error) {
+	goClient, err := GetGoClient(log...)
+	if err != nil {
+		return nil, err
+	}
+	return goClient.CoreV1(), nil
+}
+
 // GetIstioClientset returns the clientset object for Istio
 func GetIstioClientset() (*istioClient.Clientset, error) {
 	kubeConfigLoc, err := GetKubeConfigLocation()
@@ -134,6 +144,26 @@ func GetIstioClientsetInCluster(kubeconfigPath string) (*istioClient.Clientset, 
 		return cs, err
 	}
 	cs, err = istioClient.NewForConfig(kubeConfig)
+	return cs, err
+}
+
+// GetCertManagerClienset returns the clientset object for CertManager
+func GetCertManagerClienset() (*certmanagerv1.CertmanagerV1Client, error) {
+	kubeConfigLoc, err := GetKubeConfigLocation()
+	if err != nil {
+		return nil, err
+	}
+	return GetCertManagerClientsetInCluster(kubeConfigLoc)
+}
+
+// GetCertManagerClienset returns the clientset object for CertManager
+func GetCertManagerClientsetInCluster(kubeconfigPath string) (*certmanagerv1.CertmanagerV1Client, error) {
+	var cs *certmanagerv1.CertmanagerV1Client
+	kubeConfig, err := GetKubeConfigGivenPath(kubeconfigPath)
+	if err != nil {
+		return cs, err
+	}
+	cs, err = certmanagerv1.NewForConfig(kubeConfig)
 	return cs, err
 }
 
@@ -232,19 +262,27 @@ func ExecPod(client kubernetes.Interface, cfg *rest.Config, pod *v1.Pod, contain
 }
 
 // GetGoClient returns a go-client
-func GetGoClient(log vzlog.VerrazzanoLogger) (kubernetes.Interface, error) {
+func GetGoClient(log ...vzlog.VerrazzanoLogger) (kubernetes.Interface, error) {
+	var logger vzlog.VerrazzanoLogger
+	if len(log) > 0 {
+		logger = log[0]
+	}
 	if fakeClient != nil {
 		return fakeClient, nil
 	}
 	config, err := controllerruntime.GetConfig()
 	if err != nil {
-		log.Errorf("Failed to get kubeconfig: %v", err)
+		if logger != nil {
+			logger.Errorf("Failed to get kubeconfig: %v", err)
+		}
 		return nil, err
 	}
 
 	kubeClient, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Errorf("Failed to get clientset: %v", err)
+		if logger != nil {
+			logger.Errorf("Failed to get clientset: %v", err)
+		}
 		return nil, err
 	}
 	return kubeClient, err

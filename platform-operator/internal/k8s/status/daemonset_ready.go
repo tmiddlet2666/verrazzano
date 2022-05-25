@@ -24,7 +24,6 @@ func DaemonSetsAreReady(log vzlog.VerrazzanoLogger, client client.Client, namesp
 		if err := client.Get(context.TODO(), namespacedName, &daemonset); err != nil {
 			if errors.IsNotFound(err) {
 				log.Progressf("%s is waiting for daemonsets %v to exist", prefix, namespacedName)
-				// StatefulSet not found
 				return false
 			}
 			log.Errorf("Failed getting daemonset %v: %v", namespacedName, err)

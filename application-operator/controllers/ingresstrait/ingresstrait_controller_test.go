@@ -7,7 +7,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -15,6 +14,12 @@ import (
 	"testing"
 	"text/template"
 	"time"
+
+	corev1 "k8s.io/api/core/v1"
+
+	"github.com/verrazzano/verrazzano/pkg/test/ip"
+
+	"github.com/go-logr/logr"
 
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 
@@ -42,11 +47,9 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/apimachinery/pkg/util/intstr"
-	"k8s.io/client-go/rest"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
-	"sigs.k8s.io/controller-runtime/pkg/log"
 	"sigs.k8s.io/yaml"
 )
 
@@ -66,7 +69,15 @@ const (
 )
 
 var (
-	httpsLower = strings.ToLower(httpsProtocol)
+	httpsLower                           = strings.ToLower(httpsProtocol)
+	testClusterIP                        = ip.RandomIP()
+	testLoadBalancerIP                   = ip.RandomIP()
+	testLoadBalancerDomainName           = "myapp.myns." + testLoadBalancerIP + ".nip.io"
+	testLoadBalancerExternalDNSTarget    = "verrazzano-ingress." + testLoadBalancerIP + ".nip.io"
+	testLoadBalancerAppGatewayServerHost = "test-appconf.test-namespace." + testLoadBalancerIP + ".nip.io"
+	testExternalIP                       = ip.RandomIP()
+	testExternalDomainName               = "myapp.myns." + testExternalIP + ".nip.io"
+	namespace                            = corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: testNamespace}}
 )
 
 // GIVEN a controller implementation
@@ -86,11 +97,11 @@ func TestReconcilerSetupWithManager(t *testing.T) {
 	mgr = mocks.NewMockManager(mocker)
 	cli = mocks.NewMockClient(mocker)
 	scheme = runtime.NewScheme()
-	vzapi.AddToScheme(scheme)
+	_ = vzapi.AddToScheme(scheme)
 	reconciler = Reconciler{Client: cli, Scheme: scheme}
-	mgr.EXPECT().GetConfig().Return(&rest.Config{})
+	mgr.EXPECT().GetControllerOptions().AnyTimes()
 	mgr.EXPECT().GetScheme().Return(scheme)
-	mgr.EXPECT().GetLogger().Return(log.NullLogger{})
+	mgr.EXPECT().GetLogger().Return(logr.Discard())
 	mgr.EXPECT().SetFields(gomock.Any()).Return(nil).AnyTimes()
 	mgr.EXPECT().Add(gomock.Any()).Return(nil).AnyTimes()
 	err = reconciler.SetupWithManager(mgr)
@@ -107,11 +118,13 @@ func TestSuccessfullyCreateNewIngress(t *testing.T) {
 	mocker := gomock.NewController(t)
 	mock := mocks.NewMockClient(mocker)
 	mockStatus := mocks.NewMockStatusWriter(mocker)
-	getIngressTraitResourceExpectations(mock)
+	getIngressTraitResourceExpectations(mock, assert)
 
 	workLoadResourceExpectations(mock)
 	workloadResourceDefinitionExpectations(mock)
 	listChildDeploymentExpectations(mock, assert)
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	appCertificateExpectations(mock)
 	getGatewayForTraitNotFoundExpectations(mock)
@@ -136,7 +149,7 @@ func TestSuccessfullyCreateNewIngress(t *testing.T) {
 						UID:        testWorkloadID,
 					}}},
 				Spec: k8score.ServiceSpec{
-					ClusterIP: "10.11.12.13",
+					ClusterIP: testClusterIP,
 					Ports:     []k8score.ServicePort{{Port: 42}}}})
 		})
 	// Expect a call to get the app config and return that it is not found.
@@ -151,19 +164,19 @@ func TestSuccessfullyCreateNewIngress(t *testing.T) {
 		})
 	// Expect a call to create the Gateway resource and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.CreateOption) error {
 			return nil
 		})
 	// Expect a call to create the VirtualService resource and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, virtualservice *istioclient.VirtualService, opts ...client.CreateOption) error {
 			return nil
 		})
 	// Expect a call to update the status of the IngressTrait.
 	mockStatus.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
 			assert.Len(trait.Status.Conditions, 1)
 			assert.Len(trait.Status.Resources, 3)
@@ -173,7 +186,7 @@ func TestSuccessfullyCreateNewIngress(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -201,7 +214,7 @@ func TestSuccessfullyCreateNewIngressWithCertSecret(t *testing.T) {
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: "myapp"}}
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = []vzapi.IngressRule{{
 				Hosts: []string{"test-host"},
 				Paths: []vzapi.IngressPath{{Path: "test-path"}}}}
@@ -210,6 +223,16 @@ func TestSuccessfullyCreateNewIngressWithCertSecret(t *testing.T) {
 				APIVersion: "core.oam.dev/v1alpha2",
 				Kind:       "ContainerizedWorkload",
 				Name:       testWorkloadName}
+			return nil
+		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
 			return nil
 		})
 
@@ -221,7 +244,7 @@ func TestSuccessfullyCreateNewIngressWithCertSecret(t *testing.T) {
 
 	// Expect a call to create the ingress/gateway resource and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.CreateOption) error {
 			assert.Equal(istionet.ServerTLSSettings_SIMPLE, gateway.Spec.Servers[0].Tls.Mode, "Wrong Tls Mode")
 			assert.Equal("cert-secret", gateway.Spec.Servers[0].Tls.CredentialName, "Wrong secret name")
@@ -246,7 +269,7 @@ func TestSuccessfullyCreateNewIngressWithCertSecret(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -291,10 +314,20 @@ func TestSuccessfullyUpdateIngressWithCertSecret(t *testing.T) {
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: appName}}
+				Labels:    map[string]string{oam.LabelAppName: appName, oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = rules
 			trait.Spec.TLS = tls
 			trait.Spec.WorkloadReference = workloadRef
+			return nil
+		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
 			return nil
 		})
 
@@ -323,8 +356,8 @@ func TestSuccessfullyUpdateIngressWithCertSecret(t *testing.T) {
 		})
 	// Expect a call to create the ingress/gateway resource and return success
 	mock.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.CreateOption) error {
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.UpdateOption) error {
 			assert.Equal(istionet.ServerTLSSettings_SIMPLE, gateway.Spec.Servers[0].Tls.Mode, "Wrong Tls Mode")
 			assert.Equal("cert-secret", gateway.Spec.Servers[0].Tls.CredentialName, "Wrong secret name")
 			assert.Len(gateway.Spec.Servers, 1)
@@ -347,7 +380,7 @@ func TestSuccessfullyUpdateIngressWithCertSecret(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -389,7 +422,7 @@ func TestFailureCreateNewIngressWithSecretNoHosts(t *testing.T) {
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: "myapp"}}
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = []vzapi.IngressRule{{
 				Paths: []vzapi.IngressPath{{Path: "test-path"}}}}
 			trait.Spec.TLS = vzapi.IngressSecurity{SecretName: "cert-secret"}
@@ -399,10 +432,20 @@ func TestFailureCreateNewIngressWithSecretNoHosts(t *testing.T) {
 				Name:       testWorkloadName}
 			return nil
 		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
+			return nil
+		})
 	getMockStatusWriterExpectations(mock, mockStatus)
 	// Expect a call to update the status of the ingress trait.  The status is checked for the expected error condition.
 	mockStatus.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
 			assert.Len(trait.Status.Conditions, 1)
 			assert.Equal("all rules must specify at least one host when a secret is specified for TLS transport", trait.Status.Conditions[0].Message, "Unexpected error message")
@@ -413,7 +456,7 @@ func TestFailureCreateNewIngressWithSecretNoHosts(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -450,22 +493,36 @@ func TestFailureCreateGatewayCertNoAppName(t *testing.T) {
 				Name:       testWorkloadName}
 			return nil
 		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
+			return nil
+		})
 
+	deleteCertExpectations(mock, "")
+	deleteCertSecretExpectations(mock, "")
+	appCertificateExpectations(mock)
+	createCertSuccessExpectations(mock)
 	getMockStatusWriterExpectations(mock, mockStatus)
 	// Expect a call to update the status of the ingress trait.  The status is checked for the expected error condition.
 	mockStatus.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
 			assert.Len(trait.Status.Conditions, 1)
-			assert.Equal("failed to obtain app name from ingress trait", trait.Status.Conditions[0].Message, "Unexpected error message")
-			assert.Len(trait.Status.Resources, 0)
+			assert.Equal("OAM app name label missing from metadata, unable to generate gateway name", trait.Status.Conditions[0].Message, "Unexpected error message")
+			assert.Len(trait.Status.Resources, 1)
 			return nil
 		})
 
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -493,7 +550,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: "myapp"}}
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = []vzapi.IngressRule{{
 				Hosts: []string{"test-host"},
 				Paths: []vzapi.IngressPath{{Path: "test-path"}},
@@ -505,6 +562,16 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 				APIVersion: apiVersion,
 				Kind:       "VerrazzanoCoherenceWorkload",
 				Name:       testWorkloadName}
+			return nil
+		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
 			return nil
 		})
 
@@ -523,7 +590,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 			workload.SetKind("VerrazzanoCoherenceWorkload")
 			workload.SetNamespace(name.Namespace)
 			workload.SetName(name.Name)
-			unstructured.SetNestedMap(workload.Object, containedResource, "spec", "template")
+			_ = unstructured.SetNestedMap(workload.Object, containedResource, "spec", "template")
 			return nil
 		})
 	// Expect a call to get the contained Coherence resource
@@ -575,7 +642,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 						UID:        testWorkloadID,
 					}}},
 				Spec: k8score.ServiceSpec{
-					ClusterIP: "10.11.12.13",
+					ClusterIP: testClusterIP,
 					Ports:     []k8score.ServicePort{{Port: 42}}},
 			})
 		})
@@ -589,6 +656,9 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 			}
 			return nil
 		})
+
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	getGatewayForTraitNotFoundExpectations(mock)
 	createIngressResourceSuccessExpectations(mock)
@@ -608,7 +678,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkload(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -625,14 +695,15 @@ func TestFailureToGetWorkload(t *testing.T) {
 	assert := asserts.New(t)
 	mocker := gomock.NewController(t)
 	mock := mocks.NewMockClient(mocker)
-	getIngressTraitResourceExpectations(mock)
+	getIngressTraitResourceExpectations(mock, assert)
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	appCertificateExpectations(mock)
-
 	getGatewayForTraitNotFoundExpectations(mock)
 	// Expect a call to create the gateway and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.CreateOption) error {
 			return nil
 		})
@@ -657,7 +728,7 @@ func TestFailureToGetWorkload(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -674,14 +745,17 @@ func TestFailureToGetWorkloadDefinition(t *testing.T) {
 	assert := asserts.New(t)
 	mocker := gomock.NewController(t)
 	mock := mocks.NewMockClient(mocker)
-	getIngressTraitResourceExpectations(mock)
+
+	getIngressTraitResourceExpectations(mock, assert)
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	appCertificateExpectations(mock)
 	gatewayNotFoundExpectations(mock)
 
 	// Expect a call to create the gateway and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, gateway *istioclient.Gateway, opts ...client.CreateOption) error {
 			return nil
 		})
@@ -709,7 +783,7 @@ func TestFailureToGetWorkloadDefinition(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -728,7 +802,7 @@ func TestFailureToUpdateStatus(t *testing.T) {
 	mock := mocks.NewMockClient(mocker)
 	mockStatus := mocks.NewMockStatusWriter(mocker)
 
-	getIngressTraitResourceExpectations(mock)
+	getIngressTraitResourceExpectations(mock, assert)
 	workLoadResourceExpectations(mock)
 	workloadResourceDefinitionExpectations(mock)
 	listChildDeploymentExpectations(mock, assert)
@@ -745,6 +819,9 @@ func TestFailureToUpdateStatus(t *testing.T) {
 			}
 			return nil
 		})
+
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	getGatewayForTraitNotFoundExpectations(mock)
 	createIngressResourceSuccessExpectations(mock)
@@ -758,7 +835,7 @@ func TestFailureToUpdateStatus(t *testing.T) {
 	mock.EXPECT().Status().Return(mockStatus)
 	// Expect a call to update the status of the ingress trait.
 	mockStatus.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
 			return k8serrors.NewApplyConflict([]metav1.StatusCause{{Type: "test-cause-type", Message: "test-cause-message", Field: "test-cause-field"}}, "test-error-message")
 		})
@@ -766,7 +843,7 @@ func TestFailureToUpdateStatus(t *testing.T) {
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -792,7 +869,7 @@ func TestBuildAppHostNameForDNS(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -835,7 +912,7 @@ func TestBuildAppHostNameIgnoreWildcardForDNS(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 		Spec: vzapi.IngressTraitSpec{
 			Rules: []vzapi.IngressRule{{
@@ -884,7 +961,7 @@ func TestFailureBuildAppHostNameForDNS(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -925,7 +1002,7 @@ func TestBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -939,7 +1016,7 @@ func TestBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 				Namespace: name.Namespace,
 				Name:      name.Name,
 				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
+					"external-dns.alpha.kubernetes.io/target": testLoadBalancerExternalDNSTarget,
 					"verrazzano.io/dns.wildcard.domain":       "nip.io",
 				},
 			}
@@ -954,7 +1031,7 @@ func TestBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 				APIVersion: "networking.k8s.io/v1"}
 			service.Spec.Type = "LoadBalancer"
 			service.Status.LoadBalancer.Ingress = []k8score.LoadBalancerIngress{{
-				IP: "5.6.7.8",
+				IP: testLoadBalancerIP,
 			}}
 			return nil
 		})
@@ -965,7 +1042,7 @@ func TestBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 	// Validate the results
 	mocker.Finish()
 	assert.NoError(err)
-	assert.Equal("myapp.myns.5.6.7.8.nip.io", domainName)
+	assert.Equal(testLoadBalancerDomainName, domainName)
 }
 
 // TestBuildAppHostNameExternalLoadBalancerNIP tests building a hostname for the application
@@ -984,7 +1061,7 @@ func TestBuildAppHostNameExternalLoadBalancerNIP(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -998,7 +1075,7 @@ func TestBuildAppHostNameExternalLoadBalancerNIP(t *testing.T) {
 				Namespace: name.Namespace,
 				Name:      name.Name,
 				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
+					"external-dns.alpha.kubernetes.io/target": testLoadBalancerExternalDNSTarget,
 					"verrazzano.io/dns.wildcard.domain":       "nip.io",
 				},
 			}
@@ -1012,7 +1089,7 @@ func TestBuildAppHostNameExternalLoadBalancerNIP(t *testing.T) {
 			service.TypeMeta = metav1.TypeMeta{
 				APIVersion: "extensions/v1beta1"}
 			service.Spec.Type = "LoadBalancer"
-			service.Spec.ExternalIPs = []string{"5.6.7.8"}
+			service.Spec.ExternalIPs = []string{testLoadBalancerIP}
 			return nil
 		})
 
@@ -1022,7 +1099,67 @@ func TestBuildAppHostNameExternalLoadBalancerNIP(t *testing.T) {
 	// Validate the results
 	mocker.Finish()
 	assert.NoError(err)
-	assert.Equal("myapp.myns.5.6.7.8.nip.io", domainName)
+	assert.Equal(testLoadBalancerDomainName, domainName)
+}
+
+// TestBuildAppHostNameBothInternalAndExternalLoadBalancerNIP tests building a hostname for the application
+// GIVEN an appName and a trait
+// WHEN the ingress domain is nip.io and an external LoadBalancer is used and LoadBalancer ise also used in Istio Ingress
+// THEN ensure that the correct DNS name is built
+func TestBuildAppHostNameBothInternalAndExternalLoadBalancerNIP(t *testing.T) {
+	assert := asserts.New(t)
+	mocker := gomock.NewController(t)
+	mock := mocks.NewMockClient(mocker)
+
+	ns := "myns"
+	trait := vzapi.IngressTrait{
+		TypeMeta: metav1.TypeMeta{
+			APIVersion: apiVersion,
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: ns,
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
+		},
+	}
+	// Expect a call to get the Verrazzano ingress and return the ingress.
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: constants.VerrazzanoSystemNamespace, Name: constants.VzConsoleIngress}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, ingress *k8net.Ingress) error {
+			ingress.TypeMeta = metav1.TypeMeta{
+				APIVersion: "extensions/v1beta1",
+				Kind:       "ingress"}
+			ingress.ObjectMeta = metav1.ObjectMeta{
+				Namespace: name.Namespace,
+				Name:      name.Name,
+				Annotations: map[string]string{
+					"external-dns.alpha.kubernetes.io/target": testLoadBalancerExternalDNSTarget,
+					"verrazzano.io/dns.wildcard.domain":       "nip.io",
+				},
+			}
+			return nil
+		})
+
+	// Expect a call to get the Istio service
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: istioSystemNamespace, Name: istioIngressGatewayName}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, service *k8score.Service) error {
+			service.TypeMeta = metav1.TypeMeta{
+				APIVersion: "extensions/v1beta1"}
+			service.Spec.Type = "LoadBalancer"
+			service.Spec.ExternalIPs = []string{testExternalIP}
+			service.Status.LoadBalancer.Ingress = []k8score.LoadBalancerIngress{{
+				IP: testLoadBalancerIP,
+			}}
+			return nil
+		})
+
+	// Build the host name
+	domainName, err := buildAppFullyQualifiedHostName(mock, &trait)
+
+	// Validate the results
+	mocker.Finish()
+	assert.NoError(err)
+	assert.Equal(testExternalDomainName, domainName)
 }
 
 // TestBuildAppHostNameExternalLoadBalancerNIPNotFound tests building a hostname for the application
@@ -1041,7 +1178,7 @@ func TestBuildAppHostNameExternalLoadBalancerNIPNotFound(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -1055,7 +1192,7 @@ func TestBuildAppHostNameExternalLoadBalancerNIPNotFound(t *testing.T) {
 				Namespace: name.Namespace,
 				Name:      name.Name,
 				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
+					"external-dns.alpha.kubernetes.io/target": testLoadBalancerExternalDNSTarget,
 					"verrazzano.io/dns.wildcard.domain":       "nip.io",
 				},
 			}
@@ -1096,7 +1233,7 @@ func TestFailureBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -1110,7 +1247,7 @@ func TestFailureBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 				Namespace: name.Namespace,
 				Name:      name.Name,
 				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
+					"external-dns.alpha.kubernetes.io/target": testLoadBalancerExternalDNSTarget,
 					"verrazzano.io/dns.wildcard.domain":       "nip.io",
 				},
 			}
@@ -1136,11 +1273,11 @@ func TestFailureBuildAppHostNameLoadBalancerNIP(t *testing.T) {
 	assert.Equal("istio-ingressgateway is missing loadbalancer IP", err.Error())
 }
 
-// TestBuildAppHostNameNodePortNIP tests building a hostname for the application
+// TestBuildAppHostNameNodePortExternalIP tests building a hostname for the application
 // GIVEN an appName and a trait
-// WHEN the ingress domain is nip.io and NodePort is used
+// WHEN the ingress domain is nip.io and NodePort is used together with ExternalIPs
 // THEN ensure that the correct DNS name is built
-func TestBuildAppHostNameNodePortNIP(t *testing.T) {
+func TestBuildAppHostNameNodePortExternalIP(t *testing.T) {
 	assert := asserts.New(t)
 	mocker := gomock.NewController(t)
 	mock := mocks.NewMockClient(mocker)
@@ -1152,7 +1289,7 @@ func TestBuildAppHostNameNodePortNIP(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 	}
 	// Expect a call to get the Verrazzano ingress and return the ingress.
@@ -1166,7 +1303,7 @@ func TestBuildAppHostNameNodePortNIP(t *testing.T) {
 				Namespace: name.Namespace,
 				Name:      name.Name,
 				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
+					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress" + testExternalIP + ".nip.io",
 					"verrazzano.io/dns.wildcard.domain":       "nip.io",
 				},
 			}
@@ -1180,18 +1317,7 @@ func TestBuildAppHostNameNodePortNIP(t *testing.T) {
 			service.TypeMeta = metav1.TypeMeta{
 				APIVersion: "networking.k8s.io/v1"}
 			service.Spec.Type = "NodePort"
-			return nil
-		})
-
-	// Expect a call to get the Istio ingress gateway pod
-	mock.EXPECT().
-		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, podList *k8score.PodList, opts ...client.ListOption) error {
-			podList.Items = []k8score.Pod{{
-				Status: k8score.PodStatus{
-					HostIP: "5.6.7.8",
-				},
-			}}
+			service.Spec.ExternalIPs = []string{testExternalIP}
 			return nil
 		})
 
@@ -1201,70 +1327,7 @@ func TestBuildAppHostNameNodePortNIP(t *testing.T) {
 	// Validate the results
 	mocker.Finish()
 	assert.NoError(err)
-	assert.Equal("myapp.myns.5.6.7.8.nip.io", domainName)
-}
-
-// TestFailureBuildAppHostNameNodePortNIP tests a failure when building a hostname for the application
-// GIVEN an appName and a trait
-// WHEN the ingress domain is nip.io and NodePort is used, but an error occurus
-// THEN ensure that the correct error is returned
-func TestFailureBuildAppHostNameNodePortNIP(t *testing.T) {
-	assert := asserts.New(t)
-	mocker := gomock.NewController(t)
-	mock := mocks.NewMockClient(mocker)
-
-	ns := "myns"
-	trait := vzapi.IngressTrait{
-		TypeMeta: metav1.TypeMeta{
-			APIVersion: apiVersion,
-		},
-		ObjectMeta: metav1.ObjectMeta{
-			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
-		},
-	}
-	// Expect a call to get the Verrazzano ingress and return the ingress.
-	mock.EXPECT().
-		Get(gomock.Any(), types.NamespacedName{Namespace: constants.VerrazzanoSystemNamespace, Name: constants.VzConsoleIngress}, gomock.Not(gomock.Nil())).
-		DoAndReturn(func(ctx context.Context, name types.NamespacedName, ingress *k8net.Ingress) error {
-			ingress.TypeMeta = metav1.TypeMeta{
-				APIVersion: "networking.k8s.io/v1",
-				Kind:       "ingress"}
-			ingress.ObjectMeta = metav1.ObjectMeta{
-				Namespace: name.Namespace,
-				Name:      name.Name,
-				Annotations: map[string]string{
-					"external-dns.alpha.kubernetes.io/target": "verrazzano-ingress.1.2.3.4.nip.io",
-					"verrazzano.io/dns.wildcard.domain":       "nip.io",
-				},
-			}
-			return nil
-		})
-
-	// Expect a call to get the Istio service
-	mock.EXPECT().
-		Get(gomock.Any(), types.NamespacedName{Namespace: istioSystemNamespace, Name: istioIngressGatewayName}, gomock.Not(gomock.Nil())).
-		DoAndReturn(func(ctx context.Context, name types.NamespacedName, service *k8score.Service) error {
-			service.TypeMeta = metav1.TypeMeta{
-				APIVersion: "networking.k8s.io/v1"}
-			service.Spec.Type = "NodePort"
-			return nil
-		})
-
-	// Expect a call to get the Istio ingress gateway pod
-	mock.EXPECT().
-		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
-		DoAndReturn(func(ctx context.Context, podList *k8score.PodList, opts ...client.ListOption) error {
-			return errors.New("Unable to find istio pods")
-		})
-
-	// Build the host name
-	_, err := buildAppFullyQualifiedHostName(mock, &trait)
-
-	// Validate the results
-	mocker.Finish()
-	assert.Error(err)
-	assert.Equal("Unable to find istio pods", err.Error())
+	assert.Equal(testExternalDomainName, domainName)
 }
 
 // TestGetTraitFailurePropagated tests tje Reconcile method for the following use case
@@ -1281,7 +1344,8 @@ func TestGetTraitFailurePropagated(t *testing.T) {
 		AnyTimes()
 	reconciler := newIngressTraitReconciler(mock)
 	request := newRequest(testNamespace, testName)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
+
 	mocker.Finish()
 	assert.Nil(err)
 	assert.Equal(true, result.Requeue)
@@ -1301,7 +1365,7 @@ func TestGetNotFoundResource(t *testing.T) {
 		Return(k8serrors.NewNotFound(schema.GroupResource{Group: "oam.verrazzano.io", Resource: traitKind}, testName))
 	reconciler := newIngressTraitReconciler(mock)
 	request := newRequest(testNamespace, testName)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	mocker.Finish()
 	assert.NoError(err)
 	assert.Equal(false, result.Requeue)
@@ -1382,7 +1446,7 @@ func TestCreateHostsFromIngressTraitRuleWildcards(t *testing.T) {
 		},
 		ObjectMeta: metav1.ObjectMeta{
 			Namespace: ns,
-			Labels:    map[string]string{oam.LabelAppName: "myapp"},
+			Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"},
 		},
 		Spec: vzapi.IngressTraitSpec{
 			Rules: []vzapi.IngressRule{{
@@ -1819,8 +1883,8 @@ func TestExtractServicesOnlyOneService(t *testing.T) {
 	children := []*unstructured.Unstructured{&u}
 	var extractedServices []*k8score.Service
 	reconciler := Reconciler{}
-	log := vzlog.DefaultLogger()
-	extractedServices, err = reconciler.extractServicesFromUnstructuredChildren(children, log)
+	l := vzlog.DefaultLogger()
+	extractedServices, err = reconciler.extractServicesFromUnstructuredChildren(children, l)
 	assert.NoError(err)
 	assert.NotNil(extractedServices)
 	assert.Equal(len(extractedServices), 1)
@@ -1834,7 +1898,7 @@ func TestExtractServicesMultipleServices(t *testing.T) {
 	assert := asserts.New(t)
 
 	workload := &unstructured.Unstructured{}
-	updateUnstructuredFromYAMLTemplate(workload, "test/templates/wls_domain_instance.yaml", nil)
+	_ = updateUnstructuredFromYAMLTemplate(workload, "test/templates/wls_domain_instance.yaml", nil)
 
 	var service1ID types.UID = "test-service-1"
 	u1, err := newUnstructuredService(service1ID, clusterIPNone, 8001)
@@ -1851,8 +1915,8 @@ func TestExtractServicesMultipleServices(t *testing.T) {
 	children := []*unstructured.Unstructured{&u1, &u2, &u3}
 	var extractedServices []*k8score.Service
 	reconciler := Reconciler{}
-	log := vzlog.DefaultLogger()
-	extractedServices, err = reconciler.extractServicesFromUnstructuredChildren(children, log)
+	l := vzlog.DefaultLogger()
+	extractedServices, err = reconciler.extractServicesFromUnstructuredChildren(children, l)
 	assert.NoError(err)
 	assert.NotNil(extractedServices)
 	assert.Equal(len(extractedServices), 3)
@@ -1867,7 +1931,7 @@ func TestExtractServicesMultipleServices(t *testing.T) {
 // THEN verify gateway and virtual service are created correctly.
 func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 	assert := asserts.New(t)
-	cli := fake.NewFakeClientWithScheme(newScheme())
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).Build()
 	params := map[string]string{
 		"NAMESPACE_NAME":      "test-namespace",
 		"APPCONF_NAME":        "test-appconf",
@@ -1887,9 +1951,9 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 	// Create namespace
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/managed_namespace.yaml", params))
 	// Create Verrazzano ingress
-	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("verrazzano-ingress.1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("verrazzano-ingress."+testLoadBalancerIP)))
 	// Create Istio ingress service
-	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService("10.11.12.13", "1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService(testClusterIP, testLoadBalancerIP)))
 	// Create application configuration
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/appconf_with_ingress.yaml", params))
 	// Create application component
@@ -1921,7 +1985,7 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 				Port:       8001,
 				TargetPort: intstr.FromInt(8001),
 			}},
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Type:      "ClusterIP",
 		},
 	}
@@ -1930,7 +1994,7 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 	// Perform Reconcile
 	request := newRequest(params["TRAIT_NAMESPACE"], params["TRAIT_NAME"])
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	assert.NoError(err)
 	assert.Equal(true, result.Requeue, "Expected a requeue due to status update.")
 
@@ -1938,11 +2002,11 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 	err = cli.Get(context.Background(), client.ObjectKey{Namespace: "test-namespace", Name: "test-namespace-test-appconf-gw"}, &gw)
 	assert.NoError(err)
 	assert.Equal("ingressgateway", gw.Spec.Selector["istio"])
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", gw.Spec.Servers[0].Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, gw.Spec.Servers[0].Hosts[0])
 	assert.Equal(testTraitPortName, gw.Spec.Servers[0].Port.Name)
 	assert.Equal(uint32(443), gw.Spec.Servers[0].Port.Number)
 	assert.Equal("HTTPS", gw.Spec.Servers[0].Port.Protocol)
-	assert.Equal("test-namespace-test-appconf-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
+	assert.Equal("test-namespace-test-trait-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
 	assert.Equal("SIMPLE", gw.Spec.Servers[0].Tls.Mode.String())
 
 	vs := istioclient.VirtualService{}
@@ -1950,7 +2014,7 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal("test-namespace-test-appconf-gw", vs.Spec.Gateways[0])
 	assert.Len(vs.Spec.Gateways, 1)
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", vs.Spec.Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, vs.Spec.Hosts[0])
 	assert.Len(vs.Spec.Hosts, 1)
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "prefix:")
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "/bobbys-front-end")
@@ -1967,7 +2031,7 @@ func TestSelectExistingServiceForVirtualServiceDestination(t *testing.T) {
 // THEN verify the correct gateway and virtual services are created.
 func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 	assert := asserts.New(t)
-	cli := fake.NewFakeClientWithScheme(newScheme())
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).Build()
 	params := map[string]string{
 		"NAMESPACE_NAME":      "test-namespace",
 		"APPCONF_NAME":        "test-appconf",
@@ -1987,9 +2051,9 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 	// Create namespace
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/managed_namespace.yaml", params))
 	// Create Verrazzano ingress
-	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress(testLoadBalancerIP)))
 	// Create Istio ingress service
-	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService("10.11.12.13", "1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService(testClusterIP, testLoadBalancerIP)))
 	// Create application configuration
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/appconf_with_ingress.yaml", params))
 	// Create application component
@@ -2021,7 +2085,7 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 				Port:       8001,
 				TargetPort: intstr.FromInt(8001),
 			}},
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Type:      "ClusterIP",
 		},
 	}
@@ -2030,7 +2094,7 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 	// Perform Reconcile
 	request := newRequest(params["TRAIT_NAMESPACE"], params["TRAIT_NAME"])
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	assert.NoError(err)
 	assert.Equal(true, result.Requeue, "Expected a requeue due to status update.")
 
@@ -2038,11 +2102,11 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 	err = cli.Get(context.Background(), client.ObjectKey{Namespace: "test-namespace", Name: "test-namespace-test-appconf-gw"}, &gw)
 	assert.NoError(err)
 	assert.Equal("ingressgateway", gw.Spec.Selector["istio"])
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", gw.Spec.Servers[0].Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, gw.Spec.Servers[0].Hosts[0])
 	assert.Equal(testTraitPortName, gw.Spec.Servers[0].Port.Name)
 	assert.Equal(uint32(443), gw.Spec.Servers[0].Port.Number)
 	assert.Equal("HTTPS", gw.Spec.Servers[0].Port.Protocol)
-	assert.Equal("test-namespace-test-appconf-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
+	assert.Equal("test-namespace-test-trait-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
 	assert.Equal("SIMPLE", gw.Spec.Servers[0].Tls.Mode.String())
 
 	vs := istioclient.VirtualService{}
@@ -2050,7 +2114,7 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal("test-namespace-test-appconf-gw", vs.Spec.Gateways[0])
 	assert.Len(vs.Spec.Gateways, 1)
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", vs.Spec.Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, vs.Spec.Hosts[0])
 	assert.Len(vs.Spec.Hosts, 1)
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "prefix:")
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "/test-path")
@@ -2068,7 +2132,7 @@ func TestExplicitServiceProvidedForVirtualServiceDestination(t *testing.T) {
 // THEN verify the correct gateway and virtual services are created.
 func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 	assert := asserts.New(t)
-	cli := fake.NewFakeClientWithScheme(newScheme())
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).Build()
 	params := map[string]string{
 		"NAMESPACE_NAME":      "test-namespace",
 		"APPCONF_NAME":        "test-appconf",
@@ -2088,9 +2152,9 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 	// Create namespace
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/managed_namespace.yaml", params))
 	// Create Verrazzano ingress
-	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress(testLoadBalancerIP)))
 	// Create Istio ingress service
-	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService("10.11.12.13", "1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService(testClusterIP, testLoadBalancerIP)))
 	// Create application configuration
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/appconf_with_ingress.yaml", params))
 	// Create application component
@@ -2126,7 +2190,7 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 				Port:       8002,
 				TargetPort: intstr.FromInt(8002)},
 			},
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Type:      "ClusterIP",
 		},
 	}
@@ -2135,7 +2199,7 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 	// Perform Reconcile
 	request := newRequest(params["TRAIT_NAMESPACE"], params["TRAIT_NAME"])
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	assert.NoError(err, "No error because reconcile worked but needs to be retried.")
 	assert.Equal(true, result.Requeue, "Expected a requeue because the discovered service has multiple ports.")
 
@@ -2143,11 +2207,11 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 	err = cli.Get(context.Background(), client.ObjectKey{Namespace: "test-namespace", Name: "test-namespace-test-appconf-gw"}, &gw)
 	assert.NoError(err)
 	assert.Equal("ingressgateway", gw.Spec.Selector["istio"])
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", gw.Spec.Servers[0].Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, gw.Spec.Servers[0].Hosts[0])
 	assert.Equal(testTraitPortName, gw.Spec.Servers[0].Port.Name)
 	assert.Equal(uint32(443), gw.Spec.Servers[0].Port.Number)
 	assert.Equal("HTTPS", gw.Spec.Servers[0].Port.Protocol)
-	assert.Equal("test-namespace-test-appconf-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
+	assert.Equal("test-namespace-test-trait-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
 	assert.Equal("SIMPLE", gw.Spec.Servers[0].Tls.Mode.String())
 
 	vs := istioclient.VirtualService{}
@@ -2155,7 +2219,7 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 	assert.NoError(err)
 	assert.Equal("test-namespace-test-appconf-gw", vs.Spec.Gateways[0])
 	assert.Len(vs.Spec.Gateways, 1)
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", vs.Spec.Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, vs.Spec.Hosts[0])
 	assert.Len(vs.Spec.Hosts, 1)
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "prefix:")
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "/bobbys-front-end")
@@ -2173,7 +2237,7 @@ func TestMultiplePortsOnDiscoveredService(t *testing.T) {
 // THEN verify the correct gateway and virtual services are created.
 func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination(t *testing.T) {
 	assert := asserts.New(t)
-	cli := fake.NewFakeClientWithScheme(newScheme())
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).Build()
 	params := map[string]string{
 		"NAMESPACE_NAME":        "test-namespace",
 		"APPCONF_NAME":          "test-appconf",
@@ -2199,9 +2263,9 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 	// Create namespace
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/managed_namespace.yaml", params))
 	// Create Verrazzano ingress
-	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress(testLoadBalancerIP)))
 	// Create Istio ingress service
-	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService("10.11.12.13", "1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService(testClusterIP, testLoadBalancerIP)))
 	// Create application configuration
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/appconf_with_ingress.yaml", params))
 	// Create application component
@@ -2231,7 +2295,7 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 				Port:       8081,
 				TargetPort: intstr.FromInt(8081)},
 			},
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Type:      "NodePort",
 		},
 	}
@@ -2264,7 +2328,7 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 	// Perform Reconcile
 	request := newRequest(params["TRAIT_NAMESPACE"], params["TRAIT_NAME"])
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	assert.NoError(err, "No error because reconcile worked but needs to be retried.")
 	assert.Equal(true, result.Requeue, "Expected a requeue because the discovered service has multiple ports.")
 
@@ -2272,11 +2336,11 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 	err = cli.Get(context.Background(), client.ObjectKey{Namespace: "test-namespace", Name: "test-namespace-test-appconf-gw"}, &gw)
 	assert.NoError(err)
 	assert.Equal("ingressgateway", gw.Spec.Selector["istio"])
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", gw.Spec.Servers[0].Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, gw.Spec.Servers[0].Hosts[0])
 	assert.Equal(testTraitPortName, gw.Spec.Servers[0].Port.Name)
 	assert.Equal(uint32(443), gw.Spec.Servers[0].Port.Number)
 	assert.Equal("HTTPS", gw.Spec.Servers[0].Port.Protocol)
-	assert.Equal("test-namespace-test-appconf-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
+	assert.Equal("test-namespace-test-trait-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
 	assert.Equal("SIMPLE", gw.Spec.Servers[0].Tls.Mode.String())
 
 	vs := istioclient.VirtualService{}
@@ -2284,7 +2348,7 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 	assert.NoError(err)
 	assert.Equal("test-namespace-test-appconf-gw", vs.Spec.Gateways[0])
 	assert.Len(vs.Spec.Gateways, 1)
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", vs.Spec.Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, vs.Spec.Hosts[0])
 	assert.Len(vs.Spec.Hosts, 1)
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "prefix:")
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "/bobbys-front-end")
@@ -2304,7 +2368,7 @@ func TestMultipleServicesForNonWebLogicWorkloadWithoutExplicitIngressDestination
 // THEN verity that the expected gateway and virtual services are created.
 func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.T) {
 	assert := asserts.New(t)
-	cli := fake.NewFakeClientWithScheme(newScheme())
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).Build()
 	params := map[string]string{
 		"NAMESPACE_NAME":      "test-namespace",
 		"APPCONF_NAME":        "test-appconf",
@@ -2324,9 +2388,9 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 	// Create namespace
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/managed_namespace.yaml", params))
 	// Create Verrazzano ingress
-	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress("1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newVerrazzanoIngress(testLoadBalancerIP)))
 	// Create Istio ingress service
-	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService("10.11.12.13", "1.2.3.4")))
+	assert.NoError(cli.Create(context.Background(), newIstioLoadBalancerService(testClusterIP, testLoadBalancerIP)))
 	// Create application configuration
 	assert.NoError(createResourceFromTemplate(cli, "test/templates/appconf_with_ingress.yaml", params))
 	// Create application component
@@ -2343,7 +2407,7 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 	// Perform Reconcile
 	request := newRequest(params["TRAIT_NAMESPACE"], params["TRAIT_NAME"])
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 	assert.NoError(err)
 	assert.Equal(true, result.Requeue, "Expected no requeue as error expected.")
 
@@ -2374,14 +2438,14 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 				Port:       8001,
 				TargetPort: intstr.FromInt(8001),
 			}},
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Type:      "ClusterIP",
 		},
 	}
 	assert.NoError(cli.Create(context.Background(), &service))
 
 	// Reconcile again.
-	result, err = reconciler.Reconcile(request)
+	result, err = reconciler.Reconcile(nil, request)
 	assert.NoError(err)
 	assert.Equal(true, result.Requeue, "Expected requeue as status was updated.")
 
@@ -2390,11 +2454,11 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 	err = cli.Get(context.Background(), client.ObjectKey{Namespace: "test-namespace", Name: "test-namespace-test-appconf-gw"}, &gw)
 	assert.NoError(err)
 	assert.Equal("ingressgateway", gw.Spec.Selector["istio"])
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", gw.Spec.Servers[0].Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, gw.Spec.Servers[0].Hosts[0])
 	assert.Equal(testTraitPortName, gw.Spec.Servers[0].Port.Name)
 	assert.Equal(uint32(443), gw.Spec.Servers[0].Port.Number)
 	assert.Equal("HTTPS", gw.Spec.Servers[0].Port.Protocol)
-	assert.Equal("test-namespace-test-appconf-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
+	assert.Equal("test-namespace-test-trait-cert-secret", gw.Spec.Servers[0].Tls.CredentialName)
 	assert.Equal("SIMPLE", gw.Spec.Servers[0].Tls.Mode.String())
 
 	// Verify the VirtualService was created and is valid.
@@ -2403,7 +2467,7 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 	assert.NoError(err)
 	assert.Equal("test-namespace-test-appconf-gw", vs.Spec.Gateways[0])
 	assert.Len(vs.Spec.Gateways, 1)
-	assert.Equal("test-appconf.test-namespace.1.2.3.4.nip.io", vs.Spec.Hosts[0])
+	assert.Equal(testLoadBalancerAppGatewayServerHost, vs.Spec.Hosts[0])
 	assert.Len(vs.Spec.Hosts, 1)
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "prefix:")
 	assert.Contains(vs.Spec.Http[0].Match[0].Uri.String(), "/bobbys-front-end")
@@ -2418,25 +2482,26 @@ func TestSelectExistingServiceForVirtualServiceDestinationAfterRetry(t *testing.
 func newScheme() *runtime.Scheme {
 	scheme := runtime.NewScheme()
 	//_ = clientgoscheme.AddToScheme(scheme)
-	core.AddToScheme(scheme)
-	k8sapps.AddToScheme(scheme)
-	vzapi.AddToScheme(scheme)
-	k8score.AddToScheme(scheme)
-	certapiv1.AddToScheme(scheme)
-	k8net.AddToScheme(scheme)
-	istioclient.AddToScheme(scheme)
-	v1alpha2.SchemeBuilder.AddToScheme(scheme)
+	_ = core.AddToScheme(scheme)
+	_ = k8sapps.AddToScheme(scheme)
+	_ = vzapi.AddToScheme(scheme)
+	_ = k8score.AddToScheme(scheme)
+	_ = certapiv1.AddToScheme(scheme)
+	_ = k8net.AddToScheme(scheme)
+	_ = istioclient.AddToScheme(scheme)
+	_ = v1alpha2.SchemeBuilder.AddToScheme(scheme)
+
 	return scheme
 }
 
 // newIngressTraitReconciler creates a new reconciler for testing
 // c - The Kerberos client to inject into the reconciler
 func newIngressTraitReconciler(c client.Client) Reconciler {
-	log := zap.S().With("test")
+	l := zap.S().With("test")
 	scheme := newScheme()
 	reconciler := Reconciler{
 		Client: c,
-		Log:    log,
+		Log:    l,
 		Scheme: scheme}
 	return reconciler
 }
@@ -2454,12 +2519,12 @@ func newRequest(namespace string, name string) ctrl.Request {
 // convertToUnstructured converts an object to an Unstructured version
 // object - The object to convert to Unstructured
 func convertToUnstructured(object interface{}) (unstructured.Unstructured, error) {
-	bytes, err := json.Marshal(object)
+	jbytes, err := json.Marshal(object)
 	if err != nil {
 		return unstructured.Unstructured{}, err
 	}
 	var u map[string]interface{}
-	json.Unmarshal(bytes, &u)
+	_ = json.Unmarshal(jbytes, &u)
 	return unstructured.Unstructured{Object: u}, nil
 }
 
@@ -2568,11 +2633,11 @@ func updateUnstructuredFromYAMLTemplate(uns *unstructured.Unstructured, template
 	if err != nil {
 		return err
 	}
-	bytes, err := yaml.YAMLToJSON([]byte(str))
+	ybytes, err := yaml.YAMLToJSON([]byte(str))
 	if err != nil {
 		return err
 	}
-	_, _, err = unstructured.UnstructuredJSONScheme.Decode(bytes, nil, uns)
+	_, _, err = unstructured.UnstructuredJSONScheme.Decode(ybytes, nil, uns)
 	if err != nil {
 		return err
 	}
@@ -2592,15 +2657,17 @@ func createResourceFromTemplate(cli client.Client, template string, data interfa
 	return nil
 }
 
-// TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie tests the Reconcile method for the following use case.
-// GIVEN a request to reconcile an ingress trait resource that applies to a Verrazzano workload type with HTTPCookie defined for session affinity
+// TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookieIstioEnabled tests the Reconcile method for the following use case.
+// GIVEN a request to reconcile an ingress trait resource that applies to a Verrazzano workload type with HTTPCookie defined for session affinity and inside the Istio meash
 // WHEN the trait exists but the ingress does not
 // THEN ensure that the workload is unwrapped and the trait is created.
-func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *testing.T) {
+func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookieIstioEnabled(t *testing.T) {
 	assert := asserts.New(t)
 	mocker := gomock.NewController(t)
 	mock := mocks.NewMockClient(mocker)
 	mockStatus := mocks.NewMockStatusWriter(mocker)
+	labels := map[string]string{"verrazzano-managed": "true", "istio-injection": "enabled"}
+	namespace.Labels = labels
 	// Expect a call to get the ingress trait resource.
 	mock.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testTraitName}, gomock.Not(gomock.Nil())).
@@ -2611,7 +2678,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: "myapp"}}
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = []vzapi.IngressRule{{
 				Hosts: []string{"test-host"},
 				Paths: []vzapi.IngressPath{{Path: "test-path"}},
@@ -2629,6 +2696,16 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 				Name:       testWorkloadName}
 			return nil
 		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
+			return nil
+		})
 
 	containedName := "test-contained-workload-name"
 	containedResource := map[string]interface{}{
@@ -2637,7 +2714,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 		},
 	}
 
-	// Expect a call to get the Verrazzano Coherence workload resource
+	// Expect a call to get the Verrazzano workload resource
 	mock.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testWorkloadName}, gomock.Not(gomock.Nil())).
 		DoAndReturn(func(ctx context.Context, name types.NamespacedName, workload *unstructured.Unstructured) error {
@@ -2645,10 +2722,10 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 			workload.SetKind("VerrazzanoCoherenceWorkload")
 			workload.SetNamespace(name.Namespace)
 			workload.SetName(name.Name)
-			unstructured.SetNestedMap(workload.Object, containedResource, "spec", "template")
+			_ = unstructured.SetNestedMap(workload.Object, containedResource, "spec", "template")
 			return nil
 		})
-	// Expect a call to get the contained Coherence resource
+	// Expect a call to get the contained resource
 	mock.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: containedName}, gomock.Not(gomock.Nil())).
 		DoAndReturn(func(ctx context.Context, name types.NamespacedName, workload *unstructured.Unstructured) error {
@@ -2671,7 +2748,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 			}
 			return nil
 		})
-	// Expect a call to list the child Deployment resources of the Coherence workload definition
+	// Expect a call to list the child Deployment resources of the workload definition
 	mock.EXPECT().
 		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, list *unstructured.UnstructuredList, opts ...client.ListOption) error {
@@ -2679,7 +2756,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 			return nil
 		})
 	appCertificateExpectations(mock)
-	// Expect a call to list the child Service resources of the Coherence workload definition
+	// Expect a call to list the child Service resources of the workload definition
 	mock.EXPECT().
 		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, list *unstructured.UnstructuredList, opts ...client.ListOption) error {
@@ -2697,7 +2774,7 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 						UID:        testWorkloadID,
 					}}},
 				Spec: k8score.ServiceSpec{
-					ClusterIP: "10.11.12.13",
+					ClusterIP: testClusterIP,
 					Ports:     []k8score.ServicePort{{Port: 42}}},
 			})
 		})
@@ -2712,6 +2789,8 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 			return nil
 		})
 
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
 	createCertSuccessExpectations(mock)
 	getGatewayForTraitNotFoundExpectations(mock)
 	createIngressResourceSuccessExpectations(mock)
@@ -2719,6 +2798,11 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 	createIngressResSuccessExpectations(mock, assert)
 	getMockStatusWriterExpectations(mock, mockStatus)
 
+	mock.EXPECT().
+		Get(gomock.Any(), gomock.Any(), gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, key client.ObjectKey, n *corev1.Namespace) error {
+			return nil
+		})
 	// Expect a call to get the destination rule resource related to the ingress trait and return that it is not found.
 	mock.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: fmt.Sprintf("%s-rule-0-dr", testTraitName)}, gomock.Not(gomock.Nil())).
@@ -2726,14 +2810,18 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 
 	// Expect a call to create the DestinationRule resource and return success
 	mock.EXPECT().
-		Create(gomock.Any(), gomock.Any()).
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, destinationrule *istioclient.DestinationRule, opts ...client.CreateOption) error {
 			assert.Equal("test-service.test-space.svc.local", destinationrule.Spec.Host)
+			lbPolicy := destinationrule.Spec.TrafficPolicy.LoadBalancer.LbPolicy.(*istionet.LoadBalancerSettings_ConsistentHash)
+			hashKey := lbPolicy.ConsistentHash.HashKey.(*istionet.LoadBalancerSettings_ConsistentHashLB_HttpCookie)
+			assert.Equal(int64(30), hashKey.HttpCookie.Ttl.Seconds)
+			assert.Equal(int32(0), hashKey.HttpCookie.Ttl.Nanos)
 			return nil
 		})
 	// Expect a call to update the status of the ingress trait.
 	mockStatus.EXPECT().
-		Update(gomock.Any(), gomock.Any()).
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
 		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
 			assert.Len(trait.Status.Conditions, 1)
 			assert.Len(trait.Status.Resources, 4)
@@ -2743,7 +2831,192 @@ func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookie(t *test
 	// Create and make the request
 	request := newRequest(testNamespace, testTraitName)
 	reconciler := newIngressTraitReconciler(mock)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
+
+	// Validate the results
+	mocker.Finish()
+	assert.NoError(err)
+	assert.Equal(true, result.Requeue)
+	assert.Equal(time.Duration(0), result.RequeueAfter)
+}
+
+// TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookieIstioDisabled tests the Reconcile method for the following use case.
+// GIVEN a request to reconcile an ingress trait resource that applies to a Verrazzano workload type with HTTPCookie defined for session affinity and outside the Istion mesh
+// WHEN the trait exists but the ingress does not
+// THEN ensure that the workload is unwrapped and the trait is created.
+func TestSuccessfullyCreateNewIngressForVerrazzanoWorkloadWithHTTPCookieIstioDisabled(t *testing.T) {
+	assert := asserts.New(t)
+	mocker := gomock.NewController(t)
+	mock := mocks.NewMockClient(mocker)
+	mockStatus := mocks.NewMockStatusWriter(mocker)
+	labels := map[string]string{"verrazzano-managed": "true", "istio-injection": "disabled"}
+	namespace.Labels = labels
+	// Expect a call to get the ingress trait resource.
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testTraitName}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, trait *vzapi.IngressTrait) error {
+			trait.TypeMeta = metav1.TypeMeta{
+				APIVersion: apiVersion,
+				Kind:       traitKind}
+			trait.ObjectMeta = metav1.ObjectMeta{
+				Namespace: name.Namespace,
+				Name:      name.Name,
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
+			trait.Spec.Rules = []vzapi.IngressRule{{
+				Hosts: []string{"test-host"},
+				Paths: []vzapi.IngressPath{{Path: "test-path"}},
+				Destination: vzapi.IngressDestination{
+					Host: "test-service.test-space.svc.local",
+					Port: 0,
+					HTTPCookie: &vzapi.IngressDestinationHTTPCookie{
+						Name: "test-cookie",
+						Path: "/",
+						TTL:  30},
+				}}}
+			trait.Spec.WorkloadReference = oamrt.TypedReference{
+				APIVersion: apiVersion,
+				Kind:       "VerrazzanoCoherenceWorkload",
+				Name:       testWorkloadName}
+			return nil
+		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
+			return nil
+		})
+
+	containedName := "test-contained-workload-name"
+	containedResource := map[string]interface{}{
+		"metadata": map[string]interface{}{
+			"name": containedName,
+		},
+	}
+
+	// Expect a call to get the Verrazzano workload resource
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testWorkloadName}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, workload *unstructured.Unstructured) error {
+			workload.SetAPIVersion(apiVersion)
+			workload.SetKind("VerrazzanoCoherenceWorkload")
+			workload.SetNamespace(name.Namespace)
+			workload.SetName(name.Name)
+			_ = unstructured.SetNestedMap(workload.Object, containedResource, "spec", "template")
+			return nil
+		})
+	// Expect a call to get the contained resource
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: containedName}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, workload *unstructured.Unstructured) error {
+			workload.SetUnstructuredContent(containedResource)
+			workload.SetNamespace(name.Namespace)
+			workload.SetAPIVersion("coherence.oracle.com/v1")
+			workload.SetKind("Coherence")
+			workload.SetUID(testWorkloadID)
+			return nil
+		})
+	// Expect a call to get the containerized workload resource definition
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: "", Name: "coherences.coherence.oracle.com"}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, workloadDef *v1alpha2.WorkloadDefinition) error {
+			workloadDef.Namespace = name.Namespace
+			workloadDef.Name = name.Name
+			workloadDef.Spec.ChildResourceKinds = []v1alpha2.ChildResourceKind{
+				{APIVersion: "apps/v1", Kind: "Deployment", Selector: nil},
+				{APIVersion: "v1", Kind: "Service", Selector: nil},
+			}
+			return nil
+		})
+	// Expect a call to list the child Deployment resources of the workload definition
+	mock.EXPECT().
+		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, list *unstructured.UnstructuredList, opts ...client.ListOption) error {
+			assert.Equal("DeploymentList", list.GetKind())
+			return nil
+		})
+	appCertificateExpectations(mock)
+	// Expect a call to list the child Service resources of the workload definition
+	mock.EXPECT().
+		List(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, list *unstructured.UnstructuredList, opts ...client.ListOption) error {
+			assert.Equal("ServiceList", list.GetKind())
+			return appendAsUnstructured(list, k8score.Service{
+				TypeMeta: metav1.TypeMeta{
+					APIVersion: "v1",
+					Kind:       "Service",
+				},
+				ObjectMeta: metav1.ObjectMeta{
+					OwnerReferences: []metav1.OwnerReference{{
+						APIVersion: "core.oam.dev/v1alpha2",
+						Kind:       "ContainerizedWorkload",
+						Name:       testWorkloadName,
+						UID:        testWorkloadID,
+					}}},
+				Spec: k8score.ServiceSpec{
+					ClusterIP: testClusterIP,
+					Ports:     []k8score.ServicePort{{Port: 42}}},
+			})
+		})
+	// Expect a call to get the app config and return that it is not found.
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: "myapp"}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, app *v1alpha2.ApplicationConfiguration) error {
+			app.TypeMeta = metav1.TypeMeta{
+				APIVersion: "core.oam.dev/v1alpha2",
+				Kind:       "ApplicationConfiguration",
+			}
+			return nil
+		})
+
+	deleteCertExpectations(mock, "test-space-myapp-cert")
+	deleteCertSecretExpectations(mock, "test-space-myapp-cert-secret")
+	createCertSuccessExpectations(mock)
+	getGatewayForTraitNotFoundExpectations(mock)
+	createIngressResourceSuccessExpectations(mock)
+	traitVSNotFoundExpectation(mock)
+	createIngressResSuccessExpectations(mock, assert)
+	getMockStatusWriterExpectations(mock, mockStatus)
+
+	mock.EXPECT().
+		Get(gomock.Any(), gomock.Any(), gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, key client.ObjectKey, n *corev1.Namespace) error {
+			return nil
+		})
+	// Expect a call to get the destination rule resource related to the ingress trait and return that it is not found.
+	mock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: fmt.Sprintf("%s-rule-0-dr", testTraitName)}, gomock.Not(gomock.Nil())).
+		Return(k8serrors.NewNotFound(schema.GroupResource{Group: testNamespace, Resource: "DestinationRule"}, fmt.Sprintf("%s-rule-0-dr", testTraitName)))
+
+	// Expect a call to create the DestinationRule resource and return success
+	mock.EXPECT().
+		Create(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, destinationrule *istioclient.DestinationRule, opts ...client.CreateOption) error {
+			assert.Equal("test-service.test-space.svc.local", destinationrule.Spec.Host)
+			lbPolicy := destinationrule.Spec.TrafficPolicy.LoadBalancer.LbPolicy.(*istionet.LoadBalancerSettings_ConsistentHash)
+			hashKey := lbPolicy.ConsistentHash.HashKey.(*istionet.LoadBalancerSettings_ConsistentHashLB_HttpCookie)
+			mode := destinationrule.Spec.TrafficPolicy.Tls.Mode
+			assert.Equal(int64(30), hashKey.HttpCookie.Ttl.Seconds)
+			assert.Equal(int32(0), hashKey.HttpCookie.Ttl.Nanos)
+			assert.Equal(istionet.ClientTLSSettings_DISABLE, mode)
+			return nil
+		})
+	// Expect a call to update the status of the ingress trait.
+	mockStatus.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, opts ...client.UpdateOption) error {
+			assert.Len(trait.Status.Conditions, 1)
+			assert.Len(trait.Status.Resources, 4)
+			return nil
+		})
+
+	// Create and make the request
+	request := newRequest(testNamespace, testTraitName)
+	reconciler := newIngressTraitReconciler(mock)
+	result, err := reconciler.Reconcile(nil, request)
 
 	// Validate the results
 	mocker.Finish()
@@ -2763,7 +3036,7 @@ func TestReconcileKubeSystem(t *testing.T) {
 	// create a request and reconcile it
 	request := newRequest(vzconst.KubeSystem, "unit-test-verrazzano-helidon-workload")
 	reconciler := newIngressTraitReconciler(cli)
-	result, err := reconciler.Reconcile(request)
+	result, err := reconciler.Reconcile(nil, request)
 
 	mocker.Finish()
 	assert.Nil(err)
@@ -2949,7 +3222,6 @@ func TestMutateGatewayAddTrait(t *testing.T) {
 	}
 
 	reconciler := setupTraitTestFakes(appName, gw)
-
 	_, _, err := reconciler.createOrUpdateChildResources(context.TODO(), trait, vzlog.DefaultLogger())
 	assert.NoError(err)
 
@@ -3047,7 +3319,6 @@ func TestMutateGatewayHostsAddRemoveTraitRule(t *testing.T) {
 			WorkloadReference: createWorkloadReference(appName),
 		},
 	}
-
 	_, _, err2 := reconciler.createOrUpdateChildResources(context.TODO(), updatedTraitRemovedRule, vzlog.DefaultLogger())
 	assert.NoError(err2)
 
@@ -3093,7 +3364,7 @@ func setupTraitTestFakes(appName string, gw *istioclient.Gateway) Reconciler {
 				UID:        testWorkloadID,
 			}}},
 		Spec: k8score.ServiceSpec{
-			ClusterIP: "10.11.12.13",
+			ClusterIP: testClusterIP,
 			Ports:     []k8score.ServicePort{{Port: 42}}},
 	}
 
@@ -3151,8 +3422,8 @@ func getGatewayForTraitNotFoundExpectations(mock *mocks.MockClient) {
 func appCertificateExpectations(mock *mocks.MockClient) {
 	// Expect a call to get the certificate related to the ingress trait
 	mock.EXPECT().
-		Get(gomock.Any(), types.NamespacedName{Namespace: istioSystemNamespace, Name: "test-space-myapp-cert"}, gomock.Not(gomock.Nil())).
-		Return(k8serrors.NewNotFound(schema.GroupResource{Group: testNamespace, Resource: "Certificate"}, "test-space-myapp-cert"))
+		Get(gomock.Any(), types.NamespacedName{Namespace: istioSystemNamespace, Name: "test-space-test-trait-cert"}, gomock.Not(gomock.Nil())).
+		Return(k8serrors.NewNotFound(schema.GroupResource{Group: testNamespace, Resource: "Certificate"}, "test-space-test-trait-cert"))
 }
 
 func createCertSuccessExpectations(mock *mocks.MockClient) {
@@ -3162,6 +3433,32 @@ func createCertSuccessExpectations(mock *mocks.MockClient) {
 		DoAndReturn(func(ctx context.Context, certificate *certapiv1.Certificate, opts ...client.CreateOption) error {
 			return nil
 		})
+}
+
+// Expect a call to delete the certificate
+func deleteCertExpectations(mock *mocks.MockClient, certName string) {
+	oldCert := certapiv1.Certificate{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: constants.IstioSystemNamespace,
+			Name:      certName,
+		},
+	}
+	mock.EXPECT().
+		Delete(gomock.Any(), gomock.Eq(&oldCert), gomock.Any()).
+		Return(nil)
+}
+
+// Expect a call to delete the certificate secret
+func deleteCertSecretExpectations(mock *mocks.MockClient, secretName string) {
+	oldSecret := corev1.Secret{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: constants.IstioSystemNamespace,
+			Name:      secretName,
+		},
+	}
+	mock.EXPECT().
+		Delete(gomock.Any(), gomock.Eq(&oldSecret), gomock.Any()).
+		Return(nil)
 }
 
 func gatewayNotFoundExpectations(mock *mocks.MockClient) {
@@ -3219,7 +3516,7 @@ func childServiceExpectations(mock *mocks.MockClient, assert *asserts.Assertions
 						UID:        testWorkloadID,
 					}}},
 				Spec: k8score.ServiceSpec{
-					ClusterIP: "10.11.12.13",
+					ClusterIP: testClusterIP,
 					Ports:     []k8score.ServicePort{{Port: 42}}},
 			})
 		})
@@ -3264,7 +3561,7 @@ func workLoadResourceExpectations(mock *mocks.MockClient) {
 		})
 }
 
-func getIngressTraitResourceExpectations(mock *mocks.MockClient) {
+func getIngressTraitResourceExpectations(mock *mocks.MockClient, assert *asserts.Assertions) {
 	// Expect a call to get the ingress trait resource.
 	mock.EXPECT().
 		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testTraitName}, gomock.Not(gomock.Nil())).
@@ -3275,7 +3572,7 @@ func getIngressTraitResourceExpectations(mock *mocks.MockClient) {
 			trait.ObjectMeta = metav1.ObjectMeta{
 				Namespace: name.Namespace,
 				Name:      name.Name,
-				Labels:    map[string]string{oam.LabelAppName: "myapp"}}
+				Labels:    map[string]string{oam.LabelAppName: "myapp", oam.LabelAppComponent: "mycomp"}}
 			trait.Spec.Rules = []vzapi.IngressRule{{
 				Hosts: []string{"test-host"},
 				Paths: []vzapi.IngressPath{{Path: "test-path"}}}}
@@ -3285,10 +3582,80 @@ func getIngressTraitResourceExpectations(mock *mocks.MockClient) {
 				Name:       testWorkloadName}
 			return nil
 		})
+	// Expect a call to update the ingress trait resource with a finalizer.
+	mock.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 1)
+			assert.Equal(finalizerName, trait.Finalizers[0])
+			return nil
+		})
 }
 
-func createReconcilerWithFake(initObjs ...runtime.Object) Reconciler {
-	cli := fake.NewFakeClientWithScheme(newScheme(), initObjs...)
+// TestDeleteCertAndSecretWhenIngressTraitIsDeleted tests the Reconcile method for the following use case.
+// GIVEN a request to reconcile an ingress trait resource that is marked for deletion
+// WHEN the ingress trait exists
+// THEN ensure that the cert and secret trait resources associated with the ingress trait are also deleted
+func TestDeleteCertAndSecretWhenIngressTraitIsDeleted(t *testing.T) {
+	assert := asserts.New(t)
+	mocker := gomock.NewController(t)
+	cli := mocks.NewMockClient(mocker)
+	const testAppName = "test-app"
+	// expect a call to fetch the IngressTrait
+	cli.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: testNamespace, Name: testTraitName}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, trait *vzapi.IngressTrait) error {
+			trait.ObjectMeta = ctrl.ObjectMeta{
+				Namespace:         testNamespace,
+				Name:              testTraitName,
+				Finalizers:        []string{finalizerName},
+				Labels:            map[string]string{oam.LabelAppName: testAppName, oam.LabelAppComponent: "mycomp"},
+				DeletionTimestamp: &metav1.Time{Time: time.Now()}}
+			return nil
+		})
+	// Expect a call to delete the cert
+	cli.EXPECT().
+		Delete(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, cert *certapiv1.Certificate, opt *client.DeleteOptions) error {
+			assert.Equal(constants.IstioSystemNamespace, cert.Namespace)
+			assert.Equal(fmt.Sprintf("%s-%s-cert", testNamespace, testTraitName), cert.Name)
+			return nil
+		})
+	// Expect a call to delete the secret
+	cli.EXPECT().
+		Delete(gomock.Any(), gomock.Not(gomock.Nil()), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, sec *k8score.Secret, opt *client.DeleteOptions) error {
+			assert.Equal(constants.IstioSystemNamespace, sec.Namespace)
+			assert.Equal(fmt.Sprintf("%s-%s-cert-secret", testNamespace, testTraitName), sec.Name)
+			return nil
+		})
+
+	// Expect a call to update the ingress trait resource with the finalizer removed.
+	cli.EXPECT().
+		Update(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, trait *vzapi.IngressTrait, options ...client.UpdateOption) error {
+			assert.Equal(testNamespace, trait.Namespace)
+			assert.Equal(testTraitName, trait.Name)
+			assert.Len(trait.Finalizers, 0)
+			return nil
+		})
+
+	// Create and make the request
+	request := newRequest(testNamespace, testTraitName)
+	reconciler := newIngressTraitReconciler(cli)
+	result, err := reconciler.Reconcile(nil, request)
+
+	// Validate the results
+	mocker.Finish()
+	assert.NoError(err)
+	assert.Equal(false, result.Requeue)
+	assert.Equal(time.Duration(0), result.RequeueAfter)
+}
+
+func createReconcilerWithFake(initObjs ...client.Object) Reconciler {
+	cli := fake.NewClientBuilder().WithScheme(newScheme()).WithObjects(initObjs...).Build()
 	reconciler := newIngressTraitReconciler(cli)
 	return reconciler
 }

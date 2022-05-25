@@ -28,7 +28,7 @@ func TestIsEnabled(t *testing.T) {
 			// THEN the call returns true
 			name:       "Test IsEnabled when using default Verrazzano CR",
 			actualCR:   vzapi.Verrazzano{},
-			expectTrue: true,
+			expectTrue: false,
 		},
 		{
 			// GIVEN a Verrazzano custom resource with the Prometheus Adapter enabled
@@ -39,9 +39,7 @@ func TestIsEnabled(t *testing.T) {
 				Spec: vzapi.VerrazzanoSpec{
 					Components: vzapi.ComponentSpec{
 						PrometheusAdapter: &vzapi.PrometheusAdapterComponent{
-							MonitoringComponent: vzapi.MonitoringComponent{
-								Enabled: &trueValue,
-							},
+							Enabled: &trueValue,
 						},
 					},
 				},
@@ -57,9 +55,7 @@ func TestIsEnabled(t *testing.T) {
 				Spec: vzapi.VerrazzanoSpec{
 					Components: vzapi.ComponentSpec{
 						PrometheusAdapter: &vzapi.PrometheusAdapterComponent{
-							MonitoringComponent: vzapi.MonitoringComponent{
-								Enabled: &falseValue,
-							},
+							Enabled: &falseValue,
 						},
 					},
 				},

@@ -324,6 +324,10 @@ type ComponentSpec struct {
 	// +optional
 	Istio *IstioComponent `json:"istio,omitempty"`
 
+	// JaegerOperator configuration
+	// +optional
+	JaegerOperator *JaegerOperatorComponent `json:"jaegerOperator,omitempty"`
+
 	// Kiali contains the Kiali component configuration
 	// +optional
 	Kiali *KialiComponent `json:"kiali,omitempty"`
@@ -373,15 +377,10 @@ type ComponentSpec struct {
 	Verrazzano *VerrazzanoComponent `json:"verrazzano,omitempty"`
 }
 
-// MonitoringComponent Common configuration for monitoring components
-type MonitoringComponent struct {
-	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
-}
-
 // ElasticsearchComponent specifies the Elasticsearch configuration.
 type ElasticsearchComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 
 	// Arguments for installing Elasticsearch
 	// +optional
@@ -389,47 +388,73 @@ type ElasticsearchComponent struct {
 	// +patchStrategy=merge,retainKeys
 	ESInstallArgs []InstallArgs                 `json:"installArgs,omitempty" patchStrategy:"merge,retainKeys" patchMergeKey:"name"`
 	Policies      []vmov1.IndexManagementPolicy `json:"policies,omitempty"`
+	Nodes         []OpenSearchNode              `json:"nodes,omitempty"`
+}
+
+//OpenSearchNode specifies a node group in the OpenSearch cluster
+type OpenSearchNode struct {
+	Name      string                       `json:"name,omitempty"`
+	Replicas  int32                        `json:"replicas,omitempty"`
+	Roles     []vmov1.NodeRole             `json:"roles,omitempty"`
+	Storage   *OpenSearchNodeStorage       `json:"storage,omitempty"`
+	Resources *corev1.ResourceRequirements `json:"resources,omitempty"`
+}
+
+type OpenSearchNodeStorage struct {
+	Size string `json:"size"`
 }
 
 // KibanaComponent specifies the Kibana configuration.
 type KibanaComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // KubeStateMetricsComponent specifies the kube-state-metrics configuration.
 type KubeStateMetricsComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // GrafanaComponent specifies the Grafana configuration.
 type GrafanaComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // PrometheusComponent specifies the Prometheus configuration.
 type PrometheusComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // PrometheusAdapterComponent specifies the Prometheus Adapter configuration.
 type PrometheusAdapterComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // PrometheusNodeExporterComponent specifies the Prometheus Node Exporter configuration.
 type PrometheusNodeExporterComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // PrometheusOperatorComponent specifies the Prometheus Operator configuration
 type PrometheusOperatorComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // PrometheusPushgatewayComponent specifies the Prometheus Pushgateway configuration.
 type PrometheusPushgatewayComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // CertManagerComponent specifies the core CertManagerComponent config.
@@ -439,19 +464,22 @@ type CertManagerComponent struct {
 	// +patchStrategy=replace
 	Certificate Certificate `json:"certificate,omitempty" patchStrategy:"replace"`
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // CoherenceOperatorComponent specifies the Coherence Operator configuration
 type CoherenceOperatorComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // ApplicationOperatorComponent specifies the Application Operator configuration
 type ApplicationOperatorComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // AuthProxyKubernetesSection specifies the Kubernetes resources that can be customized for AuthProxy.
@@ -464,13 +492,15 @@ type AuthProxyComponent struct {
 	// +optional
 	Enabled *bool `json:"enabled,omitempty"`
 	// +optional
-	Kubernetes *AuthProxyKubernetesSection `json:"kubernetes,omitempty"`
+	Kubernetes       *AuthProxyKubernetesSection `json:"kubernetes,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // OAMComponent specifies the OAM configuration
 type OAMComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // VerrazzanoComponent specifies the Verrazzano configuration
@@ -482,18 +512,21 @@ type VerrazzanoComponent struct {
 	// +optional
 	// +patchMergeKey=name
 	// +patchStrategy=merge,retainKeys
-	InstallArgs []InstallArgs `json:"installArgs,omitempty" patchStrategy:"merge,retainKeys" patchMergeKey:"name"`
+	InstallArgs      []InstallArgs `json:"installArgs,omitempty" patchStrategy:"merge,retainKeys" patchMergeKey:"name"`
+	InstallOverrides `json:",inline"`
 }
 
 // KialiComponent specifies the Kiali configuration
 type KialiComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // ConsoleComponent specifies the Console UI configuration
 type ConsoleComponent struct {
-	MonitoringComponent `json:",inline"`
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // DNSComponent specifies the DNS configuration
@@ -506,7 +539,8 @@ type DNSComponent struct {
 	OCI *OCI `json:"oci,omitempty"`
 	// DNS type of external. For example, OLCNE uses this type.
 	// +optional
-	External *External `json:"external,omitempty"`
+	External         *External `json:"external,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // IngressNginxComponent specifies the ingress-nginx configuration
@@ -523,16 +557,25 @@ type IngressNginxComponent struct {
 	// +optional
 	Ports []corev1.ServicePort `json:"ports,omitempty"`
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // IstioIngressSection specifies the specific config options available for the Istio Ingress Gateways.
 type IstioIngressSection struct {
+	// Type of ingress.  Default is LoadBalancer
+	// +optional
+	Type IngressType `json:"type,omitempty"`
+	// Ports to be used for Istio Ingress Gateway
+	// +optional
+	Ports []corev1.ServicePort `json:"ports,omitempty"`
+	// +optional
 	Kubernetes *IstioKubernetesSection `json:"kubernetes,omitempty"`
 }
 
 // IstioEgressSection specifies the specific config options available for the Istio Egress Gateways.
 type IstioEgressSection struct {
+	// +optional
 	Kubernetes *IstioKubernetesSection `json:"kubernetes,omitempty"`
 }
 
@@ -549,11 +592,29 @@ type IstioComponent struct {
 	// +patchStrategy=merge,retainKeys
 	IstioInstallArgs []InstallArgs `json:"istioInstallArgs,omitempty" patchStrategy:"merge,retainKeys" patchMergeKey:"name"`
 	// +optional
+	InstallOverrides `json:",inline"`
+	// +optional
 	Enabled *bool `json:"enabled,omitempty"`
+	// +optional
+	InjectionEnabled *bool `json:"injectionEnabled,omitempty"`
 	// +optional
 	Ingress *IstioIngressSection `json:"ingress,omitempty"`
 	// +optional
 	Egress *IstioEgressSection `json:"egress,omitempty"`
+}
+
+// IsInjectionEnabled is istio sidecar injection enabled check
+func (c *IstioComponent) IsInjectionEnabled() bool {
+	if c.Enabled == nil || *c.Enabled {
+		return c.InjectionEnabled == nil || *c.InjectionEnabled
+	}
+	return c.InjectionEnabled != nil && *c.InjectionEnabled
+}
+
+// JaegerOperatorComponent specifies the Jaeger Operator configuration
+type JaegerOperatorComponent struct {
+	// +optional
+	Enabled *bool `json:"enabled,omitempty"`
 }
 
 // KeycloakComponent specifies the Keycloak configuration
@@ -567,7 +628,8 @@ type KeycloakComponent struct {
 	// +optional
 	MySQL MySQLComponent `json:"mysql,omitempty"`
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // MySQLComponent specifies the MySQL configuration
@@ -588,7 +650,8 @@ type MySQLComponent struct {
 // RancherComponent specifies the Rancher configuration
 type RancherComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // FluentdComponent specifies the Fluentd DaemonSet configuration
@@ -612,7 +675,8 @@ type FluentdComponent struct {
 // WebLogicOperatorComponent specifies the WebLogic Operator configuration
 type WebLogicOperatorComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // InstallArgs identifies a name/value or name/value list needed for install.
@@ -722,4 +786,16 @@ type OciLoggingConfiguration struct {
 	DefaultAppLogID string `json:"defaultAppLogId"`
 	SystemLogID     string `json:"systemLogId"`
 	APISecret       string `json:"apiSecret,omitempty"`
+}
+
+// InstallOverrides are used to pass install overrides to components
+type InstallOverrides struct {
+	MonitorChanges *bool       `json:"monitorChanges,omitempty"`
+	ValueOverrides []Overrides `json:"overrides,omitempty"`
+}
+
+// Overrides stores the specified InstallOverrides
+type Overrides struct {
+	ConfigMapRef *corev1.ConfigMapKeySelector `json:"configMapRef,omitempty"`
+	SecretRef    *corev1.SecretKeySelector    `json:"secretRef,omitempty"`
 }

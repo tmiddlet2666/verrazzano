@@ -7,6 +7,7 @@ def EFFECTIVE_DUMP_K8S_CLUSTER_ON_SUCCESS = false
 
 pipeline {
     options {
+        timeout(time: 2, unit: 'HOURS')
         skipDefaultCheckout true
         timestamps ()
     }
@@ -25,9 +26,9 @@ pipeline {
         choice (name: 'KUBERNETES_CLUSTER_VERSION',
                 description: 'Kubernetes Version for KinD Cluster',
                 // 1st choice is the default value
-                choices: [ "1.20", "1.19", "1.21" ])
+                choices: [ "1.20", "1.21", "1.22", "1.23" ])
         string (name: 'VERSION_FOR_INSTALL',
-                defaultValue: 'v1.0.2',
+                defaultValue: 'v1.1.2',
                 description: 'This is the Verrazzano version for install.  By default, the latest Master release will be installed',
                 trim: true)
         string (name: 'GIT_COMMIT_FOR_UPGRADE',
@@ -70,10 +71,12 @@ pipeline {
         DOCKER_REPO = 'ghcr.io'
         DOCKER_NAMESPACE = 'verrazzano'
         NETRC_FILE = credentials('netrc')
-        GITHUB_API_TOKEN = credentials('github-api-token-release-assets')
-        GITHUB_RELEASE_USERID = credentials('github-userid-release')
-        GITHUB_RELEASE_EMAIL = credentials('github-email-release')
         SERVICE_KEY = credentials('PAGERDUTY_SERVICE_KEY')
+
+        // Used for dumping cluster from inside tests
+        DUMP_KUBECONFIG="${KUBECONFIG}"
+        DUMP_COMMAND="${GO_REPO_PATH}/verrazzano/tools/scripts/k8s-dump-cluster.sh"
+        TEST_DUMP_ROOT="${WORKSPACE}/test-cluster-dumps"
 
         CLUSTER_NAME = 'verrazzano'
         POST_DUMP_FAILED_FILE = "${WORKSPACE}/post_dump_failed_file.tmp"
@@ -84,7 +87,7 @@ pipeline {
         OCR_REPO = 'container-registry.oracle.com'
         IMAGE_PULL_SECRET = 'verrazzano-container-registry'
         INSTALL_CONFIG_FILE_KIND_PERSISTENCE = "./tests/e2e/config/scripts/install-verrazzano-kind-with-persistence.yaml"
-        INSTALL_CONFIG_FILE_KIND_EPHEMERAL = "./tests/e2e/config/scripts/install-verrazzano-kind.yaml"
+        INSTALL_CONFIG_FILE_KIND_EPHEMERAL = "./tests/e2e/config/scripts/install-verrazzano-kind-no-persistence.yaml"
         INSTALL_CONFIG_FILE_KIND = "${params.CHAOS_TEST_TYPE.equals("ephemeral.storage.upgrade") ? env.INSTALL_CONFIG_FILE_KIND_EPHEMERAL : env.INSTALL_CONFIG_FILE_KIND_PERSISTENCE}"
         INSTALL_PROFILE = "${params.CHAOS_TEST_TYPE.equals("ephemeral.storage.upgrade") ? "dev" : "prod"}"
         VZ_ENVIRONMENT_NAME = "default"
@@ -230,9 +233,10 @@ pipeline {
             }
         }
 
-        stage('Pre-upgrade examples helidon') {
+        stage('Pre-upgrade tests') {
             steps {
                 runGinkgoNamespace('examples/helidon', "false", "true", "hello-helidon")
+                runGinkgoRandomize('upgrade/pre-upgrade/verify')
             }
             post {
                 always {
@@ -365,7 +369,7 @@ pipeline {
 
                         # A successful completion of the upgrade means the Keycloak configuration was successfully rebuilt
                         kubectl wait --timeout=25m --for=condition=UpgradeComplete verrazzano/my-verrazzano
-                        
+
                         # Kill MySQL and wait for Keycloak to be healthy again
                         ${GO_REPO_PATH}/verrazzano/ci/scripts/chaos_test_ephemeral_storage.sh
                     fi
@@ -523,7 +527,7 @@ pipeline {
                         echo "Ensuring that the install job(s) in verrazzzano-system are identical pre and post install"
                         cmp -s ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-pre-upgrade-job.out ${WORKSPACE}/verrazzano/platform-operator/scripts/install/build/logs/verrazzano-post-upgrade-job.out
                     fi
-                    
+
                 """
             }
             post {
@@ -558,6 +562,9 @@ pipeline {
                 }
                 // run todo example test to verify upgraded app/weblogic/coherence operators are functioning correctly
                 stage('examples todo') {
+                    environment {
+                        DUMP_DIRECTORY="${TEST_DUMP_ROOT}/todo"
+                    }
                     steps {
                         runGinkgoNamespace('examples/todo', "false", "false", "todo-list")
                     }

@@ -61,6 +61,14 @@ func TestProcessAgentThreadNoProjects(t *testing.T) {
 			return nil
 		})
 
+	// Managed Cluster - expect call to get the tls-ca-additional secret. Return not found since it
+	// is ok for it to be not present.
+	mcMock.EXPECT().
+		Get(gomock.Any(), types.NamespacedName{Namespace: vzconstants.RancherSystemNamespace, Name: vzconstants.AdditionalTLS}, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			return errors.NewNotFound(schema.GroupResource{Group: "", Resource: "Secret"}, name.Name)
+		})
+
 	// Admin Cluster - expect a get followed by status update on VMC to record last agent connect time
 	vmcName := types.NamespacedName{Name: string(validSecret.Data[constants.ClusterNameData]), Namespace: constants.VerrazzanoMultiClusterNamespace}
 	expectGetAPIServerURLCalled(mcMock)
@@ -69,24 +77,26 @@ func TestProcessAgentThreadNoProjects(t *testing.T) {
 
 	// Admin Cluster - expect call to list VerrazzanoProject objects - return an empty list
 	adminMock.EXPECT().
-		List(gomock.Any(), &clustersv1alpha1.VerrazzanoProjectList{}, gomock.Not(gomock.Nil())).
-		DoAndReturn(func(ctx context.Context, list *clustersv1alpha1.VerrazzanoProjectList, opts ...*client.ListOptions) error {
+		List(gomock.Any(), &clustersv1alpha1.VerrazzanoProjectList{}, gomock.Any()).
+		DoAndReturn(func(ctx context.Context, list *clustersv1alpha1.VerrazzanoProjectList, opts ...client.ListOption) error {
 			return nil
 		})
 
 	// Managed Cluster - expect call to list VerrazzanoProject objects - return an empty list
 	mcMock.EXPECT().
-		List(gomock.Any(), &clustersv1alpha1.VerrazzanoProjectList{}, gomock.Not(gomock.Nil())).
-		DoAndReturn(func(ctx context.Context, list *clustersv1alpha1.VerrazzanoProjectList, opts ...*client.ListOptions) error {
+		List(gomock.Any(), &clustersv1alpha1.VerrazzanoProjectList{}, gomock.Any()).
+		DoAndReturn(func(ctx context.Context, list *clustersv1alpha1.VerrazzanoProjectList, opts ...client.ListOption) error {
 			return nil
 		})
 
 	// Managed Cluster - expect call to list Namespace objects - return an empty list
 	mcMock.EXPECT().
-		List(gomock.Any(), &corev1.NamespaceList{}, gomock.Not(gomock.Nil())).
-		DoAndReturn(func(ctx context.Context, list *corev1.NamespaceList, opts ...*client.ListOptions) error {
+		List(gomock.Any(), &corev1.NamespaceList{}, gomock.Any()).
+		DoAndReturn(func(ctx context.Context, list *corev1.NamespaceList, opts ...client.ListOption) error {
 			return nil
 		})
+
+	expectCASyncSuccess(mcMock, adminMock, assert, "cluster1")
 
 	// Make the request
 	s := &Syncer{
@@ -349,8 +359,8 @@ func TestSyncer_updateDeployment(t *testing.T) {
 
 				// Managed Cluster - expect call to update the deployment.
 				mcMock.EXPECT().
-					Update(gomock.Any(), gomock.Any()).
-					DoAndReturn(func(ctx context.Context, deployment *appsv1.Deployment) error {
+					Update(gomock.Any(), gomock.Any(), gomock.Any()).
+					DoAndReturn(func(ctx context.Context, deployment *appsv1.Deployment, opts ...client.UpdateOption) error {
 						asserts.Equal(t, newVersion, getEnvValue(&deployment.Spec.Template.Spec.Containers, registrationSecretVersion), "expected env value for "+registrationSecretVersion)
 						return nil
 					})
@@ -397,14 +407,68 @@ func expectAdminVMCStatusUpdateSuccess(adminMock *mocks.MockClient, vmcName type
 		})
 	adminMock.EXPECT().Status().Return(adminStatusMock)
 	adminStatusMock.EXPECT().
-		Update(gomock.Any(), gomock.AssignableToTypeOf(&platformopclusters.VerrazzanoManagedCluster{})).
-		DoAndReturn(func(ctx context.Context, vmc *platformopclusters.VerrazzanoManagedCluster) error {
+		Update(gomock.Any(), gomock.AssignableToTypeOf(&platformopclusters.VerrazzanoManagedCluster{}), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, vmc *platformopclusters.VerrazzanoManagedCluster, opts ...client.UpdateOption) error {
 			assert.Equal(vmcName.Namespace, vmc.Namespace)
 			assert.Equal(vmcName.Name, vmc.Name)
 			assert.NotNil(vmc.Status)
 			assert.NotNil(vmc.Status.LastAgentConnectTime)
 			assert.NotNil(vmc.Status.APIUrl)
 			assert.NotNil(vmc.Status.PrometheusHost)
+			return nil
+		})
+}
+
+func expectCASyncSuccess(localMock, adminMock *mocks.MockClient, assert *asserts.Assertions, testClusterName string) {
+	localRegistrationSecret := types.NamespacedName{Namespace: constants.VerrazzanoSystemNamespace, Name: constants.MCRegistrationSecret}
+	adminCASecret := types.NamespacedName{Namespace: constants.VerrazzanoMultiClusterNamespace, Name: constants.VerrazzanoLocalCABundleSecret}
+	adminRegSecret := types.NamespacedName{Namespace: constants.VerrazzanoMultiClusterNamespace, Name: getRegistrationSecretName(testClusterName)}
+	localIngressTLSSecret := types.NamespacedName{Namespace: constants.VerrazzanoSystemNamespace, Name: constants.VerrazzanoIngressTLSSecret}
+	adminMock.EXPECT().
+		Get(gomock.Any(), adminCASecret, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			secret.Name = adminCASecret.Name
+			secret.Namespace = adminCASecret.Namespace
+			return nil
+		})
+	adminMock.EXPECT().
+		Get(gomock.Any(), adminRegSecret, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			secret.Name = adminRegSecret.Name
+			secret.Namespace = adminRegSecret.Namespace
+			return nil
+		})
+	localMock.EXPECT().
+		Get(gomock.Any(), localRegistrationSecret, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			secret.Name = localRegistrationSecret.Name
+			secret.Namespace = localRegistrationSecret.Namespace
+			return nil
+		})
+	localMock.EXPECT().
+		Get(gomock.Any(), localIngressTLSSecret, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			secret.Name = localIngressTLSSecret.Name
+			secret.Namespace = localIngressTLSSecret.Namespace
+			return nil
+		})
+
+	vmcName := types.NamespacedName{Namespace: constants.VerrazzanoMultiClusterNamespace, Name: testClusterName}
+	clusterCASecret := "clusterCASecret"
+	adminMock.EXPECT().
+		Get(gomock.Any(), vmcName, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, vmc *platformopclusters.VerrazzanoManagedCluster) error {
+			vmc.Name = vmcName.Name
+			vmc.Namespace = vmcName.Namespace
+			vmc.Spec.CASecret = clusterCASecret
+			return nil
+		})
+	adminClusterCASecret := types.NamespacedName{Namespace: constants.VerrazzanoMultiClusterNamespace, Name: clusterCASecret}
+	adminMock.EXPECT().
+		Get(gomock.Any(), adminClusterCASecret, gomock.Not(gomock.Nil())).
+		DoAndReturn(func(ctx context.Context, name types.NamespacedName, secret *corev1.Secret) error {
+			secret.Name = adminClusterCASecret.Name
+			secret.Namespace = adminClusterCASecret.Namespace
 			return nil
 		})
 }
@@ -494,6 +558,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 		dsClusterName  string
 		dsEsURL        string
 		dsSecretName   string
+		forceDSRestart bool
 		expectUpdateDS bool
 	}
 	const externalEsURL = "externalEsURL"
@@ -511,6 +576,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  "",
 				dsEsURL:        "",
 				dsSecretName:   "",
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -521,6 +587,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  regSecretClusterName,
 				dsEsURL:        regSecretEsURL,
 				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -531,6 +598,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  "differentClusterName",
 				dsEsURL:        regSecretEsURL,
 				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -541,6 +609,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  regSecretClusterName,
 				dsEsURL:        "differentEsURL",
 				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -551,6 +620,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  regSecretClusterName,
 				dsEsURL:        regSecretEsURL,
 				dsSecretName:   "differentSecret",
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -559,8 +629,9 @@ func TestSyncer_configureLogging(t *testing.T) {
 			fields: fields{
 				secretExists:   false,
 				dsClusterName:  defaultClusterName,
-				dsEsURL:        defaultElasticURL,
+				dsEsURL:        vzconstants.DefaultOpensearchURL,
 				dsSecretName:   defaultSecretName,
+				forceDSRestart: false,
 				expectUpdateDS: false,
 			},
 		},
@@ -571,7 +642,19 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  regSecretClusterName,
 				dsEsURL:        regSecretEsURL,
 				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: false,
 				expectUpdateDS: false,
+			},
+		},
+		{
+			name: "same registration force DS restart",
+			fields: fields{
+				secretExists:   true,
+				dsClusterName:  regSecretClusterName,
+				dsEsURL:        regSecretEsURL,
+				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: true,
+				expectUpdateDS: true,
 			},
 		},
 		{
@@ -582,6 +665,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  "",
 				dsEsURL:        "",
 				dsSecretName:   "",
+				forceDSRestart: false,
 				expectUpdateDS: true,
 			},
 		},
@@ -593,6 +677,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  defaultClusterName,
 				dsEsURL:        externalEsURL,
 				dsSecretName:   externalEsSecret,
+				forceDSRestart: false,
 				expectUpdateDS: false,
 			},
 		},
@@ -604,6 +689,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				dsClusterName:  regSecretClusterName,
 				dsEsURL:        regSecretEsURL,
 				dsSecretName:   constants.MCRegistrationSecret,
+				forceDSRestart: false,
 				expectUpdateDS: false,
 			},
 		},
@@ -672,8 +758,8 @@ func TestSyncer_configureLogging(t *testing.T) {
 			// update only when expected
 			if expectUpdateDS {
 				mcMock.EXPECT().
-					Update(gomock.Any(), gomock.Any()).
-					DoAndReturn(func(ctx context.Context, ds *appsv1.DaemonSet) error {
+					Update(gomock.Any(), gomock.Any(), gomock.Any()).
+					DoAndReturn(func(ctx context.Context, ds *appsv1.DaemonSet, opts ...client.UpdateOption) error {
 						return nil
 					})
 			}
@@ -684,7 +770,7 @@ func TestSyncer_configureLogging(t *testing.T) {
 				Log:         zap.S().With("test"),
 				Context:     context.TODO(),
 			}
-			s.configureLogging()
+			s.configureLogging(tt.fields.forceDSRestart)
 
 			// Validate the results
 			mcMocker.Finish()
@@ -764,7 +850,7 @@ func Test_updateLoggingDaemonsetEnv(t *testing.T) {
 		},
 		{
 			Name:  "ELASTICSEARCH_URL",
-			Value: defaultElasticURL,
+			Value: vzconstants.DefaultOpensearchURL,
 		},
 		{
 			Name:  "ELASTICSEARCH_USER",
@@ -789,17 +875,17 @@ func Test_updateLoggingDaemonsetEnv(t *testing.T) {
 			constants.ElasticsearchPasswordData: []byte("somepassword"),
 		},
 	}
-	newEnvs := updateLoggingDaemonsetEnv(regSecret, true, defaultElasticURL, defaultSecretName, oldEnvs)
+	newEnvs := updateLoggingDaemonsetEnv(regSecret, true, vzconstants.DefaultOpensearchURL, defaultSecretName, oldEnvs)
 	asserts.NotNil(t, findEnv("FLUENTD_CONF", &newEnvs))
 	asserts.Equal(t, newClusterName, findEnv("CLUSTER_NAME", &newEnvs).Value)
 	asserts.Equal(t, newElasticURL, findEnv("ELASTICSEARCH_URL", &newEnvs).Value)
 	asserts.Equal(t, constants.MCRegistrationSecret, findEnv("ELASTICSEARCH_USER", &newEnvs).ValueFrom.SecretKeyRef.Name)
 	asserts.Equal(t, constants.MCRegistrationSecret, findEnv("ELASTICSEARCH_PASSWORD", &newEnvs).ValueFrom.SecretKeyRef.Name)
-	//un-registration of setting secretVersion back to ""
-	newEnvs = updateLoggingDaemonsetEnv(regSecret, false, defaultElasticURL, defaultSecretName, newEnvs)
+	// un-registration of setting secretVersion back to ""
+	newEnvs = updateLoggingDaemonsetEnv(regSecret, false, vzconstants.DefaultOpensearchURL, defaultSecretName, newEnvs)
 	asserts.NotNil(t, findEnv("FLUENTD_CONF", &newEnvs))
 	asserts.Equal(t, defaultClusterName, findEnv("CLUSTER_NAME", &newEnvs).Value)
-	asserts.Equal(t, defaultElasticURL, findEnv("ELASTICSEARCH_URL", &newEnvs).Value)
+	asserts.Equal(t, vzconstants.DefaultOpensearchURL, findEnv("ELASTICSEARCH_URL", &newEnvs).Value)
 	asserts.Equal(t, defaultSecretName, findEnv("ELASTICSEARCH_USER", &newEnvs).ValueFrom.SecretKeyRef.Name)
 	asserts.Equal(t, defaultSecretName, findEnv("ELASTICSEARCH_PASSWORD", &newEnvs).ValueFrom.SecretKeyRef.Name)
 
@@ -840,7 +926,7 @@ func Test_updateLoggingDaemonsetVolumes(t *testing.T) {
 	asserts.NotNil(t, findVol("my-config", &newVols))
 	asserts.NotNil(t, findVol("varlog", &newVols))
 	asserts.Equal(t, constants.MCRegistrationSecret, findVol("secret-volume", &newVols).VolumeSource.Secret.SecretName)
-	//un-registration of setting secretVersion back to ""
+	// un-registration of setting secretVersion back to ""
 	newVols = updateLoggingDaemonsetVolumes(false, defaultSecretName, newVols)
 	asserts.Equal(t, defaultSecretName, findVol("secret-volume", &newVols).VolumeSource.Secret.SecretName)
 	asserts.NotNil(t, findVol("my-config", &newVols))

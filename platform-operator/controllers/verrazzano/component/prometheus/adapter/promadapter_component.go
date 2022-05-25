@@ -41,6 +41,7 @@ func NewComponent() spi.Component {
 			ImagePullSecretKeyname:  "image.pullSecrets[0]",
 			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "prometheus-adapter-values.yaml"),
 			Dependencies:            []string{},
+			GetInstallOverridesFunc: GetOverrides,
 		},
 	}
 }
@@ -50,7 +51,7 @@ func NewComponent() spi.Component {
 func (c prometheusAdapterComponent) IsEnabled(effectiveCR *vzapi.Verrazzano) bool {
 	comp := effectiveCR.Spec.Components.PrometheusAdapter
 	if comp == nil || comp.Enabled == nil {
-		return true
+		return false
 	}
 	return *comp.Enabled
 }
@@ -66,4 +67,15 @@ func (c prometheusAdapterComponent) IsReady(ctx spi.ComponentContext) bool {
 // PreInstall updates resources necessary for the Prometheus Adapter Component installation
 func (c prometheusAdapterComponent) PreInstall(ctx spi.ComponentContext) error {
 	return preInstall(ctx)
+}
+
+// MonitorOverrides checks whether monitoring of install overrides is enabled or not
+func (c prometheusAdapterComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
+	if ctx.EffectiveCR().Spec.Components.PrometheusAdapter != nil {
+		if ctx.EffectiveCR().Spec.Components.PrometheusAdapter.MonitorChanges != nil {
+			return *ctx.EffectiveCR().Spec.Components.PrometheusAdapter.MonitorChanges
+		}
+		return true
+	}
+	return false
 }

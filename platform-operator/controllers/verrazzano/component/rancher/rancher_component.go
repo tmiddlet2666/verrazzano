@@ -10,14 +10,13 @@ import (
 	"path/filepath"
 	"strconv"
 
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
-
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
@@ -61,6 +60,7 @@ func NewComponent() spi.Component {
 					Name:      constants.RancherIngress,
 				},
 			},
+			GetInstallOverridesFunc: GetOverrides,
 		},
 	}
 }
@@ -162,12 +162,13 @@ func (r rancherComponent) ValidateUpdate(old *vzapi.Verrazzano, new *vzapi.Verra
 	if r.IsEnabled(old) && !r.IsEnabled(new) {
 		return fmt.Errorf("Disabling component %s is not allowed", ComponentJSONName)
 	}
-	return nil
+	return r.HelmComponent.ValidateUpdate(old, new)
 }
 
 // PreInstall
 /* Sets up the environment for Rancher
-- Create the Rancher namespaces if they are not present (cattle-namespace, rancher-operator-namespace)
+- Create the Rancher namespace if it is not present (cattle-namespace)
+- note: VZ-5241 the rancher-operator-namespace is no longer used in 2.6.3
 - Copy TLS certificates for Rancher if using the default Verrazzano CA
 - Create additional LetsEncrypt TLS certificates for Rancher if using LE
 */
@@ -175,16 +176,10 @@ func (r rancherComponent) PreInstall(ctx spi.ComponentContext) error {
 	vz := ctx.EffectiveCR()
 	c := ctx.Client()
 	log := ctx.Log()
-	if err := createRancherOperatorNamespace(log, c); err != nil {
-		return err
-	}
 	if err := createCattleSystemNamespace(log, c); err != nil {
 		return err
 	}
 	if err := copyDefaultCACertificate(log, c, vz); err != nil {
-		return err
-	}
-	if err := createAdditionalCertificates(log, c, vz); err != nil {
 		return err
 	}
 	return nil
@@ -205,12 +200,12 @@ func (r rancherComponent) Install(ctx spi.ComponentContext) error {
 	c := ctx.Client()
 	// Set MKNOD Cap on Rancher deployment
 	if err := patchRancherDeployment(c); err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error patching Rancher deployment: %s", err.Error())
 	}
 	log.Debugf("Patched Rancher deployment to support MKNOD")
 	// Annotate Rancher ingress for NGINX/TLS
 	if err := patchRancherIngress(c, ctx.EffectiveCR()); err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error patching Rancher ingress: %s", err.Error())
 	}
 	log.Debugf("Patched Rancher ingress")
 
@@ -238,29 +233,40 @@ func (r rancherComponent) PostInstall(ctx spi.ComponentContext) error {
 	log := ctx.Log()
 
 	if err := createAdminSecretIfNotExists(log, c); err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error creating Rancher admin secret: %s", err.Error())
 	}
 	password, err := common.GetAdminSecret(c)
 	if err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error getting Rancher admin secret: %s", err.Error())
 	}
 	rancherHostName, err := getRancherHostname(c, vz)
 	if err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error getting Rancher hostname: %s", err.Error())
 	}
 
 	rest, err := common.NewClient(c, rancherHostName, password)
 	if err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error getting Rancher client: %s", err.Error())
 	}
 	if err := rest.SetAccessToken(); err != nil {
-		return err
+		return log.ErrorfThrottledNewErr("Error setting Rancher access token: %s", err.Error())
 	}
-
 	if err := rest.PutServerURL(); err != nil {
-		ctx.Log().Error(err)
-		return err
+		return log.ErrorfThrottledNewErr("Error setting Rancher server URL: %s", err.Error())
 	}
-
+	if err := removeBootstrapSecretIfExists(log, c); err != nil {
+		return log.ErrorfThrottledNewErr("Error removing Rancher bootstrap secret: %s", err.Error())
+	}
 	return r.HelmComponent.PostInstall(ctx)
+}
+
+// MonitorOverrides checks whether monitoring of install overrides is enabled or not
+func (r rancherComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
+	if ctx.EffectiveCR().Spec.Components.Rancher != nil {
+		if ctx.EffectiveCR().Spec.Components.Rancher.MonitorChanges != nil {
+			return *ctx.EffectiveCR().Spec.Components.Rancher.MonitorChanges
+		}
+		return true
+	}
+	return false
 }
