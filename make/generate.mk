@@ -7,8 +7,10 @@ platform-manifests: controller-gen
 	$(CONTROLLER_GEN) $(CRD_OPTIONS) rbac:roleName=manager-role webhook paths="./..." output:crd:artifacts:config=$(CRD_PATH)
 	# Add copyright headers to the kubebuilder generated CRDs
 	./hack/add-crd-header.sh
+	./hack/update-codegen.sh "modules:v1alpha1" "modules" "boilerplate.go.txt"
 	./hack/update-codegen.sh "verrazzano:v1alpha1" "verrazzano" "boilerplate.go.txt"
 	./hack/update-codegen.sh "clusters:v1alpha1" "clusters" "boilerplate-clusters.go.txt"
+
 
 # Generate manifests e.g. CRD, RBAC etc.
 .PHONY: application-manifests

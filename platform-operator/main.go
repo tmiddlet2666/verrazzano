@@ -5,6 +5,7 @@ package main
 
 import (
 	"flag"
+	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"sync"
 
 	vmov1 "github.com/verrazzano/verrazzano-monitoring-operator/pkg/apis/vmcontroller/v1"
@@ -12,6 +13,10 @@ import (
 
 	oam "github.com/crossplane/oam-kubernetes-runtime/apis/core"
 	cmapiv1 "github.com/jetstack/cert-manager/pkg/apis/certmanager/v1"
+	"go.uber.org/zap"
+	istioclinet "istio.io/client-go/pkg/apis/networking/v1alpha3"
+	istioclisec "istio.io/client-go/pkg/apis/security/v1beta1"
+
 	vzapp "github.com/verrazzano/verrazzano/application-operator/apis/oam/v1alpha1"
 	"github.com/verrazzano/verrazzano/pkg/helm"
 	vzlog "github.com/verrazzano/verrazzano/pkg/log"
@@ -24,9 +29,6 @@ import (
 	internalconfig "github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/certificate"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/netpolicy"
-	"go.uber.org/zap"
-	istioclinet "istio.io/client-go/pkg/apis/networking/v1alpha3"
-	istioclisec "istio.io/client-go/pkg/apis/security/v1beta1"
 
 	"os"
 
@@ -37,6 +39,8 @@ import (
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	kzap "sigs.k8s.io/controller-runtime/pkg/log/zap"
+
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	// +kubebuilder:scaffold:imports
 )
 
@@ -58,6 +62,7 @@ func init() {
 	// Add cert-manager components to the scheme
 	cmapiv1.AddToScheme(scheme)
 
+	utilruntime.Must(modulesv1alpha1.AddToScheme(scheme))
 	// +kubebuilder:scaffold:scheme
 }
 
