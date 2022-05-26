@@ -3630,6 +3630,8 @@ spec:
                               required:
                               - key
                               type: object
+                            overrideValues:
+                              type: string
                             secretRef:
                               description: SecretKeySelector selects a key of a Secret.
                               properties:
@@ -3648,8 +3650,6 @@ spec:
                                   type: boolean
                               required:
                               - key
-                              type: object
-                            values:
                               type: object
                           type: object
                         type: array
@@ -5426,6 +5426,8 @@ spec:
                               required:
                               - key
                               type: object
+                            overrideValues:
+                              type: string
                             secretRef:
                               description: SecretKeySelector selects a key of a Secret.
                               properties:
@@ -5444,8 +5446,6 @@ spec:
                                   type: boolean
                               required:
                               - key
-                              type: object
-                            values:
                               type: object
                           type: object
                         type: array
