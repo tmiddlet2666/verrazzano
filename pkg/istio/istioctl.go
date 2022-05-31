@@ -4,6 +4,7 @@
 package istio
 
 import (
+	"io/ioutil"
 	"os/exec"
 	"strings"
 
@@ -27,6 +28,9 @@ func Upgrade(log vzlog.VerrazzanoLogger, imageOverrideString string, overridesFi
 	for _, overridesFileName := range overridesFiles {
 		args = append(args, "-f")
 		args = append(args, overridesFileName)
+		b, _ := ioutil.ReadFile(overridesFileName)
+		log.Infof("Override %s %s", overridesFileName, string(b))
+
 	}
 
 	// Add the image override strings
