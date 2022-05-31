@@ -10,6 +10,7 @@ Collections.shuffle(jenkinsRegions)
 
 pipeline {
     options {
+        timeout(time: 1, unit: 'HOURS')
         skipDefaultCheckout true
         timestamps ()
     }

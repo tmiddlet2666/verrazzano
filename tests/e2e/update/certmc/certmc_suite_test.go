@@ -1,7 +1,7 @@
 // Copyright (c) 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
-package nginxistio
+package certmc
 
 import (
 	"testing"
@@ -10,7 +10,7 @@ import (
 	"github.com/onsi/gomega"
 )
 
-func TestNginxIstioUpdate(t *testing.T) {
+func TestManagedClusterCertManagerUpdate(t *testing.T) {
 	gomega.RegisterFailHandler(ginkgo.Fail)
-	ginkgo.RunSpecs(t, "Update nginx-istio Suite")
+	ginkgo.RunSpecs(t, "Update Managed-Cluster Cert-Manager Suite")
 }
