@@ -6,6 +6,7 @@ package helm
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"os/exec"
 	"regexp"
 	"strings"
@@ -150,21 +151,28 @@ func Upgrade(log vzlog.VerrazzanoLogger, releaseName string, namespace string, c
 		if len(override.FileOverride) > 0 {
 			args = append(args, "-f")
 			args = append(args, override.FileOverride)
+			b, _ := ioutil.ReadFile(override.FileOverride)
+			log.Infof("Override %s %s", override.FileOverride, string(b))
 		}
 		// Add the override strings
 		if len(override.SetOverrides) > 0 {
 			args = append(args, "--set")
 			args = append(args, override.SetOverrides)
+			log.Infof("Override %s", override.SetOverrides)
 		}
 		// Add the set-string override strings
 		if len(override.SetStringOverrides) > 0 {
 			args = append(args, "--set-string")
 			args = append(args, override.SetStringOverrides)
+			log.Infof("Override %s", override.SetStringOverrides)
 		}
 		// Add the set-file override strings
 		if len(override.SetFileOverrides) > 0 {
 			args = append(args, "--set-file")
 			args = append(args, override.SetFileOverrides)
+			b, _ := ioutil.ReadFile(override.SetFileOverrides)
+			log.Infof("Override %s %s", override.SetFileOverrides, string(b))
+
 		}
 	}
 
