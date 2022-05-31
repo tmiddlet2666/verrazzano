@@ -30,7 +30,6 @@ func Upgrade(log vzlog.VerrazzanoLogger, imageOverrideString string, overridesFi
 		args = append(args, overridesFileName)
 		b, _ := ioutil.ReadFile(overridesFileName)
 		log.Infof("Override %s %s", overridesFileName, string(b))
-
 	}
 
 	// Add the image override strings
@@ -58,6 +57,8 @@ func Install(log vzlog.VerrazzanoLogger, overrideStrings string, overridesFiles 
 	for _, overridesFileName := range overridesFiles {
 		args = append(args, "-f")
 		args = append(args, overridesFileName)
+		b, _ := ioutil.ReadFile(overridesFileName)
+		log.Infof("Override %s %s", overridesFileName, string(b))
 	}
 
 	// Add the override strings
