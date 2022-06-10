@@ -362,5 +362,9 @@ func checkValues(overrideValue string) bool {
 			}
 		}
 	}
-	return len(pods) == 2 && foundAnnotation && foundPromInlineAnnotation && foundIstioInlineAnnotation
+	if !(len(pods) == 2 && foundAnnotation && foundPromInlineAnnotation && foundIstioInlineAnnotation) {
+		pkg.Log(pkg.Info, fmt.Sprintf("Number of Pods found: %v, Prometheus secret annotation found: %v, Prometheus inline annotation found: %v, Istio inline annotation found: %v", len(pods), foundAnnotation, foundPromInlineAnnotation, foundIstioInlineAnnotation))
+		return false
+	}
+	return true
 }

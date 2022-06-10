@@ -37,9 +37,9 @@ var oldPromData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverri
 
 var newPromData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}"
 
-var oldIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"pilot\": {\"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"true\"}}}}}}"
+var oldIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"ingressGateways\": [{\"name\": \"istio-ingressgateway\", \"label\": {\"override\": \"true\"}, \"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"true\"}}}]}}}"
 
-var newIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"pilot\": {\"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}}}}"
+var newIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"ingressGateways\": [{\"name\": \"istio-ingressgateway\", \"label\": {\"override\": \"false\"}, \"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}]}}}"
 
 var testConfigMap = corev1.ConfigMap{
 	TypeMeta: metav1.TypeMeta{
