@@ -33,9 +33,13 @@ prometheusOperator:
     override: "false"
 `
 
-var oldInlineData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverride\": \"true\"}}}"
+var oldPromData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverride\": \"true\"}}}"
 
-var newInlineData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}"
+var newPromData = "{\"prometheusOperator\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}"
+
+var oldIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"pilot\": {\"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"true\"}}}}}}"
+
+var newIstioData = "{\"apiVersion\": \"install.istio.io/v1alpha1\", \"kind\": \"IstioOperator\", \"spec\": {\"components\": {\"pilot\": {\"k8s\": {\"podAnnotations\": {\"inlineOverride\": \"false\"}}}}}}"
 
 var testConfigMap = corev1.ConfigMap{
 	TypeMeta: metav1.TypeMeta{

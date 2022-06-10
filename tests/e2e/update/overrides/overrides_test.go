@@ -40,7 +40,8 @@ var (
 	t = framework.NewTestFramework("overrides")
 )
 
-var inlineData string
+var promData string
+var istioData string
 var monitorChanges bool
 
 var failed = false
@@ -48,29 +49,34 @@ var _ = t.AfterEach(func() {
 	failed = failed || ginkgo.CurrentSpecReport().Failed()
 })
 
-type PrometheusOperatorOverridesModifier struct {
+type OverridesModifier struct {
 }
 
-type PrometheusOperatorValuesModifier struct {
+type ValuesModifier struct {
 }
 
-type PrometheusOperatorDefaultModifier struct {
+type DefaultModifier struct {
 }
 
-func (d PrometheusOperatorDefaultModifier) ModifyCR(cr *vzapi.Verrazzano) {
+func (d DefaultModifier) ModifyCR(cr *vzapi.Verrazzano) {
 	if cr.Spec.Components.PrometheusOperator != nil {
 		if cr.Spec.Components.PrometheusOperator.ValueOverrides != nil {
 			cr.Spec.Components.PrometheusOperator.ValueOverrides = nil
 		}
 	}
+	if cr.Spec.Components.Istio != nil {
+		if cr.Spec.Components.Istio.ValueOverrides != nil {
+			cr.Spec.Components.Istio.ValueOverrides = nil
+		}
+	}
 }
 
-func (o PrometheusOperatorOverridesModifier) ModifyCR(cr *vzapi.Verrazzano) {
+func (o OverridesModifier) ModifyCR(cr *vzapi.Verrazzano) {
 	if cr.Spec.Components.PrometheusOperator == nil {
 		cr.Spec.Components.PrometheusOperator = &vzapi.PrometheusOperatorComponent{}
 	}
 	var trueVal = true
-	overrides := []vzapi.Overrides{
+	promOverrides := []vzapi.Overrides{
 		{
 			ConfigMapRef: &corev1.ConfigMapKeySelector{
 				LocalObjectReference: corev1.LocalObjectReference{
@@ -91,18 +97,31 @@ func (o PrometheusOperatorOverridesModifier) ModifyCR(cr *vzapi.Verrazzano) {
 		},
 		{
 			Values: &apiextensionsv1.JSON{
-				Raw: []byte(inlineData),
+				Raw: []byte(promData),
 			},
 		},
 	}
 	cr.Spec.Components.PrometheusOperator.Enabled = &trueVal
 	cr.Spec.Components.PrometheusOperator.MonitorChanges = &monitorChanges
-	cr.Spec.Components.PrometheusOperator.ValueOverrides = overrides
+	cr.Spec.Components.PrometheusOperator.ValueOverrides = promOverrides
+
+	if cr.Spec.Components.Istio == nil {
+		cr.Spec.Components.Istio = &vzapi.IstioComponent{}
+	}
+	istioOverrides := []vzapi.Overrides{
+		{
+			Values: &apiextensionsv1.JSON{
+				Raw: []byte(istioData),
+			},
+		},
+	}
+	cr.Spec.Components.Istio.MonitorChanges = &monitorChanges
+	cr.Spec.Components.Istio.ValueOverrides = istioOverrides
 }
 
-func (o PrometheusOperatorValuesModifier) ModifyCR(cr *vzapi.Verrazzano) {
+func (o ValuesModifier) ModifyCR(cr *vzapi.Verrazzano) {
 	var trueVal = true
-	overrides := []vzapi.Overrides{
+	promOverrides := []vzapi.Overrides{
 		{
 			ConfigMapRef: &corev1.ConfigMapKeySelector{
 				LocalObjectReference: corev1.LocalObjectReference{
@@ -124,19 +143,24 @@ func (o PrometheusOperatorValuesModifier) ModifyCR(cr *vzapi.Verrazzano) {
 	}
 	cr.Spec.Components.PrometheusOperator.Enabled = &trueVal
 	cr.Spec.Components.PrometheusOperator.MonitorChanges = &monitorChanges
-	cr.Spec.Components.PrometheusOperator.ValueOverrides = overrides
+	cr.Spec.Components.PrometheusOperator.ValueOverrides = promOverrides
+
+	var istioOverrides []vzapi.Overrides
+	cr.Spec.Components.Istio.MonitorChanges = &monitorChanges
+	cr.Spec.Components.Istio.ValueOverrides = istioOverrides
 }
 
 var _ = t.BeforeSuite(func() {
-	m := PrometheusOperatorOverridesModifier{}
-	inlineData = oldInlineData
+	m := OverridesModifier{}
+	promData = oldPromData
+	istioData = oldIstioData
 	monitorChanges = true
 	update.UpdateCRWithRetries(m, pollingInterval, waitTimeout)
 	_ = update.GetCR()
 })
 
 var _ = t.AfterSuite(func() {
-	m := PrometheusOperatorDefaultModifier{}
+	m := DefaultModifier{}
 	update.UpdateCRWithRetries(m, pollingInterval, waitTimeout)
 	_ = update.GetCR()
 	if failed {
@@ -184,9 +208,10 @@ var _ = t.Describe("Post Install Overrides", func() {
 		// that the new values have not been applied to Prometheus Operator
 		t.Context("Update Overrides", func() {
 			t.It("Update Inline Data", func() {
-				inlineData = newInlineData
+				promData = newPromData
+				istioData = newIstioData
 				monitorChanges = false
-				m := PrometheusOperatorOverridesModifier{}
+				m := OverridesModifier{}
 				update.UpdateCRWithRetries(m, pollingInterval, waitTimeout)
 				_ = update.GetCR()
 			})
@@ -225,9 +250,10 @@ var _ = t.Describe("Post Install Overrides", func() {
 		// that the new values have been applied to promtheus-operator
 		t.Context("Update Overrides", func() {
 			t.It("Update Inline Data", func() {
-				inlineData = newInlineData
+				promData = newPromData
+				istioData = newIstioData
 				monitorChanges = true
-				m := PrometheusOperatorOverridesModifier{}
+				m := OverridesModifier{}
 				update.UpdateCRWithRetries(m, pollingInterval, waitTimeout)
 				_ = update.GetCR()
 			})
@@ -293,7 +319,7 @@ func deleteOverrides() {
 	if err1 != nil && !k8serrors.IsNotFound(err1) {
 		ginkgo.AbortSuite("Failed to delete Secret")
 	}
-	m := PrometheusOperatorValuesModifier{}
+	m := ValuesModifier{}
 	update.UpdateCRWithRetries(m, pollingInterval, waitTimeout)
 	_ = update.GetCR()
 }
@@ -318,16 +344,23 @@ func checkValues(overrideValue string) bool {
 		ginkgo.AbortSuite(fmt.Sprintf("Label override not found for the Prometheus Operator pod in namespace %s: %v", constants.VerrazzanoMonitoringNamespace, err))
 	}
 	foundAnnotation := false
+	foundPromInlineAnnotation := false
+	foundIstioInlineAnnotation := false
+
 	for _, pod := range pods {
-		if val, ok := pod.Annotations[overrideKey]; ok && val == overrideValue {
-			foundAnnotation = true
+		if strings.Contains(pod.Name, "prometheus") {
+			if val, ok := pod.Annotations[overrideKey]; ok && val == overrideValue {
+				foundAnnotation = true
+			}
+			if val, ok := pod.Annotations[inlineOverrideKey]; ok && val == overrideValue {
+				foundPromInlineAnnotation = true
+			}
+		}
+		if strings.Contains(pod.Name, "istiod") {
+			if val, ok := pod.Annotations[inlineOverrideKey]; ok && val == overrideValue {
+				foundIstioInlineAnnotation = true
+			}
 		}
 	}
-	foundInlineAnnotation := false
-	for _, pod := range pods {
-		if val, ok := pod.Annotations[inlineOverrideKey]; ok && val == overrideValue {
-			foundInlineAnnotation = true
-		}
-	}
-	return len(pods) == 1 && foundAnnotation && foundInlineAnnotation
+	return len(pods) == 2 && foundAnnotation && foundPromInlineAnnotation && foundIstioInlineAnnotation
 }
