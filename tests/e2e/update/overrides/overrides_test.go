@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	waitTimeout                        = 5 * time.Minute
+	waitTimeout                        = 7 * time.Minute
 	pollingInterval                    = 5 * time.Second
 	overrideConfigMapSecretName string = "test-overrides-1"
 	dataKey                     string = "values.yaml"
