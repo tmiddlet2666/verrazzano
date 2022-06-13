@@ -85,6 +85,7 @@ var (
 )
 
 func main() {
+	// test changes
 	flag.StringVar(&metricsAddr, "metrics-addr", ":8080", "The address the metric endpoint binds to.")
 	flag.StringVar(&defaultMetricsScraper, "default-metrics-scraper", defaultScraperName,
 		"The namespace/deploymentName of the prometheus deployment to be used as the default metrics scraper")
