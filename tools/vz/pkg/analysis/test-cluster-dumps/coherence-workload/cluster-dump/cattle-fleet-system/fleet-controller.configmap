@@ -1,0 +1,30 @@
+Name:         fleet-controller
+Namespace:    cattle-fleet-system
+Labels:       app.kubernetes.io/managed-by=Helm
+Annotations:  meta.helm.sh/release-name: fleet
+              meta.helm.sh/release-namespace: cattle-fleet-system
+
+Data
+====
+config:
+----
+{
+  "agentImage": "rancher/fleet-agent:v0.3.9",
+  "agentImagePullPolicy": "IfNotPresent",
+  "apiServerURL": "https://rancher.b90.zb91df2.v8o.io",
+  "apiServerCA": "",
+  "agentCheckinInterval": "15m",
+  "ignoreClusterRegistrationLabels": false,
+  "bootstrap": {
+    "paths": "",
+    "repo": "",
+    "secret": "",
+    "branch":  "master",
+    "namespace": "fleet-local",
+    "agentNamespace": "cattle-fleet-local-system",
+  },
+  "webhookReceiverURL": "",
+  "githubURLPrefix": ""
+}
+
+Events:  <none>

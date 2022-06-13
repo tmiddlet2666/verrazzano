@@ -1,0 +1,68 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "networking.istio.io/v1beta1",
+            "kind": "VirtualService",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:27:24Z",
+                "generation": 1,
+                "name": "hello-domain-trait-55ddd597c6-rule-0-vs",
+                "namespace": "hello-wls-cf64cdc",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "oam.verrazzano.io/v1alpha1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "IngressTrait",
+                        "name": "hello-domain-trait-55ddd597c6",
+                        "uid": "e3a46f7a-b820-4298-a94d-ac0e51fbc9de"
+                    }
+                ],
+                "resourceVersion": "17825",
+                "uid": "28071542-8b60-43a3-87da-f97b206e590a"
+            },
+            "spec": {
+                "gateways": [
+                    "hello-wls-cf64cdc-hello-appconf-gw"
+                ],
+                "hosts": [
+                    "hello-appconf.hello-wls-cf64cdc.b90.zb91df2.v8o.io"
+                ],
+                "http": [
+                    {
+                        "headers": {
+                            "request": {
+                                "add": {
+                                    "WL-Proxy-SSL": "true"
+                                }
+                            }
+                        },
+                        "match": [
+                            {
+                                "uri": {
+                                    "prefix": "/hello"
+                                }
+                            }
+                        ],
+                        "route": [
+                            {
+                                "destination": {
+                                    "host": "hellodomain-adminserver",
+                                    "port": {
+                                        "number": 7001
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

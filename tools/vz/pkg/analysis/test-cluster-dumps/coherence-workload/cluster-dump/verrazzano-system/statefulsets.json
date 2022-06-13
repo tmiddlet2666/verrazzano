@@ -1,0 +1,259 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "apps/v1",
+            "kind": "StatefulSet",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:14:32Z",
+                "generation": 1,
+                "labels": {
+                    "k8s-app": "verrazzano.io",
+                    "verrazzano-component": "opensearch",
+                    "vmo.v1.verrazzano.io": "system"
+                },
+                "name": "vmi-system-es-master",
+                "namespace": "verrazzano-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "verrazzano.io/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "VerrazzanoMonitoringInstance",
+                        "name": "system",
+                        "uid": "f0619e49-a9aa-49bc-b438-ce20e035948d"
+                    }
+                ],
+                "resourceVersion": "12088",
+                "uid": "c1ab0960-c6d7-44c0-b08f-f837c059e864"
+            },
+            "spec": {
+                "podManagementPolicy": "Parallel",
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "selector": {
+                    "matchLabels": {
+                        "app": "system-es-master",
+                        "node-group": "es-master"
+                    }
+                },
+                "serviceName": "vmi-system-es-master",
+                "template": {
+                    "metadata": {
+                        "annotations": {
+                            "traffic.sidecar.istio.io/excludeInboundPorts": "9300",
+                            "traffic.sidecar.istio.io/excludeOutboundPorts": "9300"
+                        },
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "system-es-master",
+                            "node-group": "es-master",
+                            "opensearch.verrazzano.io/role-data": "true",
+                            "opensearch.verrazzano.io/role-ingest": "true",
+                            "opensearch.verrazzano.io/role-master": "true",
+                            "verrazzano-component": "opensearch"
+                        }
+                    },
+                    "spec": {
+                        "affinity": {
+                            "podAntiAffinity": {
+                                "preferredDuringSchedulingIgnoredDuringExecution": [
+                                    {
+                                        "podAffinityTerm": {
+                                            "labelSelector": {
+                                                "matchLabels": {
+                                                    "app": "system-es-master"
+                                                }
+                                            },
+                                            "topologyKey": "failure-domain.beta.kubernetes.io/zone"
+                                        },
+                                        "weight": 100
+                                    }
+                                ]
+                            }
+                        },
+                        "containers": [
+                            {
+                                "command": [
+                                    "sh",
+                                    "-c",
+                                    "#!/usr/bin/env bash -e\n# Updating elastic search keystore with keys\n# required for the repository-s3 plugin\nif [ \"${OBJECT_STORE_ACCESS_KEY_ID:-}\" ]; then\n    echo \"Updating object store access key...\"\n\techo $OBJECT_STORE_ACCESS_KEY_ID | /usr/share/opensearch/bin/opensearch-keystore add --stdin --force s3.client.default.access_key;\nfi\nif [ \"${OBJECT_STORE_SECRET_KEY_ID:-}\" ]; then\n    echo \"Updating object store secret key...\"\n\techo $OBJECT_STORE_SECRET_KEY_ID | /usr/share/opensearch/bin/opensearch-keystore add --stdin --force s3.client.default.secret_key;\nfi\n/usr/local/bin/docker-entrypoint.sh"
+                                ],
+                                "env": [
+                                    {
+                                        "name": "node.name",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.name"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "cluster.name",
+                                        "value": "system"
+                                    },
+                                    {
+                                        "name": "HTTP_ENABLE",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "logger.org.opensearch",
+                                        "value": "info"
+                                    },
+                                    {
+                                        "name": "OBJECT_STORE_ACCESS_KEY_ID",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "object_store_access_key",
+                                                "name": "verrazzano-backup",
+                                                "optional": true
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "OBJECT_STORE_SECRET_KEY_ID",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "object_store_secret_key",
+                                                "name": "verrazzano-backup",
+                                                "optional": true
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "node.roles",
+                                        "value": "master,data,ingest"
+                                    },
+                                    {
+                                        "name": "discovery.type",
+                                        "value": "single-node"
+                                    },
+                                    {
+                                        "name": "ES_JAVA_OPTS",
+                                        "value": "-Xms732422k -Xmx732422k"
+                                    }
+                                ],
+                                "image": "ghcr.io/verrazzano/opensearch:1.2.3-20220426040255-3456fb02cde",
+                                "imagePullPolicy": "IfNotPresent",
+                                "livenessProbe": {
+                                    "failureThreshold": 5,
+                                    "initialDelaySeconds": 30,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "tcpSocket": {
+                                        "port": 9300
+                                    },
+                                    "timeoutSeconds": 5
+                                },
+                                "name": "es-master",
+                                "ports": [
+                                    {
+                                        "containerPort": 9300,
+                                        "name": "transport",
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9200,
+                                        "name": "http",
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "exec": {
+                                        "command": [
+                                            "sh",
+                                            "-c",
+                                            "#!/usr/bin/env bash -e\n# If the node is starting up wait for the cluster to be ready' )\n# Once it has started only check that the node itself is responding\nSTART_FILE=/tmp/.es_start_file\nhttp () {\n    local path=\"${1}\"\n    curl -v -XGET -s -k  --fail http://127.0.0.1:9200${path}\n}\nif [ -f \"${START_FILE}\" ]; then\n    echo 'Elasticsearch is already running, lets check the node is healthy'\n    http \"\"\nelse\n    echo 'Waiting for elasticsearch cluster to become cluster to be ready'\n    if http \"\" ; then\n        touch ${START_FILE}\n    elsekpo\n\n        echo 'Cluster is not yet ready'\n        exit 1\n\n    fi\n    exit 0\nfi"
+                                        ]
+                                    },
+                                    "failureThreshold": 3,
+                                    "initialDelaySeconds": 90,
+                                    "periodSeconds": 5,
+                                    "successThreshold": 3,
+                                    "timeoutSeconds": 5
+                                },
+                                "resources": {
+                                    "requests": {
+                                        "memory": "1G"
+                                    }
+                                },
+                                "securityContext": {
+                                    "privileged": false,
+                                    "runAsUser": 1000
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/usr/share/opensearch/data",
+                                        "name": "elasticsearch-master"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "initContainers": [
+                            {
+                                "command": [
+                                    "sh",
+                                    "-c",
+                                    "chown -R 1000:1000 /usr/share/opensearch/data; sysctl -w vm.max_map_count=262144"
+                                ],
+                                "image": "ghcr.io/oracle/oraclelinux:7.9",
+                                "imagePullPolicy": "IfNotPresent",
+                                "name": "elasticsearch-init",
+                                "resources": {},
+                                "securityContext": {
+                                    "privileged": true
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/usr/share/opensearch/data",
+                                        "name": "elasticsearch-master"
+                                    }
+                                ]
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {},
+                        "serviceAccount": "verrazzano-monitoring-operator",
+                        "serviceAccountName": "verrazzano-monitoring-operator",
+                        "terminationGracePeriodSeconds": 1,
+                        "volumes": [
+                            {
+                                "emptyDir": {},
+                                "name": "elasticsearch-master"
+                            }
+                        ]
+                    }
+                },
+                "updateStrategy": {
+                    "rollingUpdate": {
+                        "partition": 0
+                    },
+                    "type": "RollingUpdate"
+                }
+            },
+            "status": {
+                "availableReplicas": 1,
+                "collisionCount": 0,
+                "currentReplicas": 1,
+                "currentRevision": "vmi-system-es-master-5589ddc995",
+                "observedGeneration": 1,
+                "readyReplicas": 1,
+                "replicas": 1,
+                "updateRevision": "vmi-system-es-master-5589ddc995",
+                "updatedReplicas": 1
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

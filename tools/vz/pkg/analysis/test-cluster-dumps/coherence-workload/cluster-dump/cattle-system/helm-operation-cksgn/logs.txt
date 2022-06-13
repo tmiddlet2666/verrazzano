@@ -1,0 +1,33 @@
+==== START logs for container helm of pod cattle-system/helm-operation-cksgn ====
+helm upgrade --force-adopt=true --history-max=5 --install=true --namespace=cattle-fleet-system --reset-values=true --timeout=5m0s --version=100.0.3+up0.3.9 --wait=true fleet-crd /home/shell/helm/fleet-crd-100.0.3-up0.3.9.tgz
+checking 12 resources for changes
+Patch CustomResourceDefinition "bundles.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "bundledeployments.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "bundlenamespacemappings.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "clustergroups.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "clusters.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "clusterregistrationtokens.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "gitrepos.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "clusterregistrations.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "gitreporestrictions.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "contents.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "imagescans.fleet.cattle.io" in namespace 
+Patch CustomResourceDefinition "gitjobs.gitjob.cattle.io" in namespace 
+beginning wait for 12 resources with timeout of 5m0s
+Release "fleet-crd" has been upgraded. Happy Helming!
+NAME: fleet-crd
+LAST DEPLOYED: Thu May 26 22:16:44 2022
+NAMESPACE: cattle-fleet-system
+STATUS: deployed
+REVISION: 2
+TEST SUITE: None
+
+---------------------------------------------------------------------
+SUCCESS: helm upgrade --force-adopt=true --history-max=5 --install=true --namespace=cattle-fleet-system --reset-values=true --timeout=5m0s --version=100.0.3+up0.3.9 --wait=true fleet-crd /home/shell/helm/fleet-crd-100.0.3-up0.3.9.tgz
+---------------------------------------------------------------------
+==== END logs for container helm of pod cattle-system/helm-operation-cksgn ====
+==== START logs for container proxy of pod cattle-system/helm-operation-cksgn ====
+W0526 22:16:42.903515       7 proxy.go:162] Request filter disabled, your proxy is vulnerable to XSRF attacks, please be cautious
+Starting to serve on 127.0.0.1:8001
+Terminated
+==== END logs for container proxy of pod cattle-system/helm-operation-cksgn ====

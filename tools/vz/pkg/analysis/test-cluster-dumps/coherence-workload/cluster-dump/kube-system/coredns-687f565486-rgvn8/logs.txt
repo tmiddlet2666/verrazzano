@@ -1,0 +1,62 @@
+==== START logs for container coredns of pod kube-system/coredns-687f565486-rgvn8 ====
+[WARNING] No files matching import glob pattern: custom/*.server
+[INFO] plugin/ready: Still waiting on: "kubernetes"
+.:53
+[WARNING] No files matching import glob pattern: custom/*.server
+[INFO] plugin/reload: Running configuration MD5 = 7b85fbe9b4156cf64b768261d4ea6e3b
+CoreDNS-1.8.4
+linux/amd64, go1.16.7 BoringCrypto, 346f7dc244b
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+[WARNING] No files matching import glob pattern: custom/*.server
+==== END logs for container coredns of pod kube-system/coredns-687f565486-rgvn8 ====

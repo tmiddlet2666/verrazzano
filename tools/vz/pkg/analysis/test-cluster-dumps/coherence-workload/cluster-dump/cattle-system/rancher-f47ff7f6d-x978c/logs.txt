@@ -1,0 +1,1115 @@
+==== START logs for container rancher of pod cattle-system/rancher-f47ff7f6d-x978c ====
+2022/05/26 22:13:05 [INFO] Rancher version v2.6.4-20220504205847-7131173f2 (7131173f2) is starting
+2022/05/26 22:13:05 [INFO] Rancher arguments {ACMEDomains:[] AddLocal:true Embedded:false BindHost: HTTPListenPort:80 HTTPSListenPort:443 K8sMode:auto Debug:false Trace:false NoCACerts:true AuditLogPath:/var/log/auditlog/rancher-api-audit.log AuditLogMaxage:10 AuditLogMaxsize:100 AuditLogMaxbackup:10 AuditLevel:0 Features: ClusterRegistry:}
+2022/05/26 22:13:05 [INFO] Listening on /tmp/log.sock
+2022/05/26 22:13:05 [INFO] Running in clustered mode with ID 10.244.0.143, monitoring endpoint cattle-system/rancher
+2022/05/26 22:13:07 [INFO] Applying CRD features.management.cattle.io
+2022/05/26 22:13:12 [INFO] Applying CRD navlinks.ui.cattle.io
+2022/05/26 22:13:13 [INFO] Applying CRD clusters.management.cattle.io
+2022/05/26 22:13:13 [INFO] Applying CRD apiservices.management.cattle.io
+2022/05/26 22:13:14 [INFO] Applying CRD clusterregistrationtokens.management.cattle.io
+2022/05/26 22:13:14 [INFO] Applying CRD settings.management.cattle.io
+2022/05/26 22:13:15 [INFO] Applying CRD preferences.management.cattle.io
+2022/05/26 22:13:15 [INFO] Applying CRD features.management.cattle.io
+2022/05/26 22:13:16 [INFO] Applying CRD clusterrepos.catalog.cattle.io
+2022/05/26 22:13:17 [INFO] Applying CRD operations.catalog.cattle.io
+2022/05/26 22:13:17 [INFO] Applying CRD apps.catalog.cattle.io
+2022/05/26 22:13:18 [INFO] Applying CRD fleetworkspaces.management.cattle.io
+2022/05/26 22:13:19 [INFO] Applying CRD bundles.fleet.cattle.io
+2022/05/26 22:13:19 [INFO] Applying CRD clusters.fleet.cattle.io
+2022/05/26 22:13:20 [INFO] Applying CRD managedcharts.management.cattle.io
+2022/05/26 22:13:20 [INFO] Applying CRD clusters.provisioning.cattle.io
+2022/05/26 22:13:21 [INFO] Applying CRD clusters.provisioning.cattle.io
+2022/05/26 22:13:21 [INFO] Applying CRD rkeclusters.rke.cattle.io
+2022/05/26 22:13:22 [INFO] Applying CRD rkecontrolplanes.rke.cattle.io
+2022/05/26 22:13:22 [INFO] Applying CRD rkebootstraps.rke.cattle.io
+2022/05/26 22:13:23 [INFO] Applying CRD rkebootstraptemplates.rke.cattle.io
+2022/05/26 22:13:24 [INFO] Applying CRD rkecontrolplanes.rke.cattle.io
+2022/05/26 22:13:24 [INFO] Applying CRD custommachines.rke.cattle.io
+2022/05/26 22:13:24 [INFO] Applying CRD etcdsnapshots.rke.cattle.io
+2022/05/26 22:13:25 [INFO] Applying CRD clusters.cluster.x-k8s.io
+2022/05/26 22:13:26 [INFO] Applying CRD machinedeployments.cluster.x-k8s.io
+2022/05/26 22:13:27 [INFO] Applying CRD machinehealthchecks.cluster.x-k8s.io
+2022/05/26 22:13:28 [INFO] Applying CRD machines.cluster.x-k8s.io
+2022/05/26 22:13:29 [INFO] Applying CRD machinesets.cluster.x-k8s.io
+2022/05/26 22:13:31 [INFO] Waiting for CRD machinesets.cluster.x-k8s.io to become available
+2022/05/26 22:13:32 [INFO] Done waiting for CRD machinesets.cluster.x-k8s.io to become available
+2022/05/26 22:13:33 [INFO] Creating CRD authconfigs.management.cattle.io
+2022/05/26 22:13:33 [INFO] Creating CRD groupmembers.management.cattle.io
+2022/05/26 22:13:33 [INFO] Creating CRD groups.management.cattle.io
+2022/05/26 22:13:33 [INFO] Creating CRD tokens.management.cattle.io
+2022/05/26 22:13:34 [INFO] Creating CRD userattributes.management.cattle.io
+2022/05/26 22:13:34 [INFO] Creating CRD users.management.cattle.io
+2022/05/26 22:13:35 [INFO] Waiting for CRD userattributes.management.cattle.io to become available
+2022/05/26 22:13:36 [INFO] Done waiting for CRD userattributes.management.cattle.io to become available
+2022/05/26 22:13:36 [INFO] Waiting for CRD users.management.cattle.io to become available
+2022/05/26 22:13:36 [INFO] Done waiting for CRD users.management.cattle.io to become available
+2022/05/26 22:13:36 [INFO] Waiting for CRD tokens.management.cattle.io to become available
+2022/05/26 22:13:37 [INFO] Done waiting for CRD tokens.management.cattle.io to become available
+2022/05/26 22:13:40 [INFO] Creating CRD clusterroletemplatebindings.management.cattle.io
+2022/05/26 22:13:40 [INFO] Creating CRD dynamicschemas.management.cattle.io
+2022/05/26 22:13:40 [INFO] Creating CRD etcdbackups.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD catalogs.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD apps.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD globalrolebindings.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD globalroles.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD apprevisions.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD catalogtemplates.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD kontainerdrivers.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD pipelineexecutions.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD catalogtemplateversions.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD pipelinesettings.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clusteralerts.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD nodedrivers.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD nodepools.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clusteralertgroups.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD pipelines.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD nodetemplates.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clustercatalogs.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD sourcecodecredentials.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD nodes.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD podsecuritypolicytemplateprojectbindings.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clusterloggings.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD sourcecodeproviderconfigs.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clusteralertrules.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD podsecuritypolicytemplates.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD sourcecoderepositories.project.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD clustermonitorgraphs.management.cattle.io
+2022/05/26 22:13:41 [INFO] Creating CRD projectnetworkpolicies.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD clusterscans.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD projectroletemplatebindings.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD projects.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD composeconfigs.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD multiclusterapps.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD rkek8ssystemimages.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD rkek8sserviceoptions.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD multiclusterapprevisions.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD monitormetrics.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD rkeaddons.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD roletemplates.management.cattle.io
+2022/05/26 22:13:42 [INFO] Creating CRD notifiers.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectalerts.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD samltokens.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectalertgroups.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD clustertemplates.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectcatalogs.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD clustertemplaterevisions.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectloggings.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectalertrules.management.cattle.io
+2022/05/26 22:13:43 [INFO] Creating CRD projectmonitorgraphs.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD cisconfigs.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD cisbenchmarkversions.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD templates.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD templateversions.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD templatecontents.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD globaldnses.management.cattle.io
+2022/05/26 22:13:44 [INFO] Creating CRD globaldnsproviders.management.cattle.io
+E0526 22:14:06.950560      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=NodeTemplate controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Catalog controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=DynamicSchema controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Project controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=PodSecurityPolicyTemplateProjectBinding controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ProjectRoleTemplateBinding controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=MultiClusterApp controller
+2022/05/26 22:14:06 [INFO] Starting apiregistration.k8s.io/v1, Kind=APIService controller
+2022/05/26 22:14:06 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRole controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ProjectCatalog controller
+2022/05/26 22:14:06 [INFO] Starting rke.cattle.io/v1, Kind=RKEBootstrap controller
+2022/05/26 22:14:06 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ClusterTemplateRevision controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Group controller
+2022/05/26 22:14:06 [INFO] Starting /v1, Kind=Endpoints controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=GlobalRoleBinding controller
+2022/05/26 22:14:06 [INFO] Starting project.cattle.io/v3, Kind=Pipeline controller
+2022/05/26 22:14:06 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=Role controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=NodeDriver controller
+2022/05/26 22:14:06 [INFO] Starting catalog.cattle.io/v1, Kind=ClusterRepo controller
+2022/05/26 22:14:06 [INFO] Starting API controllers
+2022/05/26 22:14:06 [INFO] Starting cluster.x-k8s.io/v1beta1, Kind=Machine controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Feature controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=CatalogTemplate controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Setting controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=RkeAddon controller
+2022/05/26 22:14:06 [INFO] Starting apiextensions.k8s.io/v1, Kind=CustomResourceDefinition controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=User controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Cluster controller
+I0526 22:14:06.961300      10 leaderelection.go:248] attempting to acquire leader lease kube-system/cattle-controllers...
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=CatalogTemplateVersion controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=RkeK8sSystemImage controller
+2022/05/26 22:14:06 [INFO] Starting /v1, Kind=ConfigMap controller
+2022/05/26 22:14:06 [INFO] Starting project.cattle.io/v3, Kind=SourceCodeRepository controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Token controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=GlobalDns controller
+2022/05/26 22:14:06 [INFO] Starting /v1, Kind=Secret controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=KontainerDriver controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=RkeK8sServiceOption controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=CisBenchmarkVersion controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=UserAttribute controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=CisConfig controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=MultiClusterAppRevision controller
+2022/05/26 22:14:06 [INFO] Starting project.cattle.io/v3, Kind=App controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=NodePool controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Node controller
+2022/05/26 22:14:06 [INFO] Starting project.cattle.io/v3, Kind=PipelineExecution controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ClusterRoleTemplateBinding controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=AuthConfig controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ClusterRegistrationToken controller
+2022/05/26 22:14:06 [INFO] Starting /v1, Kind=Namespace controller
+2022/05/26 22:14:06 [INFO] Starting provisioning.cattle.io/v1, Kind=Cluster controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=RoleTemplate controller
+2022/05/26 22:14:06 [INFO] Starting /v1, Kind=ServiceAccount controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ClusterTemplate controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=GroupMember controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=APIService controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=Preference controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=PodSecurityPolicyTemplate controller
+2022/05/26 22:14:06 [INFO] Starting project.cattle.io/v3, Kind=SourceCodeCredential controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ClusterCatalog controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=GlobalRole controller
+2022/05/26 22:14:06 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=RoleBinding controller
+2022/05/26 22:14:06 [INFO] Starting management.cattle.io/v3, Kind=ProjectLogging controller
+I0526 22:14:06.991920      10 leaderelection.go:258] successfully acquired lease kube-system/cattle-controllers
+2022/05/26 22:14:07 [INFO] Reconciling GlobalRoles
+2022/05/26 22:14:07 [INFO] Creating kontainerdrivers-manage
+2022/05/26 22:14:07 [INFO] Creating catalogs-use
+2022/05/26 22:14:07 [INFO] Creating users-manage
+2022/05/26 22:14:07 [INFO] Creating settings-manage
+2022/05/26 22:14:07 [INFO] Creating restricted-admin
+2022/05/26 22:14:07 [INFO] Creating user
+2022/05/26 22:14:07 [INFO] Creating clusters-create
+2022/05/26 22:14:07 [INFO] Creating catalogs-manage
+2022/05/26 22:14:07 [INFO] Creating podsecuritypolicytemplates-manage
+2022/05/26 22:14:07 [INFO] Creating nodedrivers-manage
+2022/05/26 22:14:07 [INFO] Creating view-rancher-metrics
+2022/05/26 22:14:07 [INFO] Creating admin
+2022/05/26 22:14:07 [INFO] Creating roles-manage
+2022/05/26 22:14:07 [INFO] Creating authn-manage
+2022/05/26 22:14:07 [INFO] Creating features-manage
+2022/05/26 22:14:07 [INFO] 
+2022/05/26 22:14:07 [INFO] -----------------------------------------
+2022/05/26 22:14:07 [INFO] Welcome to Rancher
+2022/05/26 22:14:07 [INFO] A bootstrap password has been generated for your admin user.
+2022/05/26 22:14:07 [INFO] 
+2022/05/26 22:14:07 [INFO] Bootstrap Password: lbwgz8qdnfzgnh9brw9p6jl6k2zxctp2wnb5pvb4wtl6jlmp8k6bcn
+2022/05/26 22:14:07 [INFO] 
+2022/05/26 22:14:07 [INFO] Use https://10.244.0.143/dashboard/?setup=lbwgz8qdnfzgnh9brw9p6jl6k2zxctp2wnb5pvb4wtl6jlmp8k6bcn to complete setup in the UI
+2022/05/26 22:14:07 [INFO] -----------------------------------------
+2022/05/26 22:14:07 [INFO] 
+2022/05/26 22:14:07 [INFO] Creating clustertemplates-create
+2022/05/26 22:14:07 [INFO] Creating clustertemplaterevisions-create
+2022/05/26 22:14:07 [INFO] Created default admin user and binding
+2022/05/26 22:14:07 [INFO] Creating user-base
+2022/05/26 22:14:07 [INFO] Reconciling RoleTemplates
+E0526 22:14:07.292688      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:07 [INFO] Creating cluster-member
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=Cluster controller
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=UserAttribute controller
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=User controller
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=GroupMember controller
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=Token controller
+2022/05/26 22:14:07 [INFO] Starting management.cattle.io/v3, Kind=Group controller
+2022/05/26 22:14:07 [INFO] Starting /v1, Kind=Secret controller
+2022/05/26 22:14:07 [INFO] Creating configmaps-manage
+2022/05/26 22:14:07 [INFO] Waiting for initial data to be populated
+2022/05/26 22:14:07 [INFO] Creating serviceaccounts-view
+2022/05/26 22:14:07 [INFO] Creating projectroletemplatebindings-manage
+2022/05/26 22:14:07 [INFO] Creating projectroletemplatebindings-view
+2022/05/26 22:14:07 [INFO] Creating projectcatalogs-manage
+2022/05/26 22:14:07 [INFO] Creating cluster-admin
+2022/05/26 22:14:07 [INFO] Creating edit
+2022/05/26 22:14:07 [INFO] Creating projectcatalogs-view
+2022/05/26 22:14:07 [INFO] Creating secrets-manage
+2022/05/26 22:14:07 [INFO] Creating nodes-manage
+2022/05/26 22:14:07 [INFO] Creating workloads-view
+2022/05/26 22:14:07 [INFO] Creating secrets-view
+2022/05/26 22:14:07 [INFO] Creating workloads-manage
+2022/05/26 22:14:07 [INFO] Creating services-view
+2022/05/26 22:14:07 [INFO] Creating storage-manage
+2022/05/26 22:14:07 [INFO] Creating ingress-manage
+2022/05/26 22:14:07 [INFO] Steve auth startup complete
+2022/05/26 22:14:07 [INFO] Creating services-manage
+2022/05/26 22:14:07 [INFO] Creating cluster-owner
+2022/05/26 22:14:07 [INFO] Creating projects-create
+2022/05/26 22:14:07 [INFO] Creating navlinks-view
+2022/05/26 22:14:07 [INFO] Creating project-member
+2022/05/26 22:14:07 [INFO] Creating persistentvolumeclaims-manage
+2022/05/26 22:14:07 [INFO] Creating project-owner
+2022/05/26 22:14:07 [INFO] Creating read-only
+2022/05/26 22:14:07 [INFO] Creating create-ns
+2022/05/26 22:14:07 [INFO] Creating ingress-view
+2022/05/26 22:14:07 [INFO] Creating monitoring-ui-view
+2022/05/26 22:14:07 [INFO] Creating admin
+2022/05/26 22:14:07 [INFO] Creating clustercatalogs-manage
+2022/05/26 22:14:07 [INFO] Registering namespaceHandler for adding labels 
+2022/05/26 22:14:07 [INFO] Creating clusterroletemplatebindings-manage
+2022/05/26 22:14:07 [INFO] Creating clusterroletemplatebindings-view
+2022/05/26 22:14:07 [INFO] Creating backups-manage
+2022/05/26 22:14:07 [INFO] Creating navlinks-manage
+2022/05/26 22:14:07 [INFO] Creating persistentvolumeclaims-view
+2022/05/26 22:14:07 [INFO] Creating project-monitoring-readonly
+2022/05/26 22:14:08 [INFO] Creating projects-view
+2022/05/26 22:14:08 [INFO] Creating nodes-view
+2022/05/26 22:14:08 [INFO] Creating configmaps-view
+2022/05/26 22:14:08 [INFO] Creating serviceaccounts-manage
+2022/05/26 22:14:08 [INFO] Creating view
+2022/05/26 22:14:08 [INFO] Creating clustercatalogs-view
+2022/05/26 22:14:09 [INFO] Waiting for initial data to be populated
+2022/05/26 22:14:11 [INFO] Waiting for initial data to be populated
+2022/05/26 22:14:11 [INFO] adding kontainer driver rancherKubernetesEngine
+2022/05/26 22:14:11 [INFO] adding kontainer driver googleKubernetesEngine
+2022/05/26 22:14:11 [INFO] Detected v2.6.0 upgrade, forcing logout for all web users
+2022/05/26 22:14:11 [INFO] Starting fleet.cattle.io/v1alpha1, Kind=Cluster controller
+2022/05/26 22:14:11 [INFO] Starting monitoring.coreos.com/v1, Kind=ServiceMonitor controller
+2022/05/26 22:14:11 [INFO] Starting cluster.x-k8s.io/v1beta1, Kind=MachineDeployment controller
+2022/05/26 22:14:11 [INFO] Starting batch/v1, Kind=Job controller
+2022/05/26 22:14:11 [INFO] Starting apps/v1, Kind=ReplicaSet controller
+2022/05/26 22:14:11 [INFO] Starting admissionregistration.k8s.io/v1, Kind=ValidatingWebhookConfiguration controller
+2022/05/26 22:14:11 [INFO] Starting admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration controller
+2022/05/26 22:14:11 [INFO] Starting catalog.cattle.io/v1, Kind=Operation controller
+2022/05/26 22:14:11 [INFO] Starting fleet.cattle.io/v1alpha1, Kind=Bundle controller
+2022/05/26 22:14:11 [INFO] Starting monitoring.coreos.com/v1, Kind=Prometheus controller
+2022/05/26 22:14:11 [INFO] Starting rke.cattle.io/v1, Kind=RKEBootstrapTemplate controller
+2022/05/26 22:14:11 [INFO] Starting catalog.cattle.io/v1, Kind=App controller
+2022/05/26 22:14:11 [INFO] Starting rke.cattle.io/v1, Kind=CustomMachine controller
+2022/05/26 22:14:11 [INFO] Starting /v1, Kind=ReplicationController controller
+2022/05/26 22:14:11 [INFO] Starting rke.cattle.io/v1, Kind=RKEControlPlane controller
+2022/05/26 22:14:11 [INFO] Starting apps/v1, Kind=StatefulSet controller
+2022/05/26 22:14:11 [INFO] Updating workload [keycloak/keycloak] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"keycloak:keycloak-http","ingressName":"keycloak:keycloak","hostname":"keycloak.b90.zb91df2.v8o.io","path":"/","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] adding kontainer driver azureKubernetesService
+2022/05/26 22:14:11 [INFO] Starting cluster.x-k8s.io/v1beta1, Kind=Cluster controller
+2022/05/26 22:14:11 [INFO] Starting apps/v1, Kind=Deployment controller
+2022/05/26 22:14:11 [INFO] Starting /v1, Kind=Node controller
+2022/05/26 22:14:11 [INFO] Updating workload [cattle-system/rancher] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"cattle-system:rancher","ingressName":"cattle-system:rancher","hostname":"rancher.b90.zb91df2.v8o.io","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Starting networking.k8s.io/v1, Kind=Ingress controller
+2022/05/26 22:14:11 [INFO] Starting management.cattle.io/v3, Kind=FleetWorkspace controller
+2022/05/26 22:14:11 [INFO] Starting apps/v1, Kind=DaemonSet controller
+2022/05/26 22:14:11 [INFO] Updating workload [monitoring/node-exporter] with public endpoints [[{"nodeName":":10.0.116.227","addresses":["10.0.116.227"],"port":9100,"protocol":"TCP","podName":"monitoring:node-exporter-bhzwc","allNodes":false},{"nodeName":":10.0.94.45","addresses":["10.0.94.45"],"port":9100,"protocol":"TCP","podName":"monitoring:node-exporter-zq4s4","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Updating workload [ingress-nginx/ingress-controller-ingress-nginx-controller] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"TCP","serviceName":"ingress-nginx:ingress-controller-ingress-nginx-controller","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Starting rke.cattle.io/v1, Kind=RKECluster controller
+2022/05/26 22:14:11 [INFO] Starting /v1, Kind=Pod controller
+2022/05/26 22:14:11 [INFO] Updating workload [verrazzano-system/verrazzano-authproxy] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:verrazzano-ingress","hostname":"verrazzano.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kiali","hostname":"kiali.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Updating ingress [verrazzano-system:verrazzano-ingress] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:verrazzano-ingress","hostname":"verrazzano.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Updating workload [verrazzano-monitoring/prometheus-node-exporter] with public endpoints [[{"nodeName":":10.0.116.227","addresses":["10.0.116.227"],"port":9400,"protocol":"TCP","podName":"verrazzano-monitoring:prometheus-node-exporter-jlk7z","allNodes":false},{"nodeName":":10.0.94.45","addresses":["10.0.94.45"],"port":9400,"protocol":"TCP","podName":"verrazzano-monitoring:prometheus-node-exporter-jx24q","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Updating ingress [verrazzano-system:vmi-system-kiali] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kiali","hostname":"kiali.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Starting batch/v1beta1, Kind=CronJob controller
+2022/05/26 22:14:11 [INFO] Updating ingress [keycloak:keycloak] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"keycloak:keycloak-http","ingressName":"keycloak:keycloak","hostname":"keycloak.b90.zb91df2.v8o.io","path":"/","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Starting management.cattle.io/v3, Kind=ManagedChart controller
+2022/05/26 22:14:11 [INFO] Starting rke.cattle.io/v1, Kind=ETCDSnapshot controller
+2022/05/26 22:14:11 [INFO] Starting /v1, Kind=Service controller
+2022/05/26 22:14:11 [INFO] Updating ingress [cattle-system:rancher] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"cattle-system:rancher","ingressName":"cattle-system:rancher","hostname":"rancher.b90.zb91df2.v8o.io","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] Updating service [ingress-controller-ingress-nginx-controller] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"TCP","serviceName":"ingress-nginx:ingress-controller-ingress-nginx-controller","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] adding kontainer driver amazonElasticContainerService
+2022/05/26 22:14:11 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:11 [ERROR] Failed to find system chart fleet-crd will try again in 5 seconds: configmaps "" not found
+2022/05/26 22:14:11 [INFO] Updating workload [verrazzano-system/verrazzano-authproxy] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:verrazzano-ingress","hostname":"verrazzano.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kiali","hostname":"kiali.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:14:11 [INFO] adding kontainer driver baiducloudcontainerengine
+2022/05/26 22:14:11 [INFO] adding kontainer driver aliyunkubernetescontainerservice
+2022/05/26 22:14:11 [INFO] adding kontainer driver tencentkubernetesengine
+2022/05/26 22:14:12 [INFO] adding kontainer driver huaweicontainercloudengine
+2022/05/26 22:14:12 [INFO] adding kontainer driver oraclecontainerengine
+2022/05/26 22:14:12 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:12 [INFO] adding kontainer driver linodekubernetesengine
+2022/05/26 22:14:12 [INFO] adding kontainer driver opentelekomcloudcontainerengine
+2022/05/26 22:14:12 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:12 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:12 [INFO] Created cattle-global-data namespace
+2022/05/26 22:14:12 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:12 [INFO] Created cattle-global-nt namespace
+2022/05/26 22:14:12 [INFO] Creating node driver pinganyunecs
+2022/05/26 22:14:12 [INFO] Creating node driver aliyunecs
+2022/05/26 22:14:12 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:12 [INFO] Creating node driver amazonec2
+2022/05/26 22:14:12 [INFO] Creating node driver azure
+2022/05/26 22:14:12 [INFO] Creating node driver cloudca
+2022/05/26 22:14:12 [INFO] Creating node driver cloudscale
+2022/05/26 22:14:12 [INFO] Creating node driver digitalocean
+2022/05/26 22:14:13 [INFO] Creating node driver exoscale
+2022/05/26 22:14:13 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:13 [INFO] Creating node driver google
+2022/05/26 22:14:13 [INFO] Creating node driver harvester
+2022/05/26 22:14:13 [INFO] Creating node driver linode
+2022/05/26 22:14:13 [INFO] Creating node driver oci
+2022/05/26 22:14:13 [INFO] Creating node driver openstack
+2022/05/26 22:14:13 [INFO] Creating node driver otc
+2022/05/26 22:14:13 [INFO] Creating node driver packet
+2022/05/26 22:14:13 [INFO] Creating node driver pnap
+2022/05/26 22:14:13 [INFO] Creating node driver rackspace
+2022/05/26 22:14:13 [INFO] Creating node driver softlayer
+2022/05/26 22:14:13 [INFO] Creating node driver nutanix
+2022/05/26 22:14:13 [INFO] Creating node driver vmwarevsphere
+2022/05/26 22:14:13 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:13 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:13 [INFO] Starting catalog controller
+2022/05/26 22:14:13 [INFO] Starting project-level catalog controller
+2022/05/26 22:14:13 [INFO] Starting cluster-level catalog controller
+2022/05/26 22:14:13 [INFO] Listening on :443
+2022/05/26 22:14:13 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:14:13 +0000 UTC
+2022/05/26 22:14:13 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:14:13 +0000 UTC
+2022/05/26 22:14:13 [INFO] Listening on :80
+2022/05/26 22:14:13 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:13 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:14:13 +0000 UTC
+2022/05/26 22:14:13 [INFO] Creating new TLS secret for serving-cert (count: 4): map[listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=45DAA03D08156322DCCB7781189A743B1CF461E2]
+2022/05/26 22:14:14 [INFO] Active TLS secret serving-cert (ver=7386) (count 4): map[listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=45DAA03D08156322DCCB7781189A743B1CF461E2]
+2022/05/26 22:14:14 [ERROR] error syncing 'server-url': handler apiservice-settings: secrets "tls-rancher-internal-ca" not found, requeuing
+2022/05/26 22:14:14 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:14 [INFO] Listening on :444
+2022/05/26 22:14:14 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:14 +0000 UTC notAfter=2023-05-26 22:14:14 +0000 UTC
+2022/05/26 22:14:14 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:14 +0000 UTC notAfter=2023-05-26 22:14:14 +0000 UTC
+2022/05/26 22:14:14 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:14 +0000 UTC notAfter=2023-05-26 22:14:14 +0000 UTC
+2022/05/26 22:14:14 [INFO] Creating new TLS secret for tls-rancher-internal (count: 1): map[listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=41236AE28AFB29B58BCFBB7D67A6253FF39DFA52]
+2022/05/26 22:14:14 [INFO] Active TLS secret tls-rancher-internal (ver=7394) (count 1): map[listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=41236AE28AFB29B58BCFBB7D67A6253FF39DFA52]
+2022/05/26 22:14:14 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:14 [ERROR] Failed to handling tunnel request from remote address 10.244.0.142:39782: response 400: cluster not found
+2022/05/26 22:14:15 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+E0526 22:14:15.169661      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:15 [INFO] Starting /v1, Kind=Secret controller
+2022/05/26 22:14:15 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:14:15 +0000 UTC
+2022/05/26 22:14:15 [INFO] Updating TLS secret for serving-cert (count: 5): map[listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=28CDCE93DB2B0F6F3FE6CD73947138B60BB0123E]
+2022/05/26 22:14:15 [INFO] Active TLS secret tls-rancher-internal (ver=7397) (count 1): map[listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=D671101B84CFE7051C2FEADD82A7BE8CF2BE0FD7]
+2022/05/26 22:14:15 [INFO] Active TLS secret serving-cert (ver=7428) (count 5): map[listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=28CDCE93DB2B0F6F3FE6CD73947138B60BB0123E]
+2022/05/26 22:14:15 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:15 [ERROR] error syncing 'fleet-local/local': handler cluster-create: server url is missing, can't generate kubeconfig for fleet import cluster, requeuing
+2022/05/26 22:14:15 [ERROR] error parsing azure-group-cache-size, skipping update strconv.Atoi: parsing "": invalid syntax
+2022/05/26 22:14:15 [INFO] Refreshing driverMetadata in 1440 minutes
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=Notifier controller
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=ClusterAlertGroup controller
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=GlobalDnsProvider controller
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=ClusterScan controller
+2022/05/26 22:14:15 [INFO] getReleaseConfig: reloading config for k3s
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=ClusterAlertRule controller
+2022/05/26 22:14:15 [INFO] getReleaseConfig: reloading config for rke2
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=EtcdBackup controller
+2022/05/26 22:14:15 [INFO] Starting management.cattle.io/v3, Kind=ComposeConfig controller
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-clustertemplaterevisions-create for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-podsecuritypolicytemplates-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-view-rancher-metrics for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-features-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-user-base for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-clustertemplates-create for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-roles-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-users-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-catalogs-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-kontainerdrivers-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-settings-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-nodedrivers-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-catalogs-use for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-clusters-create for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-authn-manage for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding globalrolebinding-n6tdq
+2022/05/26 22:14:15 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding globalrolebinding-n6tdq for user user-hlpms with role cattle-globalrole-admin
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-admin for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-user for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] [mgmt-auth-gr-controller] Creating clusterRole cattle-globalrole-restricted-admin for corresponding GlobalRole
+2022/05/26 22:14:15 [INFO] create kontainerdriver amazonelasticcontainerservice
+2022/05/26 22:14:15 [INFO] create kontainerdriver rancherkubernetesengine
+2022/05/26 22:14:15 [INFO] create kontainerdriver azurekubernetesservice
+2022/05/26 22:14:15 [INFO] create kontainerdriver googlekubernetesengine
+2022/05/26 22:14:15 [INFO] Updating global catalog system-library
+2022/05/26 22:14:15 [INFO] create kontainerdriver baiducloudcontainerengine
+2022/05/26 22:14:15 [INFO] create kontainerdriver aliyunkubernetescontainerservice
+2022/05/26 22:14:15 [INFO] create kontainerdriver tencentkubernetesengine
+2022/05/26 22:14:15 [INFO] create kontainerdriver linodekubernetesengine
+2022/05/26 22:14:15 [INFO] create kontainerdriver oraclecontainerengine
+2022/05/26 22:14:16 [INFO] driverMetadata: refreshing data from upstream https://releases.rancher.com/kontainer-driver-metadata/release-v2.6/data.json
+2022/05/26 22:14:16 [INFO] Retrieve data.json from local path /var/lib/rancher-data/driver-metadata/data.json
+2022/05/26 22:14:16 [INFO] create kontainerdriver opentelekomcloudcontainerengine
+2022/05/26 22:14:16 [INFO] create kontainerdriver huaweicontainercloudengine
+2022/05/26 22:14:16 [INFO] Rancher startup complete
+2022/05/26 22:14:16 [INFO] checking configmap cattle-system/admincreated to determine if orphan bindings cleanup needs to run
+2022/05/26 22:14:16 [INFO] checking configmap cattle-system/admincreated to determine if duplicate bindings cleanup needs to run
+2022/05/26 22:14:16 [ERROR] error syncing 'globalrolebinding-n6tdq': handler mgmt-auth-grb-controller: roles.rbac.authorization.k8s.io "cattle-global-data/admin-global-catalog" not found, requeuing
+2022/05/26 22:14:16 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:16 [INFO] create kontainerdriver azurekubernetesservice
+2022/05/26 22:14:16 [INFO] create kontainerdriver huaweicontainercloudengine
+2022/05/26 22:14:16 [INFO] bindings cleanup needed, waiting 3 minutes before starting
+2022/05/26 22:14:16 [INFO] [clean-orphan-bindings] cleaning up orphaned bindings
+2022/05/26 22:14:16 [INFO] [clean-orphan-bindings] checking for orphaned rolebindings
+2022/05/26 22:14:16 [INFO] update kontainerdriver googlekubernetesengine
+2022/05/26 22:14:16 [INFO] create kontainerdriver linodekubernetesengine
+2022/05/26 22:14:16 [INFO] create kontainerdriver rancherkubernetesengine
+2022/05/26 22:14:16 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=Machine
+2022/05/26 22:14:16 [INFO] create kontainerdriver oraclecontainerengine
+2022/05/26 22:14:16 [ERROR] error syncing 'globalrolebinding-n6tdq': handler mgmt-auth-grb-controller: roles.rbac.authorization.k8s.io "cattle-global-data/admin-global-catalog" not found, requeuing
+2022/05/26 22:14:16 [INFO] create kontainerdriver tencentkubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver amazonelasticcontainerservice
+2022/05/26 22:14:16 [INFO] update kontainerdriver baiducloudcontainerengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver rancherkubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver oraclecontainerengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver tencentkubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver linodekubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver rancherkubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver oraclecontainerengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver tencentkubernetesengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver linodekubernetesengine
+2022/05/26 22:14:16 [INFO] Starting cluster.x-k8s.io/v1alpha3, Kind=Machine controller
+2022/05/26 22:14:16 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=MachineDeployment
+2022/05/26 22:14:16 [INFO] update kontainerdriver azurekubernetesservice
+2022/05/26 22:14:16 [INFO] update kontainerdriver huaweicontainercloudengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver huaweicontainercloudengine
+2022/05/26 22:14:16 [INFO] create kontainerdriver opentelekomcloudcontainerengine
+2022/05/26 22:14:16 [INFO] update kontainerdriver aliyunkubernetescontainerservice
+2022/05/26 22:14:16 [ERROR] Failed to find system chart fleet-crd will try again in 5 seconds: configmaps "" not found
+2022/05/26 22:14:16 [INFO] Loaded configuration from &{} in [0x6f36500]
+2022/05/26 22:14:16 [INFO] Loaded configuration from &{} in [0x6f36500]
+2022/05/26 22:14:16 [INFO] update kontainerdriver opentelekomcloudcontainerengine
+2022/05/26 22:14:16 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:16 [INFO] update kontainerdriver opentelekomcloudcontainerengine
+2022/05/26 22:14:16 [INFO] [mgmt-auth-crtb-controller] Creating role/clusterRole local-clusterowner
+2022/05/26 22:14:16 [INFO] [CleanupOrphanBindingsDone] successfully cleaned up orphan bindings
+2022/05/26 22:14:16 [INFO] checking configmap cattle-system/admincreated to determine if orphan bindings cleanup needs to run
+2022/05/26 22:14:16 [INFO] Starting cluster.x-k8s.io/v1alpha3, Kind=MachineDeployment controller
+2022/05/26 22:14:16 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=Cluster
+2022/05/26 22:14:16 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=MachineHealthCheck
+2022/05/26 22:14:16 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=MachineSet
+2022/05/26 22:14:16 [ERROR] failed to sync cache for cluster.x-k8s.io/v1alpha3, Kind=Cluster
+2022/05/26 22:14:16 [ERROR] failed to sync cache for cluster.x-k8s.io/v1alpha3, Kind=MachineHealthCheck
+2022/05/26 22:14:16 [ERROR] failed to sync cache for cluster.x-k8s.io/v1alpha3, Kind=MachineSet
+2022/05/26 22:14:16 [INFO] Starting provisioning.cattle.io/v1, Kind=Cluster controller
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=ETCDSnapshot controller
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=RKEBootstrapTemplate controller
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=CustomMachine controller
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=RKECluster controller
+2022/05/26 22:14:16 [ERROR] failed to start controller for cluster.x-k8s.io/v1alpha3, Kind=Cluster: failed to wait for caches to sync
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=RKEBootstrap controller
+2022/05/26 22:14:16 [INFO] Starting rke.cattle.io/v1, Kind=RKEControlPlane controller
+2022/05/26 22:14:16 [ERROR] failed to start controller for cluster.x-k8s.io/v1alpha3, Kind=MachineHealthCheck: failed to wait for caches to sync
+2022/05/26 22:14:16 [ERROR] failed to start controller for cluster.x-k8s.io/v1alpha3, Kind=MachineSet: failed to wait for caches to sync
+E0526 22:14:16.893029      10 gvks.go:69] failed to sync schemas: failed to sync cache for cluster.x-k8s.io/v1alpha3, Kind=Cluster
+2022/05/26 22:14:16 [INFO] [clean-catalog-orphan-bindings] cleaning up orphaned catalog bindings
+2022/05/26 22:14:16 [INFO] [mgmt-auth-crtb-controller] Creating clusterRoleBinding for membership in cluster local for subject u-mo773yttt4
+2022/05/26 22:14:16 [INFO] [clean-catalog-orphan-bindings] Processing 1 rolebindings
+2022/05/26 22:14:16 [INFO] [clean-catalog-orphan-bindings] Deleting orphaned role global-catalog
+2022/05/26 22:14:16 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:16 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace local
+2022/05/26 22:14:17 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=Cluster
+2022/05/26 22:14:17 [WARNING] [clean-catalog-orphan-bindings] Error when deleting role global-catalog, roles.rbac.authorization.k8s.io "global-catalog" not found
+2022/05/26 22:14:17 [WARNING] [CleanupOrphanCatalogBindingsDone] error during orphan binding cleanup: roles.rbac.authorization.k8s.io "global-catalog" not found
+2022/05/26 22:14:17 [ERROR] failed to cleanup orphan catalog bindings
+2022/05/26 22:14:17 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-mo773yttt4 with role cluster-owner in namespace local
+2022/05/26 22:14:17 [INFO] Starting cluster.x-k8s.io/v1alpha3, Kind=Cluster controller
+2022/05/26 22:14:17 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=MachineHealthCheck
+2022/05/26 22:14:17 [ERROR] error syncing 'fleet-local/local': handler workspace-backport-cluster: fleetworkspaces.management.cattle.io "fleet-local" not found, requeuing
+2022/05/26 22:14:17 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:17 [INFO] [mgmt-cluster-rbac-delete] Creating Default project for cluster local
+2022/05/26 22:14:17 [INFO] [mgmt-project-rbac-create] Creating namespace p-chcpk
+2022/05/26 22:14:17 [INFO] [mgmt-cluster-rbac-delete] Creating System project for cluster local
+2022/05/26 22:14:17 [INFO] Starting cluster.x-k8s.io/v1alpha3, Kind=MachineHealthCheck controller
+2022/05/26 22:14:17 [INFO] Watching metadata for cluster.x-k8s.io/v1alpha3, Kind=MachineSet
+2022/05/26 22:14:17 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2022/05/26 22:14:17 [INFO] [mgmt-project-rbac-create] Creating namespace p-gc8dh
+2022/05/26 22:14:17 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace p-chcpk
+2022/05/26 22:14:17 [WARNING] Project p-chcpk has no creatorId annotation. Cannot add creator as owner
+2022/05/26 22:14:17 [INFO] [mgmt-project-rbac-create] Updating project p-chcpk
+2022/05/26 22:14:17 [WARNING] Project p-gc8dh has no creatorId annotation. Cannot add creator as owner
+2022/05/26 22:14:17 [INFO] [mgmt-project-rbac-create] Updating project p-gc8dh
+2022/05/26 22:14:17 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-mo773yttt4 with role cluster-owner in namespace p-chcpk
+2022/05/26 22:14:17 [INFO] Starting cluster.x-k8s.io/v1alpha3, Kind=MachineSet controller
+2022/05/26 22:14:17 [INFO] [mgmt-auth-crtb-controller] Creating role cluster-owner in namespace p-gc8dh
+2022/05/26 22:14:17 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:17 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-mo773yttt4 with role cluster-owner in namespace p-gc8dh
+2022/05/26 22:14:17 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:18 [INFO] uploading vmwarevsphereConfig to nodeconfig schema
+2022/05/26 22:14:18 [INFO] uploading vmwarevsphereConfig to nodetemplateconfig schema
+2022/05/26 22:14:18 [INFO] uploading linodeConfig to nodeconfig schema
+2022/05/26 22:14:18 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2022/05/26 22:14:18 [INFO] uploading linodeConfig to nodetemplateconfig schema
+2022/05/26 22:14:18 [INFO] uploading azureConfig to nodeconfig schema
+2022/05/26 22:14:18 [WARNING] Cluster local has no creatorId annotation. Cannot add creator as owner
+2022/05/26 22:14:18 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+2022/05/26 22:14:18 [INFO] uploading azureConfig to nodetemplateconfig schema
+2022/05/26 22:14:18 [INFO] uploading amazonec2Config to nodeconfig schema
+2022/05/26 22:14:18 [INFO] Adding peer wss://10.244.0.142/v3/connect, 10.244.0.142
+2022/05/26 22:14:18 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:18 [INFO] uploading amazonec2Config to nodetemplateconfig schema
+2022/05/26 22:14:19 [INFO] uploading harvesterConfig to nodeconfig schema
+2022/05/26 22:14:19 [INFO] uploading harvesterConfig to nodetemplateconfig schema
+2022/05/26 22:14:19 [INFO] uploading digitaloceanConfig to nodeconfig schema
+2022/05/26 22:14:19 [INFO] uploading digitaloceanConfig to nodetemplateconfig schema
+2022/05/26 22:14:19 [INFO] uploading vmwarevspherecredentialConfig to credentialconfig schema
+E0526 22:14:19.413470      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:19 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=AzureConfig
+2022/05/26 22:14:19 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=LinodeConfig
+2022/05/26 22:14:19 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig
+2022/05/26 22:14:19 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate
+2022/05/26 22:14:19 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine
+2022/05/26 22:14:19 [INFO] uploading linodecredentialConfig to credentialconfig schema
+2022/05/26 22:14:19 [INFO] uploading azurecredentialConfig to credentialconfig schema
+2022/05/26 22:14:19 [ERROR] failed to sync cache for rke-machine-config.cattle.io/v1, Kind=LinodeConfig
+2022/05/26 22:14:19 [ERROR] failed to sync cache for rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig
+2022/05/26 22:14:19 [ERROR] failed to sync cache for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate
+2022/05/26 22:14:19 [ERROR] failed to sync cache for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine
+2022/05/26 22:14:19 [ERROR] failed to start controller for rke-machine-config.cattle.io/v1, Kind=LinodeConfig: failed to wait for caches to sync
+2022/05/26 22:14:19 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=AzureConfig controller
+2022/05/26 22:14:19 [ERROR] failed to start controller for rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig: failed to wait for caches to sync
+2022/05/26 22:14:19 [ERROR] failed to start controller for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate: failed to wait for caches to sync
+2022/05/26 22:14:19 [ERROR] failed to start controller for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine: failed to wait for caches to sync
+E0526 22:14:19.724231      10 gvks.go:69] failed to sync schemas: failed to sync cache for rke-machine-config.cattle.io/v1, Kind=LinodeConfig
+2022/05/26 22:14:19 [INFO] uploading googlecredentialConfig to credentialconfig schema
+2022/05/26 22:14:19 [INFO] uploading amazonec2credentialConfig to credentialconfig schema
+2022/05/26 22:14:19 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:20 [INFO] uploading harvestercredentialConfig to credentialconfig schema
+2022/05/26 22:14:20 [INFO] uploading digitaloceancredentialConfig to credentialconfig schema
+E0526 22:14:20.374897      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=HarvesterConfig
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=Amazonec2Config
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=LinodeConfig
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=AzureMachine
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=LinodeMachine
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=AzureMachineTemplate
+2022/05/26 22:14:20 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate
+2022/05/26 22:14:21 [INFO] Catalog sync done. 7 templates created, 0 templates updated, 0 templates deleted, 0 templates failed
+2022/05/26 22:14:21 [ERROR] failed to sync cache for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate
+2022/05/26 22:14:21 [ERROR] failed to sync cache for rke-machine.cattle.io/v1, Kind=AzureMachineTemplate
+2022/05/26 22:14:21 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=HarvesterConfig controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=Amazonec2Config controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=LinodeConfig controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine.cattle.io/v1, Kind=AzureMachine controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine.cattle.io/v1, Kind=LinodeMachine controller
+2022/05/26 22:14:21 [ERROR] failed to start controller for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate: failed to wait for caches to sync
+2022/05/26 22:14:21 [ERROR] failed to start controller for rke-machine.cattle.io/v1, Kind=AzureMachineTemplate: failed to wait for caches to sync
+2022/05/26 22:14:21 [INFO] Starting rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine controller
+2022/05/26 22:14:21 [INFO] Starting rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate controller
+E0526 22:14:21.191680      10 gvks.go:69] failed to sync schemas: failed to sync cache for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate
+2022/05/26 22:14:21 [WARNING] Cluster local has no creatorId annotation. Cannot add creator as owner
+2022/05/26 22:14:21 [INFO] [mgmt-cluster-rbac-delete] Updating cluster local
+E0526 22:14:21.385136      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:21 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=DigitaloceanConfig
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=Amazonec2MachineTemplate
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=AzureMachineTemplate
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=DigitaloceanMachine
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=HarvesterMachineTemplate
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=DigitaloceanMachineTemplate
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=Amazonec2Machine
+2022/05/26 22:14:21 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=HarvesterMachine
+2022/05/26 22:14:21 [INFO] kontainerdriver amazonelasticcontainerservice listening on address 127.0.0.1:37197
+2022/05/26 22:14:21 [INFO] kontainerdriver amazonelasticcontainerservice stopped
+2022/05/26 22:14:21 [INFO] kontainerdriver googlekubernetesengine listening on address 127.0.0.1:39975
+2022/05/26 22:14:21 [INFO] kontainerdriver googlekubernetesengine stopped
+2022/05/26 22:14:21 [INFO] update kontainerdriver amazonelasticcontainerservice
+2022/05/26 22:14:21 [ERROR] Failed to find system chart fleet-crd will try again in 5 seconds: configmaps "" not found
+2022/05/26 22:14:21 [INFO] update kontainerdriver googlekubernetesengine
+2022/05/26 22:14:21 [INFO] kontainerdriver azurekubernetesservice listening on address 127.0.0.1:38993
+2022/05/26 22:14:21 [INFO] kontainerdriver azurekubernetesservice stopped
+2022/05/26 22:14:22 [INFO] update kontainerdriver azurekubernetesservice
+2022/05/26 22:14:22 [INFO] Starting rke-machine-config.cattle.io/v1, Kind=DigitaloceanConfig controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=Amazonec2MachineTemplate controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=AzureMachineTemplate controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=DigitaloceanMachine controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=HarvesterMachineTemplate controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=DigitaloceanMachineTemplate controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=Amazonec2Machine controller
+2022/05/26 22:14:22 [INFO] Starting rke-machine.cattle.io/v1, Kind=HarvesterMachine controller
+2022/05/26 22:14:24 [ERROR] error syncing 'git-webhook': handler apiservice: failed to create cattle-fleet-system/stv-aggregation /v1, Kind=Secret for apiservice git-webhook: namespaces "cattle-fleet-system" not found, requeuing
+2022/05/26 22:14:24 [INFO] Handling backend connection request [10.244.0.142]
+2022/05/26 22:14:26 [INFO] kontainerdriver amazonelasticcontainerservice listening on address 127.0.0.1:39787
+2022/05/26 22:14:26 [INFO] kontainerdriver amazonelasticcontainerservice stopped
+2022/05/26 22:14:26 [INFO] dynamic schema for kontainerdriver amazonelasticcontainerservice updating
+2022/05/26 22:14:26 [INFO] kontainerdriver googlekubernetesengine listening on address 127.0.0.1:34065
+2022/05/26 22:14:26 [INFO] kontainerdriver googlekubernetesengine stopped
+2022/05/26 22:14:26 [INFO] dynamic schema for kontainerdriver googlekubernetesengine updating
+2022/05/26 22:14:27 [INFO] kontainerdriver azurekubernetesservice listening on address 127.0.0.1:36759
+2022/05/26 22:14:27 [INFO] kontainerdriver azurekubernetesservice stopped
+2022/05/26 22:14:27 [INFO] dynamic schema for kontainerdriver azurekubernetesservice updating
+2022/05/26 22:14:29 [INFO] Starting cluster controllers for local
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-nt
+2022/05/26 22:14:30 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-global-nt": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-impersonation-system
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-data
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-node-lease
+2022/05/26 22:14:30 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-global-data": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:30 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-impersonation-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:30 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "kube-node-lease": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-public
+2022/05/26 22:14:30 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-nt
+2022/05/26 22:14:31 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-global-nt": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:31 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "kube-public": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-node-lease
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-public
+2022/05/26 22:14:31 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "kube-node-lease": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-nt
+2022/05/26 22:14:31 [INFO] Creating user for principal system://local
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-data
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-impersonation-system
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-node-lease
+2022/05/26 22:14:31 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-impersonation-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:31 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-global-data": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:31 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=fleet-default
+2022/05/26 22:14:31 [INFO] Creating globalRoleBindings for u-b4qkhsnliz
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=fleet-local
+2022/05/26 22:14:32 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "fleet-default": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:32 [INFO] Creating new GlobalRoleBinding for GlobalRoleBinding grb-nr4f4
+2022/05/26 22:14:32 [INFO] [mgmt-auth-grb-controller] Creating clusterRoleBinding for globalRoleBinding grb-nr4f4 for user u-b4qkhsnliz with role cattle-globalrole-user
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-impersonation-system
+2022/05/26 22:14:32 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "fleet-local": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-global-data
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=ingress-nginx
+2022/05/26 22:14:32 [INFO] Starting management.cattle.io/v3, Kind=SamlToken controller
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=fleet-default
+2022/05/26 22:14:32 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-system
+2022/05/26 22:14:32 [INFO] Active TLS secret serving-cert (ver=8668) (count 6): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=28CDCE93DB2B0F6F3FE6CD73947138B60BB0123E]
+2022/05/26 22:14:32 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "ingress-nginx": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:32 [INFO] Active TLS secret tls-rancher-internal (ver=8756) (count 2): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=D671101B84CFE7051C2FEADD82A7BE8CF2BE0FD7]
+2022/05/26 22:14:32 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-fleet-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:32 [INFO] [mgmt-auth-crtb-controller] Creating clusterRoleBinding for membership in cluster local for subject u-b4qkhsnliz
+2022/05/26 22:14:33 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-system
+2022/05/26 22:14:33 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=fleet-local
+2022/05/26 22:14:33 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace local
+2022/05/26 22:14:33 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace p-gc8dh
+2022/05/26 22:14:33 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-chcpk to namespace=default
+E0526 22:14:33.417120      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:14:33 [INFO] Starting /v1, Kind=ServiceAccount controller
+2022/05/26 22:14:33 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=RoleBinding controller
+2022/05/26 22:14:33 [INFO] Starting /v1, Kind=Secret controller
+2022/05/26 22:14:33 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=Role controller
+2022/05/26 22:14:33 [INFO] Starting /v1, Kind=Namespace controller
+2022/05/26 22:14:33 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding controller
+2022/05/26 22:14:33 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRole controller
+2022/05/26 22:14:33 [INFO] Starting cluster agent for local [owner=false]
+2022/05/26 22:14:33 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:33 [INFO] [mgmt-auth-crtb-controller] Creating roleBinding for subject u-b4qkhsnliz with role cluster-owner in namespace p-chcpk
+2022/05/26 22:14:33 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-system
+2022/05/26 22:14:33 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cert-manager
+2022/05/26 22:14:33 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "default": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:33 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cert-manager": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:34 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=ingress-nginx
+2022/05/26 22:14:35 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-chcpk to namespace=default
+2022/05/26 22:14:35 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "default": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:35 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-chcpk to namespace=default
+2022/05/26 22:14:35 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cert-manager
+2022/05/26 22:14:35 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-system
+2022/05/26 22:14:35 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:35 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cert-manager": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:37 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cert-manager
+2022/05/26 22:14:38 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-system
+2022/05/26 22:14:39 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-system
+2022/05/26 22:14:39 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "kube-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:14:43 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=kube-system
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=Alertmanager
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=ConfigMap
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=DynamicSchema
+2022/05/26 22:14:43 [INFO] Watching metadata for rbac.authorization.k8s.io/v1, Kind=RoleBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectAlert
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=ManualScalerTrait
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=CisConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for storage.k8s.io/v1, Kind=CSINode
+2022/05/26 22:14:43 [INFO] Watching metadata for install.istio.io/v1alpha1, Kind=IstioOperator
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectNetworkPolicy
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Cluster
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=VirtualService
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=CustomMachine
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=RKEControlPlane
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=VerrazzanoProject
+2022/05/26 22:14:43 [INFO] Watching metadata for cert-manager.io/v1, Kind=Certificate
+2022/05/26 22:14:43 [INFO] Watching metadata for verrazzano.io/v1, Kind=VerrazzanoMonitoringInstance
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=EtcdBackup
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1alpha1, Kind=AlertmanagerConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterScan
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=MonitorMetric
+2022/05/26 22:14:43 [INFO] Watching metadata for node.k8s.io/v1, Kind=RuntimeClass
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=IngressTrait
+2022/05/26 22:14:43 [INFO] Watching metadata for admissionregistration.k8s.io/v1, Kind=MutatingWebhookConfiguration
+2022/05/26 22:14:43 [INFO] Watching metadata for admissionregistration.k8s.io/v1, Kind=ValidatingWebhookConfiguration
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=GlobalDns
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Namespace
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=MultiClusterAppRevision
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=APIService
+2022/05/26 22:14:43 [INFO] Watching metadata for acme.cert-manager.io/v1, Kind=Order
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterCatalog
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=TemplateContent
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=Prometheus
+2022/05/26 22:14:43 [INFO] Watching metadata for storage.k8s.io/v1, Kind=StorageClass
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterAlert
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=GlobalDnsProvider
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Service
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=VerrazzanoCoherenceWorkload
+2022/05/26 22:14:43 [INFO] Watching metadata for provisioning.cattle.io/v1, Kind=Cluster
+2022/05/26 22:14:43 [INFO] Watching metadata for flowcontrol.apiserver.k8s.io/v1beta1, Kind=PriorityLevelConfiguration
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=CatalogTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for coordination.k8s.io/v1, Kind=Lease
+2022/05/26 22:14:43 [INFO] Watching metadata for storage.k8s.io/v1beta1, Kind=CSIStorageCapacity
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=TraitDefinition
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=NodeDriver
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=RkeAddon
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=App
+2022/05/26 22:14:43 [INFO] Watching metadata for discovery.k8s.io/v1, Kind=EndpointSlice
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectLogging
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=RkeK8sSystemImage
+2022/05/26 22:14:43 [INFO] Watching metadata for apps/v1, Kind=ControllerRevision
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Secret
+2022/05/26 22:14:43 [INFO] Watching metadata for events.k8s.io/v1, Kind=Event
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=PersistentVolumeClaim
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=VerrazzanoHelidonWorkload
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=UserAttribute
+2022/05/26 22:14:43 [INFO] Watching metadata for app.verrazzano.io/v1alpha1, Kind=MetricsBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.kiali.io/v1alpha1, Kind=MonitoringDashboard
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=NodeTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=KontainerDriver
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=SourceCodeCredential
+2022/05/26 22:14:43 [INFO] Watching metadata for apiregistration.k8s.io/v1, Kind=APIService
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.k8s.io/v1, Kind=NetworkPolicy
+2022/05/26 22:14:43 [INFO] Watching metadata for apps/v1, Kind=Deployment
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterMonitorGraph
+2022/05/26 22:14:43 [INFO] Watching metadata for extensions.istio.io/v1alpha1, Kind=WasmPlugin
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterAlertRule
+2022/05/26 22:14:43 [INFO] Watching metadata for coherence.oracle.com/v1, Kind=Coherence
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=HealthScope
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=TemplateVersion
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=WorkloadEntry
+2022/05/26 22:14:43 [INFO] Watching metadata for rbac.authorization.k8s.io/v1, Kind=Role
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=RKECluster
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=ProxyConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=SamlToken
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=RKEBootstrapTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for storage.k8s.io/v1, Kind=VolumeAttachment
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=RoleTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for batch/v1, Kind=Job
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=VerrazzanoManagedCluster
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=LimitRange
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectCatalog
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=WorkloadDefinition
+2022/05/26 22:14:43 [INFO] Watching metadata for cert-manager.io/v1, Kind=CertificateRequest
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=PodSecurityPolicyTemplateProjectBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=MultiClusterApp
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=SourceCodeProviderConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectRoleTemplateBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=DestinationRule
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.k8s.io/v1, Kind=Ingress
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectAlertGroup
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=ReplicationController
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=PrometheusRule
+2022/05/26 22:14:43 [INFO] Watching metadata for apps/v1, Kind=ReplicaSet
+2022/05/26 22:14:43 [INFO] Watching metadata for install.verrazzano.io/v1alpha1, Kind=Verrazzano
+2022/05/26 22:14:43 [INFO] Watching metadata for certificates.k8s.io/v1, Kind=CertificateSigningRequest
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Setting
+2022/05/26 22:14:43 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=Bundle
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=ServiceMonitor
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=MultiClusterSecret
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=LoggingTrait
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=CisBenchmarkVersion
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=RkeK8sServiceOption
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Catalog
+2022/05/26 22:14:43 [INFO] Watching metadata for cert-manager.io/v1, Kind=Issuer
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=ServiceAccount
+2022/05/26 22:14:43 [INFO] Watching metadata for catalog.cattle.io/v1, Kind=App
+2022/05/26 22:14:43 [INFO] Watching metadata for cluster.x-k8s.io/v1beta1, Kind=MachineHealthCheck
+2022/05/26 22:14:43 [INFO] Watching metadata for security.istio.io/v1beta1, Kind=AuthorizationPolicy
+2022/05/26 22:14:43 [INFO] Watching metadata for rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for policy/v1, Kind=PodDisruptionBudget
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=FleetWorkspace
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=Probe
+2022/05/26 22:14:43 [INFO] Watching metadata for cluster.x-k8s.io/v1beta1, Kind=Machine
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=MetricsTrait
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=PersistentVolume
+2022/05/26 22:14:43 [INFO] Watching metadata for security.istio.io/v1beta1, Kind=RequestAuthentication
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=SourceCodeRepository
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ManagedChart
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Event
+2022/05/26 22:14:43 [INFO] Watching metadata for flowcontrol.apiserver.k8s.io/v1beta1, Kind=FlowSchema
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=Sidecar
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=ServiceEntry
+2022/05/26 22:14:43 [INFO] Watching metadata for telemetry.istio.io/v1alpha1, Kind=Telemetry
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=MultiClusterConfigMap
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=Component
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectMonitorGraph
+2022/05/26 22:14:43 [INFO] Watching metadata for catalog.cattle.io/v1, Kind=ClusterRepo
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=RKEBootstrap
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterLogging
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterAlertGroup
+2022/05/26 22:14:43 [INFO] Watching metadata for app.verrazzano.io/v1alpha1, Kind=MetricsTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=NodePool
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=User
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Node
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=Pipeline
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterRegistrationToken
+2022/05/26 22:14:43 [INFO] Watching metadata for apps/v1, Kind=DaemonSet
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=PipelineExecution
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=WorkloadGroup
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=ContainerizedWorkload
+2022/05/26 22:14:43 [INFO] Watching metadata for rbac.authorization.k8s.io/v1, Kind=ClusterRole
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=PodTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for ui.cattle.io/v1, Kind=NavLink
+2022/05/26 22:14:43 [INFO] Watching metadata for weblogic.oracle/v8, Kind=Domain
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ProjectAlertRule
+2022/05/26 22:14:43 [INFO] Watching metadata for cert-manager.io/v1, Kind=ClusterIssuer
+2022/05/26 22:14:43 [INFO] Watching metadata for cluster.x-k8s.io/v1beta1, Kind=MachineSet
+2022/05/26 22:14:43 [INFO] Watching metadata for policy/v1beta1, Kind=PodSecurityPolicy
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Endpoints
+2022/05/26 22:14:43 [INFO] Watching metadata for apiextensions.k8s.io/v1, Kind=CustomResourceDefinition
+2022/05/26 22:14:43 [INFO] Watching metadata for cluster.x-k8s.io/v1beta1, Kind=MachineDeployment
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1alpha3, Kind=EnvoyFilter
+2022/05/26 22:14:43 [INFO] Watching metadata for security.istio.io/v1beta1, Kind=PeerAuthentication
+2022/05/26 22:14:43 [INFO] Watching metadata for apps/v1, Kind=StatefulSet
+2022/05/26 22:14:43 [INFO] Watching metadata for cluster.x-k8s.io/v1beta1, Kind=Cluster
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=GroupMember
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterTemplateRevision
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=ResourceQuota
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Project
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Template
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=ApplicationConfiguration
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=AuthConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.istio.io/v1beta1, Kind=Gateway
+2022/05/26 22:14:43 [INFO] Watching metadata for networking.k8s.io/v1, Kind=IngressClass
+2022/05/26 22:14:43 [INFO] Watching metadata for batch/v1, Kind=CronJob
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Notifier
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Group
+2022/05/26 22:14:43 [INFO] Watching metadata for scheduling.k8s.io/v1, Kind=PriorityClass
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Node
+2022/05/26 22:14:43 [INFO] Watching metadata for acme.cert-manager.io/v1, Kind=Challenge
+2022/05/26 22:14:43 [INFO] Watching metadata for rke.cattle.io/v1, Kind=ETCDSnapshot
+2022/05/26 22:14:43 [INFO] Watching metadata for catalog.cattle.io/v1, Kind=Operation
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Token
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterRoleTemplateBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=MultiClusterComponent
+2022/05/26 22:14:43 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=Cluster
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=GlobalRoleBinding
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=PipelineSetting
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=ThanosRuler
+2022/05/26 22:14:43 [INFO] Watching metadata for storage.k8s.io/v1, Kind=CSIDriver
+2022/05/26 22:14:43 [INFO] Watching metadata for clusters.verrazzano.io/v1alpha1, Kind=MultiClusterApplicationConfiguration
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ComposeConfig
+2022/05/26 22:14:43 [INFO] Watching metadata for autoscaling/v2beta2, Kind=HorizontalPodAutoscaler
+2022/05/26 22:14:43 [INFO] Watching metadata for oam.verrazzano.io/v1alpha1, Kind=VerrazzanoWebLogicWorkload
+2022/05/26 22:14:43 [INFO] Watching metadata for project.cattle.io/v3, Kind=AppRevision
+2022/05/26 22:14:43 [INFO] Watching metadata for /v1, Kind=Pod
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Preference
+2022/05/26 22:14:43 [INFO] Watching metadata for core.oam.dev/v1alpha2, Kind=ScopeDefinition
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=Feature
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=ClusterTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for monitoring.coreos.com/v1, Kind=PodMonitor
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=GlobalRole
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=PodSecurityPolicyTemplate
+2022/05/26 22:14:43 [INFO] Watching metadata for management.cattle.io/v3, Kind=CatalogTemplateVersion
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=AzureMachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=Amazonec2Config
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=DigitaloceanMachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=LinodeMachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=Amazonec2MachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=HarvesterConfig
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=HarvesterMachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=LinodeMachine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=LinodeConfig
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=VmwarevsphereConfig
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=AzureMachine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=Amazonec2Machine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=VmwarevsphereMachineTemplate
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=DigitaloceanMachine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine.cattle.io/v1, Kind=HarvesterMachine
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=AzureConfig
+2022/05/26 22:14:54 [INFO] Watching metadata for rke-machine-config.cattle.io/v1, Kind=DigitaloceanConfig
+2022/05/26 22:15:11 [ERROR] Failed to serve peer connection 10.244.0.142: websocket: close 1006 (abnormal closure): unexpected EOF
+2022/05/26 22:15:11 [INFO] error in remotedialer server [400]: read tcp 10.244.0.143:443->10.244.0.142:39978: use of closed network connection
+2022/05/26 22:15:12 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:15:12 +0000 UTC
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9433) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9435) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9439) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Active TLS secret tls-rancher-internal (ver=9436) (count 1): map[listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=03B37EA6104147A39501C6DC9DFFD80963EE3DD8]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9440) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9441) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9442) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9443) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9446) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9449) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Active TLS secret serving-cert (ver=9450) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:12 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9451) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9454) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9455) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9458) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9459) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: -1): map[]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: -1): map[]
+2022/05/26 22:15:13 [ERROR] error syncing 'cattle-system/serving-cert': handler tls-storage: Secret "serving-cert" is invalid: [data[tls.crt]: Required value, data[tls.key]: Required value], requeuing
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: -1): map[]
+2022/05/26 22:15:13 [ERROR] error syncing 'cattle-system/serving-cert': handler tls-storage: Secret "serving-cert" is invalid: [data[tls.crt]: Required value, data[tls.key]: Required value], requeuing
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9471) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9472) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9473) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9474) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9475) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9476) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9477) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9478) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9483) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9484) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: -1): map[]
+2022/05/26 22:15:13 [ERROR] error syncing 'cattle-system/serving-cert': handler tls-storage: Secret "serving-cert" is invalid: [data[tls.crt]: Required value, data[tls.key]: Required value], requeuing
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9485) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9489) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9490) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:13 [INFO] Updating TLS secret for serving-cert (count: 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9491) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=02CAC56A8868A775BE1A71C77429D4490FA804A2]
+2022/05/26 22:15:13 [INFO] Active TLS secret serving-cert (ver=9492) (count 7): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=D896D8F9D1780742A4F9434AC4B4EC6B519A882C]
+2022/05/26 22:15:15 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:15:15 +0000 UTC
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=5DC7EEB0273D672E77E7BA2CFFBD00E43C547663]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9503) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=5DC7EEB0273D672E77E7BA2CFFBD00E43C547663]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9504) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret tls-rancher-internal (ver=9502) (count 1): map[listener.cattle.io/cn-10.96.216.134:10.96.216.134 listener.cattle.io/fingerprint:SHA1=1F0022A9D53DA2703B482AE981A3E18D27C5E677]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=5DC7EEB0273D672E77E7BA2CFFBD00E43C547663]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: -1): map[]
+2022/05/26 22:15:15 [ERROR] error syncing 'cattle-system/serving-cert': handler tls-storage: Secret "serving-cert" is invalid: [data[tls.crt]: Required value, data[tls.key]: Required value], requeuing
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9507) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9508) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9509) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9510) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9511) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9512) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9513) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=A8B7C60F4450D2BBEA163154698218198C04B5E7]
+2022/05/26 22:15:15 [INFO] Updating TLS secret for serving-cert (count: 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Active TLS secret serving-cert (ver=9515) (count 8): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=3BCAEF9B7879788D2EA8B59182655DDCEF781B32]
+2022/05/26 22:15:15 [INFO] Adding peer wss://10.244.0.144/v3/connect, 10.244.0.144
+2022/05/26 22:15:15 [INFO] Removing peer 10.244.0.142
+2022/05/26 22:15:15 [INFO] Stopping cluster agent for local
+2022/05/26 22:15:15 [INFO] Shutting down rbac.authorization.k8s.io/v1, Kind=ClusterRole workers
+2022/05/26 22:15:15 [INFO] Shutting down rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding workers
+2022/05/26 22:15:15 [INFO] Shutting down /v1, Kind=Namespace workers
+2022/05/26 22:15:15 [INFO] Shutting down rbac.authorization.k8s.io/v1, Kind=Role workers
+2022/05/26 22:15:15 [INFO] Shutting down /v1, Kind=Secret workers
+2022/05/26 22:15:15 [INFO] Shutting down rbac.authorization.k8s.io/v1, Kind=RoleBinding workers
+2022/05/26 22:15:15 [INFO] Shutting down /v1, Kind=ServiceAccount workers
+E0526 22:15:15.603683      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:15:15 [INFO] Starting /v1, Kind=ConfigMap controller
+2022/05/26 22:15:15 [INFO] Starting /v1, Kind=ConfigMap controller
+2022/05/26 22:15:15 [INFO] Registering istio for cluster "local"
+2022/05/26 22:15:15 [INFO] Starting cluster controllers for local
+2022/05/26 22:15:15 [INFO] Starting management.cattle.io/v3, Kind=ClusterLogging controller
+2022/05/26 22:15:15 [INFO] Starting management.cattle.io/v3, Kind=ClusterAlert controller
+E0526 22:15:16.144668      10 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+2022/05/26 22:15:16 [INFO] Starting apiregistration.k8s.io/v1, Kind=APIService controller
+2022/05/26 22:15:16 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=ServiceAccount controller
+2022/05/26 22:15:16 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=RoleBinding controller
+2022/05/26 22:15:16 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=Role controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=Namespace controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=LimitRange controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=Node controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=ResourceQuota controller
+2022/05/26 22:15:16 [INFO] Starting /v1, Kind=Secret controller
+2022/05/26 22:15:16 [INFO] Starting rbac.authorization.k8s.io/v1, Kind=ClusterRole controller
+2022/05/26 22:15:16 [INFO] Starting cluster agent for local [owner=true]
+2022/05/26 22:15:16 [ERROR] error parsing azure-group-cache-size, skipping update strconv.Atoi: parsing "": invalid syntax
+2022/05/26 22:15:16 [INFO] Refreshing driverMetadata in 1440 minutes
+2022/05/26 22:15:16 [INFO] getReleaseConfig: reloading config for k3s
+2022/05/26 22:15:16 [INFO] getReleaseConfig: reloading config for rke2
+2022/05/26 22:15:16 [INFO] driverMetadata: refreshing data from upstream https://releases.rancher.com/kontainer-driver-metadata/release-v2.6/data.json
+2022/05/26 22:15:16 [INFO] Retrieve data.json from local path /var/lib/rancher-data/driver-metadata/data.json
+2022/05/26 22:15:16 [INFO] Loaded configuration from &{} in [0x6f36500]
+2022/05/26 22:15:16 [INFO] Loaded configuration from &{} in [0x6f36500]
+2022/05/26 22:15:19 [ERROR] Failed to handling tunnel request from remote address 10.244.0.16:56078: response 400: cluster not found
+2022/05/26 22:15:21 [INFO] Handling backend connection request [10.244.0.144]
+2022/05/26 22:15:24 [ERROR] Failed to handling tunnel request from remote address 10.244.0.16:56250: response 400: cluster not found
+2022/05/26 22:15:24 [INFO] Updating ingress [verrazzano-system:vmi-system-kibana] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kibana","hostname":"kibana.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:15:24 [INFO] Updating ingress [verrazzano-system:vmi-system-grafana] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-grafana","hostname":"grafana.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:15:24 [INFO] Updating ingress [verrazzano-system:vmi-system-prometheus] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-prometheus","hostname":"prometheus.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:15:24 [INFO] Updating ingress [verrazzano-system:vmi-system-es-ingest] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-es-ingest","hostname":"elasticsearch.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:15:24 [INFO] Updating workload [verrazzano-system/verrazzano-authproxy] with public endpoints [[{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-prometheus","hostname":"prometheus.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kibana","hostname":"kibana.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-es-ingest","hostname":"elasticsearch.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:verrazzano-ingress","hostname":"verrazzano.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-kiali","hostname":"kiali.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false},{"addresses":["144.24.237.19"],"port":443,"protocol":"HTTPS","serviceName":"verrazzano-system:verrazzano-authproxy","ingressName":"verrazzano-system:vmi-system-grafana","hostname":"grafana.vmi.system.b90.zb91df2.v8o.io","path":"/()(.*)","allNodes":false}]]
+2022/05/26 22:15:25 [INFO] Adding peer wss://10.244.0.16/v3/connect, 10.244.0.16
+2022/05/26 22:15:29 [INFO] Handling backend connection request [10.244.0.16]
+2022/05/26 22:15:29 [ERROR] Failed to install system chart fleet-crd: pod cattle-system/helm-operation-m95rt failed, watch closed
+2022/05/26 22:16:30 [ERROR] Failed to install system chart fleet: pod cattle-system/helm-operation-b2m5p failed, watch closed
+2022/05/26 22:16:41 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=BundleDeployment
+2022/05/26 22:16:41 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=ClusterGroup
+2022/05/26 22:16:41 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=BundleNamespaceMapping
+2022/05/26 22:16:41 [ERROR] Failed to install system chart fleet: failed to install , pod cattle-system/helm-operation-85pgs exited 123
+2022/05/26 22:16:44 [ERROR] error syncing 'cattle-fleet-system/helm-operation-m95rt': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-m95rt), requeuing
+2022/05/26 22:16:44 [ERROR] error syncing 'cattle-fleet-system/helm-operation-m95rt': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-m95rt), requeuing
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=ImageScan
+2022/05/26 22:16:49 [INFO] Watching metadata for gitjob.cattle.io/v1, Kind=GitJob
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=GitRepoRestriction
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=ClusterRegistrationToken
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=ClusterRegistration
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=Content
+2022/05/26 22:16:49 [INFO] Watching metadata for fleet.cattle.io/v1alpha1, Kind=GitRepo
+2022/05/26 22:16:50 [ERROR] error syncing 'cattle-fleet-system/helm-operation-cksgn': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-cksgn), requeuing
+2022/05/26 22:16:50 [ERROR] error syncing 'cattle-fleet-system/helm-operation-cksgn': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-cksgn), requeuing
+2022/05/26 22:16:51 [ERROR] error syncing 'cattle-fleet-system/helm-operation-cksgn': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-cksgn), requeuing
+2022/05/26 22:17:08 [ERROR] defaultSvcAccountHandler: Sync: error handling default ServiceAccount of namespace key=cattle-fleet-clusters-system, err=Operation cannot be fulfilled on namespaces "cattle-fleet-clusters-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:09 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-clusters-system
+2022/05/26 22:17:09 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-fleet-clusters-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:09 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-clusters-system
+2022/05/26 22:17:11 [ERROR] Failed to install system chart fleet: failed to install , pod cattle-system/helm-operation-m5f9q exited 123
+2022/05/26 22:17:12 [ERROR] error syncing 'cattle-fleet-system/helm-operation-b2m5p': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-b2m5p), requeuing
+2022/05/26 22:17:12 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cluster-fleet-local-local-1a3d67d0a899
+2022/05/26 22:17:12 [ERROR] error syncing 'cattle-fleet-system/helm-operation-b2m5p': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-b2m5p), requeuing
+2022/05/26 22:17:12 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cluster-fleet-local-local-1a3d67d0a899": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:12 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cluster-fleet-local-local-1a3d67d0a899
+2022/05/26 22:17:12 [ERROR] error syncing 'cattle-fleet-system/helm-operation-b2m5p': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-b2m5p), requeuing
+2022/05/26 22:17:12 [ERROR] defaultSvcAccountHandler: Sync: error handling default ServiceAccount of namespace key=cattle-fleet-local-system, err=Operation cannot be fulfilled on namespaces "cattle-fleet-local-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:12 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-local-system
+2022/05/26 22:17:13 [ERROR] namespaceHandler: Sync: error adding project id label to namespace err=Operation cannot be fulfilled on namespaces "cattle-fleet-local-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:13 [ERROR] defaultSvcAccountHandler: Sync: error handling default ServiceAccount of namespace key=cattle-fleet-local-system, err=Operation cannot be fulfilled on namespaces "cattle-fleet-local-system": the object has been modified; please apply your changes to the latest version and try again
+2022/05/26 22:17:13 [INFO] namespaceHandler: addProjectIDLabelToNamespace: adding label field.cattle.io/projectId=p-gc8dh to namespace=cattle-fleet-local-system
+2022/05/26 22:17:13 [ERROR] error syncing 'cattle-fleet-system/helm-operation-b2m5p': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-b2m5p), requeuing
+2022/05/26 22:17:16 [INFO] starting duplicate binding cleanup
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] starting bindings cleanup
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] total PRTB duplicate clusterRoleBindings 0, roleBindings 0
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] binding with deterministic name not found, will delete all except the oldest binding
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] binding with deterministic name not found, will delete all except the oldest binding
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] binding with deterministic name not found, will delete all except the oldest binding
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] binding with deterministic name not found, will delete all except the oldest binding
+2022/05/26 22:17:16 [INFO] [clean-dupe-bindings] total CRTB duplicate clusterRoleBindings 0, roleBindings 0
+2022/05/26 22:17:16 [INFO] successfully cleaned up duplicate bindings
+2022/05/26 22:17:41 [ERROR] error syncing 'cattle-system/helm-operation-4qrg6': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-4qrg6), requeuing
+2022/05/26 22:17:41 [ERROR] error syncing 'cattle-system/helm-operation-4qrg6': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-4qrg6), requeuing
+2022/05/26 22:17:41 [ERROR] error syncing 'cattle-system/helm-operation-4qrg6': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-4qrg6), requeuing
+2022/05/26 22:17:41 [ERROR] error syncing 'cattle-system/helm-operation-4qrg6': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-4qrg6), requeuing
+2022/05/26 22:17:41 [ERROR] error syncing 'cattle-system/helm-operation-4qrg6': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-4qrg6), requeuing
+2022/05/26 22:17:44 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:17:44 +0000 UTC
+2022/05/26 22:17:44 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:17:44 +0000 UTC
+2022/05/26 22:17:44 [INFO] certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:14:13 +0000 UTC notAfter=2023-05-26 22:17:44 +0000 UTC
+2022/05/26 22:17:44 [INFO] Updating TLS secret for serving-cert (count: 9): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.b90.zb91df2.v8o.io:rancher.b90.zb91df2.v8o.io listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=9090E614F9924F88437C0F6A2FD7770508BC86EB]
+2022/05/26 22:17:44 [INFO] Active TLS secret serving-cert (ver=11352) (count 9): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.b90.zb91df2.v8o.io:rancher.b90.zb91df2.v8o.io listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=9090E614F9924F88437C0F6A2FD7770508BC86EB]
+2022/05/26 22:17:44 [INFO] Active TLS secret serving-cert (ver=11353) (count 9): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.b90.zb91df2.v8o.io:rancher.b90.zb91df2.v8o.io listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=1395C5AEB0A49CAD135A6378923074279818886F]
+2022/05/26 22:17:44 [INFO] Active TLS secret serving-cert (ver=11354) (count 9): map[field.cattle.io/projectId:local:p-gc8dh listener.cattle.io/cn-10.244.0.142:10.244.0.142 listener.cattle.io/cn-10.244.0.143:10.244.0.143 listener.cattle.io/cn-10.244.0.144:10.244.0.144 listener.cattle.io/cn-10.244.0.16:10.244.0.16 listener.cattle.io/cn-127.0.0.1:127.0.0.1 listener.cattle.io/cn-localhost:localhost listener.cattle.io/cn-rancher.b90.zb91df2.v8o.io:rancher.b90.zb91df2.v8o.io listener.cattle.io/cn-rancher.cattle-system:rancher.cattle-system listener.cattle.io/fingerprint:SHA1=5F5E4CD6755D868917A046E7AFA2F2B857190C43]
+2022/05/26 22:17:46 [ERROR] error syncing 'cattle-fleet-system/helm-operation-6km99': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-6km99), requeuing
+2022/05/26 22:17:46 [ERROR] error syncing 'cattle-fleet-system/helm-operation-6km99': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-6km99), requeuing
+2022/05/26 22:17:46 [ERROR] error syncing 'cattle-fleet-system/helm-operation-6km99': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-6km99), requeuing
+2022/05/26 22:17:46 [ERROR] error syncing 'cattle-fleet-system/helm-operation-6km99': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-6km99), requeuing
+2022/05/26 22:17:46 [ERROR] error syncing 'cattle-fleet-system/helm-operation-6km99': handler helm-operation: an error on the server ("container not found (\"proxy\")") has prevented the request from succeeding (get pods helm-operation-6km99), requeuing
+2022/05/26 22:23:34 [INFO] Updating service [springboot-frontend-workload] with public endpoints [[{"port":30912,"protocol":"TCP","serviceName":"foo:springboot-frontend-workload","allNodes":true}]]
+2022/05/26 22:23:35 [INFO] Updating service [springboot-backend-workload] with public endpoints [[{"port":32331,"protocol":"TCP","serviceName":"foo:springboot-backend-workload","allNodes":true}]]
+2022/05/26 22:23:35 [INFO] Updating service [sleep-workload] with public endpoints [[{"port":32609,"protocol":"TCP","serviceName":"foo:sleep-workload","allNodes":true}]]
+2022/05/26 22:23:48 [INFO] Updating service [springboot-frontend-workload] with public endpoints [[{"port":32400,"protocol":"TCP","serviceName":"bar:springboot-frontend-workload","allNodes":true}]]
+2022/05/26 22:23:48 [INFO] Updating service [springboot-backend-workload] with public endpoints [[{"port":31791,"protocol":"TCP","serviceName":"bar:springboot-backend-workload","allNodes":true}]]
+2022/05/26 22:23:48 [INFO] Updating service [sleep-workload] with public endpoints [[{"port":32362,"protocol":"TCP","serviceName":"bar:sleep-workload","allNodes":true}]]
+2022/05/26 22:24:17 [INFO] Updating service [springboot-frontend-workload] with public endpoints [[{"port":30317,"protocol":"TCP","serviceName":"noistio:springboot-frontend-workload","allNodes":true}]]
+2022/05/26 22:24:17 [INFO] Updating service [springboot-backend-workload] with public endpoints [[{"port":32557,"protocol":"TCP","serviceName":"noistio:springboot-backend-workload","allNodes":true}]]
+2022/05/26 22:24:18 [INFO] Updating service [sleep-workload] with public endpoints [[{"port":32394,"protocol":"TCP","serviceName":"noistio:sleep-workload","allNodes":true}]]
+==== END logs for container rancher of pod cattle-system/rancher-f47ff7f6d-x978c ====

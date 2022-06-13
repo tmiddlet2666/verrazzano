@@ -1,0 +1,12 @@
+Name:         ca804aa8.oracle.com
+Namespace:    verrazzano-system
+Labels:       <none>
+Annotations:  control-plane.alpha.kubernetes.io/leader:
+                {"holderIdentity":"coherence-operator-5b9f86c9b5-vw4l7_7e360063-628d-4849-926a-90eee08b6f79","leaseDurationSeconds":15,"acquireTime":"2022...
+
+Data
+====
+Events:
+  Type    Reason          Age   From                                                                      Message
+  ----    ------          ----  ----                                                                      -------
+  Normal  LeaderElection  55m   coherence-operator-5b9f86c9b5-vw4l7_7e360063-628d-4849-926a-90eee08b6f79  coherence-operator-5b9f86c9b5-vw4l7_7e360063-628d-4849-926a-90eee08b6f79 became leader

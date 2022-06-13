@@ -1,0 +1,31 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "annotations": {
+            "cattle.io/status": "{\"Conditions\":[{\"Type\":\"ResourceQuotaInit\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:30Z\"},{\"Type\":\"InitialRolesPopulated\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:35Z\"}]}",
+            "field.cattle.io/projectId": "local:p-gc8dh",
+            "lifecycle.cattle.io/create.namespace-auth": "true",
+            "management.cattle.io/no-default-sa-token": "true"
+        },
+        "creationTimestamp": "2022-05-26T22:08:48Z",
+        "finalizers": [
+            "controller.cattle.io/namespace-auth"
+        ],
+        "labels": {
+            "field.cattle.io/projectId": "p-gc8dh",
+            "kubernetes.io/metadata.name": "cert-manager"
+        },
+        "name": "cert-manager",
+        "resourceVersion": "8982",
+        "uid": "c11ba58d-d35d-4950-8e02-a06939f52d81"
+    },
+    "spec": {
+        "finalizers": [
+            "kubernetes"
+        ]
+    },
+    "status": {
+        "phase": "Active"
+    }
+}

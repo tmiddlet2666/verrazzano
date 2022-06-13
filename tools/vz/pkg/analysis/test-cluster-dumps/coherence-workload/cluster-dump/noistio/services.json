@@ -1,0 +1,171 @@
+{
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22579"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "sleep-workload",
+                "namespace": "noistio",
+                "uid": "f33449e1-a305-48e0-b5fa-34b27a10fdff",
+                "resourceVersion": "15861",
+                "creationTimestamp": "2022-05-26T22:24:18Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":32394,\"protocol\":\"TCP\",\"serviceName\":\"noistio:sleep-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "sleep-workload",
+                        "uid": "ead39c60-f5e5-4775-a163-c548f8535289",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "sleep-workload",
+                        "protocol": "TCP",
+                        "port": 80,
+                        "targetPort": 80,
+                        "nodePort": 32394
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289"
+                },
+                "clusterIP": "10.96.114.1",
+                "clusterIPs": [
+                    "10.96.114.1"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload",
+                "namespace": "noistio",
+                "uid": "44ab8f87-92f4-4373-88f2-b5a0913cd2b5",
+                "resourceVersion": "15814",
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":32557,\"protocol\":\"TCP\",\"serviceName\":\"noistio:springboot-backend-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-backend-workload",
+                        "uid": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "springboot-backend-workload",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080,
+                        "nodePort": 32557
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca"
+                },
+                "clusterIP": "10.96.73.86",
+                "clusterIPs": [
+                    "10.96.73.86"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload",
+                "namespace": "noistio",
+                "uid": "4aff1054-58ed-4097-978a-3741f027ab0c",
+                "resourceVersion": "15723",
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":30317,\"protocol\":\"TCP\",\"serviceName\":\"noistio:springboot-frontend-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-frontend-workload",
+                        "uid": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "springboot-frontend-workload",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080,
+                        "nodePort": 30317
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7"
+                },
+                "clusterIP": "10.96.147.220",
+                "clusterIPs": [
+                    "10.96.147.220"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

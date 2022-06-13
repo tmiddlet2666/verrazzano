@@ -1,0 +1,863 @@
+{
+    "kind": "PodList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22188"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "cert-manager-6b858787c8-s5nrr",
+                "generateName": "cert-manager-6b858787c8-",
+                "namespace": "cert-manager",
+                "uid": "67a2377c-11d5-4a0c-8ccc-548f15c84edf",
+                "resourceVersion": "3512",
+                "creationTimestamp": "2022-05-26T22:08:52Z",
+                "labels": {
+                    "app": "cert-manager",
+                    "app.kubernetes.io/component": "controller",
+                    "app.kubernetes.io/instance": "cert-manager",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "cert-manager",
+                    "app.kubernetes.io/version": "v1.7.1",
+                    "helm.sh/chart": "cert-manager-v1.7.1",
+                    "pod-template-hash": "6b858787c8"
+                },
+                "annotations": {
+                    "prometheus.io/path": "/metrics",
+                    "prometheus.io/port": "9402",
+                    "prometheus.io/scrape": "true"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "cert-manager-6b858787c8",
+                        "uid": "2697f11e-7308-4095-b59a-35a951a8a986",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-46x49",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "cert-manager",
+                        "image": "ghcr.io/verrazzano/cert-manager-controller:v1.7.1",
+                        "args": [
+                            "--v=2",
+                            "--cluster-resource-namespace=$(POD_NAMESPACE)",
+                            "--leader-election-namespace=kube-system",
+                            "--acme-http01-solver-image=ghcr.io/verrazzano/cert-manager-acmesolver:v1.7.1",
+                            "--default-issuer-name=verrazzano-cluster-issuer",
+                            "--default-issuer-kind=ClusterIssuer"
+                        ],
+                        "ports": [
+                            {
+                                "containerPort": 9402,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-46x49",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "cert-manager",
+                "serviceAccount": "cert-manager",
+                "nodeName": "10.0.94.45",
+                "securityContext": {
+                    "runAsNonRoot": false
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "verrazzano-container-registry"
+                    }
+                ],
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:05Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:05Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.7",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.7"
+                    }
+                ],
+                "startTime": "2022-05-26T22:08:52Z",
+                "containerStatuses": [
+                    {
+                        "name": "cert-manager",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:09:04Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/cert-manager-controller:v1.7.1",
+                        "imageID": "ghcr.io/verrazzano/cert-manager-controller@sha256:d1c2fdf7484c4aab84f594f7097d933a04ef5c9b884b38e58deda496097426e7",
+                        "containerID": "cri-o://c294caaecd41694796f3abcc7d92165dcbc1f5f43c8e5413a5ba86bb1892223e",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "cert-manager-cainjector-74cc67688d-hgh8d",
+                "generateName": "cert-manager-cainjector-74cc67688d-",
+                "namespace": "cert-manager",
+                "uid": "6cfb2c6c-da72-437a-9707-88cb89a6a79e",
+                "resourceVersion": "3532",
+                "creationTimestamp": "2022-05-26T22:08:52Z",
+                "labels": {
+                    "app": "cainjector",
+                    "app.kubernetes.io/component": "cainjector",
+                    "app.kubernetes.io/instance": "cert-manager",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "cainjector",
+                    "app.kubernetes.io/version": "v1.7.1",
+                    "helm.sh/chart": "cert-manager-v1.7.1",
+                    "pod-template-hash": "74cc67688d"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "cert-manager-cainjector-74cc67688d",
+                        "uid": "9ff49aa6-6377-49ce-ae94-dc06061c867a",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-7rrnk",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "cert-manager",
+                        "image": "ghcr.io/verrazzano/cert-manager-cainjector:v1.7.1",
+                        "args": [
+                            "--v=2",
+                            "--leader-election-namespace=kube-system"
+                        ],
+                        "env": [
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-7rrnk",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "cert-manager-cainjector",
+                "serviceAccount": "cert-manager-cainjector",
+                "nodeName": "10.0.94.45",
+                "securityContext": {
+                    "runAsNonRoot": false
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "verrazzano-container-registry"
+                    }
+                ],
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:05Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:05Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.5",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.5"
+                    }
+                ],
+                "startTime": "2022-05-26T22:08:52Z",
+                "containerStatuses": [
+                    {
+                        "name": "cert-manager",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:09:05Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/cert-manager-cainjector:v1.7.1",
+                        "imageID": "ghcr.io/verrazzano/cert-manager-cainjector@sha256:380a7465c3ad801b2b6d83c0e4aa0449ffde32085cc3e3140c39d99c5c491ce0",
+                        "containerID": "cri-o://981925c7866aaa992460da9c7f45a1e1b836d97d581e6c3316ef2771dffb2c1b",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "cert-manager-webhook-85fbc8dd5c-n6pk4",
+                "generateName": "cert-manager-webhook-85fbc8dd5c-",
+                "namespace": "cert-manager",
+                "uid": "fa1bb06a-4ae2-408e-a765-7ae8481ca9c8",
+                "resourceVersion": "3685",
+                "creationTimestamp": "2022-05-26T22:08:52Z",
+                "labels": {
+                    "app": "webhook",
+                    "app.kubernetes.io/component": "webhook",
+                    "app.kubernetes.io/instance": "cert-manager",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "webhook",
+                    "app.kubernetes.io/version": "v1.7.1",
+                    "helm.sh/chart": "cert-manager-v1.7.1",
+                    "pod-template-hash": "85fbc8dd5c"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "cert-manager-webhook-85fbc8dd5c",
+                        "uid": "fd1dcbff-7947-42d7-89f9-2fc43c4fc852",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-r6gkl",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "cert-manager",
+                        "image": "ghcr.io/verrazzano/cert-manager-webhook:v1.7.1",
+                        "args": [
+                            "--v=2",
+                            "--secure-port=10250",
+                            "--dynamic-serving-ca-secret-namespace=$(POD_NAMESPACE)",
+                            "--dynamic-serving-ca-secret-name=cert-manager-webhook-ca",
+                            "--dynamic-serving-dns-names=cert-manager-webhook,cert-manager-webhook.cert-manager,cert-manager-webhook.cert-manager.svc"
+                        ],
+                        "ports": [
+                            {
+                                "name": "https",
+                                "containerPort": 10250,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-r6gkl",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "livenessProbe": {
+                            "httpGet": {
+                                "path": "/livez",
+                                "port": 6080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 60,
+                            "timeoutSeconds": 1,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": 6080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "timeoutSeconds": 1,
+                            "periodSeconds": 5,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "cert-manager-webhook",
+                "serviceAccount": "cert-manager-webhook",
+                "nodeName": "10.0.94.45",
+                "securityContext": {
+                    "runAsNonRoot": false
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "verrazzano-container-registry"
+                    }
+                ],
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:12Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:12Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:52Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.6",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.6"
+                    }
+                ],
+                "startTime": "2022-05-26T22:08:52Z",
+                "containerStatuses": [
+                    {
+                        "name": "cert-manager",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:09:05Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/cert-manager-webhook:v1.7.1",
+                        "imageID": "ghcr.io/verrazzano/cert-manager-webhook@sha256:a3f87bf46325e76643370a9058e57dacbaba3394660092d65bea68f28ba68bc3",
+                        "containerID": "cri-o://56727ea6fb912302da43bf9e62edf47c7204c0ac956b2986cddb11cdb019edc7",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "external-dns-6ccb54b56b-lvmgq",
+                "generateName": "external-dns-6ccb54b56b-",
+                "namespace": "cert-manager",
+                "uid": "9a0a5b07-4d09-445a-ac0e-7a1a5fa63299",
+                "resourceVersion": "3784",
+                "creationTimestamp": "2022-05-26T22:08:57Z",
+                "labels": {
+                    "app.kubernetes.io/instance": "external-dns",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "external-dns",
+                    "helm.sh/chart": "external-dns-2.20.0",
+                    "pod-template-hash": "6ccb54b56b"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "external-dns-6ccb54b56b",
+                        "uid": "91af1ea7-4834-41fd-91ff-d9783304bc0f",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "config",
+                        "secret": {
+                            "secretName": "oci",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-qqr7k",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "external-dns",
+                        "image": "ghcr.io/verrazzano/external-dns:v0.10.2-20220225144626-7bae1b96",
+                        "args": [
+                            "--log-level=info",
+                            "--log-format=text",
+                            "--events",
+                            "--domain-filter=zb91df2.v8o.io",
+                            "--policy=sync",
+                            "--provider=oci",
+                            "--registry=txt",
+                            "--interval=24h",
+                            "--txt-owner-id=v8o-d796bfe3",
+                            "--txt-prefix=_v8o-d796bfe3-",
+                            "--oci-zone-scope=GLOBAL",
+                            "--source=service",
+                            "--source=ingress",
+                            "--source=istio-gateway"
+                        ],
+                        "ports": [
+                            {
+                                "name": "http",
+                                "containerPort": 7979,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "config",
+                                "mountPath": "/etc/kubernetes/"
+                            },
+                            {
+                                "name": "kube-api-access-qqr7k",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "livenessProbe": {
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 10,
+                            "timeoutSeconds": 5,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 2
+                        },
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/healthz",
+                                "port": "http",
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 5,
+                            "timeoutSeconds": 5,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 6
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "external-dns",
+                "serviceAccount": "external-dns",
+                "nodeName": "10.0.94.45",
+                "securityContext": {
+                    "runAsUser": 1001,
+                    "fsGroup": 1001
+                },
+                "imagePullSecrets": [
+                    {
+                        "name": "verrazzano-container-registry"
+                    }
+                ],
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:57Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:17Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:09:17Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:08:57Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.8",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.8"
+                    }
+                ],
+                "startTime": "2022-05-26T22:08:57Z",
+                "containerStatuses": [
+                    {
+                        "name": "external-dns",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:09:07Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/external-dns:v0.10.2-20220225144626-7bae1b96",
+                        "imageID": "ghcr.io/verrazzano/external-dns@sha256:b36a77ef13519782f8554851f0f65c7b41de534af2878ef03b4bb04341887a27",
+                        "containerID": "cri-o://de3f19670b84f4eaff75385ac9c2abea18044fe4c7e767e7c07ce2359c3930d5",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        }
+    ]
+}

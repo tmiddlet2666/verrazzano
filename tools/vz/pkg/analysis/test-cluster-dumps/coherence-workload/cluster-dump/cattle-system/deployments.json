@@ -1,0 +1,371 @@
+{
+    "kind": "DeploymentList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "22125"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "rancher",
+                "namespace": "cattle-system",
+                "uid": "9bd356b1-c9c7-429e-8d48-211754d159d9",
+                "resourceVersion": "9623",
+                "generation": 3,
+                "creationTimestamp": "2022-05-26T22:11:44Z",
+                "labels": {
+                    "app": "rancher",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "chart": "rancher-2.6.4",
+                    "heritage": "Helm",
+                    "release": "rancher"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "2",
+                    "field.cattle.io/publicEndpoints": "[{\"addresses\":[\"144.24.237.19\"],\"port\":443,\"protocol\":\"HTTPS\",\"serviceName\":\"cattle-system:rancher\",\"ingressName\":\"cattle-system:rancher\",\"hostname\":\"rancher.b90.zb91df2.v8o.io\",\"allNodes\":false}]",
+                    "meta.helm.sh/release-name": "rancher",
+                    "meta.helm.sh/release-namespace": "cattle-system"
+                }
+            },
+            "spec": {
+                "replicas": 3,
+                "selector": {
+                    "matchLabels": {
+                        "app": "rancher"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "rancher",
+                            "release": "rancher"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "tls-ca-additional-volume",
+                                "secret": {
+                                    "secretName": "tls-ca-additional",
+                                    "defaultMode": 256
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "rancher",
+                                "image": "ghcr.io/verrazzano/rancher:v2.6.4-20220504205847-7131173f2",
+                                "args": [
+                                    "--no-cacerts",
+                                    "--http-listen-port=80",
+                                    "--https-listen-port=443",
+                                    "--add-local=true"
+                                ],
+                                "ports": [
+                                    {
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "CATTLE_NAMESPACE",
+                                        "value": "cattle-system"
+                                    },
+                                    {
+                                        "name": "CATTLE_PEER_SERVICE",
+                                        "value": "rancher"
+                                    },
+                                    {
+                                        "name": "CATTLE_SYSTEM_CATALOG",
+                                        "value": "bundled"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "tls-ca-additional-volume",
+                                        "readOnly": true,
+                                        "mountPath": "/etc/pki/trust/anchors/ca-additional.pem",
+                                        "subPath": "ca-additional.pem"
+                                    },
+                                    {
+                                        "name": "tls-ca-additional-volume",
+                                        "readOnly": true,
+                                        "mountPath": "/etc/rancher/ssl/ca-additional.pem",
+                                        "subPath": "ca-additional.pem"
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": "/healthz",
+                                        "port": 80,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 60,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 30,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/healthz",
+                                        "port": 80,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 1,
+                                    "periodSeconds": 30,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent",
+                                "securityContext": {
+                                    "capabilities": {
+                                        "add": [
+                                            "MKNOD"
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "rancher",
+                        "serviceAccount": "rancher",
+                        "securityContext": {},
+                        "imagePullSecrets": [
+                            {
+                                "name": "verrazzano-container-registry"
+                            }
+                        ],
+                        "affinity": {
+                            "nodeAffinity": {
+                                "requiredDuringSchedulingIgnoredDuringExecution": {
+                                    "nodeSelectorTerms": [
+                                        {
+                                            "matchExpressions": [
+                                                {
+                                                    "key": "kubernetes.io/os",
+                                                    "operator": "NotIn",
+                                                    "values": [
+                                                        "windows"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    ]
+                                }
+                            },
+                            "podAntiAffinity": {
+                                "preferredDuringSchedulingIgnoredDuringExecution": [
+                                    {
+                                        "weight": 100,
+                                        "podAffinityTerm": {
+                                            "labelSelector": {
+                                                "matchExpressions": [
+                                                    {
+                                                        "key": "app",
+                                                        "operator": "In",
+                                                        "values": [
+                                                            "rancher"
+                                                        ]
+                                                    }
+                                                ]
+                                            },
+                                            "topologyKey": "kubernetes.io/hostname"
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "schedulerName": "default-scheduler",
+                        "tolerations": [
+                            {
+                                "key": "cattle.io/os",
+                                "operator": "Equal",
+                                "value": "linux",
+                                "effect": "NoSchedule"
+                            }
+                        ]
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": 1,
+                        "maxSurge": 1
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 3,
+                "replicas": 3,
+                "updatedReplicas": 3,
+                "readyReplicas": 3,
+                "availableReplicas": 3,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:14:18Z",
+                        "lastTransitionTime": "2022-05-26T22:14:18Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:15:25Z",
+                        "lastTransitionTime": "2022-05-26T22:11:44Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"rancher-f47ff7f6d\" has successfully progressed."
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "name": "rancher-webhook",
+                "namespace": "cattle-system",
+                "uid": "e4460b13-dffc-4c32-a074-0ea074edce61",
+                "resourceVersion": "11240",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:17:31Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "rancher-webhook",
+                    "meta.helm.sh/release-namespace": "cattle-system"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "rancher-webhook"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "rancher-webhook"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "tls",
+                                "secret": {
+                                    "secretName": "rancher-webhook-tls",
+                                    "defaultMode": 420
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "rancher-webhook",
+                                "image": "rancher/rancher-webhook:v0.2.5",
+                                "ports": [
+                                    {
+                                        "name": "https",
+                                        "containerPort": 9443,
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "name": "capi-https",
+                                        "containerPort": 8777,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "env": [
+                                    {
+                                        "name": "STAMP"
+                                    },
+                                    {
+                                        "name": "ENABLE_CAPI",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "ENABLE_MCM",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "tls",
+                                        "mountPath": "/tmp/k8s-webhook-server/serving-certs"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "rancher-webhook",
+                        "serviceAccount": "rancher-webhook",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 1,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:17:39Z",
+                        "lastTransitionTime": "2022-05-26T22:17:39Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:17:39Z",
+                        "lastTransitionTime": "2022-05-26T22:17:31Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"rancher-webhook-6958cfcddf\" has successfully progressed."
+                    }
+                ]
+            }
+        }
+    ]
+}

@@ -1,0 +1,171 @@
+{
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22249"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "sleep-workload",
+                "namespace": "foo",
+                "uid": "f36e58b3-700d-40f7-b4c5-bea8c01faa92",
+                "resourceVersion": "14632",
+                "creationTimestamp": "2022-05-26T22:23:35Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "001318e4-e40b-4d0d-85c4-7f9ac12112a6"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":32609,\"protocol\":\"TCP\",\"serviceName\":\"foo:sleep-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "sleep-workload",
+                        "uid": "001318e4-e40b-4d0d-85c4-7f9ac12112a6",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "sleep-workload",
+                        "protocol": "TCP",
+                        "port": 80,
+                        "targetPort": 80,
+                        "nodePort": 32609
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "001318e4-e40b-4d0d-85c4-7f9ac12112a6"
+                },
+                "clusterIP": "10.96.52.237",
+                "clusterIPs": [
+                    "10.96.52.237"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload",
+                "namespace": "foo",
+                "uid": "00e76c58-43e8-4971-bb5d-7011aa493e4f",
+                "resourceVersion": "14548",
+                "creationTimestamp": "2022-05-26T22:23:35Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "d1c745bb-3291-4356-9252-2c267b01c201"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":32331,\"protocol\":\"TCP\",\"serviceName\":\"foo:springboot-backend-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-backend-workload",
+                        "uid": "d1c745bb-3291-4356-9252-2c267b01c201",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "springboot-backend-workload",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080,
+                        "nodePort": 32331
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "d1c745bb-3291-4356-9252-2c267b01c201"
+                },
+                "clusterIP": "10.96.178.186",
+                "clusterIPs": [
+                    "10.96.178.186"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload",
+                "namespace": "foo",
+                "uid": "9c9e98b2-fdc0-45b8-ad68-11676d80c639",
+                "resourceVersion": "14549",
+                "creationTimestamp": "2022-05-26T22:23:34Z",
+                "labels": {
+                    "containerizedworkload.oam.crossplane.io": "f09fdc99-df02-4da8-8151-c012455391ef"
+                },
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"port\":30912,\"protocol\":\"TCP\",\"serviceName\":\"foo:springboot-frontend-workload\",\"allNodes\":true}]"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-frontend-workload",
+                        "uid": "f09fdc99-df02-4da8-8151-c012455391ef",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "springboot-frontend-workload",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080,
+                        "nodePort": 30912
+                    }
+                ],
+                "selector": {
+                    "containerizedworkload.oam.crossplane.io": "f09fdc99-df02-4da8-8151-c012455391ef"
+                },
+                "clusterIP": "10.96.16.168",
+                "clusterIPs": [
+                    "10.96.16.168"
+                ],
+                "type": "NodePort",
+                "sessionAffinity": "None",
+                "externalTrafficPolicy": "Cluster",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

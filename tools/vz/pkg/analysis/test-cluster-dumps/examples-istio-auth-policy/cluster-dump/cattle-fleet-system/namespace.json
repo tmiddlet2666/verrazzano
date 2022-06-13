@@ -1,0 +1,34 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "annotations": {
+            "cattle.io/status": "{\"Conditions\":[{\"Type\":\"ResourceQuotaInit\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:30Z\"},{\"Type\":\"InitialRolesPopulated\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:35Z\"}]}",
+            "field.cattle.io/projectId": "local:p-gc8dh",
+            "lifecycle.cattle.io/create.namespace-auth": "true",
+            "management.cattle.io/no-default-sa-token": "true",
+            "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/3zOS26EMAyA4bt4DZQUmkLO0Qs4wRGp8kDYLEaIu48C+9nZsvT9PiGR4IKCYE7AnIughJK5rsX+kxMm6fZQOocikbpQvsICBnwkktaWIiw7bu1tXA24nW7hLyRiwbSByUeMDUS0FD+6K/IKBsYf1Q/94NVstbPo3dwPSo2TVZPWXmn3bekX8a5lTAQGHqN9fuIXC6V65Y0cmLNOgnLU+HW9AwAA///+sh4F8wAAAA",
+            "objectset.rio.cattle.io/id": "fleet-bootstrap-data"
+        },
+        "creationTimestamp": "2022-05-26T22:14:27Z",
+        "finalizers": [
+            "controller.cattle.io/namespace-auth"
+        ],
+        "labels": {
+            "field.cattle.io/projectId": "p-gc8dh",
+            "kubernetes.io/metadata.name": "cattle-fleet-system",
+            "objectset.rio.cattle.io/hash": "4510303f19b6cbafc9031148b1866f16c2be7aaa"
+        },
+        "name": "cattle-fleet-system",
+        "resourceVersion": "10664",
+        "uid": "b3729345-3b31-4220-a16e-2413f65670a2"
+    },
+    "spec": {
+        "finalizers": [
+            "kubernetes"
+        ]
+    },
+    "status": {
+        "phase": "Active"
+    }
+}

@@ -1,0 +1,211 @@
+{
+    "kind": "ReplicaSetList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "22084"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958",
+                "namespace": "cattle-fleet-system",
+                "uid": "3c7ae846-71a2-4c09-8ed3-cb03044774ad",
+                "resourceVersion": "10667",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:16:34Z",
+                "labels": {
+                    "app": "fleet-controller",
+                    "pod-template-hash": "5746685958"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "fleet",
+                    "meta.helm.sh/release-namespace": "cattle-fleet-system"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "fleet-controller",
+                        "uid": "479002da-4101-4bce-83ca-eb077c5229ed",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "fleet-controller",
+                        "pod-template-hash": "5746685958"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "fleet-controller",
+                            "pod-template-hash": "5746685958"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "fleet-controller",
+                                "image": "rancher/fleet:v0.3.9",
+                                "command": [
+                                    "fleetcontroller"
+                                ],
+                                "env": [
+                                    {
+                                        "name": "NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "nodeSelector": {
+                            "kubernetes.io/os": "linux"
+                        },
+                        "serviceAccountName": "fleet-controller",
+                        "serviceAccount": "fleet-controller",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler",
+                        "tolerations": [
+                            {
+                                "key": "cattle.io/os",
+                                "operator": "Equal",
+                                "value": "linux",
+                                "effect": "NoSchedule"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7",
+                "namespace": "cattle-fleet-system",
+                "uid": "6be5c8bc-5599-4167-9d07-31311a9ca4f1",
+                "resourceVersion": "10666",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:16:34Z",
+                "labels": {
+                    "app": "gitjob",
+                    "pod-template-hash": "cc9948fd7"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "fleet",
+                    "meta.helm.sh/release-namespace": "cattle-fleet-system"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "gitjob",
+                        "uid": "423b2fcd-3827-4c30-bae6-ae7f94a77304",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "gitjob",
+                        "pod-template-hash": "cc9948fd7"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "gitjob",
+                            "pod-template-hash": "cc9948fd7"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "gitjob",
+                                "image": "rancher/gitjob:v0.1.26",
+                                "command": [
+                                    "gitjob",
+                                    "--tekton-image",
+                                    "rancher/tekton-utils:v0.1.5"
+                                ],
+                                "env": [
+                                    {
+                                        "name": "NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "nodeSelector": {
+                            "kubernetes.io/os": "linux"
+                        },
+                        "serviceAccountName": "gitjob",
+                        "serviceAccount": "gitjob",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler",
+                        "tolerations": [
+                            {
+                                "key": "cattle.io/os",
+                                "operator": "Equal",
+                                "value": "linux",
+                                "effect": "NoSchedule"
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        }
+    ]
+}

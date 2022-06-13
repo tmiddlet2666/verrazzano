@@ -1,0 +1,14 @@
+Name:         hellodomain-wdt-config-map
+Namespace:    hello-wls-cf64cdc
+Labels:       weblogic.domainUID=hellodomain
+Annotations:  <none>
+
+Data
+====
+WebLogicPlugin.yaml:
+----
+resources:
+  WebAppContainer:
+    WeblogicPluginEnabled: true
+
+Events:  <none>

@@ -1,0 +1,156 @@
+{
+    "kind": "DeploymentList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "44473"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "fleet-agent",
+                "namespace": "cattle-fleet-local-system",
+                "uid": "7da81f7b-09b4-4555-8dbe-2714a9048b57",
+                "resourceVersion": "11104",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:17:13Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "objectset.rio.cattle.io/hash": "362023f752e7f1989d8b652e029bd2c658ae7c44"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "2",
+                    "meta.helm.sh/release-name": "fleet-agent-local",
+                    "meta.helm.sh/release-namespace": "cattle-fleet-local-system",
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/4RUWW/zNhD8L/ssKb4PvRn+1K9GvypGYuQlMIIVtbLZUKRKrty4hv57QR+K0sN9Eo+d2eXMQCfASr6QddJoiAGryj0c+hDAu9Q5xPCNKmWOJWmGAEpizJER4hOg1oaRpdHOb032Gwl2xJGVJhLIrCiS5kF6kkIRcYg70hxmxrBji1V4KQovl8oIVKE7OqYSmgAUZqTuMu/R7SGG4WTQGwyL6XhA06I/n83zWTYZD6g3mGf5QEzGM6SpGI08qcaSvo4Dl0NXofA3d0dyFQk/kCNFgo316xJZ7H+0s2JV/Y2/8UC2yLQ7QnxqAmAqK4VMZ3hHUGHpLOdGluQYywpiXSvVleI/6K9zYVFILdm3AW1yWnT2laWCrKX8W22l3j2LPeW1knq32mnTHicfJGo+J+H1hiEtqH1p8lFZcu5i+usJ3ul4G6jjzE1ZU5HFs1Cw0hDAAVVNHghsa4Jts20C+IPkbs8Q95utf4wwmlFqspcGpA/n79W5dPFr8rxeLJMb20/WlH66QpLKn6ho12tkn46bwNGny03TBC3h4nuSbt6el4/rlvJ/YtBClz8ny19W6dsq3SRPL4sfHXzPdQu/J2nytNisHtNOSSFENptN8nA46hXhSEyKEPvDSZhl+XQ0pGw+nY3DATTbAGSJOw+xqMWe7EPH//jQi4bRHK5F61qptVFSeFdWRWp4bcl9xvwf2bfkTG2FN+XU+F6O7EEKWghhas3pv2HYKG9rmwEqChLszTHXWJH/fZyT4WMYCWXqvLLmIHOy0XudkdXE5HxUau0jKlHJPyn/Gpnk9xpVR7FzZrys9xp+htC4+3RK6voDfOia5q8AAAD//2BKAqwFBQAA",
+                    "objectset.rio.cattle.io/id": "fleet-agent-bootstrap-cattle-fleet-local-system"
+                }
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "fleet-agent"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "fleet-agent"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "fleet-agent",
+                                "image": "rancher/fleet-agent:v0.3.9",
+                                "env": [
+                                    {
+                                        "name": "NAMESPACE",
+                                        "valueFrom": {
+                                            "fieldRef": {
+                                                "apiVersion": "v1",
+                                                "fieldPath": "metadata.namespace"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "AGENT_SCOPE",
+                                        "value": "cattle-fleet-local-system"
+                                    },
+                                    {
+                                        "name": "CHECKIN_INTERVAL",
+                                        "value": "0s"
+                                    },
+                                    {
+                                        "name": "GENERATION",
+                                        "value": "bundle"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "fleet-agent",
+                        "serviceAccount": "fleet-agent",
+                        "securityContext": {},
+                        "affinity": {
+                            "nodeAffinity": {
+                                "preferredDuringSchedulingIgnoredDuringExecution": [
+                                    {
+                                        "weight": 1,
+                                        "preference": {
+                                            "matchExpressions": [
+                                                {
+                                                    "key": "fleet.cattle.io/agent",
+                                                    "operator": "In",
+                                                    "values": [
+                                                        "true"
+                                                    ]
+                                                }
+                                            ]
+                                        }
+                                    }
+                                ]
+                            }
+                        },
+                        "schedulerName": "default-scheduler",
+                        "tolerations": [
+                            {
+                                "key": "node.cloudprovider.kubernetes.io/uninitialized",
+                                "operator": "Equal",
+                                "value": "true",
+                                "effect": "NoSchedule"
+                            },
+                            {
+                                "key": "cattle.io/os",
+                                "operator": "Equal",
+                                "value": "linux",
+                                "effect": "NoSchedule"
+                            }
+                        ]
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:17:22Z",
+                        "lastTransitionTime": "2022-05-26T22:17:22Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:17:31Z",
+                        "lastTransitionTime": "2022-05-26T22:17:13Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"fleet-agent-57497ff7dc\" has successfully progressed."
+                    }
+                ]
+            }
+        }
+    ]
+}

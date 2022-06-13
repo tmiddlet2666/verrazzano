@@ -1,0 +1,30 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "annotations": {
+            "cattle.io/status": "{\"Conditions\":[{\"Type\":\"ResourceQuotaInit\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:23:21Z\"},{\"Type\":\"InitialRolesPopulated\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:23:22Z\"}]}",
+            "lifecycle.cattle.io/create.namespace-auth": "true"
+        },
+        "creationTimestamp": "2022-05-26T22:23:20Z",
+        "finalizers": [
+            "controller.cattle.io/namespace-auth"
+        ],
+        "labels": {
+            "istio-injection": "enabled",
+            "kubernetes.io/metadata.name": "hello-helidon-2f4c5e4",
+            "verrazzano-managed": "true"
+        },
+        "name": "hello-helidon-2f4c5e4",
+        "resourceVersion": "14215",
+        "uid": "6f7ca4b5-af5d-4a99-8565-2a96d49ff183"
+    },
+    "spec": {
+        "finalizers": [
+            "kubernetes"
+        ]
+    },
+    "status": {
+        "phase": "Active"
+    }
+}

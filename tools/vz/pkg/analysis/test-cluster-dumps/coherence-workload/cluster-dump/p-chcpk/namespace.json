@@ -1,0 +1,30 @@
+{
+    "apiVersion": "v1",
+    "kind": "Namespace",
+    "metadata": {
+        "annotations": {
+            "cattle.io/status": "{\"Conditions\":[{\"Type\":\"ResourceQuotaInit\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:30Z\"},{\"Type\":\"InitialRolesPopulated\",\"Status\":\"True\",\"Message\":\"\",\"LastUpdateTime\":\"2022-05-26T22:14:31Z\"}]}",
+            "lifecycle.cattle.io/create.namespace-auth": "true",
+            "management.cattle.io/no-default-sa-token": "true",
+            "management.cattle.io/system-namespace": "true"
+        },
+        "creationTimestamp": "2022-05-26T22:14:17Z",
+        "finalizers": [
+            "controller.cattle.io/namespace-auth"
+        ],
+        "labels": {
+            "kubernetes.io/metadata.name": "p-chcpk"
+        },
+        "name": "p-chcpk",
+        "resourceVersion": "8575",
+        "uid": "7cf8fb40-c526-4cae-b627-56faa7568545"
+    },
+    "spec": {
+        "finalizers": [
+            "kubernetes"
+        ]
+    },
+    "status": {
+        "phase": "Active"
+    }
+}

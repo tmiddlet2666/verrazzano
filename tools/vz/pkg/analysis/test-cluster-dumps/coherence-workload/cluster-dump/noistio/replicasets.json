@@ -1,0 +1,563 @@
+{
+    "kind": "ReplicaSetList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "22584"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "sleep-workload-697db95bbd",
+                "namespace": "noistio",
+                "uid": "9f75d032-c703-4b4d-9445-524fee3910cb",
+                "resourceVersion": "15991",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:24:18Z",
+                "labels": {
+                    "app": "sleep",
+                    "app.oam.dev/component": "sleep",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "sleep-v1",
+                    "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                    "pod-template-hash": "697db95bbd"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "sleep-workload",
+                        "uid": "ebe4482e-b033-479f-8c59-37bf13d64706",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                        "pod-template-hash": "697db95bbd"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "sleep",
+                            "app.oam.dev/component": "sleep",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "sleep-v1",
+                            "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                            "pod-template-hash": "697db95bbd"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/metrics",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "sleep",
+                                "image": "ghcr.io/oracle/oraclelinux:7-slim",
+                                "command": [
+                                    "/bin/sleep",
+                                    "3650d"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "sleep-workload-7d8cd55f76",
+                "namespace": "noistio",
+                "uid": "c4abb771-95ff-4571-b80e-4a9d438042e2",
+                "resourceVersion": "16003",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:18Z",
+                "labels": {
+                    "app": "sleep",
+                    "app.oam.dev/component": "sleep",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "sleep-v1",
+                    "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                    "pod-template-hash": "7d8cd55f76"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "sleep-workload",
+                        "uid": "ebe4482e-b033-479f-8c59-37bf13d64706",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 0,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                        "pod-template-hash": "7d8cd55f76"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "sleep",
+                            "app.oam.dev/component": "sleep",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "sleep-v1",
+                            "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                            "pod-template-hash": "7d8cd55f76"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "sleep",
+                                "image": "ghcr.io/oracle/oraclelinux:7-slim",
+                                "command": [
+                                    "/bin/sleep",
+                                    "3650d"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 0,
+                "observedGeneration": 2
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload-85dcdd67cb",
+                "namespace": "noistio",
+                "uid": "5430c09f-8cd8-4c3e-b87f-5c61e7a3f425",
+                "resourceVersion": "16745",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-backend",
+                    "app.oam.dev/component": "springboot-backend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-backend-v1",
+                    "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                    "pod-template-hash": "85dcdd67cb"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-backend-workload",
+                        "uid": "fd70c7c3-98de-4e1d-8d20-9e0d04ef9bc3",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 0,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                        "pod-template-hash": "85dcdd67cb"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-backend",
+                            "app.oam.dev/component": "springboot-backend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-backend-v1",
+                            "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                            "pod-template-hash": "85dcdd67cb"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-backend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 0,
+                "observedGeneration": 2
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload-8c58ff47d",
+                "namespace": "noistio",
+                "uid": "6327051e-9760-434e-947b-2872280b2594",
+                "resourceVersion": "16736",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-backend",
+                    "app.oam.dev/component": "springboot-backend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-backend-v1",
+                    "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                    "pod-template-hash": "8c58ff47d"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-backend-workload",
+                        "uid": "fd70c7c3-98de-4e1d-8d20-9e0d04ef9bc3",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                        "pod-template-hash": "8c58ff47d"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-backend",
+                            "app.oam.dev/component": "springboot-backend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-backend-v1",
+                            "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                            "pod-template-hash": "8c58ff47d"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/metrics",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-backend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload-58c678c5b7",
+                "namespace": "noistio",
+                "uid": "d4b222fd-71a4-4f34-8603-9e631c4a3e6e",
+                "resourceVersion": "16726",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-frontend",
+                    "app.oam.dev/component": "springboot-frontend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-frontend-v1",
+                    "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                    "pod-template-hash": "58c678c5b7"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-frontend-workload",
+                        "uid": "11667305-b1f2-4d3e-b3e6-3a35d2404344",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 0,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                        "pod-template-hash": "58c678c5b7"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-frontend",
+                            "app.oam.dev/component": "springboot-frontend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-frontend-v1",
+                            "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                            "pod-template-hash": "58c678c5b7"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-frontend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 0,
+                "observedGeneration": 2
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload-597d48f8",
+                "namespace": "noistio",
+                "uid": "9f99bf32-fd2c-48c2-bb09-d060be3da8fe",
+                "resourceVersion": "16713",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-frontend",
+                    "app.oam.dev/component": "springboot-frontend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-frontend-v1",
+                    "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                    "pod-template-hash": "597d48f8"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-frontend-workload",
+                        "uid": "11667305-b1f2-4d3e-b3e6-3a35d2404344",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                        "pod-template-hash": "597d48f8"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-frontend",
+                            "app.oam.dev/component": "springboot-frontend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-frontend-v1",
+                            "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                            "pod-template-hash": "597d48f8"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/actuator/prometheus",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-frontend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        }
+    ]
+}

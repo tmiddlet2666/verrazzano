@@ -1,0 +1,16 @@
+==== START logs for container kube-prometheus-stack of pod verrazzano-monitoring/prometheus-operator-kube-p-operator-69ddb84d98-vwwvt ====
+level=info ts=2022-05-26T22:10:26.895400992Z caller=main.go:220 msg="Starting Prometheus Operator" version="(version=0.55.1, branch=HEAD, revision=40883e886f4bee9d7f9e8b8a8df6947abc1e7021)"
+level=info ts=2022-05-26T22:10:26.895489284Z caller=main.go:221 build_context="(go=go1.17.5, user=@build-ol8-x86_64.oracle.com, date=20220408-18:42:37OURCE)"
+level=warn ts=2022-05-26T22:10:26.91847653Z caller=operator.go:316 component=prometheusoperator msg="failed to check if the API supports the endpointslice resources" err="converting (v1.APIGroup) to (v1.APIResourceList): unknown conversion"
+level=info ts=2022-05-26T22:10:26.918574271Z caller=operator.go:318 component=prometheusoperator msg="Kubernetes API capabilities" endpointslices=false
+level=info ts=2022-05-26T22:10:26.921400102Z caller=main.go:113 msg="Starting secure server on [::]:10250"
+level=info ts=2022-05-26T22:10:26.925275556Z caller=operator.go:427 component=prometheusoperator msg="connection established" cluster-version=v1.22.5
+level=info ts=2022-05-26T22:10:26.925314347Z caller=operator.go:436 component=prometheusoperator msg="CRD API endpoints ready"
+level=info ts=2022-05-26T22:10:26.925355129Z caller=operator.go:309 component=thanosoperator msg="connection established" cluster-version=v1.22.5
+level=info ts=2022-05-26T22:10:26.925405759Z caller=operator.go:318 component=thanosoperator msg="CRD API endpoints ready"
+level=info ts=2022-05-26T22:10:26.92575718Z caller=operator.go:448 component=alertmanageroperator msg="connection established" cluster-version=v1.22.5
+level=info ts=2022-05-26T22:10:26.925804407Z caller=operator.go:457 component=alertmanageroperator msg="CRD API endpoints ready"
+level=info ts=2022-05-26T22:10:28.42692975Z caller=operator.go:261 component=thanosoperator msg="successfully synced all caches"
+level=info ts=2022-05-26T22:10:28.626484147Z caller=operator.go:357 component=prometheusoperator msg="successfully synced all caches"
+level=info ts=2022-05-26T22:10:28.626536812Z caller=operator.go:280 component=alertmanageroperator msg="successfully synced all caches"
+==== END logs for container kube-prometheus-stack of pod verrazzano-monitoring/prometheus-operator-kube-p-operator-69ddb84d98-vwwvt ====

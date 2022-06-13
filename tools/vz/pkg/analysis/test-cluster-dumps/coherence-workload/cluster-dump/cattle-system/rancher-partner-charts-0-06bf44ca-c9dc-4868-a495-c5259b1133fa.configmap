@@ -1,0 +1,15 @@
+Name:         rancher-partner-charts-0-06bf44ca-c9dc-4868-a495-c5259b1133fa
+Namespace:    cattle-system
+Labels:       objectset.rio.cattle.io/hash=41a45bc42696d995153786fff35303a289075728
+Annotations:  catalog.cattle.io/next: 
+              catalog.cattle.io/size: 21957
+              objectset.rio.cattle.io/applied:
+                H4sIAAAAAAAA/4yRzW7bMBCEX6XYa0RHP6QsCuihaAsk/bkkhpG46GFFrWLGEimQtFPb8LsXtFOgBeImPHLJb2Zn9tBog277CQNCvQdlTSAToIYr7q8/PJ/Li60s7r493n65Hi60fT...
+              objectset.rio.cattle.io/id: 
+              objectset.rio.cattle.io/owner-gvk: catalog.cattle.io/v1, Kind=ClusterRepo
+              objectset.rio.cattle.io/owner-name: rancher-partner-charts
+              objectset.rio.cattle.io/owner-namespace: 
+
+Data
+====
+Events:  <none>

@@ -1,0 +1,83 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "IngressTrait",
+            "metadata": {
+                "annotations": {
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:31Z",
+                "finalizers": [
+                    "ingresstrait.finalizers.verrazzano.io"
+                ],
+                "generation": 3,
+                "labels": {
+                    "app.oam.dev/component": "hello-coherence",
+                    "app.oam.dev/name": "hello-appconf",
+                    "app.oam.dev/resourceType": "TRAIT",
+                    "app.oam.dev/revision": "hello-coherence-v1"
+                },
+                "name": "hello-ingress",
+                "namespace": "hello-coherence-7b195c4",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "hello-appconf",
+                        "uid": "33aad5eb-f1c1-4588-b22f-61807f4841e8"
+                    }
+                ],
+                "resourceVersion": "16053",
+                "uid": "759cfcad-5df6-47b1-8538-5d4764b11200"
+            },
+            "spec": {
+                "rules": [
+                    {
+                        "paths": [
+                            {
+                                "path": "/catalogue",
+                                "pathType": "Prefix"
+                            }
+                        ]
+                    }
+                ],
+                "workloadRef": {
+                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                    "kind": "VerrazzanoCoherenceWorkload",
+                    "name": "hello-coherence"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:23:39Z",
+                        "reason": "ReconcileSuccess",
+                        "status": "True",
+                        "type": "Synced"
+                    }
+                ],
+                "resources": [
+                    {
+                        "apiVersion": "cert-manager.io/v1",
+                        "kind": "Certificate",
+                        "name": "hello-coherence-7b195c4-hello-ingress-cert"
+                    },
+                    {
+                        "apiVersion": "networking.istio.io/v1alpha3",
+                        "kind": "VirtualService",
+                        "name": "hello-ingress-rule-0-vs"
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

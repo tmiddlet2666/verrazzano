@@ -1,0 +1,520 @@
+{
+    "kind": "EventList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22276"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "hello-appconf.16f2c7e7e2bc1702",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "f7773ac8-a3a8-4ca9-955c-cff07db4d815",
+                "resourceVersion": "21989",
+                "creationTimestamp": "2022-05-26T22:23:31Z"
+            },
+            "involvedObject": {
+                "kind": "ApplicationConfiguration",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-appconf",
+                "uid": "33aad5eb-f1c1-4588-b22f-61807f4841e8",
+                "apiVersion": "core.oam.dev/v1alpha2",
+                "resourceVersion": "14359"
+            },
+            "reason": "RenderedComponents",
+            "message": "Successfully rendered components",
+            "source": {
+                "component": "oam/applicationconfiguration.core.oam.dev"
+            },
+            "firstTimestamp": "2022-05-26T22:23:31Z",
+            "lastTimestamp": "2022-05-26T22:35:33Z",
+            "count": 14,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-appconf.16f2c7e7e619bfa1",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "3c9785fc-a3e4-4dd7-bbf6-088b39e84f58",
+                "resourceVersion": "21521",
+                "creationTimestamp": "2022-05-26T22:23:32Z"
+            },
+            "involvedObject": {
+                "kind": "ApplicationConfiguration",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-appconf",
+                "uid": "33aad5eb-f1c1-4588-b22f-61807f4841e8",
+                "apiVersion": "core.oam.dev/v1alpha2",
+                "resourceVersion": "14359"
+            },
+            "reason": "AppliedComponents",
+            "message": "Successfully applied components",
+            "source": {
+                "component": "oam/applicationconfiguration.core.oam.dev"
+            },
+            "firstTimestamp": "2022-05-26T22:23:32Z",
+            "lastTimestamp": "2022-05-26T22:34:33Z",
+            "count": 13,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7e9e92924d2",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "f5882554-a2cf-4a3a-8ab4-4b1e4f2ef0a5",
+                "resourceVersion": "14960",
+                "creationTimestamp": "2022-05-26T22:23:40Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14956"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned hello-coherence-7b195c4/hello-coh-0 to 10.0.116.227",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:23:40.651478Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7ea441a996f",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "f3031abc-2f89-42dd-81bc-a3182d62cc78",
+                "resourceVersion": "15030",
+                "creationTimestamp": "2022-05-26T22:23:42Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.initContainers{coherence-k8s-utils}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/oracle/coherence-operator:3.2.5-utils\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:23:42Z",
+            "lastTimestamp": "2022-05-26T22:23:42Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7eba985b8e6",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "45a65a2c-a6b1-4d20-9ca8-56b14b9b6ba7",
+                "resourceVersion": "15145",
+                "creationTimestamp": "2022-05-26T22:23:48Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.initContainers{coherence-k8s-utils}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/oracle/coherence-operator:3.2.5-utils\" in 5.996469136s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:23:48Z",
+            "lastTimestamp": "2022-05-26T22:23:48Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7ebb7774cbe",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "80cc9bf8-8b6e-4dd6-9cb0-c37539c25db7",
+                "resourceVersion": "15150",
+                "creationTimestamp": "2022-05-26T22:23:48Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.initContainers{coherence-k8s-utils}"
+            },
+            "reason": "Created",
+            "message": "Created container coherence-k8s-utils",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:23:48Z",
+            "lastTimestamp": "2022-05-26T22:23:48Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7ebbab23fb8",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "3f5916ec-a7c8-4bde-a757-e4bc6eaa8877",
+                "resourceVersion": "15162",
+                "creationTimestamp": "2022-05-26T22:23:48Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.initContainers{coherence-k8s-utils}"
+            },
+            "reason": "Started",
+            "message": "Started container coherence-k8s-utils",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:23:48Z",
+            "lastTimestamp": "2022-05-26T22:23:48Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7ebf852a859",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "366ef02c-b6df-4461-8ef8-9be5a2d07346",
+                "resourceVersion": "15254",
+                "creationTimestamp": "2022-05-26T22:23:49Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{coherence}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/oracle/coherence-helidon-sockshop-catalog:1.0.0\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:23:49Z",
+            "lastTimestamp": "2022-05-26T22:23:49Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f1308fd0a3",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "2da75923-bb34-48e0-9819-0b09e222b0d7",
+                "resourceVersion": "15607",
+                "creationTimestamp": "2022-05-26T22:24:11Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{coherence}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/oracle/coherence-helidon-sockshop-catalog:1.0.0\" in 22.418337841s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:11Z",
+            "lastTimestamp": "2022-05-26T22:24:11Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f14f61067a",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "241e8b63-dc12-4ae7-b421-ad0d507b5252",
+                "resourceVersion": "15622",
+                "creationTimestamp": "2022-05-26T22:24:12Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{coherence}"
+            },
+            "reason": "Created",
+            "message": "Created container coherence",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:12Z",
+            "lastTimestamp": "2022-05-26T22:24:12Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f15c7538b8",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "26de2ac2-22da-42f0-8723-79228bb86296",
+                "resourceVersion": "15640",
+                "creationTimestamp": "2022-05-26T22:24:13Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{coherence}"
+            },
+            "reason": "Started",
+            "message": "Started container coherence",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:12Z",
+            "lastTimestamp": "2022-05-26T22:24:12Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f15ebee563",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "8ce612d0-85e9-483e-99e3-613f7e8edab9",
+                "resourceVersion": "15654",
+                "creationTimestamp": "2022-05-26T22:24:14Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{fluentd-stdout-sidecar}"
+            },
+            "reason": "Pulled",
+            "message": "Container image \"ghcr.io/verrazzano/fluentd-kubernetes-daemonset:v1.14.5-20220427170000-87ed055\" already present on machine",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:12Z",
+            "lastTimestamp": "2022-05-26T22:24:12Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f1798a92d0",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "6ba58e7e-e1ad-490d-8a2d-b0262e8793a1",
+                "resourceVersion": "15663",
+                "creationTimestamp": "2022-05-26T22:24:14Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{fluentd-stdout-sidecar}"
+            },
+            "reason": "Created",
+            "message": "Created container fluentd-stdout-sidecar",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:13Z",
+            "lastTimestamp": "2022-05-26T22:24:13Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-0.16f2c7f181725119",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "3f039b20-d4fb-48df-9833-4935871e073f",
+                "resourceVersion": "15667",
+                "creationTimestamp": "2022-05-26T22:24:14Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh-0",
+                "uid": "026d1e6c-21ab-4ce0-8dc5-f5e76c98638c",
+                "apiVersion": "v1",
+                "resourceVersion": "14957",
+                "fieldPath": "spec.containers{fluentd-stdout-sidecar}"
+            },
+            "reason": "Started",
+            "message": "Started container fluentd-stdout-sidecar",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:24:13Z",
+            "lastTimestamp": "2022-05-26T22:24:13Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh.16f2c7e9e2b86dd6",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "d7243ba9-74ce-4492-9888-8a5f16ee8c09",
+                "resourceVersion": "14952",
+                "creationTimestamp": "2022-05-26T22:23:40Z"
+            },
+            "involvedObject": {
+                "kind": "Coherence",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh",
+                "uid": "f0c85f29-aff4-447c-94ff-655388101297",
+                "apiVersion": "coherence.oracle.com/v1",
+                "resourceVersion": "14651"
+            },
+            "reason": "Created",
+            "message": "successfully created StatefulSet for Coherence resource 'hello-coh'",
+            "source": {
+                "component": "controllers.StatefulSet"
+            },
+            "firstTimestamp": "2022-05-26T22:23:40Z",
+            "lastTimestamp": "2022-05-26T22:23:40Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coh.16f2c7e9e89962dc",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "dbc54dfe-44e2-49c0-a1d9-eaad61881913",
+                "resourceVersion": "14958",
+                "creationTimestamp": "2022-05-26T22:23:40Z"
+            },
+            "involvedObject": {
+                "kind": "StatefulSet",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coh",
+                "uid": "91cffc28-6ece-478e-a564-6ba05b8006b8",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "14946"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "create Pod hello-coh-0 in StatefulSet hello-coh successful",
+            "source": {
+                "component": "statefulset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:23:40Z",
+            "lastTimestamp": "2022-05-26T22:23:40Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "hello-coherence-7b195c4.NamespaceWatchingStarted.2779909615fcb65",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "f9a303cb-f2ff-44d8-9500-23b2a2aa49a2",
+                "resourceVersion": "14248",
+                "creationTimestamp": "2022-05-26T22:23:21Z",
+                "labels": {
+                    "weblogic.createdByOperator": "true"
+                }
+            },
+            "involvedObject": {
+                "kind": "Namespace",
+                "namespace": "hello-coherence-7b195c4",
+                "name": "hello-coherence-7b195c4"
+            },
+            "reason": "NamespaceWatchingStarted",
+            "message": "Started watching namespace hello-coherence-7b195c4",
+            "source": {},
+            "firstTimestamp": "2022-05-26T22:23:21Z",
+            "lastTimestamp": "2022-05-26T22:23:21Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "weblogic.operator",
+            "reportingInstance": "weblogic-operator-cb95dc8-mg6xm"
+        }
+    ]
+}

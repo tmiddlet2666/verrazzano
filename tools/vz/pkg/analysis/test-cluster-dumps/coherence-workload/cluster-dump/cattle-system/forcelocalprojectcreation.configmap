@@ -1,0 +1,11 @@
+Name:         forcelocalprojectcreation
+Namespace:    cattle-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+projectsCreated:
+----
+true
+Events:  <none>

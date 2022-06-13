@@ -1,0 +1,17 @@
+Name:         verrazzano-monitoring-operator-config
+Namespace:    verrazzano-system
+Labels:       app=verrazzano-monitoring-operator
+              app.kubernetes.io/managed-by=Helm
+Annotations:  meta.helm.sh/release-name: verrazzano-monitoring-operator
+              meta.helm.sh/release-namespace: verrazzano-system
+
+Data
+====
+config:
+----
+metricsPort: 8090
+defaultSimpleCompReplicas: 1
+defaultPrometheusReplicas: 1
+defaultIngressTargetDNSName: b90-verrazzano-ingress.zb91df2.v8o.io
+
+Events:  <none>

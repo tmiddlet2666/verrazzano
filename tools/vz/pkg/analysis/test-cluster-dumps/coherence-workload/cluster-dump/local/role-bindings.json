@@ -1,0 +1,78 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:14:17Z",
+                "labels": {
+                    "cattle.io/creator": "norman"
+                },
+                "name": "local-fleet-local-owner-cluster-owner",
+                "namespace": "local",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "management.cattle.io/v3",
+                        "kind": "ClusterRoleTemplateBinding",
+                        "name": "local-fleet-local-owner",
+                        "uid": "0becede4-bbe2-487b-87ab-046f8efbee2a"
+                    }
+                ],
+                "resourceVersion": "7774",
+                "uid": "97c41151-0c16-48cf-b845-cbe5577d2d2c"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "cluster-owner"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "u-mo773yttt4"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:14:33Z",
+                "labels": {
+                    "cattle.io/creator": "norman"
+                },
+                "name": "u-b4qkhsnliz-admin-cluster-owner",
+                "namespace": "local",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "management.cattle.io/v3",
+                        "kind": "ClusterRoleTemplateBinding",
+                        "name": "u-b4qkhsnliz-admin",
+                        "uid": "096cab83-f13d-4d0b-a7fc-bc2bf2084ed2"
+                    }
+                ],
+                "resourceVersion": "8801",
+                "uid": "a4eb725a-b6e5-4975-ae9a-58e8450de3a2"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "cluster-owner"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "u-b4qkhsnliz"
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

@@ -1,0 +1,15 @@
+==== START logs for container kube-state-metrics of pod verrazzano-monitoring/kube-state-metrics-c8895779-j586c ====
+I0526 22:09:32.633135       1 server.go:100] Using resources certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
+I0526 22:09:32.633265       1 types.go:136] Using all namespace
+I0526 22:09:32.633302       1 server.go:122] Metric allow-denylisting: Excluding the following lists that were on denylist: 
+W0526 22:09:32.633332       1 client_config.go:617] Neither --kubeconfig nor --master was specified.  Using the inClusterConfig.  This might not work.
+I0526 22:09:32.634582       1 server.go:250] Testing communication with server
+I0526 22:09:32.648677       1 server.go:255] Running with Kubernetes cluster version: v1.22. git version: v1.22.5. git tree state: clean. commit: c999fea1e6dbf111d64000dfaaff45edaa4c34d2. platform: linux/amd64
+I0526 22:09:32.648715       1 server.go:257] Communication with server successful
+I0526 22:09:32.649034       1 server.go:202] Starting metrics server: [::]:8080
+I0526 22:09:32.649058       1 metrics_handler.go:96] Autosharding disabled
+I0526 22:09:32.649092       1 server.go:191] Starting kube-state-metrics self metrics server: [::]:8081
+I0526 22:09:32.649648       1 server.go:66] levelinfomsgTLS is disabled.http2false
+I0526 22:09:32.649837       1 server.go:66] levelinfomsgTLS is disabled.http2false
+I0526 22:09:32.652491       1 builder.go:232] Active resources: certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments
+==== END logs for container kube-state-metrics of pod verrazzano-monitoring/kube-state-metrics-c8895779-j586c ====

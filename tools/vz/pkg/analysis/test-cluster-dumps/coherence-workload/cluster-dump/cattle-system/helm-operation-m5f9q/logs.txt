@@ -1,0 +1,8 @@
+==== START logs for container helm of pod cattle-system/helm-operation-m5f9q ====
+helm upgrade --force-adopt=true --history-max=5 --install=true --namespace=cattle-fleet-system --reset-values=true --timeout=5m0s --values=/home/shell/helm/values-fleet-100.0.3-up0.3.9.yaml --version=100.0.3+up0.3.9 --wait=true fleet /home/shell/helm/fleet-100.0.3-up0.3.9.tgz
+Error: UPGRADE FAILED: another operation (install/upgrade/rollback) is in progress
+==== END logs for container helm of pod cattle-system/helm-operation-m5f9q ====
+==== START logs for container proxy of pod cattle-system/helm-operation-m5f9q ====
+W0526 22:17:09.023893       8 proxy.go:162] Request filter disabled, your proxy is vulnerable to XSRF attacks, please be cautious
+Starting to serve on 127.0.0.1:8001
+==== END logs for container proxy of pod cattle-system/helm-operation-m5f9q ====

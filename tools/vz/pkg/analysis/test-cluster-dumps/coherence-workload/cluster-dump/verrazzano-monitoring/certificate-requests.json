@@ -1,0 +1,161 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "CertificateRequest",
+            "metadata": {
+                "annotations": {
+                    "cert-manager.io/certificate-name": "prometheus-operator-kube-p-admission",
+                    "cert-manager.io/certificate-revision": "1",
+                    "cert-manager.io/private-key-secret-name": "prometheus-operator-kube-p-admission-wprs5",
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "creationTimestamp": "2022-05-26T22:09:44Z",
+                "generateName": "prometheus-operator-kube-p-admission-",
+                "generation": 1,
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "prometheus-operator-kube-p-admission-jkzlc",
+                "namespace": "verrazzano-monitoring",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "cert-manager.io/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "Certificate",
+                        "name": "prometheus-operator-kube-p-admission",
+                        "uid": "34c78f68-2fee-4b11-bfd9-6272be7f72f0"
+                    }
+                ],
+                "resourceVersion": "4216",
+                "uid": "eb781018-856e-4e73-a33b-12cfff27d039"
+            },
+            "spec": {
+                "duration": "8760h0m0s",
+                "extra": {
+                    "authentication.kubernetes.io/pod-name": [
+                        "cert-manager-6b858787c8-s5nrr"
+                    ],
+                    "authentication.kubernetes.io/pod-uid": [
+                        "67a2377c-11d5-4a0c-8ccc-548f15c84edf"
+                    ]
+                },
+                "groups": [
+                    "system:serviceaccounts",
+                    "system:serviceaccounts:cert-manager",
+                    "system:authenticated"
+                ],
+                "issuerRef": {
+                    "name": "prometheus-operator-kube-p-root-issuer"
+                },
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJREZEQ0NBZndDQVFBd0FEQ0NBU0l3RFFZSktvWklodmNOQVFFQkJRQURnZ0VQQURDQ0FRb0NnZ0VCQUx4ZgovVklsWmRyY3d0bDlmT0ZOTlAyMTdMMnRlREphRVlQZWdyM1pTc3EwVVovb0dlMDIydW1ESmxzclpwc20xY21kCkVJbXFRSkJ4RlgxL1ZDTU9pRFFWaEFPSEhGQlRqdGNOU1dEa0c4by9BcEZtcWxNU2tQTnNiM2tjRXNCSDZ4NTYKSk1XV3Nud280Wko5TlRHUjhRMjE2akt6NGcwS0tiNXhqZFIzSmlTYnRKVklzeHVXVXVwcE1ueFVBbkt0aTIyeQpMcmNRbEF4TmZEK2w3eURQckpzTHkzeUxhZzdUa25jUFh5SDlQNGYyc2x2TzNrTHFIamhUUXNTOTEvYWQxdkJSCkFtUGFzS3orcEhidEczMCt4SDgzV0lHais3SGZJZ0YwQnRJczF5UU10VUZwYStJOHJlWVdUTkIrYTlsdUFlTEoKdUhYdWR2YTFQTUFLVXdCWjQwc0NBd0VBQWFDQnpqQ0J5d1lKS29aSWh2Y05BUWtPTVlHOU1JRzZNSUdxQmdOVgpIUkVFZ2FJd2daK0NJM0J5YjIxbGRHaGxkWE10YjNCbGNtRjBiM0l0YTNWaVpTMXdMVzl3WlhKaGRHOXlnamx3CmNtOXRaWFJvWlhWekxXOXdaWEpoZEc5eUxXdDFZbVV0Y0MxdmNHVnlZWFJ2Y2k1MlpYSnlZWHA2WVc1dkxXMXYKYm1sMGIzSnBibWVDUFhCeWIyMWxkR2hsZFhNdGIzQmxjbUYwYjNJdGEzVmlaUzF3TFc5d1pYSmhkRzl5TG5abApjbkpoZW5waGJtOHRiVzl1YVhSdmNtbHVaeTV6ZG1Nd0N3WURWUjBQQkFRREFnV2dNQTBHQ1NxR1NJYjNEUUVCCkN3VUFBNElCQVFBSEtqMXNhZlBYVkN1dFNQNmZJMmRsTzM0SFUrQ3FjTCs5eDV1VjlkQk9Gb0krSzIvM3FPMUcKMFM2WHMzZXpLVC9GekZOTy9qd2hxc0NVZm5na1ZxdTBBM2lBOE83L2hMbytwNDlSS0sxV3FMNXZ2Q0VvT01XRQpLdEdUQVRHT0oxOUxKVXo4eCtmTkxiWVdjWnRySHNINGpocGVPdzdUYUFNVldyRGFRSndNc0UyY3o5MnBFRFhqCnE4K3NXSG11K0FIa2t5SGRVdXcrRTJnbXBKTHVjVzI3ZlpzWjYyT05vUVV1VWJtMU5WVXBHdEI3RWgwOVdTL0oKb3UwMkJNcTU1SmZnWDJobEZZdzZVdmthZ0VnTXB1L29kNWNaSFNBbTFHVGVLRythNzdoN0JrN2RUUFZ6NGlQYgorQW9lK2c3bHBSbUZ6cjM1dUZ5bzZERU5ZekcrTGtQYwotLS0tLUVORCBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0K",
+                "uid": "f21ca2fa-56e0-4c05-b135-32f750e9c665",
+                "username": "system:serviceaccount:cert-manager:cert-manager"
+            },
+            "status": {
+                "ca": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJekNDQWd1Z0F3SUJBZ0lSQVBmSC9tR21VQ0F0Q3RoQnJwR0xIMHd3RFFZSktvWklodmNOQVFFTEJRQXcKS3pFcE1DY0dBMVVFQXhNZ1kyRXVkMlZpYUc5dmF5NXJkV0psTFhCeWIyMWxkR2hsZFhNdGMzUmhZMnN3SGhjTgpNakl3TlRJMk1qSXdPVFEwV2hjTk1qY3dOVEkxTWpJd09UUTBXakFyTVNrd0p3WURWUVFERXlCallTNTNaV0pvCmIyOXJMbXQxWW1VdGNISnZiV1YwYUdWMWN5MXpkR0ZqYXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQU15SXRaQXA3MExsSk1SWE0yWDBUSUdkOGhUZEpDeXNneCsyNndNMk9qSm9sUkphbE5FSgpBR3lvUnpUbk94dHhUSmpjSDk5UWNoR0xjZHJhd1NJTmY0WjZiQmRvTjhXRlhpK3RobzdhUW9VZ1dpU2FxODlaCm53TEMveEtabHA3bVMrUkZDajN3WDBnTzJoS1p4MVhCd3VnV3NOZWFNQi9tVC9uRW44RUx0dzRkU3Jidis0OUgKT090SmlBVURCemZVb1AzbnJlaUlqTGIramk1eWVGZ3ZyUGVPTkd1NUwvWndJWFUvK1ZPcG9pZkg1OUJKRXp1TQpPM0JVSHBlc2VHeUhaVmdoMXhERXF2SWludGl4QkI0TEdkelRwSzRoME5MZnE3eWNlelBSSnBpQjlDanpmbXVjCmMybEUyMTNROTc2KzU1RzNBNzRRYmNWZ3JJNGlOYWxlRTMwQ0F3RUFBYU5DTUVBd0RnWURWUjBQQVFIL0JBUUQKQWdLa01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHSC9TWXRqbVBNUGlTK2NlbU1ac2xtRgprL3hOTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFESlh3cGdiWlVCRy9ENVhnMWdSTkV3dFQycng1bnZySkgrCjh3MG9CYTVhK3M1Q2FCMUZnMUtCd2xRVzNzRWJEVFRTU1ljQi9IcnY0V0VRVGkxRDMyb2FzSkIxSXFyZ1plNHoKUDdYZE9IdEZDZDZmZklqUzZzaGd4Smp2WHptK2MzNC9TdThlUzV2YVpnOWpWVGZoYUpTQitZeE92SVkzaE55dwp4cEVKZlZaaWVmQ1hlUmhPQ0lyeEl4OTRSdlgvMno5ODhQZHlDM2JNN2lkQU5paFNaVXdINnBkK2Q5R0QvWmxjCnByMzh3eVlsTWFROUg5Q0VvUGM1a0FjRnlDdEt0NDRhak5XVk9xdDAybTJvSWFMOG9ad3FpNmxCN1lqV3Z5YjkKZytmd2tCR1dtc2g5QzY5NXVIdHViWU96U3FzSUpETlFCU2I1UzVlN21kYkNIa3l4ZlpXSgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURxVENDQXBHZ0F3SUJBZ0lSQUxMcmk3K0o0blRraGVQWkJLaEljeVV3RFFZSktvWklodmNOQVFFTEJRQXcKS3pFcE1DY0dBMVVFQXhNZ1kyRXVkMlZpYUc5dmF5NXJkV0psTFhCeWIyMWxkR2hsZFhNdGMzUmhZMnN3SGhjTgpNakl3TlRJMk1qSXdPVFE1V2hjTk1qTXdOVEkyTWpJd09UUTVXakFBTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGCkFBT0NBUThBTUlJQkNnS0NBUUVBdkYvOVVpVmwydHpDMlgxODRVMDAvYlhzdmExNE1sb1JnOTZDdmRsS3lyUlIKbitnWjdUYmE2WU1tV3l0bW15YlZ5WjBRaWFwQWtIRVZmWDlVSXc2SU5CV0VBNGNjVUZPTzF3MUpZT1FieWo4QwprV2FxVXhLUTgyeHZlUndTd0Vmckhub2t4WmF5ZkNqaGtuMDFNWkh4RGJYcU1yUGlEUW9wdm5HTjFIY21KSnUwCmxVaXpHNVpTNm1reWZGUUNjcTJMYmJJdXR4Q1VERTE4UDZYdklNK3Ntd3ZMZkl0cUR0T1NkdzlmSWYwL2gvYXkKVzg3ZVF1b2VPRk5DeEwzWDlwM1c4RkVDWTlxd3JQNmtkdTBiZlQ3RWZ6ZFlnYVA3c2Q4aUFYUUcwaXpYSkF5MQpRV2xyNGp5dDVoWk0wSDVyMlc0QjRzbTRkZTUyOXJVOHdBcFRBRm5qU3dJREFRQUJvNEh5TUlIdk1BNEdBMVVkCkR3RUIvd1FFQXdJRm9EQU1CZ05WSFJNQkFmOEVBakFBTUI4R0ExVWRJd1FZTUJhQUZHSC9TWXRqbVBNUGlTK2MKZW1NWnNsbUZrL3hOTUlHdEJnTlZIUkVCQWY4RWdhSXdnWitDSTNCeWIyMWxkR2hsZFhNdGIzQmxjbUYwYjNJdAphM1ZpWlMxd0xXOXdaWEpoZEc5eWdqbHdjbTl0WlhSb1pYVnpMVzl3WlhKaGRHOXlMV3QxWW1VdGNDMXZjR1Z5CllYUnZjaTUyWlhKeVlYcDZZVzV2TFcxdmJtbDBiM0pwYm1lQ1BYQnliMjFsZEdobGRYTXRiM0JsY21GMGIzSXQKYTNWaVpTMXdMVzl3WlhKaGRHOXlMblpsY25KaGVucGhibTh0Ylc5dWFYUnZjbWx1Wnk1emRtTXdEUVlKS29aSQpodmNOQVFFTEJRQURnZ0VCQUlQTUZ4RVIzVHNBeGl0MUh1L3JRMEVOeE0xMkJ3OWd0eWRjdVUzcTBxNERwcXJ3ClR0eGxKWHlkd0tiUGVXU3UxZUk4RkRmVFVjc0RaSVlobDNBbVZkZElwb3A3bVBmcVZUY0F4b3NybWQyci9mVnIKZU9tQWY0cHpJS2ZzYXk3V1l6bE16V0N0YWx5VFgrVmRXMnRCVzNCdENEbS90N1JkdFNWcjRZRm9odmRGb1BWZwpsWkk5d0JlZEtpNEpjU1c5R0dXQTJubmw2Zy90dkhYSmZwYVYyQXloR2M0SEJkcWNxaTBLSG0rTlVzR25GNmZMCjh6VVUxWkllOGVRMjBBVjVLSVI5bGpsa0FmaGdmTHAwU2d1c1hiOEU4RFU3emxFUkZpTWt4Vy9BTFVCT1BYSkoKb09RU3kyMnFTazBlRzl0ekg1b0RMZHhsOUoxNGNPUmpuWXhWT2s0PQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:09:44Z",
+                        "message": "Certificate request has been approved by cert-manager.io",
+                        "reason": "cert-manager.io",
+                        "status": "True",
+                        "type": "Approved"
+                    },
+                    {
+                        "lastTransitionTime": "2022-05-26T22:09:49Z",
+                        "message": "Certificate fetched from issuer successfully",
+                        "reason": "Issued",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "CertificateRequest",
+            "metadata": {
+                "annotations": {
+                    "cert-manager.io/certificate-name": "prometheus-operator-kube-p-root-cert",
+                    "cert-manager.io/certificate-revision": "1",
+                    "cert-manager.io/private-key-secret-name": "prometheus-operator-kube-p-root-cert-zxgb5",
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "creationTimestamp": "2022-05-26T22:09:44Z",
+                "generateName": "prometheus-operator-kube-p-root-cert-",
+                "generation": 1,
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "prometheus-operator-kube-p-root-cert-bs5st",
+                "namespace": "verrazzano-monitoring",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "cert-manager.io/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "Certificate",
+                        "name": "prometheus-operator-kube-p-root-cert",
+                        "uid": "bece28bd-c77d-4ed2-af5f-b6852e38f381"
+                    }
+                ],
+                "resourceVersion": "4168",
+                "uid": "6f629619-1590-45f6-8dc7-e0030e81d63a"
+            },
+            "spec": {
+                "duration": "43800h0m0s",
+                "extra": {
+                    "authentication.kubernetes.io/pod-name": [
+                        "cert-manager-6b858787c8-s5nrr"
+                    ],
+                    "authentication.kubernetes.io/pod-uid": [
+                        "67a2377c-11d5-4a0c-8ccc-548f15c84edf"
+                    ]
+                },
+                "groups": [
+                    "system:serviceaccounts",
+                    "system:serviceaccounts:cert-manager",
+                    "system:authenticated"
+                ],
+                "isCA": true,
+                "issuerRef": {
+                    "name": "prometheus-operator-kube-p-self-signed-issuer"
+                },
+                "request": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURSBSRVFVRVNULS0tLS0KTUlJQ2pqQ0NBWFlDQVFBd0t6RXBNQ2NHQTFVRUF4TWdZMkV1ZDJWaWFHOXZheTVyZFdKbExYQnliMjFsZEdobApkWE10YzNSaFkyc3dnZ0VpTUEwR0NTcUdTSWIzRFFFQkFRVUFBNElCRHdBd2dnRUtBb0lCQVFETWlMV1FLZTlDCjVTVEVWek5sOUV5Qm5mSVUzU1FzcklNZnR1c0ROam95YUpVU1dwVFJDUUJzcUVjMDV6c2JjVXlZM0IvZlVISVIKaTNIYTJzRWlEWCtHZW13WGFEZkZoVjR2cllhTzJrS0ZJRm9rbXF2UFdaOEN3djhTbVphZTVrdmtSUW85OEY5SQpEdG9TbWNkVndjTG9GckRYbWpBZjVrLzV4Si9CQzdjT0hVcTI3L3VQUnpqclNZZ0ZBd2MzMUtEOTU2M29pSXkyCi9vNHVjbmhZTDZ6M2pqUnJ1Uy8yY0NGMVAvbFRxYUlueCtmUVNSTTdqRHR3VkI2WHJIaHNoMlZZSWRjUXhLcnkKSXA3WXNRUWVDeG5jMDZTdUlkRFMzNnU4bkhzejBTYVlnZlFvODM1cm5ITnBSTnRkMFBlK3Z1ZVJ0d08rRUczRgpZS3lPSWpXcFhoTjlBZ01CQUFHZ0hqQWNCZ2txaGtpRzl3MEJDUTR4RHpBTk1Bc0dBMVVkRHdRRUF3SUNwREFOCkJna3Foa2lHOXcwQkFRc0ZBQU9DQVFFQU1MdmdYQ2xFc3JWY1FaRWpYYjdwSWl3NmpXWWJrY21XdTltdStGZUYKNFl6OEdwRXZabThCVjVZWXYzQkNLeTgvK2gyQkZqR1BtQ3FIaEhtZ2JONXBXZnkveGxidytBVGFSVk9rTnVKMgp5TGtKTW5VcVdoNlBmZ1g3SnRma2ZtZE1NV0Izb2F4SCsyWGYzUjFuY0NERjJzeXcyKzdGbnlQek8yVFdWVWRECnpxcEtDZzg0aGNJL1UrckpKTHhYUk1ZUzNFU2VWUHpKV1psYkluNWlmKzFIYjZhMFFiRDZ2WmFWcDFGQXd4ak4KZ0tPNmVwQzZ6aDBTbVRETytIMkE3cUNWYi9nZWtURTVzZGJxeGE1cjIxa1krT2sxOHFaWm03M21PbUhVV0ovaApFNDFjZXhFU3ViK281VmtBUXdZQmg3NXFzZk1FcVpkWEdVYmpzUmsyY0VMZTJRPT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUgUkVRVUVTVC0tLS0tCg==",
+                "uid": "f21ca2fa-56e0-4c05-b135-32f750e9c665",
+                "username": "system:serviceaccount:cert-manager:cert-manager"
+            },
+            "status": {
+                "ca": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJekNDQWd1Z0F3SUJBZ0lSQVBmSC9tR21VQ0F0Q3RoQnJwR0xIMHd3RFFZSktvWklodmNOQVFFTEJRQXcKS3pFcE1DY0dBMVVFQXhNZ1kyRXVkMlZpYUc5dmF5NXJkV0psTFhCeWIyMWxkR2hsZFhNdGMzUmhZMnN3SGhjTgpNakl3TlRJMk1qSXdPVFEwV2hjTk1qY3dOVEkxTWpJd09UUTBXakFyTVNrd0p3WURWUVFERXlCallTNTNaV0pvCmIyOXJMbXQxWW1VdGNISnZiV1YwYUdWMWN5MXpkR0ZqYXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQU15SXRaQXA3MExsSk1SWE0yWDBUSUdkOGhUZEpDeXNneCsyNndNMk9qSm9sUkphbE5FSgpBR3lvUnpUbk94dHhUSmpjSDk5UWNoR0xjZHJhd1NJTmY0WjZiQmRvTjhXRlhpK3RobzdhUW9VZ1dpU2FxODlaCm53TEMveEtabHA3bVMrUkZDajN3WDBnTzJoS1p4MVhCd3VnV3NOZWFNQi9tVC9uRW44RUx0dzRkU3Jidis0OUgKT090SmlBVURCemZVb1AzbnJlaUlqTGIramk1eWVGZ3ZyUGVPTkd1NUwvWndJWFUvK1ZPcG9pZkg1OUJKRXp1TQpPM0JVSHBlc2VHeUhaVmdoMXhERXF2SWludGl4QkI0TEdkelRwSzRoME5MZnE3eWNlelBSSnBpQjlDanpmbXVjCmMybEUyMTNROTc2KzU1RzNBNzRRYmNWZ3JJNGlOYWxlRTMwQ0F3RUFBYU5DTUVBd0RnWURWUjBQQVFIL0JBUUQKQWdLa01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHSC9TWXRqbVBNUGlTK2NlbU1ac2xtRgprL3hOTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFESlh3cGdiWlVCRy9ENVhnMWdSTkV3dFQycng1bnZySkgrCjh3MG9CYTVhK3M1Q2FCMUZnMUtCd2xRVzNzRWJEVFRTU1ljQi9IcnY0V0VRVGkxRDMyb2FzSkIxSXFyZ1plNHoKUDdYZE9IdEZDZDZmZklqUzZzaGd4Smp2WHptK2MzNC9TdThlUzV2YVpnOWpWVGZoYUpTQitZeE92SVkzaE55dwp4cEVKZlZaaWVmQ1hlUmhPQ0lyeEl4OTRSdlgvMno5ODhQZHlDM2JNN2lkQU5paFNaVXdINnBkK2Q5R0QvWmxjCnByMzh3eVlsTWFROUg5Q0VvUGM1a0FjRnlDdEt0NDRhak5XVk9xdDAybTJvSWFMOG9ad3FpNmxCN1lqV3Z5YjkKZytmd2tCR1dtc2g5QzY5NXVIdHViWU96U3FzSUpETlFCU2I1UzVlN21kYkNIa3l4ZlpXSgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                "certificate": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJekNDQWd1Z0F3SUJBZ0lSQVBmSC9tR21VQ0F0Q3RoQnJwR0xIMHd3RFFZSktvWklodmNOQVFFTEJRQXcKS3pFcE1DY0dBMVVFQXhNZ1kyRXVkMlZpYUc5dmF5NXJkV0psTFhCeWIyMWxkR2hsZFhNdGMzUmhZMnN3SGhjTgpNakl3TlRJMk1qSXdPVFEwV2hjTk1qY3dOVEkxTWpJd09UUTBXakFyTVNrd0p3WURWUVFERXlCallTNTNaV0pvCmIyOXJMbXQxWW1VdGNISnZiV1YwYUdWMWN5MXpkR0ZqYXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQU15SXRaQXA3MExsSk1SWE0yWDBUSUdkOGhUZEpDeXNneCsyNndNMk9qSm9sUkphbE5FSgpBR3lvUnpUbk94dHhUSmpjSDk5UWNoR0xjZHJhd1NJTmY0WjZiQmRvTjhXRlhpK3RobzdhUW9VZ1dpU2FxODlaCm53TEMveEtabHA3bVMrUkZDajN3WDBnTzJoS1p4MVhCd3VnV3NOZWFNQi9tVC9uRW44RUx0dzRkU3Jidis0OUgKT090SmlBVURCemZVb1AzbnJlaUlqTGIramk1eWVGZ3ZyUGVPTkd1NUwvWndJWFUvK1ZPcG9pZkg1OUJKRXp1TQpPM0JVSHBlc2VHeUhaVmdoMXhERXF2SWludGl4QkI0TEdkelRwSzRoME5MZnE3eWNlelBSSnBpQjlDanpmbXVjCmMybEUyMTNROTc2KzU1RzNBNzRRYmNWZ3JJNGlOYWxlRTMwQ0F3RUFBYU5DTUVBd0RnWURWUjBQQVFIL0JBUUQKQWdLa01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHSC9TWXRqbVBNUGlTK2NlbU1ac2xtRgprL3hOTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFESlh3cGdiWlVCRy9ENVhnMWdSTkV3dFQycng1bnZySkgrCjh3MG9CYTVhK3M1Q2FCMUZnMUtCd2xRVzNzRWJEVFRTU1ljQi9IcnY0V0VRVGkxRDMyb2FzSkIxSXFyZ1plNHoKUDdYZE9IdEZDZDZmZklqUzZzaGd4Smp2WHptK2MzNC9TdThlUzV2YVpnOWpWVGZoYUpTQitZeE92SVkzaE55dwp4cEVKZlZaaWVmQ1hlUmhPQ0lyeEl4OTRSdlgvMno5ODhQZHlDM2JNN2lkQU5paFNaVXdINnBkK2Q5R0QvWmxjCnByMzh3eVlsTWFROUg5Q0VvUGM1a0FjRnlDdEt0NDRhak5XVk9xdDAybTJvSWFMOG9ad3FpNmxCN1lqV3Z5YjkKZytmd2tCR1dtc2g5QzY5NXVIdHViWU96U3FzSUpETlFCU2I1UzVlN21kYkNIa3l4ZlpXSgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:09:44Z",
+                        "message": "Certificate request has been approved by cert-manager.io",
+                        "reason": "cert-manager.io",
+                        "status": "True",
+                        "type": "Approved"
+                    },
+                    {
+                        "lastTransitionTime": "2022-05-26T22:09:44Z",
+                        "message": "Certificate fetched from issuer successfully",
+                        "reason": "Issued",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

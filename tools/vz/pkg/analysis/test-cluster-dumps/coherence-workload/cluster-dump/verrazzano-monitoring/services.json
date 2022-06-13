@@ -1,0 +1,362 @@
+{
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22654"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "kube-state-metrics",
+                "namespace": "verrazzano-monitoring",
+                "uid": "e5b14f28-2976-4758-973e-d41c20e0c324",
+                "resourceVersion": "3814",
+                "creationTimestamp": "2022-05-26T22:09:21Z",
+                "labels": {
+                    "app.kubernetes.io/component": "metrics",
+                    "app.kubernetes.io/instance": "kube-state-metrics",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "kube-state-metrics",
+                    "app.kubernetes.io/part-of": "kube-state-metrics",
+                    "app.kubernetes.io/version": "2.4.1",
+                    "helm.sh/chart": "kube-state-metrics-4.7.0",
+                    "release": "kube-state-metrics"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "kube-state-metrics",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring",
+                    "prometheus.io/scrape": "true"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http",
+                        "protocol": "TCP",
+                        "port": 8080,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app.kubernetes.io/instance": "kube-state-metrics",
+                    "app.kubernetes.io/name": "kube-state-metrics"
+                },
+                "clusterIP": "10.96.122.196",
+                "clusterIPs": [
+                    "10.96.122.196"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter",
+                "namespace": "verrazzano-monitoring",
+                "uid": "cf9e4117-18ce-471f-92c5-f59ef493e444",
+                "resourceVersion": "3751",
+                "creationTimestamp": "2022-05-26T22:09:15Z",
+                "labels": {
+                    "app.kubernetes.io/component": "metrics",
+                    "app.kubernetes.io/instance": "prometheus-adapter",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "prometheus-adapter",
+                    "app.kubernetes.io/part-of": "prometheus-adapter",
+                    "app.kubernetes.io/version": "v0.9.1",
+                    "helm.sh/chart": "prometheus-adapter-3.2.0"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-adapter",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "protocol": "TCP",
+                        "port": 443,
+                        "targetPort": "https"
+                    }
+                ],
+                "selector": {
+                    "app.kubernetes.io/instance": "prometheus-adapter",
+                    "app.kubernetes.io/name": "prometheus-adapter"
+                },
+                "clusterIP": "10.96.252.136",
+                "clusterIPs": [
+                    "10.96.252.136"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter",
+                "namespace": "verrazzano-monitoring",
+                "uid": "28f316cf-6be4-487d-9721-6d98ac37aa9b",
+                "resourceVersion": "3906",
+                "creationTimestamp": "2022-05-26T22:09:27Z",
+                "labels": {
+                    "app": "prometheus-node-exporter",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "chart": "prometheus-node-exporter-3.1.0",
+                    "heritage": "Helm",
+                    "release": "prometheus-node-exporter"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-node-exporter",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring",
+                    "prometheus.io/scrape": "true"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "metrics",
+                        "protocol": "TCP",
+                        "port": 9400,
+                        "targetPort": 9100
+                    }
+                ],
+                "selector": {
+                    "app": "prometheus-node-exporter",
+                    "release": "prometheus-node-exporter"
+                },
+                "clusterIP": "10.96.252.48",
+                "clusterIPs": [
+                    "10.96.252.48"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-alertmanager",
+                "namespace": "verrazzano-monitoring",
+                "uid": "68f772c7-6aaf-4d19-98a1-68e03167edfa",
+                "resourceVersion": "3658",
+                "creationTimestamp": "2022-05-26T22:09:10Z",
+                "labels": {
+                    "app": "kube-prometheus-stack-alertmanager",
+                    "app.kubernetes.io/instance": "prometheus-operator",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                    "app.kubernetes.io/version": "34.8.0",
+                    "chart": "kube-prometheus-stack-34.8.0",
+                    "heritage": "Helm",
+                    "release": "prometheus-operator",
+                    "self-monitor": "true"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http-web",
+                        "protocol": "TCP",
+                        "port": 9093,
+                        "targetPort": 9093
+                    }
+                ],
+                "selector": {
+                    "alertmanager": "prometheus-operator-kube-p-alertmanager",
+                    "app.kubernetes.io/name": "alertmanager"
+                },
+                "clusterIP": "10.96.54.16",
+                "clusterIPs": [
+                    "10.96.54.16"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator",
+                "namespace": "verrazzano-monitoring",
+                "uid": "dd3082ef-c90f-41f7-a471-a60fb0c9eba6",
+                "resourceVersion": "3646",
+                "creationTimestamp": "2022-05-26T22:09:10Z",
+                "labels": {
+                    "app": "kube-prometheus-stack-operator",
+                    "app.kubernetes.io/instance": "prometheus-operator",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                    "app.kubernetes.io/version": "34.8.0",
+                    "chart": "kube-prometheus-stack-34.8.0",
+                    "heritage": "Helm",
+                    "release": "prometheus-operator"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "https",
+                        "protocol": "TCP",
+                        "port": 443,
+                        "targetPort": "https"
+                    }
+                ],
+                "selector": {
+                    "app": "kube-prometheus-stack-operator",
+                    "release": "prometheus-operator"
+                },
+                "clusterIP": "10.96.124.166",
+                "clusterIPs": [
+                    "10.96.124.166"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-prometheus",
+                "namespace": "verrazzano-monitoring",
+                "uid": "bab72086-0f7c-4804-bd08-b847b4a0d594",
+                "resourceVersion": "3653",
+                "creationTimestamp": "2022-05-26T22:09:10Z",
+                "labels": {
+                    "app": "kube-prometheus-stack-prometheus",
+                    "app.kubernetes.io/instance": "prometheus-operator",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                    "app.kubernetes.io/version": "34.8.0",
+                    "chart": "kube-prometheus-stack-34.8.0",
+                    "heritage": "Helm",
+                    "release": "prometheus-operator",
+                    "self-monitor": "true"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http-web",
+                        "protocol": "TCP",
+                        "port": 9090,
+                        "targetPort": 9090
+                    }
+                ],
+                "selector": {
+                    "app.kubernetes.io/name": "prometheus",
+                    "prometheus": "prometheus-operator-kube-p-prometheus"
+                },
+                "clusterIP": "10.96.239.232",
+                "clusterIPs": [
+                    "10.96.239.232"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway",
+                "namespace": "verrazzano-monitoring",
+                "uid": "edcbb292-030a-4d4f-8c74-52a71739bdee",
+                "resourceVersion": "3864",
+                "creationTimestamp": "2022-05-26T22:09:24Z",
+                "labels": {
+                    "app": "prometheus-pushgateway",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "chart": "prometheus-pushgateway-1.16.1",
+                    "heritage": "Helm",
+                    "release": "prometheus-pushgateway"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "prometheus-pushgateway",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http",
+                        "protocol": "TCP",
+                        "port": 9091,
+                        "targetPort": 9091
+                    }
+                ],
+                "selector": {
+                    "app": "prometheus-pushgateway",
+                    "release": "prometheus-pushgateway"
+                },
+                "clusterIP": "10.96.244.101",
+                "clusterIPs": [
+                    "10.96.244.101"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

@@ -1,0 +1,239 @@
+{
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22280"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "hello-coh-http",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "7265eb25-3b5a-46a5-b99f-bd0cbf34e86c",
+                "resourceVersion": "14665",
+                "creationTimestamp": "2022-05-26T22:23:36Z",
+                "labels": {
+                    "coherence-hash": "65dcc47b48",
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherence-service",
+                    "coherenceDeployment": "hello-coh",
+                    "coherencePort": "http",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "coherence.oracle.com/v1",
+                        "kind": "Coherence",
+                        "name": "hello-coh",
+                        "uid": "f0c85f29-aff4-447c-94ff-655388101297",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http",
+                        "protocol": "TCP",
+                        "port": 7001,
+                        "targetPort": 7001
+                    }
+                ],
+                "selector": {
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherencePod",
+                    "coherenceDeployment": "hello-coh",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "clusterIP": "10.96.209.148",
+                "clusterIPs": [
+                    "10.96.209.148"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-metrics",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "115e7e97-07d9-43a7-9d41-9be9aed167f5",
+                "resourceVersion": "14662",
+                "creationTimestamp": "2022-05-26T22:23:36Z",
+                "labels": {
+                    "coherence-hash": "65dcc47b48",
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherence-service",
+                    "coherenceDeployment": "hello-coh",
+                    "coherencePort": "metrics",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "coherence.oracle.com/v1",
+                        "kind": "Coherence",
+                        "name": "hello-coh",
+                        "uid": "f0c85f29-aff4-447c-94ff-655388101297",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "metrics",
+                        "protocol": "TCP",
+                        "port": 9612,
+                        "targetPort": 9612
+                    }
+                ],
+                "selector": {
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherencePod",
+                    "coherenceDeployment": "hello-coh",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "clusterIP": "10.96.108.35",
+                "clusterIPs": [
+                    "10.96.108.35"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-sts",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "919b932c-92d1-4440-a652-ed75592e4818",
+                "resourceVersion": "14660",
+                "creationTimestamp": "2022-05-26T22:23:36Z",
+                "labels": {
+                    "coherence-hash": "65dcc47b48",
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherence-headless",
+                    "coherenceDeployment": "hello-coh",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "coherence.oracle.com/v1",
+                        "kind": "Coherence",
+                        "name": "hello-coh",
+                        "uid": "f0c85f29-aff4-447c-94ff-655388101297",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "tcp-coherence",
+                        "protocol": "TCP",
+                        "port": 7,
+                        "targetPort": 7
+                    }
+                ],
+                "selector": {
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherencePod",
+                    "coherenceDeployment": "hello-coh",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "clusterIP": "None",
+                "clusterIPs": [
+                    "None"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "publishNotReadyAddresses": true,
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        },
+        {
+            "metadata": {
+                "name": "hello-coh-wka",
+                "namespace": "hello-coherence-7b195c4",
+                "uid": "158649e7-0e1c-4e1a-8399-56c116c5cbb9",
+                "resourceVersion": "14658",
+                "creationTimestamp": "2022-05-26T22:23:36Z",
+                "labels": {
+                    "coherence-hash": "65dcc47b48",
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherenceWkaService",
+                    "coherenceDeployment": "hello-coh",
+                    "coherenceRole": "HelloCoherenceRole"
+                },
+                "annotations": {
+                    "service.alpha.kubernetes.io/tolerate-unready-endpoints": "true"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "coherence.oracle.com/v1",
+                        "kind": "Coherence",
+                        "name": "hello-coh",
+                        "uid": "f0c85f29-aff4-447c-94ff-655388101297",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "tcp-coherence",
+                        "protocol": "TCP",
+                        "port": 7,
+                        "targetPort": 7
+                    }
+                ],
+                "selector": {
+                    "coherenceCluster": "HelloCoherence",
+                    "coherenceComponent": "coherencePod",
+                    "coherenceWKAMember": "true"
+                },
+                "clusterIP": "None",
+                "clusterIPs": [
+                    "None"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "publishNotReadyAddresses": true,
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

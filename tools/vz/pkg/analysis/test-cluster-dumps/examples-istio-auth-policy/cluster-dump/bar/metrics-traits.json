@@ -1,0 +1,215 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "MetricsTrait",
+            "metadata": {
+                "annotations": {
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:48Z",
+                "finalizers": [
+                    "metricstrait.finalizers.verrazzano.io"
+                ],
+                "generation": 1,
+                "labels": {
+                    "app.oam.dev/component": "sleep",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "TRAIT",
+                    "app.oam.dev/revision": "sleep-v1"
+                },
+                "name": "sleep-trait-656cfbdb97",
+                "namespace": "bar",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "authpolicy-appconf",
+                        "uid": "167a6c10-c25f-4eec-a84c-0f3aa87edce9"
+                    }
+                ],
+                "resourceVersion": "15347",
+                "uid": "bf27f3c4-9e1d-43cb-ae97-de4a9c6f1491"
+            },
+            "spec": {
+                "workloadRef": {
+                    "apiVersion": "core.oam.dev/v1alpha2",
+                    "kind": "ContainerizedWorkload",
+                    "name": "sleep-workload"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:23:51Z",
+                        "reason": "ReconcileSuccess",
+                        "status": "True",
+                        "type": "Synced"
+                    }
+                ],
+                "resources": [
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "sleep-workload",
+                        "namespace": "bar",
+                        "role": "source"
+                    },
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "vmi-system-prometheus-0",
+                        "namespace": "verrazzano-system",
+                        "role": "scraper"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "MetricsTrait",
+            "metadata": {
+                "annotations": {
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:48Z",
+                "finalizers": [
+                    "metricstrait.finalizers.verrazzano.io"
+                ],
+                "generation": 1,
+                "labels": {
+                    "app.oam.dev/component": "springboot-backend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "TRAIT",
+                    "app.oam.dev/revision": "springboot-backend-v1"
+                },
+                "name": "springboot-backend-trait-656cfbdb97",
+                "namespace": "bar",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "authpolicy-appconf",
+                        "uid": "167a6c10-c25f-4eec-a84c-0f3aa87edce9"
+                    }
+                ],
+                "resourceVersion": "15280",
+                "uid": "79e841eb-d044-4d8a-b18c-61951e331928"
+            },
+            "spec": {
+                "workloadRef": {
+                    "apiVersion": "core.oam.dev/v1alpha2",
+                    "kind": "ContainerizedWorkload",
+                    "name": "springboot-backend-workload"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:23:50Z",
+                        "reason": "ReconcileSuccess",
+                        "status": "True",
+                        "type": "Synced"
+                    }
+                ],
+                "resources": [
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-backend-workload",
+                        "namespace": "bar",
+                        "role": "source"
+                    },
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "vmi-system-prometheus-0",
+                        "namespace": "verrazzano-system",
+                        "role": "scraper"
+                    }
+                ]
+            }
+        },
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "MetricsTrait",
+            "metadata": {
+                "annotations": {
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:48Z",
+                "finalizers": [
+                    "metricstrait.finalizers.verrazzano.io"
+                ],
+                "generation": 1,
+                "labels": {
+                    "app.oam.dev/component": "springboot-frontend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "TRAIT",
+                    "app.oam.dev/revision": "springboot-frontend-v1"
+                },
+                "name": "springboot-frontend-trait-55474b8f87",
+                "namespace": "bar",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "authpolicy-appconf",
+                        "uid": "167a6c10-c25f-4eec-a84c-0f3aa87edce9"
+                    }
+                ],
+                "resourceVersion": "15235",
+                "uid": "00e34924-87b2-4142-92d7-174813758c76"
+            },
+            "spec": {
+                "path": "/actuator/prometheus",
+                "workloadRef": {
+                    "apiVersion": "core.oam.dev/v1alpha2",
+                    "kind": "ContainerizedWorkload",
+                    "name": "springboot-frontend-workload"
+                }
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:23:48Z",
+                        "reason": "ReconcileSuccess",
+                        "status": "True",
+                        "type": "Synced"
+                    }
+                ],
+                "resources": [
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "springboot-frontend-workload",
+                        "namespace": "bar",
+                        "role": "source"
+                    },
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "vmi-system-prometheus-0",
+                        "namespace": "verrazzano-system",
+                        "role": "scraper"
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

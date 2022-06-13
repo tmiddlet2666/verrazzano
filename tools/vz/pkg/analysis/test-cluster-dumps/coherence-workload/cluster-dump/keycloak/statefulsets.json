@@ -1,0 +1,324 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "apps/v1",
+            "kind": "StatefulSet",
+            "metadata": {
+                "annotations": {
+                    "field.cattle.io/publicEndpoints": "[{\"addresses\":[\"144.24.237.19\"],\"port\":443,\"protocol\":\"HTTPS\",\"serviceName\":\"keycloak:keycloak-http\",\"ingressName\":\"keycloak:keycloak\",\"hostname\":\"keycloak.b90.zb91df2.v8o.io\",\"path\":\"/\",\"allNodes\":false}]",
+                    "meta.helm.sh/release-name": "keycloak",
+                    "meta.helm.sh/release-namespace": "keycloak"
+                },
+                "creationTimestamp": "2022-05-26T22:12:02Z",
+                "generation": 1,
+                "labels": {
+                    "app.kubernetes.io/instance": "keycloak",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "keycloak",
+                    "app.kubernetes.io/version": "15.0.2-20220510113519-620b97bc83",
+                    "helm.sh/chart": "keycloak-15.1.0"
+                },
+                "name": "keycloak",
+                "namespace": "keycloak",
+                "resourceVersion": "11335",
+                "uid": "0375bee1-a1b2-49ea-a492-d45468fb8118"
+            },
+            "spec": {
+                "podManagementPolicy": "Parallel",
+                "replicas": 1,
+                "revisionHistoryLimit": 10,
+                "selector": {
+                    "matchLabels": {
+                        "app.kubernetes.io/instance": "keycloak",
+                        "app.kubernetes.io/name": "keycloak"
+                    }
+                },
+                "serviceName": "keycloak-headless",
+                "template": {
+                    "metadata": {
+                        "annotations": {
+                            "checksum/config-startup": "81710203936914d8f3cd1da3830974e98b32b880798d2a230d2d53f0ef86e377",
+                            "checksum/secrets": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+                        },
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app.kubernetes.io/instance": "keycloak",
+                            "app.kubernetes.io/name": "keycloak"
+                        }
+                    },
+                    "spec": {
+                        "affinity": {
+                            "podAntiAffinity": {
+                                "preferredDuringSchedulingIgnoredDuringExecution": [
+                                    {
+                                        "podAffinityTerm": {
+                                            "labelSelector": {
+                                                "matchExpressions": [
+                                                    {
+                                                        "key": "app.kubernetes.io/component",
+                                                        "operator": "NotIn",
+                                                        "values": [
+                                                            "test"
+                                                        ]
+                                                    }
+                                                ],
+                                                "matchLabels": {
+                                                    "app.kubernetes.io/instance": "keycloak",
+                                                    "app.kubernetes.io/name": "keycloak"
+                                                }
+                                            },
+                                            "topologyKey": "failure-domain.beta.kubernetes.io/zone"
+                                        },
+                                        "weight": 100
+                                    }
+                                ],
+                                "requiredDuringSchedulingIgnoredDuringExecution": [
+                                    {
+                                        "labelSelector": {
+                                            "matchExpressions": [
+                                                {
+                                                    "key": "app.kubernetes.io/component",
+                                                    "operator": "NotIn",
+                                                    "values": [
+                                                        "test"
+                                                    ]
+                                                }
+                                            ],
+                                            "matchLabels": {
+                                                "app.kubernetes.io/instance": "keycloak",
+                                                "app.kubernetes.io/name": "keycloak"
+                                            }
+                                        },
+                                        "topologyKey": "kubernetes.io/hostname"
+                                    }
+                                ]
+                            }
+                        },
+                        "containers": [
+                            {
+                                "env": [
+                                    {
+                                        "name": "DB_VENDOR",
+                                        "value": "mysql"
+                                    },
+                                    {
+                                        "name": "DB_ADDR",
+                                        "value": "mysql"
+                                    },
+                                    {
+                                        "name": "DB_PORT",
+                                        "value": "3306"
+                                    },
+                                    {
+                                        "name": "DB_DATABASE",
+                                        "value": "keycloak"
+                                    },
+                                    {
+                                        "name": "DB_USER",
+                                        "value": "keycloak"
+                                    },
+                                    {
+                                        "name": "DB_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "mysql-password",
+                                                "name": "mysql"
+                                            }
+                                        }
+                                    },
+                                    {
+                                        "name": "PROXY_ADDRESS_FORWARDING",
+                                        "value": "true"
+                                    },
+                                    {
+                                        "name": "KEYCLOAK_USER",
+                                        "value": "keycloakadmin"
+                                    },
+                                    {
+                                        "name": "KEYCLOAK_PASSWORD",
+                                        "valueFrom": {
+                                            "secretKeyRef": {
+                                                "key": "password",
+                                                "name": "keycloak-http"
+                                            }
+                                        }
+                                    }
+                                ],
+                                "image": "ghcr.io/verrazzano/keycloak:15.0.2-20220510113519-620b97bc83",
+                                "imagePullPolicy": "IfNotPresent",
+                                "livenessProbe": {
+                                    "failureThreshold": 3,
+                                    "httpGet": {
+                                        "path": "/auth/",
+                                        "port": "http",
+                                        "scheme": "HTTP"
+                                    },
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 5
+                                },
+                                "name": "keycloak",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "name": "http",
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 8443,
+                                        "name": "https",
+                                        "protocol": "TCP"
+                                    },
+                                    {
+                                        "containerPort": 9990,
+                                        "name": "http-management",
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "readinessProbe": {
+                                    "failureThreshold": 3,
+                                    "httpGet": {
+                                        "path": "/auth/realms/master",
+                                        "port": "http",
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 30,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 1
+                                },
+                                "resources": {},
+                                "securityContext": {
+                                    "runAsNonRoot": false,
+                                    "runAsUser": 0
+                                },
+                                "startupProbe": {
+                                    "failureThreshold": 60,
+                                    "httpGet": {
+                                        "path": "/auth/",
+                                        "port": "http",
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 30,
+                                    "periodSeconds": 5,
+                                    "successThreshold": 1,
+                                    "timeoutSeconds": 1
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/opt/jboss/startup-scripts/keycloak.cli",
+                                        "name": "startup",
+                                        "readOnly": true,
+                                        "subPath": "keycloak.cli"
+                                    },
+                                    {
+                                        "mountPath": "/opt/jboss/keycloak/themes/oracle",
+                                        "name": "theme"
+                                    },
+                                    {
+                                        "mountPath": "/etc/keycloak-http",
+                                        "name": "keycloak-http"
+                                    }
+                                ]
+                            }
+                        ],
+                        "dnsPolicy": "ClusterFirst",
+                        "enableServiceLinks": true,
+                        "imagePullSecrets": [
+                            {
+                                "name": "verrazzano-container-registry"
+                            }
+                        ],
+                        "initContainers": [
+                            {
+                                "args": [
+                                    "-c",
+                                    "echo \"Copying theme...\"\ncp -R /oracle/* /theme\n"
+                                ],
+                                "command": [
+                                    "sh"
+                                ],
+                                "image": "ghcr.io/verrazzano/keycloak-oracle-theme:1.3.0-20220510114742-dc513a7",
+                                "imagePullPolicy": "IfNotPresent",
+                                "name": "theme-provider",
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "volumeMounts": [
+                                    {
+                                        "mountPath": "/theme",
+                                        "name": "theme"
+                                    },
+                                    {
+                                        "mountPath": "/cacerts",
+                                        "name": "cacerts"
+                                    }
+                                ]
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "schedulerName": "default-scheduler",
+                        "securityContext": {
+                            "fsGroup": 1000
+                        },
+                        "serviceAccount": "keycloak",
+                        "serviceAccountName": "keycloak",
+                        "terminationGracePeriodSeconds": 60,
+                        "volumes": [
+                            {
+                                "configMap": {
+                                    "defaultMode": 365,
+                                    "items": [
+                                        {
+                                            "key": "keycloak.cli",
+                                            "path": "keycloak.cli"
+                                        }
+                                    ],
+                                    "name": "keycloak-startup"
+                                },
+                                "name": "startup"
+                            },
+                            {
+                                "emptyDir": {},
+                                "name": "theme"
+                            },
+                            {
+                                "emptyDir": {},
+                                "name": "cacerts"
+                            },
+                            {
+                                "name": "keycloak-http",
+                                "secret": {
+                                    "defaultMode": 420,
+                                    "secretName": "keycloak-http"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "updateStrategy": {
+                    "type": "RollingUpdate"
+                }
+            },
+            "status": {
+                "availableReplicas": 1,
+                "collisionCount": 0,
+                "currentReplicas": 1,
+                "currentRevision": "keycloak-6c547c5dcf",
+                "observedGeneration": 1,
+                "readyReplicas": 1,
+                "replicas": 1,
+                "updateRevision": "keycloak-6c547c5dcf",
+                "updatedReplicas": 1
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

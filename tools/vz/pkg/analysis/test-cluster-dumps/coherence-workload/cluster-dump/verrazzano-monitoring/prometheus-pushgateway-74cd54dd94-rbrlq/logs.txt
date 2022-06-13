@@ -1,0 +1,6 @@
+==== START logs for container pushgateway of pod verrazzano-monitoring/prometheus-pushgateway-74cd54dd94-rbrlq ====
+ts=2022-05-26T22:09:32.639Z caller=level.go:63 level=info msg="starting pushgateway" version="(version=1.4.2, branch=HEAD, revision=99981d7be923ab18d45873e9eaa3d2c77477b1ef)"
+ts=2022-05-26T22:09:32.641Z caller=level.go:63 level=info build_context="(go=go1.17.5, user=@0f6d8312-99cc-4b20-afe9-5f5b57f6ce9c-k3zpf-bsxhk, date=20220411-07:30:18OURCE)"
+ts=2022-05-26T22:09:32.643Z caller=level.go:63 level=info listen_address=:9091
+ts=2022-05-26T22:09:32.644Z caller=level.go:63 level=info msg="TLS is disabled." http2=false
+==== END logs for container pushgateway of pod verrazzano-monitoring/prometheus-pushgateway-74cd54dd94-rbrlq ====

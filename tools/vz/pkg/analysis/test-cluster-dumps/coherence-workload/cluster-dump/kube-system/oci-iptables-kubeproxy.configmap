@@ -1,0 +1,50 @@
+Name:         oci-iptables-kubeproxy
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+iptables-save:
+----
+#!/bin/sh
+if [ -x /host/sbin/iptables-save ]; then
+chroot /host /sbin/iptables-save "$@"
+elif [ -x /host/usr/local/sbin/iptables-save ]; then
+chroot /host /usr/local/sbin/iptables-save "$@"
+elif [ -x /host/bin/iptables-save ]; then
+chroot /host /bin/iptables-save "$@"
+elif [ -x /host/usr/local/bin/iptables-save ]; then
+chroot /host /usr/local/bin/iptables-save "$@"
+else
+chroot /host iptables-save "$@"
+fi
+iptables:
+----
+#!/bin/sh
+if [ -x /host/sbin/iptables ]; then
+chroot /host /sbin/iptables "$@"
+elif [ -x /host/usr/local/sbin/iptables ]; then
+chroot /host /usr/local/sbin/iptables "$@"
+elif [ -x /host/bin/iptables ]; then
+chroot /host /bin/iptables "$@"
+elif [ -x /host/usr/local/bin/iptables ]; then
+chroot /host /usr/local/bin/iptables "$@"
+else
+chroot /host iptables "$@"
+fi
+iptables-restore:
+----
+#!/bin/sh
+if [ -x /host/sbin/iptables-restore ]; then
+chroot /host /sbin/iptables-restore "$@"
+elif [ -x /host/usr/local/sbin/iptables-restore ]; then
+chroot /host /usr/local/sbin/iptables-restore "$@"
+elif [ -x /host/bin/iptables-restore ]; then
+chroot /host /bin/iptables-restore "$@"
+elif [ -x /host/usr/local/bin/iptables-restore ]; then
+chroot /host /usr/local/bin/iptables-restore "$@"
+else
+chroot /host iptables-restore "$@"
+fi
+Events:  <none>

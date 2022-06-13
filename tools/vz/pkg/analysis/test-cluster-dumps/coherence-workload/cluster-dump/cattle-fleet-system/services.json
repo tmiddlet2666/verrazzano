@@ -1,0 +1,52 @@
+{
+    "kind": "ServiceList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22077"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "gitjob",
+                "namespace": "cattle-fleet-system",
+                "uid": "3eeaa8f8-3e58-474f-859a-2bb68124ace1",
+                "resourceVersion": "10249",
+                "creationTimestamp": "2022-05-26T22:16:34Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "annotations": {
+                    "meta.helm.sh/release-name": "fleet",
+                    "meta.helm.sh/release-namespace": "cattle-fleet-system"
+                }
+            },
+            "spec": {
+                "ports": [
+                    {
+                        "name": "http-80",
+                        "protocol": "TCP",
+                        "port": 80,
+                        "targetPort": 8080
+                    }
+                ],
+                "selector": {
+                    "app": "gitjob"
+                },
+                "clusterIP": "10.96.4.2",
+                "clusterIPs": [
+                    "10.96.4.2"
+                ],
+                "type": "ClusterIP",
+                "sessionAffinity": "None",
+                "ipFamilies": [
+                    "IPv4"
+                ],
+                "ipFamilyPolicy": "SingleStack",
+                "internalTrafficPolicy": "Cluster"
+            },
+            "status": {
+                "loadBalancer": {}
+            }
+        }
+    ]
+}

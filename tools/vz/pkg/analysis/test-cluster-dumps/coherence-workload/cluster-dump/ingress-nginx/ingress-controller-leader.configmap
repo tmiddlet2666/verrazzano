@@ -1,0 +1,9 @@
+Name:         ingress-controller-leader
+Namespace:    ingress-nginx
+Labels:       <none>
+Annotations:  control-plane.alpha.kubernetes.io/leader:
+                {"holderIdentity":"ingress-controller-ingress-nginx-controller-6b8bb69d6d-hg8kf","leaseDurationSeconds":30,"acquireTime":"2022-05-26T22:11...
+
+Data
+====
+Events:  <none>

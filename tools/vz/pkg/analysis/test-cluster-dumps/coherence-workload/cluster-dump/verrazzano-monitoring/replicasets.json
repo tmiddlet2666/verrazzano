@@ -1,0 +1,589 @@
+{
+    "kind": "ReplicaSetList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "22658"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779",
+                "namespace": "verrazzano-monitoring",
+                "uid": "43be7978-4b73-46bb-8d59-947bbf279b5a",
+                "resourceVersion": "4106",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:09:21Z",
+                "labels": {
+                    "app.kubernetes.io/component": "metrics",
+                    "app.kubernetes.io/instance": "kube-state-metrics",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "kube-state-metrics",
+                    "app.kubernetes.io/part-of": "kube-state-metrics",
+                    "app.kubernetes.io/version": "2.4.1",
+                    "helm.sh/chart": "kube-state-metrics-4.7.0",
+                    "pod-template-hash": "c8895779",
+                    "release": "kube-state-metrics"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "kube-state-metrics",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "kube-state-metrics",
+                        "uid": "b7018c93-7d01-4a3d-960b-ee38ec6e115a",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app.kubernetes.io/instance": "kube-state-metrics",
+                        "app.kubernetes.io/name": "kube-state-metrics",
+                        "pod-template-hash": "c8895779"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app.kubernetes.io/component": "metrics",
+                            "app.kubernetes.io/instance": "kube-state-metrics",
+                            "app.kubernetes.io/managed-by": "Helm",
+                            "app.kubernetes.io/name": "kube-state-metrics",
+                            "app.kubernetes.io/part-of": "kube-state-metrics",
+                            "app.kubernetes.io/version": "2.4.1",
+                            "helm.sh/chart": "kube-state-metrics-4.7.0",
+                            "pod-template-hash": "c8895779",
+                            "release": "kube-state-metrics"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "kube-state-metrics",
+                                "image": "ghcr.io/verrazzano/kube-state-metrics:v2.4.2",
+                                "args": [
+                                    "--port=8080",
+                                    "--resources=certificatesigningrequests,configmaps,cronjobs,daemonsets,deployments,endpoints,horizontalpodautoscalers,ingresses,jobs,limitranges,mutatingwebhookconfigurations,namespaces,networkpolicies,nodes,persistentvolumeclaims,persistentvolumes,poddisruptionbudgets,pods,replicasets,replicationcontrollers,resourcequotas,secrets,services,statefulsets,storageclasses,validatingwebhookconfigurations,volumeattachments",
+                                    "--telemetry-port=8081"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": "/healthz",
+                                        "port": 8080,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 5,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/",
+                                        "port": 8080,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 5,
+                                    "timeoutSeconds": 5,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "kube-state-metrics",
+                        "serviceAccount": "kube-state-metrics",
+                        "securityContext": {
+                            "runAsUser": 65534,
+                            "runAsGroup": 65534,
+                            "fsGroup": 65534
+                        },
+                        "imagePullSecrets": [
+                            {
+                                "name": "verrazzano-container-registry"
+                            }
+                        ],
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494",
+                "namespace": "verrazzano-monitoring",
+                "uid": "8b034779-36a4-40fc-9d1c-5b63405f66bb",
+                "resourceVersion": "4333",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:09:15Z",
+                "labels": {
+                    "app.kubernetes.io/component": "metrics",
+                    "app.kubernetes.io/instance": "prometheus-adapter",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "prometheus-adapter",
+                    "app.kubernetes.io/part-of": "prometheus-adapter",
+                    "app.kubernetes.io/version": "v0.9.1",
+                    "helm.sh/chart": "prometheus-adapter-3.2.0",
+                    "pod-template-hash": "7f989b8494"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "prometheus-adapter",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "prometheus-adapter",
+                        "uid": "ea81d512-ba6a-4948-8d66-cec2e0f592bb",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app.kubernetes.io/instance": "prometheus-adapter",
+                        "app.kubernetes.io/name": "prometheus-adapter",
+                        "pod-template-hash": "7f989b8494"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "name": "prometheus-adapter",
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app.kubernetes.io/component": "metrics",
+                            "app.kubernetes.io/instance": "prometheus-adapter",
+                            "app.kubernetes.io/managed-by": "Helm",
+                            "app.kubernetes.io/name": "prometheus-adapter",
+                            "app.kubernetes.io/part-of": "prometheus-adapter",
+                            "app.kubernetes.io/version": "v0.9.1",
+                            "helm.sh/chart": "prometheus-adapter-3.2.0",
+                            "pod-template-hash": "7f989b8494"
+                        },
+                        "annotations": {
+                            "checksum/config": "ad59ded4a83e358b891ff176a4c6759b961f22d7a91e45a943b3f65951c7d44f"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "config",
+                                "configMap": {
+                                    "name": "prometheus-adapter",
+                                    "defaultMode": 420
+                                }
+                            },
+                            {
+                                "name": "tmp",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "prometheus-adapter",
+                                "image": "ghcr.io/verrazzano/prometheus-adapter:v0.9.1-3",
+                                "args": [
+                                    "/adapter",
+                                    "--secure-port=6443",
+                                    "--cert-dir=/tmp/cert",
+                                    "--logtostderr=true",
+                                    "--prometheus-url=http://prometheus-operator-kube-p-prometheus:9090",
+                                    "--metrics-relist-interval=1m",
+                                    "--v=4",
+                                    "--config=/etc/adapter/config.yaml"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "https",
+                                        "containerPort": 6443,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "config",
+                                        "readOnly": true,
+                                        "mountPath": "/etc/adapter/"
+                                    },
+                                    {
+                                        "name": "tmp",
+                                        "mountPath": "/tmp"
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": "/healthz",
+                                        "port": "https",
+                                        "scheme": "HTTPS"
+                                    },
+                                    "initialDelaySeconds": 30,
+                                    "timeoutSeconds": 5,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/healthz",
+                                        "port": "https",
+                                        "scheme": "HTTPS"
+                                    },
+                                    "initialDelaySeconds": 30,
+                                    "timeoutSeconds": 5,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent",
+                                "securityContext": {
+                                    "capabilities": {
+                                        "drop": [
+                                            "all"
+                                        ]
+                                    },
+                                    "runAsUser": 10001,
+                                    "runAsNonRoot": true,
+                                    "readOnlyRootFilesystem": true,
+                                    "allowPrivilegeEscalation": false
+                                }
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "prometheus-adapter",
+                        "serviceAccount": "prometheus-adapter",
+                        "securityContext": {
+                            "fsGroup": 10001
+                        },
+                        "imagePullSecrets": [
+                            {
+                                "name": "verrazzano-container-registry"
+                            }
+                        ],
+                        "affinity": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98",
+                "namespace": "verrazzano-monitoring",
+                "uid": "3ceacf81-5199-488b-95d9-b8dda407125b",
+                "resourceVersion": "4544",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:09:10Z",
+                "labels": {
+                    "app": "kube-prometheus-stack-operator",
+                    "app.kubernetes.io/instance": "prometheus-operator",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                    "app.kubernetes.io/version": "34.8.0",
+                    "chart": "kube-prometheus-stack-34.8.0",
+                    "heritage": "Helm",
+                    "pod-template-hash": "69ddb84d98",
+                    "release": "prometheus-operator"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "2",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "prometheus-operator-kube-p-operator",
+                        "uid": "6ffd4749-48a7-4c0b-9e59-47ea100ee808",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "kube-prometheus-stack-operator",
+                        "pod-template-hash": "69ddb84d98",
+                        "release": "prometheus-operator"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "kube-prometheus-stack-operator",
+                            "app.kubernetes.io/instance": "prometheus-operator",
+                            "app.kubernetes.io/managed-by": "Helm",
+                            "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                            "app.kubernetes.io/version": "34.8.0",
+                            "chart": "kube-prometheus-stack-34.8.0",
+                            "heritage": "Helm",
+                            "pod-template-hash": "69ddb84d98",
+                            "release": "prometheus-operator"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "tls-secret",
+                                "secret": {
+                                    "secretName": "prometheus-operator-kube-p-admission",
+                                    "defaultMode": 420
+                                }
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "kube-prometheus-stack",
+                                "image": "ghcr.io/verrazzano/prometheus-operator:v0.55.1",
+                                "args": [
+                                    "--kubelet-service=kube-system/prometheus-operator-kube-p-kubelet",
+                                    "--localhost=127.0.0.1",
+                                    "--prometheus-default-base-image=ghcr.io/verrazzano/prometheus:v2.34.0",
+                                    "--alertmanager-default-base-image=ghcr.io/verrazzano/alertmanager:v0.24.0",
+                                    "--prometheus-config-reloader=ghcr.io/verrazzano/prometheus-config-reloader:v0.55.1",
+                                    "--config-reloader-cpu-request=200m",
+                                    "--config-reloader-cpu-limit=200m",
+                                    "--config-reloader-memory-request=50Mi",
+                                    "--config-reloader-memory-limit=50Mi",
+                                    "--thanos-default-base-image=quay.io/thanos/thanos:v0.25.2",
+                                    "--web.enable-tls=true",
+                                    "--web.cert-file=/cert/tls.crt",
+                                    "--web.key-file=/cert/tls.key",
+                                    "--web.listen-address=:10250",
+                                    "--web.tls-min-version=VersionTLS13"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "https",
+                                        "containerPort": 10250,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "tls-secret",
+                                        "readOnly": true,
+                                        "mountPath": "/cert"
+                                    }
+                                ],
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent",
+                                "securityContext": {
+                                    "readOnlyRootFilesystem": true,
+                                    "allowPrivilegeEscalation": false
+                                }
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "prometheus-operator-kube-p-operator",
+                        "serviceAccount": "prometheus-operator-kube-p-operator",
+                        "securityContext": {
+                            "runAsUser": 65534,
+                            "runAsGroup": 65534,
+                            "runAsNonRoot": true,
+                            "fsGroup": 65534
+                        },
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94",
+                "namespace": "verrazzano-monitoring",
+                "uid": "3b1d3666-ba5e-42c4-b8b3-1a8c05cf66b0",
+                "resourceVersion": "4163",
+                "generation": 1,
+                "creationTimestamp": "2022-05-26T22:09:24Z",
+                "labels": {
+                    "app": "prometheus-pushgateway",
+                    "pod-template-hash": "74cd54dd94",
+                    "release": "prometheus-pushgateway"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/desired-replicas": "1",
+                    "deployment.kubernetes.io/max-replicas": "1",
+                    "deployment.kubernetes.io/revision": "1",
+                    "meta.helm.sh/release-name": "prometheus-pushgateway",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "prometheus-pushgateway",
+                        "uid": "8e09699e-0a32-463c-ab8b-688f34ab9bf7",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "app": "prometheus-pushgateway",
+                        "pod-template-hash": "74cd54dd94",
+                        "release": "prometheus-pushgateway"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "prometheus-pushgateway",
+                            "pod-template-hash": "74cd54dd94",
+                            "release": "prometheus-pushgateway"
+                        }
+                    },
+                    "spec": {
+                        "volumes": [
+                            {
+                                "name": "storage-volume",
+                                "emptyDir": {}
+                            }
+                        ],
+                        "containers": [
+                            {
+                                "name": "pushgateway",
+                                "image": "ghcr.io/verrazzano/prometheus-pushgateway:v1.4.2",
+                                "ports": [
+                                    {
+                                        "name": "metrics",
+                                        "containerPort": 9091,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "volumeMounts": [
+                                    {
+                                        "name": "storage-volume",
+                                        "mountPath": "/data"
+                                    }
+                                ],
+                                "livenessProbe": {
+                                    "httpGet": {
+                                        "path": "/-/ready",
+                                        "port": 9091,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 10,
+                                    "timeoutSeconds": 10,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "readinessProbe": {
+                                    "httpGet": {
+                                        "path": "/-/ready",
+                                        "port": 9091,
+                                        "scheme": "HTTP"
+                                    },
+                                    "initialDelaySeconds": 10,
+                                    "timeoutSeconds": 10,
+                                    "periodSeconds": 10,
+                                    "successThreshold": 1,
+                                    "failureThreshold": 3
+                                },
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "serviceAccountName": "prometheus-pushgateway",
+                        "serviceAccount": "prometheus-pushgateway",
+                        "securityContext": {
+                            "runAsUser": 65534,
+                            "runAsNonRoot": true,
+                            "fsGroup": 65534
+                        },
+                        "imagePullSecrets": [
+                            {
+                                "name": "verrazzano-container-registry"
+                            }
+                        ],
+                        "schedulerName": "default-scheduler"
+                    }
+                }
+            },
+            "status": {
+                "replicas": 1,
+                "fullyLabeledReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "observedGeneration": 1
+            }
+        }
+    ]
+}

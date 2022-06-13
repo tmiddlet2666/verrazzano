@@ -1,0 +1,170 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "core.oam.dev/v1alpha2",
+            "kind": "ApplicationConfiguration",
+            "metadata": {
+                "annotations": {
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:25Z",
+                "generation": 1,
+                "name": "authpolicy-appconf",
+                "namespace": "foo",
+                "resourceVersion": "14534",
+                "uid": "77d24df4-4317-4cf9-b61b-9f604bd9a175"
+            },
+            "spec": {
+                "components": [
+                    {
+                        "componentName": "springboot-frontend",
+                        "traits": [
+                            {
+                                "trait": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait",
+                                    "spec": {
+                                        "path": "/actuator/prometheus"
+                                    }
+                                }
+                            },
+                            {
+                                "trait": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "IngressTrait",
+                                    "metadata": {
+                                        "name": "springboot-ingress"
+                                    },
+                                    "spec": {
+                                        "rules": [
+                                            {
+                                                "paths": [
+                                                    {
+                                                        "path": "/",
+                                                        "pathType": "Prefix"
+                                                    },
+                                                    {
+                                                        "path": "/verrazzanoFact",
+                                                        "pathType": "Prefix"
+                                                    },
+                                                    {
+                                                        "path": "/externalCall",
+                                                        "pathType": "Prefix"
+                                                    }
+                                                ]
+                                            }
+                                        ]
+                                    }
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "componentName": "springboot-backend",
+                        "traits": [
+                            {
+                                "trait": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait"
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        "componentName": "sleep",
+                        "traits": [
+                            {
+                                "trait": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait"
+                                }
+                            }
+                        ]
+                    }
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:23:35Z",
+                        "reason": "ReconcileSuccess",
+                        "status": "True",
+                        "type": "Synced"
+                    }
+                ],
+                "dependency": {},
+                "observedGeneration": 1,
+                "workloads": [
+                    {
+                        "componentName": "springboot-frontend",
+                        "componentRevisionName": "springboot-frontend-v1",
+                        "traits": [
+                            {
+                                "traitRef": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait",
+                                    "name": "springboot-frontend-trait-55474b8f87"
+                                }
+                            },
+                            {
+                                "traitRef": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "IngressTrait",
+                                    "name": "springboot-ingress"
+                                }
+                            }
+                        ],
+                        "workloadRef": {
+                            "apiVersion": "core.oam.dev/v1alpha2",
+                            "kind": "ContainerizedWorkload",
+                            "name": "springboot-frontend-workload"
+                        }
+                    },
+                    {
+                        "componentName": "springboot-backend",
+                        "componentRevisionName": "springboot-backend-v1",
+                        "traits": [
+                            {
+                                "traitRef": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait",
+                                    "name": "springboot-backend-trait-656cfbdb97"
+                                }
+                            }
+                        ],
+                        "workloadRef": {
+                            "apiVersion": "core.oam.dev/v1alpha2",
+                            "kind": "ContainerizedWorkload",
+                            "name": "springboot-backend-workload"
+                        }
+                    },
+                    {
+                        "componentName": "sleep",
+                        "componentRevisionName": "sleep-v1",
+                        "traits": [
+                            {
+                                "traitRef": {
+                                    "apiVersion": "oam.verrazzano.io/v1alpha1",
+                                    "kind": "MetricsTrait",
+                                    "name": "sleep-trait-656cfbdb97"
+                                }
+                            }
+                        ],
+                        "workloadRef": {
+                            "apiVersion": "core.oam.dev/v1alpha2",
+                            "kind": "ContainerizedWorkload",
+                            "name": "sleep-workload"
+                        }
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

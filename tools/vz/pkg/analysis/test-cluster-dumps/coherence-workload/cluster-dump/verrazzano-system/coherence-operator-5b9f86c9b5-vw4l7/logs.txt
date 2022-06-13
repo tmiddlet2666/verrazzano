@@ -1,0 +1,321 @@
+==== START logs for container manager of pod verrazzano-system/coherence-operator-5b9f86c9b5-vw4l7 ====
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Version: 3.2.5
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Build Date: 2022-02-08T18:33:18Z
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Built By: runner
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Git Commit: 4e9924443b34f17909b78497922f2e721e7e7305
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Coherence Image: ghcr.io/oracle/coherence-ce:21.06.2
+2022-05-26T22:09:17.162Z	INFO	operator	Operator Utils Image: ghcr.io/oracle/coherence-operator:3.2.5-utils
+2022-05-26T22:09:17.162Z	INFO	operator	Go Version: go1.16.13
+2022-05-26T22:09:17.162Z	INFO	operator	Go OS/Arch: linux/amd64
+I0526 22:09:19.065745       1 request.go:665] Waited for 1.047346619s due to client-side throttling, not priority and fairness, request: GET:https://10.96.0.1:443/apis/rbac.authorization.k8s.io/v1?timeout=32s
+2022-05-26T22:09:20.169Z	INFO	setup	Operator will watch all namespaces
+2022-05-26T22:09:23.173Z	INFO	controller-runtime.metrics	metrics server is starting to listen	{"addr": ":8080"}
+2022-05-26T22:09:23.179Z	INFO	operator	Ensuring operator CRDs are present (K8s version 1.22.5)
+2022-05-26T22:09:23.480Z	INFO	operator	Loading operator CRD yaml from 'crd_v1.yaml'
+2022-05-26T22:09:23.593Z	INFO	operator	Updating operator CRD 'coherence.coherence.oracle.com'
+2022-05-26T22:09:24.299Z	INFO	controllers.Certs	installing webhook /coherence-operator-mutating-webhook-configuration
+2022-05-26T22:09:24.312Z	INFO	controllers.Certs	installing webhook /coherence-operator-validating-webhook-configuration
+2022-05-26T22:09:24.324Z	INFO	controller-runtime.builder	Registering a mutating webhook	{"GVK": "coherence.oracle.com/v1, Kind=Coherence", "path": "/mutate-coherence-oracle-com-v1-coherence"}
+2022-05-26T22:09:24.324Z	INFO	controller-runtime.webhook	registering webhook	{"path": "/mutate-coherence-oracle-com-v1-coherence"}
+2022-05-26T22:09:24.324Z	INFO	controller-runtime.builder	Registering a validating webhook	{"GVK": "coherence.oracle.com/v1, Kind=Coherence", "path": "/validate-coherence-oracle-com-v1-coherence"}
+2022-05-26T22:09:24.324Z	INFO	controller-runtime.webhook	registering webhook	{"path": "/validate-coherence-oracle-com-v1-coherence"}
+2022-05-26T22:09:24.324Z	INFO	setup	starting manager
+I0526 22:09:24.324689       1 leaderelection.go:248] attempting to acquire leader lease verrazzano-system/ca804aa8.oracle.com...
+2022-05-26T22:09:24.324Z	INFO	starting metrics server	{"path": "/metrics"}
+2022-05-26T22:09:24.324Z	INFO	controller-runtime.webhook.webhooks	starting webhook server
+2022-05-26T22:09:24.325Z	INFO	controller-runtime.certwatcher	Updated current TLS certificate
+2022-05-26T22:09:24.325Z	INFO	controller-runtime.certwatcher	Starting certificate watcher
+2022-05-26T22:09:24.325Z	INFO	controller-runtime.webhook	serving webhook server	{"host": "", "port": 9443}
+I0526 22:09:24.348231       1 leaderelection.go:258] successfully acquired lease verrazzano-system/ca804aa8.oracle.com
+2022-05-26T22:09:24.348Z	INFO	controller.coherence	Starting EventSource	{"reconciler group": "coherence.oracle.com", "reconciler kind": "Coherence", "source": "kind source: /, Kind="}
+2022-05-26T22:09:24.348Z	INFO	controller.coherence	Starting Controller	{"reconciler group": "coherence.oracle.com", "reconciler kind": "Coherence"}
+2022-05-26T22:09:24.348Z	DEBUG	events	Normal	{"object": {"kind":"ConfigMap","namespace":"verrazzano-system","name":"ca804aa8.oracle.com","uid":"2eeb9ed4-c1e0-4953-99a1-c7e87e1d6027","apiVersion":"v1","resourceVersion":"3854"}, "reason": "LeaderElection", "message": "coherence-operator-5b9f86c9b5-vw4l7_7e360063-628d-4849-926a-90eee08b6f79 became leader"}
+2022-05-26T22:09:24.348Z	DEBUG	events	Normal	{"object": {"kind":"Lease","namespace":"verrazzano-system","name":"ca804aa8.oracle.com","uid":"fa5c4807-0806-4610-b011-c238e64231d6","apiVersion":"coordination.k8s.io/v1","resourceVersion":"3855"}, "reason": "LeaderElection", "message": "coherence-operator-5b9f86c9b5-vw4l7_7e360063-628d-4849-926a-90eee08b6f79 became leader"}
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.ConfigMap	Starting EventSource	{"source": "kind source: /, Kind="}
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.ConfigMap	Starting Controller
+2022-05-26T22:09:24.348Z	INFO	rest-server	Serving REST requests	{"listenAddress": "[::]:8000"}
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.StatefulSet	Starting EventSource	{"source": "kind source: /, Kind="}
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.StatefulSet	Starting Controller
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.Service	Starting EventSource	{"source": "kind source: /, Kind="}
+2022-05-26T22:09:24.348Z	INFO	controller.controllers.Service	Starting Controller
+2022-05-26T22:09:24.348Z	INFO	controller.coherence-webhook-server-cert	Starting EventSource	{"reconciler group": "", "reconciler kind": "Secret", "source": "kind source: /, Kind="}
+2022-05-26T22:09:24.348Z	INFO	controller.coherence-webhook-server-cert	Starting Controller	{"reconciler group": "", "reconciler kind": "Secret"}
+2022-05-26T22:09:24.849Z	INFO	controller.coherence	Starting workers	{"reconciler group": "coherence.oracle.com", "reconciler kind": "Coherence", "worker count": 1}
+2022-05-26T22:09:24.849Z	INFO	controller.controllers.ConfigMap	Starting workers	{"worker count": 1}
+2022-05-26T22:09:24.849Z	INFO	controller.controllers.StatefulSet	Starting workers	{"worker count": 1}
+2022-05-26T22:09:24.849Z	INFO	controller.controllers.Service	Starting workers	{"worker count": 1}
+2022-05-26T22:09:24.851Z	INFO	controller.coherence-webhook-server-cert	Starting workers	{"reconciler group": "", "reconciler kind": "Secret", "worker count": 1}
+2022-05-26T22:09:24.876Z	INFO	controllers.Certs	installing webhook /coherence-operator-mutating-webhook-configuration
+2022-05-26T22:09:24.889Z	INFO	controllers.Certs	installing webhook /coherence-operator-validating-webhook-configuration
+2022-05-26T22:23:34.903Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "UID": "659e6b21-9d91-429e-8259-d66e304a7e94", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:34.904Z	INFO	coherence-webhook	Setting defaults for new resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:34.905Z	INFO	coherence-webhook	Applied coherence-hash label	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "6b7cc69675"}
+2022-05-26T22:23:34.909Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "659e6b21-9d91-429e-8259-d66e304a7e94", "allowed": true}
+2022-05-26T22:23:35.660Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "UID": "e52851b1-9ef2-4f4a-8f06-3986da6c39a7", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:35.661Z	INFO	coherence-webhook	validate create	{"name": "hello-coh"}
+2022-05-26T22:23:35.661Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "e52851b1-9ef2-4f4a-8f06-3986da6c39a7", "allowed": true}
+2022-05-26T22:23:35.691Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:35.697Z	INFO	controllers.Coherence	Created patch for Coherence/hello-coh {"metadata":{"labels":{"coherence-hash":"65dcc47b48"}}}
+2022-05-26T22:23:35.698Z	INFO	controllers.Coherence	Applied coherence-hash label	{"hash": "65dcc47b48"}
+2022-05-26T22:23:35.698Z	INFO	controllers.Coherence	Patching Coherence/hello-coh with {"metadata":{"labels":{"coherence-hash":"65dcc47b48"}}}
+2022-05-26T22:23:36.123Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "UID": "4705a386-00ce-49d2-b0f1-d6837d4f135c", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:36.123Z	INFO	coherence-webhook	Setting defaults for new resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:36.124Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "4705a386-00ce-49d2-b0f1-d6837d4f135c", "allowed": true}
+2022-05-26T22:23:36.172Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "UID": "fe811495-1ab5-4821-a39a-1c8b0196acc4", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:36.172Z	INFO	coherence-webhook	Setting defaults for new resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:36.174Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/mutate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "fe811495-1ab5-4821-a39a-1c8b0196acc4", "allowed": true}
+2022-05-26T22:23:36.192Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "UID": "abf2b9b9-60c1-4fe2-9664-1826b7506d04", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:36.192Z	INFO	coherence-webhook	validate update	{"name": "hello-coh"}
+2022-05-26T22:23:36.192Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "abf2b9b9-60c1-4fe2-9664-1826b7506d04", "allowed": true}
+2022-05-26T22:23:36.745Z	DEBUG	controller-runtime.webhook.webhooks	received request	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "UID": "31bb7b66-22ad-4c14-90b8-593ddec8e8f2", "kind": "coherence.oracle.com/v1, Kind=Coherence", "resource": {"group":"coherence.oracle.com","version":"v1","resource":"coherence"}}
+2022-05-26T22:23:36.751Z	INFO	coherence-webhook	validate update	{"name": "hello-coh"}
+2022-05-26T22:23:36.751Z	DEBUG	controller-runtime.webhook.webhooks	wrote response	{"webhook": "/validate-coherence-oracle-com-v1-coherence", "code": 200, "reason": "", "UID": "31bb7b66-22ad-4c14-90b8-593ddec8e8f2", "allowed": true}
+2022-05-26T22:23:36.772Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:36.808Z	INFO	controllers.Coherence	Operator configuration updated	{"Key": "operatorhost", "OldValue": "", "NewValue": "coherence-operator-rest.verrazzano-system.svc:8000"}
+2022-05-26T22:23:36.814Z	INFO	controllers.Coherence	Creating configuration secret coherence-operator-config
+2022-05-26T22:23:36.824Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": ""}
+2022-05-26T22:23:36.851Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:23:36.851Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:36.852Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:36.852Z	INFO	controllers.Service	Creating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:36.867Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:36.867Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:36.867Z	INFO	controllers.Service	Creating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:36.874Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:36.874Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:36.874Z	INFO	controllers.Service	Creating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:36.887Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:36.887Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:36.887Z	INFO	controllers.Service	Creating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:36.905Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:36.905Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:36.905Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:23:36.905Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:23:36.905Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+I0526 22:23:37.956209       1 request.go:665] Waited for 1.045194362s due to client-side throttling, not priority and fairness, request: GET:https://10.96.0.1:443/apis/storage.k8s.io/v1beta1?timeout=32s
+2022-05-26T22:23:38.616Z	INFO	controllers.ServiceMonitor	Creating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:38.628Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:38.628Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.354Z	INFO	controllers.ServiceMonitor	Creating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.369Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.369Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:23:40.369Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:40.369Z	INFO	controllers.StatefulSet	Creating StatefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:40.369Z	INFO	controllers.StatefulSet	Creating StatefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:40.543Z	INFO	controllers.StatefulSet	Created statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:40.543Z	DEBUG	events	Normal	{"object": {"kind":"Coherence","namespace":"hello-coherence-7b195c4","name":"hello-coh","uid":"f0c85f29-aff4-447c-94ff-655388101297","apiVersion":"coherence.oracle.com/v1","resourceVersion":"14651"}, "reason": "Created", "message": "successfully created StatefulSet for Coherence resource 'hello-coh'"}
+2022-05-26T22:23:40.543Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:40.564Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+2022-05-26T22:23:40.564Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:40.586Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": "65dcc47b48"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:23:40.595Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:40.595Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:40.595Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:40.596Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:40.596Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:40.596Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:40.596Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:40.597Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:40.597Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:40.597Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:40.607Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:40.607Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.607Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.608Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:40.608Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:40.608Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:23:40.608Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:23:40.608Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:40.691Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:40.697Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:40.707Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:40.728Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:40.769Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:40.850Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:41.010Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:41.331Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:41.974Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:42.318Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:42.323Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:42.328Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:43.255Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:44.128Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:44.135Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:44.135Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:23:44.135Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:44.135Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:44.173Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:44.173Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+2022-05-26T22:23:44.173Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:44.185Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": "65dcc47b48"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:23:44.205Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:44.205Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:44.205Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:44.206Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:44.207Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:23:44.207Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:23:44.207Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:45.817Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:45.916Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:45.916Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:45.916Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.627Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.627Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.627Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:23:47.627Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:47.627Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:47.632Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:47.632Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+2022-05-26T22:23:47.632Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:23:47.637Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": "65dcc47b48"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:23:47.660Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:47.660Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:47.660Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:47.661Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:23:47.662Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:23:47.662Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:23:47.662Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+I0526 22:23:48.713640       1 request.go:665] Waited for 1.044949744s due to client-side throttling, not priority and fairness, request: GET:https://10.96.0.1:443/apis/certificates.k8s.io/v1?timeout=32s
+2022-05-26T22:23:49.747Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:49.747Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:23:49.747Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:50.938Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:23:51.455Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:51.455Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:23:51.455Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:23:51.455Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:51.456Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:51.458Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:23:51.458Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+2022-05-26T22:24:01.179Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:24:01.185Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:24:01.186Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:24:01.189Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:24:01.189Z	INFO	controllers.StatefulSet	Completed reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:24:12.578Z	INFO	rest-server	GET query for node labels	{"node": "10.0.116.227", "label": "topology.kubernetes.io/zone", "value": "EU-ZURICH-1-AD-1", "remoteAddress": "10.244.0.155:36864"}
+2022-05-26T22:24:12.589Z	INFO	rest-server	GET query for node labels	{"node": "10.0.116.227", "label": "topology.kubernetes.io/region", "value": "eu-zurich-1", "remoteAddress": "10.244.0.155:36864"}
+2022-05-26T22:25:17.683Z	INFO	controllers.StatefulSet	Starting reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:25:17.689Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:17.689Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:17.706Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:17.706Z	INFO	controllers.StatefulSet	Completed reconcile	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "StatefulSet"}
+2022-05-26T22:25:17.709Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:25:17.712Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": "65dcc47b48"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:25:17.723Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:25:17.723Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:25:17.723Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:17.724Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:17.724Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:17.724Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:17.724Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:17.725Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:17.725Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:17.725Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:25:17.726Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:25:17.727Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:25:17.727Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+I0526 22:25:18.778356       1 request.go:665] Waited for 1.044987766s due to client-side throttling, not priority and fairness, request: GET:https://10.96.0.1:443/apis/flowcontrol.apiserver.k8s.io/v1beta1?timeout=32s
+2022-05-26T22:25:19.435Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:19.436Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:19.436Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.143Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.143Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.143Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:25:21.143Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:21.143Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:21.167Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:21.167Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+2022-05-26T22:25:21.167Z	INFO	controllers.Coherence	Reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh"}
+2022-05-26T22:25:21.171Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "hash": "65dcc47b48", "store": "65dcc47b48"}
+2022-05-26T22:25:21.192Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ConfigMap"}
+2022-05-26T22:25:21.192Z	INFO	controllers.ConfigMap	Reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:25:21.192Z	INFO	controllers.ConfigMap	Finished reconciling all ConfigMap	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ConfigMap"}
+2022-05-26T22:25:21.192Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Secret"}
+2022-05-26T22:25:21.192Z	INFO	controllers.Secret	Reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:25:21.192Z	INFO	controllers.Secret	Finished reconciling all Secret	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Secret"}
+2022-05-26T22:25:21.192Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.Service"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-wka"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:21.193Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-sts"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.194Z	INFO	controllers.Service	Updating Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.195Z	INFO	controllers.Service	Finished reconciling single Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service", "Resource": "hello-coh-http"}
+2022-05-26T22:25:21.195Z	INFO	controllers.Service	Finished reconciling all Service	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "Service"}
+2022-05-26T22:25:21.195Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.ServiceMonitor"}
+2022-05-26T22:25:21.195Z	INFO	controllers.ServiceMonitor	Reconciling all ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor"}
+2022-05-26T22:25:21.195Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:22.912Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:22.913Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-metrics"}
+2022-05-26T22:25:22.913Z	INFO	controllers.ServiceMonitor	Reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:24.620Z	INFO	controllers.ServiceMonitor	Updating ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:24.621Z	INFO	controllers.ServiceMonitor	Finished reconciling single ServiceMonitor	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh", "Kind": "ServiceMonitor", "Resource": "hello-coh-http"}
+2022-05-26T22:25:24.621Z	INFO	controllers.Coherence	Reconciling Coherence resource secondary resources	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "controller": "controllers.StatefulSet"}
+2022-05-26T22:25:24.621Z	INFO	controllers.StatefulSet	Reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:24.621Z	INFO	controllers.StatefulSet	Updating statefulSet	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:24.623Z	INFO	controllers.StatefulSet	Finished reconciling StatefulSet for deployment	{"Namespace": "hello-coherence-7b195c4", "Name": "hello-coh"}
+2022-05-26T22:25:24.624Z	INFO	controllers.Coherence	Finished reconciling Coherence resource	{"namespace": "hello-coherence-7b195c4", "name": "hello-coh", "requeue": false, "after": "0s"}
+==== END logs for container manager of pod verrazzano-system/coherence-operator-5b9f86c9b5-vw4l7 ====

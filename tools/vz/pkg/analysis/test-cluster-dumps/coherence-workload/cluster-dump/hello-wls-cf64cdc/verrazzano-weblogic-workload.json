@@ -1,0 +1,116 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "VerrazzanoWebLogicWorkload",
+            "metadata": {
+                "annotations": {
+                    "description": "Sample application to validate deployment of VerrazzanoWebLogicWorkload",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:32Z",
+                "generation": 1,
+                "labels": {
+                    "app.oam.dev/component": "hello-domain",
+                    "app.oam.dev/name": "hello-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "hello-domain-v1"
+                },
+                "name": "hello-domain",
+                "namespace": "hello-wls-cf64cdc",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "hello-appconf",
+                        "uid": "c2d1c64f-d647-4d04-913b-7b995719d81c"
+                    }
+                ],
+                "resourceVersion": "14425",
+                "uid": "f0a79bb4-68d1-4fe5-92ff-9f2c4873f722"
+            },
+            "spec": {
+                "template": {
+                    "metadata": {
+                        "name": "hello-domain"
+                    },
+                    "spec": {
+                        "adminServer": {
+                            "adminChannelPortForwardingEnabled": true
+                        },
+                        "auxiliaryImageVolumes": [
+                            {
+                                "mountPath": "/auxiliary",
+                                "name": "auxiliaryImageVolume1"
+                            }
+                        ],
+                        "configuration": {
+                            "introspectorJobActiveDeadlineSeconds": 900,
+                            "model": {
+                                "domainType": "WLS",
+                                "modelHome": "/auxiliary/models",
+                                "runtimeEncryptionSecret": "hellodomain-runtime-encrypt-secret",
+                                "wdtInstallHome": "/auxiliary/weblogic-deploy"
+                            }
+                        },
+                        "domainHome": "/u01/domains/hellodomain",
+                        "domainHomeSourceType": "FromModel",
+                        "domainUID": "hellodomain",
+                        "image": "container-registry.oracle.com/middleware/weblogic:12.2.1.4",
+                        "imagePullSecrets": [
+                            {
+                                "name": "hellodomain-repo-credentials"
+                            }
+                        ],
+                        "includeServerOutInPodLog": true,
+                        "replicas": 1,
+                        "serverPod": {
+                            "auxiliaryImages": [
+                                {
+                                    "image": "ghcr.io/verrazzano/weblogic-app:1.0.0-1-20220319111617-b157b52a",
+                                    "volume": "auxiliaryImageVolume1"
+                                }
+                            ],
+                            "env": [
+                                {
+                                    "name": "JAVA_OPTIONS",
+                                    "value": "-Dweblogic.StdoutDebugEnabled=false"
+                                },
+                                {
+                                    "name": "USER_MEM_ARGS",
+                                    "value": "-Djava.security.egd=file:/dev/./urandom -Xms64m -Xmx256m "
+                                },
+                                {
+                                    "name": "WL_HOME",
+                                    "value": "/u01/oracle/wlserver"
+                                },
+                                {
+                                    "name": "MW_HOME",
+                                    "value": "/u01/oracle"
+                                }
+                            ],
+                            "labels": {
+                                "app": "hello-domain",
+                                "version": "v1"
+                            }
+                        },
+                        "webLogicCredentialsSecret": {
+                            "name": "hellodomain-weblogic-credentials"
+                        }
+                    }
+                }
+            },
+            "status": {
+                "lastGeneration": "1"
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

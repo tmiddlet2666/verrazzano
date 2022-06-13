@@ -1,0 +1,3685 @@
+{
+    "kind": "PodList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22513"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "coredns-687f565486-rgvn8",
+                "generateName": "coredns-687f565486-",
+                "namespace": "kube-system",
+                "uid": "ebff6700-8150-4e45-b86b-05ff4e0010b6",
+                "resourceVersion": "2311",
+                "creationTimestamp": "2022-05-26T22:06:08Z",
+                "labels": {
+                    "k8s-app": "kube-dns",
+                    "pod-template-hash": "687f565486"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "coredns-687f565486",
+                        "uid": "f443736f-545a-4d33-b9e1-175151b85280",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "config-volume",
+                        "configMap": {
+                            "name": "coredns",
+                            "items": [
+                                {
+                                    "key": "Corefile",
+                                    "path": "Corefile"
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "custom-config-volume",
+                        "configMap": {
+                            "name": "coredns-custom",
+                            "defaultMode": 420,
+                            "optional": true
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-ckfkq",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "coredns",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:bb06cdbbb347185fabf739f023a818a857332f3aef103a41a7f74fafd8f8d1d4",
+                        "args": [
+                            "-conf",
+                            "/etc/coredns/Corefile"
+                        ],
+                        "ports": [
+                            {
+                                "name": "dns",
+                                "containerPort": 53,
+                                "protocol": "UDP"
+                            },
+                            {
+                                "name": "dns-tcp",
+                                "containerPort": 53,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "name": "metrics",
+                                "containerPort": 9153,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "memory": "170Mi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "70Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "config-volume",
+                                "readOnly": true,
+                                "mountPath": "/etc/coredns"
+                            },
+                            {
+                                "name": "custom-config-volume",
+                                "readOnly": true,
+                                "mountPath": "/etc/coredns/custom"
+                            },
+                            {
+                                "name": "kube-api-access-ckfkq",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "livenessProbe": {
+                            "httpGet": {
+                                "path": "/health",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 60,
+                            "timeoutSeconds": 5,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 5
+                        },
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/ready",
+                                "port": 8181,
+                                "scheme": "HTTP"
+                            },
+                            "timeoutSeconds": 1,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "capabilities": {
+                                "add": [
+                                    "NET_BIND_SERVICE"
+                                ],
+                                "drop": [
+                                    "all"
+                                ]
+                            },
+                            "readOnlyRootFilesystem": true,
+                            "allowPrivilegeEscalation": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "Default",
+                "nodeSelector": {
+                    "beta.kubernetes.io/os": "linux"
+                },
+                "serviceAccountName": "coredns",
+                "serviceAccount": "coredns",
+                "nodeName": "10.0.116.227",
+                "securityContext": {},
+                "affinity": {
+                    "podAntiAffinity": {
+                        "preferredDuringSchedulingIgnoredDuringExecution": [
+                            {
+                                "weight": 100,
+                                "podAffinityTerm": {
+                                    "labelSelector": {
+                                        "matchExpressions": [
+                                            {
+                                                "key": "k8s-app",
+                                                "operator": "In",
+                                                "values": [
+                                                    "kube-dns"
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "topologyKey": "failure-domain.beta.kubernetes.io/zone"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priorityClassName": "system-cluster-critical",
+                "priority": 2000000000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:09Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:12Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:12Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:09Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.244.0.131",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.131"
+                    }
+                ],
+                "startTime": "2022-05-26T22:06:09Z",
+                "containerStatuses": [
+                    {
+                        "name": "coredns",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:06:11Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:bb06cdbbb347185fabf739f023a818a857332f3aef103a41a7f74fafd8f8d1d4",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:0c02fd86c8ec83bfa64378753ae809598ce9cd4cc32647506133926835d62043",
+                        "containerID": "cri-o://8af5433ace4284dfa8a112a1dfcf8db0deb72c53e348d92099d7ae4598a572bf",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "coredns-687f565486-wk6cv",
+                "generateName": "coredns-687f565486-",
+                "namespace": "kube-system",
+                "uid": "16552393-adfe-44aa-a1d5-f38e4bc9316b",
+                "resourceVersion": "2243",
+                "creationTimestamp": "2022-05-26T21:58:38Z",
+                "labels": {
+                    "k8s-app": "kube-dns",
+                    "pod-template-hash": "687f565486"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "coredns-687f565486",
+                        "uid": "f443736f-545a-4d33-b9e1-175151b85280",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "config-volume",
+                        "configMap": {
+                            "name": "coredns",
+                            "items": [
+                                {
+                                    "key": "Corefile",
+                                    "path": "Corefile"
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "custom-config-volume",
+                        "configMap": {
+                            "name": "coredns-custom",
+                            "defaultMode": 420,
+                            "optional": true
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-sckc7",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "coredns",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:bb06cdbbb347185fabf739f023a818a857332f3aef103a41a7f74fafd8f8d1d4",
+                        "args": [
+                            "-conf",
+                            "/etc/coredns/Corefile"
+                        ],
+                        "ports": [
+                            {
+                                "name": "dns",
+                                "containerPort": 53,
+                                "protocol": "UDP"
+                            },
+                            {
+                                "name": "dns-tcp",
+                                "containerPort": 53,
+                                "protocol": "TCP"
+                            },
+                            {
+                                "name": "metrics",
+                                "containerPort": 9153,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "memory": "170Mi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "70Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "config-volume",
+                                "readOnly": true,
+                                "mountPath": "/etc/coredns"
+                            },
+                            {
+                                "name": "custom-config-volume",
+                                "readOnly": true,
+                                "mountPath": "/etc/coredns/custom"
+                            },
+                            {
+                                "name": "kube-api-access-sckc7",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "livenessProbe": {
+                            "httpGet": {
+                                "path": "/health",
+                                "port": 8080,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 60,
+                            "timeoutSeconds": 5,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 5
+                        },
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/ready",
+                                "port": 8181,
+                                "scheme": "HTTP"
+                            },
+                            "timeoutSeconds": 1,
+                            "periodSeconds": 10,
+                            "successThreshold": 1,
+                            "failureThreshold": 3
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "capabilities": {
+                                "add": [
+                                    "NET_BIND_SERVICE"
+                                ],
+                                "drop": [
+                                    "all"
+                                ]
+                            },
+                            "readOnlyRootFilesystem": true,
+                            "allowPrivilegeEscalation": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "Default",
+                "nodeSelector": {
+                    "beta.kubernetes.io/os": "linux"
+                },
+                "serviceAccountName": "coredns",
+                "serviceAccount": "coredns",
+                "nodeName": "10.0.94.45",
+                "securityContext": {},
+                "affinity": {
+                    "podAntiAffinity": {
+                        "preferredDuringSchedulingIgnoredDuringExecution": [
+                            {
+                                "weight": 100,
+                                "podAffinityTerm": {
+                                    "labelSelector": {
+                                        "matchExpressions": [
+                                            {
+                                                "key": "k8s-app",
+                                                "operator": "In",
+                                                "values": [
+                                                    "kube-dns"
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    "topologyKey": "failure-domain.beta.kubernetes.io/zone"
+                                }
+                            }
+                        ]
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priorityClassName": "system-cluster-critical",
+                "priority": 2000000000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:02Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:02Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:02Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:02Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.2",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.2"
+                    }
+                ],
+                "startTime": "2022-05-26T22:05:02Z",
+                "containerStatuses": [
+                    {
+                        "name": "coredns",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:06:01Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:bb06cdbbb347185fabf739f023a818a857332f3aef103a41a7f74fafd8f8d1d4",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-coredns@sha256:0c02fd86c8ec83bfa64378753ae809598ce9cd4cc32647506133926835d62043",
+                        "containerID": "cri-o://220ff5958c5a6892aec0f0ea2f5421575f8cb9a9363446ae410314f51d2dd32e",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "csi-oci-node-mpzbj",
+                "generateName": "csi-oci-node-",
+                "namespace": "kube-system",
+                "uid": "15d16723-fbf3-47a2-9d56-12c7a7053685",
+                "resourceVersion": "2197",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "app": "csi-oci-node",
+                    "controller-revision-hash": "f6dfbf996",
+                    "pod-template-generation": "1",
+                    "role": "csi-oci"
+                },
+                "annotations": {
+                    "checksum/config": "6bc5cc92b481f982"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "csi-oci-node",
+                        "uid": "b91b3839-aad2-43c8-bd77-eedb9a128ac5",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "registration-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins_registry/",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "plugin-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins/blockvolume.csi.oraclecloud.com",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "pods-mount-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "device-dir",
+                        "hostPath": {
+                            "path": "/dev",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "chroot-iscsiadm",
+                        "configMap": {
+                            "name": "oci-csi-iscsiadm",
+                            "items": [
+                                {
+                                    "key": "iscsiadm",
+                                    "path": "iscsiadm"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "fss-plugin-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins/fss.csi.oraclecloud.com",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "encrypt-pods-mount-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "fss-driver-mounts",
+                        "configMap": {
+                            "name": "oci-fss-csi",
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-mmz44",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "csi-node-driver",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci:oke-multiarch-1.22-ba49ae1-87@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "command": [
+                            "/usr/local/bin/oci-csi-node-driver"
+                        ],
+                        "args": [
+                            "--v=2",
+                            "--csi-address=/csi/csi.sock",
+                            "--kubelet-registration-path=/var/lib/kubelet/plugins/blockvolume.csi.oraclecloud.com/csi.sock",
+                            "--endpoint=unix:///csi/csi.sock",
+                            "--nodeid=$(KUBE_NODE_NAME)",
+                            "--fss-endpoint=unix:///fss/csi.sock",
+                            "--fss-csi-address=/fss/csi.sock",
+                            "--fss-kubelet-registration-path=/var/lib/kubelet/plugins/fss.csi.oraclecloud.com/csi.sock",
+                            "--fss-csi-driver-enabled=true"
+                        ],
+                        "env": [
+                            {
+                                "name": "KUBE_NODE_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "spec.nodeName"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "300Mi"
+                            },
+                            "requests": {
+                                "cpu": "30m",
+                                "memory": "70Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "plugin-dir",
+                                "mountPath": "/csi"
+                            },
+                            {
+                                "name": "pods-mount-dir",
+                                "mountPath": "/var/lib/kubelet",
+                                "mountPropagation": "Bidirectional"
+                            },
+                            {
+                                "name": "device-dir",
+                                "mountPath": "/dev"
+                            },
+                            {
+                                "name": "registration-dir",
+                                "mountPath": "/registration"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host",
+                                "mountPropagation": "HostToContainer"
+                            },
+                            {
+                                "name": "chroot-iscsiadm",
+                                "mountPath": "/sbin/iscsiadm",
+                                "subPath": "iscsiadm"
+                            },
+                            {
+                                "name": "fss-plugin-dir",
+                                "mountPath": "/fss"
+                            },
+                            {
+                                "name": "encrypt-pods-mount-dir",
+                                "mountPath": "/host/var/lib/kubelet",
+                                "mountPropagation": "Bidirectional"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/umount.oci-fss",
+                                "subPath": "umount.oci-fss"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/umount",
+                                "subPath": "umount"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/mount",
+                                "subPath": "mount"
+                            },
+                            {
+                                "name": "kube-api-access-mmz44",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "lifecycle": {
+                            "preStop": {
+                                "exec": {
+                                    "command": [
+                                        "/bin/sh",
+                                        "-c",
+                                        "rm -rf /registration/blockvolume.csi.oraclecloud.com /registration/blockvolume.csi.oraclecloud.com-reg.sock /registration/fss.csi.oraclecloud.com /registration/fss.csi.oraclecloud.com-reg.sock"
+                                    ]
+                                }
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "csi-oci-node-sa",
+                "serviceAccount": "csi-oci-node-sa",
+                "nodeName": "10.0.116.227",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.116.227"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:46Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:56Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:56Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.0.116.227",
+                "podIPs": [
+                    {
+                        "ip": "10.0.116.227"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:46Z",
+                "containerStatuses": [
+                    {
+                        "name": "csi-node-driver",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:56Z"
+                            }
+                        },
+                        "lastState": {
+                            "terminated": {
+                                "exitCode": 1,
+                                "reason": "Error",
+                                "startedAt": "2022-05-26T22:05:17Z",
+                                "finishedAt": "2022-05-26T22:05:49Z",
+                                "containerID": "cri-o://0f6bca8e6d43eeb92d5131ae236ba8948dc3def74f4d7371752a3cbdb4b214e5"
+                            }
+                        },
+                        "ready": true,
+                        "restartCount": 1,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "containerID": "cri-o://4daa0178af68a745963a7a60ddee33e3fac1c04e4db33324957f5abffef365ee",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "csi-oci-node-qwm87",
+                "generateName": "csi-oci-node-",
+                "namespace": "kube-system",
+                "uid": "35ef2a33-c81d-4f96-8674-c98a74559a94",
+                "resourceVersion": "2222",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "app": "csi-oci-node",
+                    "controller-revision-hash": "f6dfbf996",
+                    "pod-template-generation": "1",
+                    "role": "csi-oci"
+                },
+                "annotations": {
+                    "checksum/config": "6bc5cc92b481f982"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "csi-oci-node",
+                        "uid": "b91b3839-aad2-43c8-bd77-eedb9a128ac5",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "registration-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins_registry/",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "plugin-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins/blockvolume.csi.oraclecloud.com",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "pods-mount-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "device-dir",
+                        "hostPath": {
+                            "path": "/dev",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "chroot-iscsiadm",
+                        "configMap": {
+                            "name": "oci-csi-iscsiadm",
+                            "items": [
+                                {
+                                    "key": "iscsiadm",
+                                    "path": "iscsiadm"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "fss-plugin-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet/plugins/fss.csi.oraclecloud.com",
+                            "type": "DirectoryOrCreate"
+                        }
+                    },
+                    {
+                        "name": "encrypt-pods-mount-dir",
+                        "hostPath": {
+                            "path": "/var/lib/kubelet",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "fss-driver-mounts",
+                        "configMap": {
+                            "name": "oci-fss-csi",
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-md44k",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "csi-node-driver",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci:oke-multiarch-1.22-ba49ae1-87@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "command": [
+                            "/usr/local/bin/oci-csi-node-driver"
+                        ],
+                        "args": [
+                            "--v=2",
+                            "--csi-address=/csi/csi.sock",
+                            "--kubelet-registration-path=/var/lib/kubelet/plugins/blockvolume.csi.oraclecloud.com/csi.sock",
+                            "--endpoint=unix:///csi/csi.sock",
+                            "--nodeid=$(KUBE_NODE_NAME)",
+                            "--fss-endpoint=unix:///fss/csi.sock",
+                            "--fss-csi-address=/fss/csi.sock",
+                            "--fss-kubelet-registration-path=/var/lib/kubelet/plugins/fss.csi.oraclecloud.com/csi.sock",
+                            "--fss-csi-driver-enabled=true"
+                        ],
+                        "env": [
+                            {
+                                "name": "KUBE_NODE_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "spec.nodeName"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "300Mi"
+                            },
+                            "requests": {
+                                "cpu": "30m",
+                                "memory": "70Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "plugin-dir",
+                                "mountPath": "/csi"
+                            },
+                            {
+                                "name": "pods-mount-dir",
+                                "mountPath": "/var/lib/kubelet",
+                                "mountPropagation": "Bidirectional"
+                            },
+                            {
+                                "name": "device-dir",
+                                "mountPath": "/dev"
+                            },
+                            {
+                                "name": "registration-dir",
+                                "mountPath": "/registration"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host",
+                                "mountPropagation": "HostToContainer"
+                            },
+                            {
+                                "name": "chroot-iscsiadm",
+                                "mountPath": "/sbin/iscsiadm",
+                                "subPath": "iscsiadm"
+                            },
+                            {
+                                "name": "fss-plugin-dir",
+                                "mountPath": "/fss"
+                            },
+                            {
+                                "name": "encrypt-pods-mount-dir",
+                                "mountPath": "/host/var/lib/kubelet",
+                                "mountPropagation": "Bidirectional"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/umount.oci-fss",
+                                "subPath": "umount.oci-fss"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/umount",
+                                "subPath": "umount"
+                            },
+                            {
+                                "name": "fss-driver-mounts",
+                                "mountPath": "/sbin/mount",
+                                "subPath": "mount"
+                            },
+                            {
+                                "name": "kube-api-access-md44k",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "lifecycle": {
+                            "preStop": {
+                                "exec": {
+                                    "command": [
+                                        "/bin/sh",
+                                        "-c",
+                                        "rm -rf /registration/blockvolume.csi.oraclecloud.com /registration/blockvolume.csi.oraclecloud.com-reg.sock /registration/fss.csi.oraclecloud.com /registration/fss.csi.oraclecloud.com-reg.sock"
+                                    ]
+                                }
+                            }
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "csi-oci-node-sa",
+                "serviceAccount": "csi-oci-node-sa",
+                "nodeName": "10.0.94.45",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.94.45"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:59Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:59Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.0.94.45",
+                "podIPs": [
+                    {
+                        "ip": "10.0.94.45"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:45Z",
+                "containerStatuses": [
+                    {
+                        "name": "csi-node-driver",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:58Z"
+                            }
+                        },
+                        "lastState": {
+                            "terminated": {
+                                "exitCode": 1,
+                                "reason": "Error",
+                                "startedAt": "2022-05-26T22:05:16Z",
+                                "finishedAt": "2022-05-26T22:05:48Z",
+                                "containerID": "cri-o://19f51dc0a2e41ad549dbbedd44ea53d5ec0295f5e7d2d19da7f70ef809db2a65"
+                            }
+                        },
+                        "ready": true,
+                        "restartCount": 1,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cloud-provider-oci@sha256:66cbb0e0c4dd3820fbef9d45d12644df280cc3889b0084cefa1a37649efbf7a6",
+                        "containerID": "cri-o://df63374539faf63f2e25abf25e6c01e1e8a99448ba7da30822400ea80fe6bc1c",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "kube-dns-autoscaler-6c78b87c54-fwjdj",
+                "generateName": "kube-dns-autoscaler-6c78b87c54-",
+                "namespace": "kube-system",
+                "uid": "4a068e0a-2da1-4b99-b8c9-a674fc543391",
+                "resourceVersion": "2294",
+                "creationTimestamp": "2022-05-26T21:58:38Z",
+                "labels": {
+                    "k8s-app": "kube-dns-autoscaler",
+                    "pod-template-hash": "6c78b87c54"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "kube-dns-autoscaler-6c78b87c54",
+                        "uid": "f1eb61c5-2bce-4d75-aa6b-e398b8742e78",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-4tnnb",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "autoscaler",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cluster-proportional-autoscaler-amd64@sha256:5e3af57b43c5b4590f4e70f5a9ea598f3f8abb4d175a8d6323a1755287084031",
+                        "command": [
+                            "/cluster-proportional-autoscaler",
+                            "--namespace=kube-system",
+                            "--configmap=kube-dns-autoscaler",
+                            "--target=deployment/coredns",
+                            "--logtostderr=true",
+                            "--v=2"
+                        ],
+                        "resources": {
+                            "requests": {
+                                "cpu": "20m",
+                                "memory": "10Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-4tnnb",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "readOnlyRootFilesystem": true,
+                            "allowPrivilegeEscalation": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "dns-autoscaler",
+                "serviceAccount": "dns-autoscaler",
+                "nodeName": "10.0.116.227",
+                "securityContext": {},
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:03Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:09Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:06:09Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:03Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.244.0.130",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.130"
+                    }
+                ],
+                "startTime": "2022-05-26T22:05:03Z",
+                "containerStatuses": [
+                    {
+                        "name": "autoscaler",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:06:08Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cluster-proportional-autoscaler-amd64@sha256:5e3af57b43c5b4590f4e70f5a9ea598f3f8abb4d175a8d6323a1755287084031",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-cluster-proportional-autoscaler-amd64@sha256:5e3af57b43c5b4590f4e70f5a9ea598f3f8abb4d175a8d6323a1755287084031",
+                        "containerID": "cri-o://dc83c4d6e92aec676fe8d9097a2bce457651b6da6632b640fe736212d4a97ae1",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "kube-flannel-ds-fhnq4",
+                "generateName": "kube-flannel-ds-",
+                "namespace": "kube-system",
+                "uid": "fe92dbaf-d17c-4cd8-9cd8-9461f8ece9a7",
+                "resourceVersion": "2224",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "app": "flannel",
+                    "controller-revision-hash": "5dd8cc8d6",
+                    "pod-template-generation": "1",
+                    "tier": "node"
+                },
+                "annotations": {
+                    "checksum/config": "b1655542c5171d68"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "kube-flannel-ds",
+                        "uid": "9d9ec4f2-fc57-49ae-bd4e-6e3739ee5bdf",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "run",
+                        "hostPath": {
+                            "path": "/run",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "cni",
+                        "hostPath": {
+                            "path": "/etc/cni/net.d",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "flannel-cfg",
+                        "configMap": {
+                            "name": "kube-flannel-cfg",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "chroot-iptables",
+                        "configMap": {
+                            "name": "oci-iptables-flannel",
+                            "items": [
+                                {
+                                    "key": "iptables",
+                                    "path": "iptables"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-49dl9",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "install-cni",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "command": [
+                            "cp"
+                        ],
+                        "args": [
+                            "-f",
+                            "/etc/kube-flannel/cni-conf.json",
+                            "/etc/cni/net.d/10-flannel.conflist"
+                        ],
+                        "env": [
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "cni",
+                                "mountPath": "/etc/cni/net.d"
+                            },
+                            {
+                                "name": "flannel-cfg",
+                                "mountPath": "/etc/kube-flannel/"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "kube-api-access-49dl9",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "kube-flannel",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "command": [
+                            "/opt/bin/flanneld"
+                        ],
+                        "args": [
+                            "--ip-masq",
+                            "--kube-subnet-mgr"
+                        ],
+                        "env": [
+                            {
+                                "name": "POD_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.name"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "1",
+                                "memory": "500Mi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "50Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "run",
+                                "mountPath": "/run"
+                            },
+                            {
+                                "name": "flannel-cfg",
+                                "mountPath": "/etc/kube-flannel/"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "kube-api-access-49dl9",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "flannel",
+                "serviceAccount": "flannel",
+                "nodeName": "10.0.94.45",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.94.45"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:59Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:59Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.0.94.45",
+                "podIPs": [
+                    {
+                        "ip": "10.0.94.45"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:45Z",
+                "initContainerStatuses": [
+                    {
+                        "name": "install-cni",
+                        "state": {
+                            "terminated": {
+                                "exitCode": 0,
+                                "reason": "Completed",
+                                "startedAt": "2022-05-26T22:05:16Z",
+                                "finishedAt": "2022-05-26T22:05:16Z",
+                                "containerID": "cri-o://641c94b7db5419fbd431204ec8afc272593376b930448c2bc0f9bccab1d3ebc0"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "containerID": "cri-o://641c94b7db5419fbd431204ec8afc272593376b930448c2bc0f9bccab1d3ebc0"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "name": "kube-flannel",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:58Z"
+                            }
+                        },
+                        "lastState": {
+                            "terminated": {
+                                "exitCode": 1,
+                                "reason": "Error",
+                                "startedAt": "2022-05-26T22:05:17Z",
+                                "finishedAt": "2022-05-26T22:05:48Z",
+                                "containerID": "cri-o://d5bb59e03ba1c5d220542888f28f2871e328dae750e4f74d04dcf8e29560efde"
+                            }
+                        },
+                        "ready": true,
+                        "restartCount": 1,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "containerID": "cri-o://2dd9962516a8410abe257fafddef3e54aba459db24387da7192e460964aa5c6e",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "kube-flannel-ds-thrgl",
+                "generateName": "kube-flannel-ds-",
+                "namespace": "kube-system",
+                "uid": "e4c25541-d915-4255-8e04-218f8bb1e23c",
+                "resourceVersion": "2196",
+                "creationTimestamp": "2022-05-26T22:04:46Z",
+                "labels": {
+                    "app": "flannel",
+                    "controller-revision-hash": "5dd8cc8d6",
+                    "pod-template-generation": "1",
+                    "tier": "node"
+                },
+                "annotations": {
+                    "checksum/config": "b1655542c5171d68"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "kube-flannel-ds",
+                        "uid": "9d9ec4f2-fc57-49ae-bd4e-6e3739ee5bdf",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "run",
+                        "hostPath": {
+                            "path": "/run",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "cni",
+                        "hostPath": {
+                            "path": "/etc/cni/net.d",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "flannel-cfg",
+                        "configMap": {
+                            "name": "kube-flannel-cfg",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "chroot-iptables",
+                        "configMap": {
+                            "name": "oci-iptables-flannel",
+                            "items": [
+                                {
+                                    "key": "iptables",
+                                    "path": "iptables"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-xqf5k",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "install-cni",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "command": [
+                            "cp"
+                        ],
+                        "args": [
+                            "-f",
+                            "/etc/kube-flannel/cni-conf.json",
+                            "/etc/cni/net.d/10-flannel.conflist"
+                        ],
+                        "env": [
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "cni",
+                                "mountPath": "/etc/cni/net.d"
+                            },
+                            {
+                                "name": "flannel-cfg",
+                                "mountPath": "/etc/kube-flannel/"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "kube-api-access-xqf5k",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "kube-flannel",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "command": [
+                            "/opt/bin/flanneld"
+                        ],
+                        "args": [
+                            "--ip-masq",
+                            "--kube-subnet-mgr"
+                        ],
+                        "env": [
+                            {
+                                "name": "POD_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.name"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "1",
+                                "memory": "500Mi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "50Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "run",
+                                "mountPath": "/run"
+                            },
+                            {
+                                "name": "flannel-cfg",
+                                "mountPath": "/etc/kube-flannel/"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "kube-api-access-xqf5k",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "flannel",
+                "serviceAccount": "flannel",
+                "nodeName": "10.0.116.227",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.116.227"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:18Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:56Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:56Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:46Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.0.116.227",
+                "podIPs": [
+                    {
+                        "ip": "10.0.116.227"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:46Z",
+                "initContainerStatuses": [
+                    {
+                        "name": "install-cni",
+                        "state": {
+                            "terminated": {
+                                "exitCode": 0,
+                                "reason": "Completed",
+                                "startedAt": "2022-05-26T22:05:17Z",
+                                "finishedAt": "2022-05-26T22:05:17Z",
+                                "containerID": "cri-o://fab577f692a646208a502e92cfe9006bc57225141c76a3253b86f2e48be35ad7"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "containerID": "cri-o://fab577f692a646208a502e92cfe9006bc57225141c76a3253b86f2e48be35ad7"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "name": "kube-flannel",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:56Z"
+                            }
+                        },
+                        "lastState": {
+                            "terminated": {
+                                "exitCode": 1,
+                                "reason": "Error",
+                                "startedAt": "2022-05-26T22:05:18Z",
+                                "finishedAt": "2022-05-26T22:05:49Z",
+                                "containerID": "cri-o://1eebe43a74947f526e67f9facad07a67a0909ef3b5ebeab5e692b0726a333651"
+                            }
+                        },
+                        "ready": true,
+                        "restartCount": 1,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-flannel@sha256:2f222947024b78d6c28d1ff60beefdafbfc1ff2d65a5fdb3bb21b6fa48e80df5",
+                        "containerID": "cri-o://fda135ff41ddc68b033792ca6e21ace6befd0ee8b8ba849ba39fed363246918c",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "kube-proxy-tz2mc",
+                "generateName": "kube-proxy-",
+                "namespace": "kube-system",
+                "uid": "fc9f68c8-9fe7-4517-8c8b-85a2d40c63c2",
+                "resourceVersion": "2027",
+                "creationTimestamp": "2022-05-26T22:04:46Z",
+                "labels": {
+                    "controller-revision-hash": "54bd5c7c7c",
+                    "k8s-app": "kube-proxy",
+                    "pod-template-generation": "1"
+                },
+                "annotations": {
+                    "checksum/config": "cff42fbe3c54430b"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "kube-proxy",
+                        "uid": "698b9e0f-baa5-4e77-8760-5e2433d07505",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-proxy",
+                        "emptyDir": {}
+                    },
+                    {
+                        "name": "kube-proxy-config-volume",
+                        "configMap": {
+                            "name": "kube-proxy",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "xtables-lock",
+                        "hostPath": {
+                            "path": "/run/xtables.lock",
+                            "type": "FileOrCreate"
+                        }
+                    },
+                    {
+                        "name": "lib-modules",
+                        "hostPath": {
+                            "path": "/lib/modules",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "chroot-iptables",
+                        "configMap": {
+                            "name": "oci-iptables-kubeproxy",
+                            "items": [
+                                {
+                                    "key": "iptables",
+                                    "path": "iptables"
+                                },
+                                {
+                                    "key": "iptables-save",
+                                    "path": "iptables-save"
+                                },
+                                {
+                                    "key": "iptables-restore",
+                                    "path": "iptables-restore"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-b29nw",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-kube-proxy",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "command": [
+                            "sh",
+                            "/var/lib/kube-proxy-config/kube_proxy_init.sh"
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-proxy",
+                                "mountPath": "/var/lib/kube-proxy"
+                            },
+                            {
+                                "name": "kube-proxy-config-volume",
+                                "mountPath": "/var/lib/kube-proxy-config"
+                            },
+                            {
+                                "name": "kube-api-access-b29nw",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "kube-proxy",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "command": [
+                            "/usr/local/bin/kube-proxy",
+                            "--config=/var/lib/kube-proxy/config.conf",
+                            "--hostname-override=$(NODE_NAME)"
+                        ],
+                        "env": [
+                            {
+                                "name": "NODE_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "spec.nodeName"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-proxy",
+                                "mountPath": "/var/lib/kube-proxy"
+                            },
+                            {
+                                "name": "xtables-lock",
+                                "mountPath": "/run/xtables.lock"
+                            },
+                            {
+                                "name": "lib-modules",
+                                "readOnly": true,
+                                "mountPath": "/lib/modules"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables-save",
+                                "subPath": "iptables-save"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables-restore",
+                                "subPath": "iptables-restore"
+                            },
+                            {
+                                "name": "kube-api-access-b29nw",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                    "beta.kubernetes.io/os": "linux"
+                },
+                "serviceAccountName": "kube-proxy",
+                "serviceAccount": "kube-proxy",
+                "nodeName": "10.0.94.45",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.94.45"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:18Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:18Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:46Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.0.94.45",
+                "podIPs": [
+                    {
+                        "ip": "10.0.94.45"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:46Z",
+                "initContainerStatuses": [
+                    {
+                        "name": "init-kube-proxy",
+                        "state": {
+                            "terminated": {
+                                "exitCode": 0,
+                                "reason": "Completed",
+                                "startedAt": "2022-05-26T22:05:16Z",
+                                "finishedAt": "2022-05-26T22:05:16Z",
+                                "containerID": "cri-o://ce794c3c2024c5b770e98c0d361ed4ce69e9d4f9d03b230bbeeef71230d4ef09"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:6c3435a228ef16929a1ab04ad8c4aa492821a85dc3364192194b62bb020f030f",
+                        "containerID": "cri-o://ce794c3c2024c5b770e98c0d361ed4ce69e9d4f9d03b230bbeeef71230d4ef09"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "name": "kube-proxy",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:17Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:6c3435a228ef16929a1ab04ad8c4aa492821a85dc3364192194b62bb020f030f",
+                        "containerID": "cri-o://0d619713743b43c34311eef88581cfe2233b946317c0d37140b345a301d468fc",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "kube-proxy-ztwl4",
+                "generateName": "kube-proxy-",
+                "namespace": "kube-system",
+                "uid": "f94ace85-cda1-4e10-8bb6-2b61b726af4e",
+                "resourceVersion": "2044",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "controller-revision-hash": "54bd5c7c7c",
+                    "k8s-app": "kube-proxy",
+                    "pod-template-generation": "1"
+                },
+                "annotations": {
+                    "checksum/config": "cff42fbe3c54430b"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "kube-proxy",
+                        "uid": "698b9e0f-baa5-4e77-8760-5e2433d07505",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-proxy",
+                        "emptyDir": {}
+                    },
+                    {
+                        "name": "kube-proxy-config-volume",
+                        "configMap": {
+                            "name": "kube-proxy",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "xtables-lock",
+                        "hostPath": {
+                            "path": "/run/xtables.lock",
+                            "type": "FileOrCreate"
+                        }
+                    },
+                    {
+                        "name": "lib-modules",
+                        "hostPath": {
+                            "path": "/lib/modules",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "chroot-iptables",
+                        "configMap": {
+                            "name": "oci-iptables-kubeproxy",
+                            "items": [
+                                {
+                                    "key": "iptables",
+                                    "path": "iptables"
+                                },
+                                {
+                                    "key": "iptables-save",
+                                    "path": "iptables-save"
+                                },
+                                {
+                                    "key": "iptables-restore",
+                                    "path": "iptables-restore"
+                                }
+                            ],
+                            "defaultMode": 493
+                        }
+                    },
+                    {
+                        "name": "host-root",
+                        "hostPath": {
+                            "path": "/",
+                            "type": "Directory"
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-tkb4x",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "init-kube-proxy",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "command": [
+                            "sh",
+                            "/var/lib/kube-proxy-config/kube_proxy_init.sh"
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-proxy",
+                                "mountPath": "/var/lib/kube-proxy"
+                            },
+                            {
+                                "name": "kube-proxy-config-volume",
+                                "mountPath": "/var/lib/kube-proxy-config"
+                            },
+                            {
+                                "name": "kube-api-access-tkb4x",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "kube-proxy",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "command": [
+                            "/usr/local/bin/kube-proxy",
+                            "--config=/var/lib/kube-proxy/config.conf",
+                            "--hostname-override=$(NODE_NAME)"
+                        ],
+                        "env": [
+                            {
+                                "name": "NODE_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "spec.nodeName"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PATH",
+                                "value": "/hostIptables:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/host/usr/bin:/host/sbin"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-proxy",
+                                "mountPath": "/var/lib/kube-proxy"
+                            },
+                            {
+                                "name": "xtables-lock",
+                                "mountPath": "/run/xtables.lock"
+                            },
+                            {
+                                "name": "lib-modules",
+                                "readOnly": true,
+                                "mountPath": "/lib/modules"
+                            },
+                            {
+                                "name": "host-root",
+                                "mountPath": "/host"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables",
+                                "subPath": "iptables"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables-save",
+                                "subPath": "iptables-save"
+                            },
+                            {
+                                "name": "chroot-iptables",
+                                "mountPath": "/hostIptables/iptables-restore",
+                                "subPath": "iptables-restore"
+                            },
+                            {
+                                "name": "kube-api-access-tkb4x",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "Always",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                    "beta.kubernetes.io/os": "linux"
+                },
+                "serviceAccountName": "kube-proxy",
+                "serviceAccount": "kube-proxy",
+                "nodeName": "10.0.116.227",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.116.227"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:18Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:19Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:19Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:46Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.0.116.227",
+                "podIPs": [
+                    {
+                        "ip": "10.0.116.227"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:46Z",
+                "initContainerStatuses": [
+                    {
+                        "name": "init-kube-proxy",
+                        "state": {
+                            "terminated": {
+                                "exitCode": 0,
+                                "reason": "Completed",
+                                "startedAt": "2022-05-26T22:05:17Z",
+                                "finishedAt": "2022-05-26T22:05:17Z",
+                                "containerID": "cri-o://b481be5d8be9d67b87ea181290a4b0547002e255e8c7bc81474ef4e9b994ae69"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:6c3435a228ef16929a1ab04ad8c4aa492821a85dc3364192194b62bb020f030f",
+                        "containerID": "cri-o://b481be5d8be9d67b87ea181290a4b0547002e255e8c7bc81474ef4e9b994ae69"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "name": "kube-proxy",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:18Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:fdb6ddf38d0d690f6ec855cd5cee6a554b15c982f5c78c35c2552d23e9012bea",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-kube-proxy@sha256:6c3435a228ef16929a1ab04ad8c4aa492821a85dc3364192194b62bb020f030f",
+                        "containerID": "cri-o://04dabd7e57905d5b43b15e69e2e3f6f1757862023f006125540f5accb67bf178",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "proxymux-client-4v9rk",
+                "generateName": "proxymux-client-",
+                "namespace": "kube-system",
+                "uid": "c0ca3e0a-4d74-4c80-bda7-09020e0e4dde",
+                "resourceVersion": "2003",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "controller-revision-hash": "58f484b9b6",
+                    "oke-app": "proxymux-client-ds",
+                    "pod-template-generation": "1"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "proxymux-client",
+                        "uid": "a48fa38a-bac6-40bd-a203-8f2d6ca6dc2b",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "proxymux-cfg",
+                        "hostPath": {
+                            "path": "/etc/proxymux/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "kubernetes-cfg",
+                        "hostPath": {
+                            "path": "/etc/kubernetes/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "systemd",
+                        "hostPath": {
+                            "path": "/run/systemd/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "pki",
+                        "hostPath": {
+                            "path": "/etc/pki/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-5nwg9",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "proxymux-client",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:8c17900c130224ed6a9d8f2a8dd4aa87b83d7061afffaca5222404e083ce3d22",
+                        "args": [
+                            "--config=/mnt/etc/proxymux/config.yaml",
+                            "--verbosity=info"
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "256Mi"
+                            },
+                            "requests": {
+                                "cpu": "50m",
+                                "memory": "64Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "proxymux-cfg",
+                                "mountPath": "/mnt/etc/proxymux/"
+                            },
+                            {
+                                "name": "kubernetes-cfg",
+                                "mountPath": "/etc/kubernetes/"
+                            },
+                            {
+                                "name": "systemd",
+                                "mountPath": "/run/systemd/"
+                            },
+                            {
+                                "name": "pki",
+                                "mountPath": "/etc/pki/"
+                            },
+                            {
+                                "name": "kube-api-access-5nwg9",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                    "node.info.ds_proxymux_client": "true"
+                },
+                "serviceAccountName": "proxymux-client",
+                "serviceAccount": "proxymux-client",
+                "nodeName": "10.0.94.45",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.94.45"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.0.94.45",
+                "podIPs": [
+                    {
+                        "ip": "10.0.94.45"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:45Z",
+                "containerStatuses": [
+                    {
+                        "name": "proxymux-client",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:16Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:8c17900c130224ed6a9d8f2a8dd4aa87b83d7061afffaca5222404e083ce3d22",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:76d9c6aab54d22a25d9d81c67470a653a541cfec530b3acc82416b930d2edaf7",
+                        "containerID": "cri-o://d8c5abf44b4cc3ed5c32c6979fc07e36c4f1dbe0707412399f2d76ade32ffc70",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        },
+        {
+            "metadata": {
+                "name": "proxymux-client-9mgf5",
+                "generateName": "proxymux-client-",
+                "namespace": "kube-system",
+                "uid": "0029bdfe-2cf4-4df9-8d4e-b5c58efa647b",
+                "resourceVersion": "2005",
+                "creationTimestamp": "2022-05-26T22:04:45Z",
+                "labels": {
+                    "controller-revision-hash": "58f484b9b6",
+                    "oke-app": "proxymux-client-ds",
+                    "pod-template-generation": "1"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "DaemonSet",
+                        "name": "proxymux-client",
+                        "uid": "a48fa38a-bac6-40bd-a203-8f2d6ca6dc2b",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "proxymux-cfg",
+                        "hostPath": {
+                            "path": "/etc/proxymux/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "kubernetes-cfg",
+                        "hostPath": {
+                            "path": "/etc/kubernetes/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "systemd",
+                        "hostPath": {
+                            "path": "/run/systemd/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "pki",
+                        "hostPath": {
+                            "path": "/etc/pki/",
+                            "type": ""
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-5zmmp",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "proxymux-client",
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:8c17900c130224ed6a9d8f2a8dd4aa87b83d7061afffaca5222404e083ce3d22",
+                        "args": [
+                            "--config=/mnt/etc/proxymux/config.yaml",
+                            "--verbosity=info"
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "500m",
+                                "memory": "256Mi"
+                            },
+                            "requests": {
+                                "cpu": "50m",
+                                "memory": "64Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "proxymux-cfg",
+                                "mountPath": "/mnt/etc/proxymux/"
+                            },
+                            {
+                                "name": "kubernetes-cfg",
+                                "mountPath": "/etc/kubernetes/"
+                            },
+                            {
+                                "name": "systemd",
+                                "mountPath": "/run/systemd/"
+                            },
+                            {
+                                "name": "pki",
+                                "mountPath": "/etc/pki/"
+                            },
+                            {
+                                "name": "kube-api-access-5zmmp",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "privileged": true,
+                            "readOnlyRootFilesystem": true
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "nodeSelector": {
+                    "node.info.ds_proxymux_client": "true"
+                },
+                "serviceAccountName": "proxymux-client",
+                "serviceAccount": "proxymux-client",
+                "nodeName": "10.0.116.227",
+                "hostNetwork": true,
+                "securityContext": {},
+                "affinity": {
+                    "nodeAffinity": {
+                        "requiredDuringSchedulingIgnoredDuringExecution": {
+                            "nodeSelectorTerms": [
+                                {
+                                    "matchFields": [
+                                        {
+                                            "key": "metadata.name",
+                                            "operator": "In",
+                                            "values": [
+                                                "10.0.116.227"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                },
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "CriticalAddonsOnly",
+                        "operator": "Exists"
+                    },
+                    {
+                        "operator": "Exists"
+                    },
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute"
+                    },
+                    {
+                        "key": "node.kubernetes.io/disk-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/memory-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/pid-pressure",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/unschedulable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    },
+                    {
+                        "key": "node.kubernetes.io/network-unavailable",
+                        "operator": "Exists",
+                        "effect": "NoSchedule"
+                    }
+                ],
+                "priorityClassName": "system-node-critical",
+                "priority": 2000001000,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:46Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:05:17Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:04:45Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.0.116.227",
+                "podIPs": [
+                    {
+                        "ip": "10.0.116.227"
+                    }
+                ],
+                "startTime": "2022-05-26T22:04:46Z",
+                "containerStatuses": [
+                    {
+                        "name": "proxymux-client",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:05:17Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:8c17900c130224ed6a9d8f2a8dd4aa87b83d7061afffaca5222404e083ce3d22",
+                        "imageID": "eu-zurich-1.ocir.io/axoxdievda5j/oke-public-proxymux-cli@sha256:76d9c6aab54d22a25d9d81c67470a653a541cfec530b3acc82416b930d2edaf7",
+                        "containerID": "cri-o://57c953a14dca62e76f84771ea522c1fd24b90f4bcbc162d03b469ab42ad4582d",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        }
+    ]
+}

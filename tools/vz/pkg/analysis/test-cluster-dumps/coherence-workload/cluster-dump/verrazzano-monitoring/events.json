@@ -1,0 +1,1761 @@
+{
+    "kind": "EventList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22643"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779-j586c.16f2c721d0474746",
+                "namespace": "verrazzano-monitoring",
+                "uid": "7e189437-ed3b-4274-b82a-3544c4e44358",
+                "resourceVersion": "3830",
+                "creationTimestamp": "2022-05-26T22:09:21Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779-j586c",
+                "uid": "66f50019-82f6-4b95-888d-0ab5b1e30051",
+                "apiVersion": "v1",
+                "resourceVersion": "3825"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/kube-state-metrics-c8895779-j586c to 10.0.116.227",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:21.240562Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779-j586c.16f2c723710aeb52",
+                "namespace": "verrazzano-monitoring",
+                "uid": "790f7208-9da9-4175-933b-86188d0453b6",
+                "resourceVersion": "3936",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779-j586c",
+                "uid": "66f50019-82f6-4b95-888d-0ab5b1e30051",
+                "apiVersion": "v1",
+                "resourceVersion": "3828",
+                "fieldPath": "spec.containers{kube-state-metrics}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/kube-state-metrics:v2.4.2\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779-j586c.16f2c72469c00924",
+                "namespace": "verrazzano-monitoring",
+                "uid": "883f62f9-f7a7-4fd1-8f27-16911e7a657b",
+                "resourceVersion": "3986",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779-j586c",
+                "uid": "66f50019-82f6-4b95-888d-0ab5b1e30051",
+                "apiVersion": "v1",
+                "resourceVersion": "3828",
+                "fieldPath": "spec.containers{kube-state-metrics}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/kube-state-metrics:v2.4.2\" in 4.172606366s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779-j586c.16f2c72474574d6b",
+                "namespace": "verrazzano-monitoring",
+                "uid": "f6f4b201-9574-4072-91af-845c518af42f",
+                "resourceVersion": "3990",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779-j586c",
+                "uid": "66f50019-82f6-4b95-888d-0ab5b1e30051",
+                "apiVersion": "v1",
+                "resourceVersion": "3828",
+                "fieldPath": "spec.containers{kube-state-metrics}"
+            },
+            "reason": "Created",
+            "message": "Created container kube-state-metrics",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779-j586c.16f2c724778ac785",
+                "namespace": "verrazzano-monitoring",
+                "uid": "2ae39694-1729-4a4d-8895-c8649c2a1ff8",
+                "resourceVersion": "3995",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779-j586c",
+                "uid": "66f50019-82f6-4b95-888d-0ab5b1e30051",
+                "apiVersion": "v1",
+                "resourceVersion": "3828",
+                "fieldPath": "spec.containers{kube-state-metrics}"
+            },
+            "reason": "Started",
+            "message": "Started container kube-state-metrics",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics-c8895779.16f2c721cf6136c7",
+                "namespace": "verrazzano-monitoring",
+                "uid": "834a629e-685f-4bbc-8452-f3c78ede33e4",
+                "resourceVersion": "3826",
+                "creationTimestamp": "2022-05-26T22:09:21Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics-c8895779",
+                "uid": "43be7978-4b73-46bb-8d59-947bbf279b5a",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3818"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: kube-state-metrics-c8895779-j586c",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:21Z",
+            "lastTimestamp": "2022-05-26T22:09:21Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "kube-state-metrics.16f2c721c79bb6af",
+                "namespace": "verrazzano-monitoring",
+                "uid": "b03e753f-78ae-4a11-ac0e-37aafd1b8db7",
+                "resourceVersion": "3819",
+                "creationTimestamp": "2022-05-26T22:09:21Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "verrazzano-monitoring",
+                "name": "kube-state-metrics",
+                "uid": "b7018c93-7d01-4a3d-960b-ee38ec6e115a",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3815"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set kube-state-metrics-c8895779 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:21Z",
+            "lastTimestamp": "2022-05-26T22:09:21Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494-7f5qh.16f2c7209e7dfece",
+                "namespace": "verrazzano-monitoring",
+                "uid": "b191c1f2-6190-4d94-8f84-54cf4a02fdf7",
+                "resourceVersion": "3769",
+                "creationTimestamp": "2022-05-26T22:09:16Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494-7f5qh",
+                "uid": "ef2f4444-e708-45ac-9fc1-026514bc8f9f",
+                "apiVersion": "v1",
+                "resourceVersion": "3761"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/prometheus-adapter-7f989b8494-7f5qh to 10.0.116.227",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:16.110300Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494-7f5qh.16f2c720cb45aef0",
+                "namespace": "verrazzano-monitoring",
+                "uid": "f954225e-2dbd-4319-b905-b25970592ad7",
+                "resourceVersion": "3781",
+                "creationTimestamp": "2022-05-26T22:09:16Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494-7f5qh",
+                "uid": "ef2f4444-e708-45ac-9fc1-026514bc8f9f",
+                "apiVersion": "v1",
+                "resourceVersion": "3762",
+                "fieldPath": "spec.containers{prometheus-adapter}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/prometheus-adapter:v0.9.1-3\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:16Z",
+            "lastTimestamp": "2022-05-26T22:09:16Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494-7f5qh.16f2c7236ddf93c0",
+                "namespace": "verrazzano-monitoring",
+                "uid": "c2826546-e6b2-4f45-a1bf-1ce687510020",
+                "resourceVersion": "3934",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494-7f5qh",
+                "uid": "ef2f4444-e708-45ac-9fc1-026514bc8f9f",
+                "apiVersion": "v1",
+                "resourceVersion": "3762",
+                "fieldPath": "spec.containers{prometheus-adapter}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/prometheus-adapter:v0.9.1-3\" in 11.317909256s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494-7f5qh.16f2c72379791998",
+                "namespace": "verrazzano-monitoring",
+                "uid": "6acd36fd-c25c-4bc6-9f28-b103afaa8e3b",
+                "resourceVersion": "3940",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494-7f5qh",
+                "uid": "ef2f4444-e708-45ac-9fc1-026514bc8f9f",
+                "apiVersion": "v1",
+                "resourceVersion": "3762",
+                "fieldPath": "spec.containers{prometheus-adapter}"
+            },
+            "reason": "Created",
+            "message": "Created container prometheus-adapter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494-7f5qh.16f2c7237c01a621",
+                "namespace": "verrazzano-monitoring",
+                "uid": "6682107f-d257-404b-b1c7-ee0ac8942d54",
+                "resourceVersion": "3941",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494-7f5qh",
+                "uid": "ef2f4444-e708-45ac-9fc1-026514bc8f9f",
+                "apiVersion": "v1",
+                "resourceVersion": "3762",
+                "fieldPath": "spec.containers{prometheus-adapter}"
+            },
+            "reason": "Started",
+            "message": "Started container prometheus-adapter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter-7f989b8494.16f2c7209d27002b",
+                "namespace": "verrazzano-monitoring",
+                "uid": "87cb8b0c-4800-4724-b89c-415097e41d85",
+                "resourceVersion": "3764",
+                "creationTimestamp": "2022-05-26T22:09:16Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter-7f989b8494",
+                "uid": "8b034779-36a4-40fc-9d1c-5b63405f66bb",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3756"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: prometheus-adapter-7f989b8494-7f5qh",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:16Z",
+            "lastTimestamp": "2022-05-26T22:09:16Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-adapter.16f2c720943a65f1",
+                "namespace": "verrazzano-monitoring",
+                "uid": "840f6ee8-74a9-4ddf-8e76-bdfae51fdbea",
+                "resourceVersion": "3758",
+                "creationTimestamp": "2022-05-26T22:09:15Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-adapter",
+                "uid": "ea81d512-ba6a-4948-8d66-cec2e0f592bb",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3755"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set prometheus-adapter-7f989b8494 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:15Z",
+            "lastTimestamp": "2022-05-26T22:09:15Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jlk7z.16f2c72333ec13ba",
+                "namespace": "verrazzano-monitoring",
+                "uid": "498286d9-5e5d-4733-8959-401f92a19d39",
+                "resourceVersion": "3926",
+                "creationTimestamp": "2022-05-26T22:09:27Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jlk7z",
+                "uid": "5f3ecb2d-b0e8-4f16-8a02-f21a873ba00e",
+                "apiVersion": "v1",
+                "resourceVersion": "3918"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/prometheus-node-exporter-jlk7z to 10.0.116.227",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:27.207273Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jlk7z.16f2c72371125082",
+                "namespace": "verrazzano-monitoring",
+                "uid": "c223b49d-8880-4b7d-88b7-9a908f4c0591",
+                "resourceVersion": "3937",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jlk7z",
+                "uid": "5f3ecb2d-b0e8-4f16-8a02-f21a873ba00e",
+                "apiVersion": "v1",
+                "resourceVersion": "3922",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/node-exporter:v1.3.1\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jlk7z.16f2c724698c39cf",
+                "namespace": "verrazzano-monitoring",
+                "uid": "e5082555-2d2c-4185-9cde-5c1281e6fbc5",
+                "resourceVersion": "3985",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jlk7z",
+                "uid": "5f3ecb2d-b0e8-4f16-8a02-f21a873ba00e",
+                "apiVersion": "v1",
+                "resourceVersion": "3922",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/node-exporter:v1.3.1\" in 4.168726187s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jlk7z.16f2c72473bd584f",
+                "namespace": "verrazzano-monitoring",
+                "uid": "c9f6a4da-1796-4b1e-aaf3-56ff12ce878b",
+                "resourceVersion": "3989",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jlk7z",
+                "uid": "5f3ecb2d-b0e8-4f16-8a02-f21a873ba00e",
+                "apiVersion": "v1",
+                "resourceVersion": "3922",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Created",
+            "message": "Created container node-exporter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jlk7z.16f2c72476558a9f",
+                "namespace": "verrazzano-monitoring",
+                "uid": "80651a2e-910b-4b5b-b4ea-a57c15dff1a0",
+                "resourceVersion": "3992",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jlk7z",
+                "uid": "5f3ecb2d-b0e8-4f16-8a02-f21a873ba00e",
+                "apiVersion": "v1",
+                "resourceVersion": "3922",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Started",
+            "message": "Started container node-exporter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c72330babec7",
+                "namespace": "verrazzano-monitoring",
+                "uid": "8443a1e3-617d-4eb7-8415-3858e76bf10d",
+                "resourceVersion": "3919",
+                "creationTimestamp": "2022-05-26T22:09:27Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3915"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/prometheus-node-exporter-jx24q to 10.0.94.45",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:27.153712Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c724be481d54",
+                "namespace": "verrazzano-monitoring",
+                "uid": "c94b1bd1-25f8-4ef7-b379-5e49184025c0",
+                "resourceVersion": "4020",
+                "creationTimestamp": "2022-05-26T22:09:33Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/node-exporter:v1.3.1\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:09:33Z",
+            "lastTimestamp": "2022-05-26T22:09:33Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c7256400ec4c",
+                "namespace": "verrazzano-monitoring",
+                "uid": "26778583-5c52-4c67-9138-d23093603d32",
+                "resourceVersion": "4061",
+                "creationTimestamp": "2022-05-26T22:09:36Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/node-exporter:v1.3.1\" in 2.780317768s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:09:36Z",
+            "lastTimestamp": "2022-05-26T22:09:36Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c7256c17725a",
+                "namespace": "verrazzano-monitoring",
+                "uid": "70b65c32-ef0d-4034-81ca-c4420efe7a02",
+                "resourceVersion": "4064",
+                "creationTimestamp": "2022-05-26T22:09:36Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Created",
+            "message": "Created container node-exporter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:09:36Z",
+            "lastTimestamp": "2022-05-26T22:09:36Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c7256eaa1b2b",
+                "namespace": "verrazzano-monitoring",
+                "uid": "2954c567-1e1b-451f-aa5b-b5b12603a32a",
+                "resourceVersion": "4065",
+                "creationTimestamp": "2022-05-26T22:09:36Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Started",
+            "message": "Started container node-exporter",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:09:36Z",
+            "lastTimestamp": "2022-05-26T22:09:36Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c8054c68b812",
+                "namespace": "verrazzano-monitoring",
+                "uid": "5f53c407-9685-4908-baa1-205855dda593",
+                "resourceVersion": "16775",
+                "creationTimestamp": "2022-05-26T22:25:40Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Unhealthy",
+            "message": "Readiness probe failed: Get \"http://10.0.94.45:9400/\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:25:38Z",
+            "lastTimestamp": "2022-05-26T22:25:38Z",
+            "count": 1,
+            "type": "Warning",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter-jx24q.16f2c8054c78fa18",
+                "namespace": "verrazzano-monitoring",
+                "uid": "e72f6396-7718-4baf-a1d1-0d5ce2bfdeae",
+                "resourceVersion": "16777",
+                "creationTimestamp": "2022-05-26T22:25:40Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter-jx24q",
+                "uid": "4efd541f-be68-4439-bb08-e7eb4089dfeb",
+                "apiVersion": "v1",
+                "resourceVersion": "3916",
+                "fieldPath": "spec.containers{node-exporter}"
+            },
+            "reason": "Unhealthy",
+            "message": "Liveness probe failed: Get \"http://10.0.94.45:9400/\": context deadline exceeded (Client.Timeout exceeded while awaiting headers)",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:25:38Z",
+            "lastTimestamp": "2022-05-26T22:25:38Z",
+            "count": 1,
+            "type": "Warning",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter.16f2c723304925ef",
+                "namespace": "verrazzano-monitoring",
+                "uid": "26acff9e-d403-485e-9c59-23a8036d4f93",
+                "resourceVersion": "3920",
+                "creationTimestamp": "2022-05-26T22:09:27Z"
+            },
+            "involvedObject": {
+                "kind": "DaemonSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter",
+                "uid": "8b71b1b8-983b-43ae-a208-6f2f19c4ab7f",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3908"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: prometheus-node-exporter-jx24q",
+            "source": {
+                "component": "daemonset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:27Z",
+            "lastTimestamp": "2022-05-26T22:09:27Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-node-exporter.16f2c72331b93ccb",
+                "namespace": "verrazzano-monitoring",
+                "uid": "01496bef-1866-42ac-a0db-068acdbe56e3",
+                "resourceVersion": "3923",
+                "creationTimestamp": "2022-05-26T22:09:27Z"
+            },
+            "involvedObject": {
+                "kind": "DaemonSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-node-exporter",
+                "uid": "8b71b1b8-983b-43ae-a208-6f2f19c4ab7f",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3908"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: prometheus-node-exporter-jlk7z",
+            "source": {
+                "component": "daemonset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:27Z",
+            "lastTimestamp": "2022-05-26T22:09:27Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission-jkzlc.16f2c7274f89bffd",
+                "namespace": "verrazzano-monitoring",
+                "uid": "3057457d-5b8c-4d93-b4cd-644626d5ba27",
+                "resourceVersion": "4157",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "CertificateRequest",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission-jkzlc",
+                "uid": "eb781018-856e-4e73-a33b-12cfff27d039",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4155"
+            },
+            "reason": "IssuerNotReady",
+            "message": "Referenced issuer does not have a Ready status condition",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission-jkzlc.16f2c7274fbece7c",
+                "namespace": "verrazzano-monitoring",
+                "uid": "42fe8a04-5afe-46f0-9610-4f6a6458358e",
+                "resourceVersion": "4160",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "CertificateRequest",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission-jkzlc",
+                "uid": "eb781018-856e-4e73-a33b-12cfff27d039",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4150"
+            },
+            "reason": "cert-manager.io",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission-jkzlc.16f2c7286b4aa326",
+                "namespace": "verrazzano-monitoring",
+                "uid": "60efc631-bdcb-443b-aa90-700118ea03fa",
+                "resourceVersion": "4215",
+                "creationTimestamp": "2022-05-26T22:09:49Z"
+            },
+            "involvedObject": {
+                "kind": "CertificateRequest",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission-jkzlc",
+                "uid": "eb781018-856e-4e73-a33b-12cfff27d039",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4165"
+            },
+            "reason": "CertificateIssued",
+            "message": "Certificate fetched from issuer successfully",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:49Z",
+            "lastTimestamp": "2022-05-26T22:09:49Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission.16f2c7273580ea25",
+                "namespace": "verrazzano-monitoring",
+                "uid": "1b18181e-06af-4966-bf40-2fb626ae4ea8",
+                "resourceVersion": "4133",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission",
+                "uid": "34c78f68-2fee-4b11-bfd9-6272be7f72f0",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4126"
+            },
+            "reason": "Issuing",
+            "message": "Issuing certificate as Secret does not exist",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission.16f2c7274318fb23",
+                "namespace": "verrazzano-monitoring",
+                "uid": "c9c81e3c-6aed-4218-b157-d6fa4bba92a9",
+                "resourceVersion": "4145",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission",
+                "uid": "34c78f68-2fee-4b11-bfd9-6272be7f72f0",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4130"
+            },
+            "reason": "Generated",
+            "message": "Stored new private key in temporary Secret resource \"prometheus-operator-kube-p-admission-wprs5\"",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission.16f2c7274bbb49e7",
+                "namespace": "verrazzano-monitoring",
+                "uid": "6bd9b959-1d83-4f33-b9cf-f40ac18eebb1",
+                "resourceVersion": "4151",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission",
+                "uid": "34c78f68-2fee-4b11-bfd9-6272be7f72f0",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4148"
+            },
+            "reason": "Requested",
+            "message": "Created new CertificateRequest resource \"prometheus-operator-kube-p-admission-jkzlc\"",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-admission.16f2c7286f20ce02",
+                "namespace": "verrazzano-monitoring",
+                "uid": "a9e6e09c-54ec-40a1-8f90-10c709584d65",
+                "resourceVersion": "4220",
+                "creationTimestamp": "2022-05-26T22:09:49Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-admission",
+                "uid": "34c78f68-2fee-4b11-bfd9-6272be7f72f0",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4148"
+            },
+            "reason": "Issuing",
+            "message": "The certificate has been successfully issued",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:49Z",
+            "lastTimestamp": "2022-05-26T22:09:49Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c71f67426a94",
+                "namespace": "verrazzano-monitoring",
+                "uid": "29395dfc-2477-4ad8-9e33-efb898139979",
+                "resourceVersion": "3671",
+                "creationTimestamp": "2022-05-26T22:09:10Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3666"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/prometheus-operator-kube-p-operator-69ddb84d98-vwwvt to 10.0.94.45",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:10.888703Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c71f7802195e",
+                "namespace": "verrazzano-monitoring",
+                "uid": "14451fee-25e1-4026-ac03-d8ed97d4599f",
+                "resourceVersion": "4115",
+                "creationTimestamp": "2022-05-26T22:09:11Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3667"
+            },
+            "reason": "FailedMount",
+            "message": "MountVolume.SetUp failed for volume \"tls-secret\" : secret \"prometheus-operator-kube-p-admission\" not found",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:09:11Z",
+            "lastTimestamp": "2022-05-26T22:09:42Z",
+            "count": 7,
+            "type": "Warning",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c72ffb834533",
+                "namespace": "verrazzano-monitoring",
+                "uid": "1f96e27f-2ada-47ac-a244-8aeb32c0a97e",
+                "resourceVersion": "4461",
+                "creationTimestamp": "2022-05-26T22:10:22Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3667",
+                "fieldPath": "spec.containers{kube-prometheus-stack}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/prometheus-operator:v0.55.1\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:10:22Z",
+            "lastTimestamp": "2022-05-26T22:10:22Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c7310dc067b0",
+                "namespace": "verrazzano-monitoring",
+                "uid": "6d445309-3b50-4cc2-a4bf-433a61a076a5",
+                "resourceVersion": "4538",
+                "creationTimestamp": "2022-05-26T22:10:26Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3667",
+                "fieldPath": "spec.containers{kube-prometheus-stack}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/prometheus-operator:v0.55.1\" in 4.600474056s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:10:26Z",
+            "lastTimestamp": "2022-05-26T22:10:26Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c731160853b1",
+                "namespace": "verrazzano-monitoring",
+                "uid": "47a42a89-17cc-47f5-941b-cdf7f317f780",
+                "resourceVersion": "4539",
+                "creationTimestamp": "2022-05-26T22:10:26Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3667",
+                "fieldPath": "spec.containers{kube-prometheus-stack}"
+            },
+            "reason": "Created",
+            "message": "Created container kube-prometheus-stack",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:10:26Z",
+            "lastTimestamp": "2022-05-26T22:10:26Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt.16f2c73118724c8c",
+                "namespace": "verrazzano-monitoring",
+                "uid": "ea2acc9e-bbe6-401a-a57f-a197b386faef",
+                "resourceVersion": "4540",
+                "creationTimestamp": "2022-05-26T22:10:26Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+                "uid": "ad0de23d-0cf7-40a7-b1e2-50650fa5ffbe",
+                "apiVersion": "v1",
+                "resourceVersion": "3667",
+                "fieldPath": "spec.containers{kube-prometheus-stack}"
+            },
+            "reason": "Started",
+            "message": "Started container kube-prometheus-stack",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:10:26Z",
+            "lastTimestamp": "2022-05-26T22:10:26Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98.16f2c71f668abbd9",
+                "namespace": "verrazzano-monitoring",
+                "uid": "270b8089-36ec-4c66-94b9-86e6f301078f",
+                "resourceVersion": "3669",
+                "creationTimestamp": "2022-05-26T22:09:10Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator-69ddb84d98",
+                "uid": "3ceacf81-5199-488b-95d9-b8dda407125b",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3662"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: prometheus-operator-kube-p-operator-69ddb84d98-vwwvt",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:10Z",
+            "lastTimestamp": "2022-05-26T22:09:10Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-operator.16f2c71f610f3d84",
+                "namespace": "verrazzano-monitoring",
+                "uid": "492d42ad-659e-4e7c-bb78-1a9af2307a24",
+                "resourceVersion": "3663",
+                "creationTimestamp": "2022-05-26T22:09:10Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-operator",
+                "uid": "6ffd4749-48a7-4c0b-9e59-47ea100ee808",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3661"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set prometheus-operator-kube-p-operator-69ddb84d98 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:10Z",
+            "lastTimestamp": "2022-05-26T22:09:10Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert-bs5st.16f2c72750504dc6",
+                "namespace": "verrazzano-monitoring",
+                "uid": "fda342e4-5648-4c02-80f5-9c4767a611e7",
+                "resourceVersion": "4164",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "CertificateRequest",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert-bs5st",
+                "uid": "6f629619-1590-45f6-8dc7-e0030e81d63a",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4156"
+            },
+            "reason": "CertificateIssued",
+            "message": "Certificate fetched from issuer successfully",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert-bs5st.16f2c727505437aa",
+                "namespace": "verrazzano-monitoring",
+                "uid": "cb938090-cada-4ed3-9c7b-c610b40b58c6",
+                "resourceVersion": "4166",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "CertificateRequest",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert-bs5st",
+                "uid": "6f629619-1590-45f6-8dc7-e0030e81d63a",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4152"
+            },
+            "reason": "cert-manager.io",
+            "message": "Certificate request has been approved by cert-manager.io",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert.16f2c7273405a2cb",
+                "namespace": "verrazzano-monitoring",
+                "uid": "a2d905ae-ebc6-45ee-95c8-f28192c13181",
+                "resourceVersion": "4128",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert",
+                "uid": "bece28bd-c77d-4ed2-af5f-b6852e38f381",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4125"
+            },
+            "reason": "Issuing",
+            "message": "Issuing certificate as Secret does not exist",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert.16f2c727458cf234",
+                "namespace": "verrazzano-monitoring",
+                "uid": "cd5d9041-0bb9-45ae-852b-db71c34d5e26",
+                "resourceVersion": "4147",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert",
+                "uid": "bece28bd-c77d-4ed2-af5f-b6852e38f381",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4127"
+            },
+            "reason": "Generated",
+            "message": "Stored new private key in temporary Secret resource \"prometheus-operator-kube-p-root-cert-zxgb5\"",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert.16f2c7274d12ec74",
+                "namespace": "verrazzano-monitoring",
+                "uid": "464eb953-7e10-411f-bafd-83be8707051c",
+                "resourceVersion": "4153",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert",
+                "uid": "bece28bd-c77d-4ed2-af5f-b6852e38f381",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4149"
+            },
+            "reason": "Requested",
+            "message": "Created new CertificateRequest resource \"prometheus-operator-kube-p-root-cert-bs5st\"",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-cert.16f2c72755cc3b88",
+                "namespace": "verrazzano-monitoring",
+                "uid": "001dd1c9-d420-4530-8070-8f4de040a49a",
+                "resourceVersion": "4171",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Certificate",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-cert",
+                "uid": "bece28bd-c77d-4ed2-af5f-b6852e38f381",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4149"
+            },
+            "reason": "Issuing",
+            "message": "The certificate has been successfully issued",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-issuer.16f2c727365bfaa0",
+                "namespace": "verrazzano-monitoring",
+                "uid": "9f2b8759-493c-487f-a31a-29f83c2ba085",
+                "resourceVersion": "4141",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Issuer",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-issuer",
+                "uid": "c0c6bb6e-a1f4-4068-a537-4ffe4924e55b",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4132"
+            },
+            "reason": "ErrGetKeyPair",
+            "message": "Error getting keypair for CA issuer: secret \"prometheus-operator-kube-p-root-cert\" not found",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 2,
+            "type": "Warning",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-issuer.16f2c727365d0139",
+                "namespace": "verrazzano-monitoring",
+                "uid": "d39d1c05-a17f-47f4-95b5-ede7b3c64d0e",
+                "resourceVersion": "4143",
+                "creationTimestamp": "2022-05-26T22:09:44Z"
+            },
+            "involvedObject": {
+                "kind": "Issuer",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-issuer",
+                "uid": "c0c6bb6e-a1f4-4068-a537-4ffe4924e55b",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4132"
+            },
+            "reason": "ErrInitIssuer",
+            "message": "Error initializing issuer: secret \"prometheus-operator-kube-p-root-cert\" not found",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:44Z",
+            "lastTimestamp": "2022-05-26T22:09:44Z",
+            "count": 2,
+            "type": "Warning",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-operator-kube-p-root-issuer.16f2c72869bc4c49",
+                "namespace": "verrazzano-monitoring",
+                "uid": "fdff2c85-d639-4fc4-b5d3-7c9faf50f6e8",
+                "resourceVersion": "4214",
+                "creationTimestamp": "2022-05-26T22:09:49Z"
+            },
+            "involvedObject": {
+                "kind": "Issuer",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-operator-kube-p-root-issuer",
+                "uid": "c0c6bb6e-a1f4-4068-a537-4ffe4924e55b",
+                "apiVersion": "cert-manager.io/v1",
+                "resourceVersion": "4140"
+            },
+            "reason": "KeyPairVerified",
+            "message": "Signing CA verified",
+            "source": {
+                "component": "cert-manager"
+            },
+            "firstTimestamp": "2022-05-26T22:09:49Z",
+            "lastTimestamp": "2022-05-26T22:09:49Z",
+            "count": 2,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq.16f2c722a4ee7834",
+                "namespace": "verrazzano-monitoring",
+                "uid": "88472126-4f3b-445c-b0ec-a24b281e1cfc",
+                "resourceVersion": "3881",
+                "creationTimestamp": "2022-05-26T22:09:24Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq",
+                "uid": "5c49b3c7-ef18-4a78-b0af-25af94c737f8",
+                "apiVersion": "v1",
+                "resourceVersion": "3876"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned verrazzano-monitoring/prometheus-pushgateway-74cd54dd94-rbrlq to 10.0.116.227",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:09:24.808290Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq.16f2c723747d0ad5",
+                "namespace": "verrazzano-monitoring",
+                "uid": "98897ff2-b1fb-43bf-b3b0-0cc9a97cbef1",
+                "resourceVersion": "3939",
+                "creationTimestamp": "2022-05-26T22:09:28Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq",
+                "uid": "5c49b3c7-ef18-4a78-b0af-25af94c737f8",
+                "apiVersion": "v1",
+                "resourceVersion": "3877",
+                "fieldPath": "spec.containers{pushgateway}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"ghcr.io/verrazzano/prometheus-pushgateway:v1.4.2\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:28Z",
+            "lastTimestamp": "2022-05-26T22:09:28Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq.16f2c7246983b7ec",
+                "namespace": "verrazzano-monitoring",
+                "uid": "98546fa3-7899-4794-8dfb-f67c53f76e2c",
+                "resourceVersion": "3984",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq",
+                "uid": "5c49b3c7-ef18-4a78-b0af-25af94c737f8",
+                "apiVersion": "v1",
+                "resourceVersion": "3877",
+                "fieldPath": "spec.containers{pushgateway}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"ghcr.io/verrazzano/prometheus-pushgateway:v1.4.2\" in 4.110830952s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq.16f2c72474f30256",
+                "namespace": "verrazzano-monitoring",
+                "uid": "8da8eb4d-2cd7-416a-8c2e-cb80b4e76980",
+                "resourceVersion": "3991",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq",
+                "uid": "5c49b3c7-ef18-4a78-b0af-25af94c737f8",
+                "apiVersion": "v1",
+                "resourceVersion": "3877",
+                "fieldPath": "spec.containers{pushgateway}"
+            },
+            "reason": "Created",
+            "message": "Created container pushgateway",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq.16f2c72477c4aa06",
+                "namespace": "verrazzano-monitoring",
+                "uid": "993cde73-132b-4a79-90b0-0ffd30583446",
+                "resourceVersion": "3996",
+                "creationTimestamp": "2022-05-26T22:09:32Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94-rbrlq",
+                "uid": "5c49b3c7-ef18-4a78-b0af-25af94c737f8",
+                "apiVersion": "v1",
+                "resourceVersion": "3877",
+                "fieldPath": "spec.containers{pushgateway}"
+            },
+            "reason": "Started",
+            "message": "Started container pushgateway",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.116.227"
+            },
+            "firstTimestamp": "2022-05-26T22:09:32Z",
+            "lastTimestamp": "2022-05-26T22:09:32Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway-74cd54dd94.16f2c722a45c4fdd",
+                "namespace": "verrazzano-monitoring",
+                "uid": "a954fc2a-3c9f-408e-ae7b-02bf2450b14a",
+                "resourceVersion": "3878",
+                "creationTimestamp": "2022-05-26T22:09:24Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway-74cd54dd94",
+                "uid": "3b1d3666-ba5e-42c4-b8b3-1a8c05cf66b0",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3869"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: prometheus-pushgateway-74cd54dd94-rbrlq",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:24Z",
+            "lastTimestamp": "2022-05-26T22:09:24Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "prometheus-pushgateway.16f2c7229d9c9d3c",
+                "namespace": "verrazzano-monitoring",
+                "uid": "a025b3b6-a00b-4518-8fb4-aaea988a5fc7",
+                "resourceVersion": "3871",
+                "creationTimestamp": "2022-05-26T22:09:24Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "verrazzano-monitoring",
+                "name": "prometheus-pushgateway",
+                "uid": "8e09699e-0a32-463c-ab8b-688f34ab9bf7",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "3867"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set prometheus-pushgateway-74cd54dd94 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:09:24Z",
+            "lastTimestamp": "2022-05-26T22:09:24Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        }
+    ]
+}

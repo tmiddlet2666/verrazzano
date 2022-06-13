@@ -1,0 +1,131 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "coherence-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:09:02Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "leader-election-rolebinding",
+                "namespace": "verrazzano-system",
+                "resourceVersion": "3388",
+                "uid": "9834ad39-02fe-4f33-b6eb-9e5ca0cbe305"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "leader-election-role"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "coherence-operator",
+                    "namespace": "verrazzano-system"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "oam-kubernetes-runtime",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:08:43Z",
+                "labels": {
+                    "app.kubernetes.io/instance": "oam-kubernetes-runtime",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "oam-kubernetes-runtime",
+                    "app.kubernetes.io/version": "0.3.0",
+                    "helm.sh/chart": "oam-kubernetes-runtime-0.3.0"
+                },
+                "name": "oam-kubernetes-runtime-leader-election",
+                "namespace": "verrazzano-system",
+                "resourceVersion": "2959",
+                "uid": "3699886e-b5c5-4577-8261-ae02e848816e"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "oam-kubernetes-runtime-leader-election"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "oam-kubernetes-runtime"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:14:30Z",
+                "labels": {
+                    "k8s-app": "verrazzano.io",
+                    "vmo.v1.verrazzano.io": "system"
+                },
+                "name": "vmi-system-verrazzano-monitoring-operator",
+                "namespace": "verrazzano-system",
+                "resourceVersion": "8550",
+                "uid": "ff50d6c2-8a61-499f-bd4a-68865a8e407a"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "ClusterRole",
+                "name": "vmi-cluster-role-default"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "default",
+                    "namespace": "verrazzano-system"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "weblogic-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:44Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "weblogic.operatorName": "verrazzano-system"
+                },
+                "name": "weblogic-operator-rolebinding",
+                "namespace": "verrazzano-system",
+                "resourceVersion": "4742",
+                "uid": "6a4e4bb9-a7a5-4cc9-abc5-19bafb19d93b"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "weblogic-operator-role"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "weblogic-operator-sa",
+                    "namespace": "verrazzano-system"
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

@@ -1,0 +1,13 @@
+==== START logs for container autoscaler of pod kube-system/kube-dns-autoscaler-6c78b87c54-fwjdj ====
+I0526 22:06:08.577508       1 autoscaler.go:49] Scaling Namespace: kube-system, Target: deployment/coredns
+I0526 22:06:08.846334       1 plugin.go:50] Set control mode to linear
+I0526 22:06:08.846374       1 linear_controller.go:60] ConfigMap version change (old:  new: 575) - rebuilding params
+I0526 22:06:08.846381       1 linear_controller.go:61] Params from apiserver: 
+{
+  "nodesPerReplica": 1,
+  "preventSinglePointFailure": true,
+  "min": 1
+}
+I0526 22:06:08.853430       1 k8sclient.go:272] Cluster status: SchedulableNodes[2], SchedulableCores[16]
+I0526 22:06:08.853455       1 k8sclient.go:273] Replicas are not as expected : updating replicas from 1 to 2
+==== END logs for container autoscaler of pod kube-system/kube-dns-autoscaler-6c78b87c54-fwjdj ====

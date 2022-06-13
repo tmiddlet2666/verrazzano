@@ -1,0 +1,53 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "app.verrazzano.io/v1alpha1",
+            "kind": "MetricsTemplate",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 1,
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "standard-k8s-metrics-template",
+                "namespace": "verrazzano-system",
+                "resourceVersion": "4592",
+                "uid": "63cbf062-faa4-43b0-b4c1-0b48abcf9e29"
+            },
+            "spec": {
+                "prometheusConfig": {
+                    "scrapeConfigTemplate": "kubernetes_sd_configs:\n  - namespaces:\n      names:\n      - {{.workload.metadata.namespace}}\n    role: pod\nrelabel_configs:\n  - action: replace\n    replacement: local\n    source_labels: null\n    target_label: verrazzano_cluster\n  - action: keep\n    regex: {{index .workload.metadata.labels \"app.verrazzano.io/workload\"}};true\n    source_labels:\n      - __meta_kubernetes_pod_label_app_verrazzano_io_workload\n      - __meta_kubernetes_pod_annotation_prometheus_io_scrape\n  - action: replace\n    regex: ([^:]+)(?::\\d+)?;(\\d+)\n    replacement: $1:$2\n    source_labels:\n      - __address__\n      - __meta_kubernetes_pod_annotation_prometheus_io_port\n    target_label: __address__\n  - action: replace\n    regex: (.*)\n    source_labels:\n      - __meta_kubernetes_pod_annotation_prometheus_io_path\n    target_label: __metrics_path__\n  - action: replace\n    regex: (.*)\n    replacement: $1\n    source_labels:\n      - __meta_kubernetes_namespace\n    target_label: namespace\n  - action: labelmap\n    regex: __meta_kubernetes_pod_label_(.+)\n  - action: replace\n    source_labels:\n      - __meta_kubernetes_pod_name\n    target_label: pod_name\n  - action: labeldrop\n    regex: (controller_revision_hash)\n  - action: replace\n    regex: .*/(.*)$\n    replacement: $1\n    source_labels:\n      - name\n    target_label: webapp\n{{ if index .namespace.metadata.labels \"istio-injection\" }}\n{{ if eq (index .namespace.metadata.labels \"istio-injection\" ) \"enabled\" }}\nscheme: https\ntls_config:\n  ca_file: /etc/istio-certs/root-cert.pem\n  cert_file: /etc/istio-certs/cert-chain.pem\n  insecure_skip_verify: true\n  key_file: /etc/istio-certs/key.pem\n{{ end }}\n{{ end }}\n",
+                    "targetConfigMap": {
+                        "name": "vmi-system-prometheus-config",
+                        "namespace": "verrazzano-system"
+                    }
+                },
+                "workloadSelector": {
+                    "apiGroups": [
+                        "apps",
+                        ""
+                    ],
+                    "apiVersions": [
+                        "v1"
+                    ],
+                    "resources": [
+                        "deployment",
+                        "statefulset",
+                        "replicaset",
+                        "pod"
+                    ]
+                }
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

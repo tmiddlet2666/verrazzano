@@ -1,0 +1,22 @@
+Name:         oci-iptables-flannel
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+iptables:
+----
+#!/bin/sh
+if [ -x /host/sbin/iptables ]; then
+chroot /host /sbin/iptables "$@"
+elif [ -x /host/usr/local/sbin/iptables ]; then
+chroot /host /usr/local/sbin/iptables "$@"
+elif [ -x /host/bin/iptables ]; then
+chroot /host /bin/iptables "$@"
+elif [ -x /host/usr/local/bin/iptables ]; then
+chroot /host /usr/local/bin/iptables "$@"
+else
+chroot /host iptables "$@"
+fi
+Events:  <none>

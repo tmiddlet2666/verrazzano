@@ -1,0 +1,9 @@
+Name:         proxymux-server
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  control-plane.alpha.kubernetes.io/leader:
+                {"holderIdentity":"host-10-64-198-66","leaseDurationSeconds":60,"acquireTime":"2022-05-26T21:57:04Z","renewTime":"2022-05-26T23:04:27Z","l...
+
+Data
+====
+Events:  <none>

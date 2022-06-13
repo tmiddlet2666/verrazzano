@@ -1,0 +1,71 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "cert-manager.io/v1",
+            "kind": "Certificate",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:12:02Z",
+                "generation": 2,
+                "labels": {
+                    "app.kubernetes.io/instance": "keycloak",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "keycloak",
+                    "app.kubernetes.io/version": "15.0.2-20220510113519-620b97bc83",
+                    "helm.sh/chart": "keycloak-15.1.0"
+                },
+                "name": "keycloak-tls",
+                "namespace": "keycloak",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "networking.k8s.io/v1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "Ingress",
+                        "name": "keycloak",
+                        "uid": "276a2dd5-5200-4a7d-a387-95a77adca778"
+                    }
+                ],
+                "resourceVersion": "11916",
+                "uid": "49007d2a-93db-4c12-aef3-d0e6b107c243"
+            },
+            "spec": {
+                "commonName": "keycloak.b90.zb91df2.v8o.io",
+                "dnsNames": [
+                    "keycloak.b90.zb91df2.v8o.io"
+                ],
+                "issuerRef": {
+                    "group": "cert-manager.io",
+                    "kind": "ClusterIssuer",
+                    "name": "verrazzano-cluster-issuer"
+                },
+                "secretName": "keycloak-tls",
+                "usages": [
+                    "digital signature",
+                    "key encipherment"
+                ]
+            },
+            "status": {
+                "conditions": [
+                    {
+                        "lastTransitionTime": "2022-05-26T22:18:38Z",
+                        "message": "Certificate is up to date and has not expired",
+                        "observedGeneration": 2,
+                        "reason": "Ready",
+                        "status": "True",
+                        "type": "Ready"
+                    }
+                ],
+                "notAfter": "2022-08-24T21:18:37Z",
+                "notBefore": "2022-05-26T21:18:38Z",
+                "renewalTime": "2022-07-25T21:18:37Z",
+                "revision": 2
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

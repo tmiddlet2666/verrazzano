@@ -1,0 +1,71 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "networking.istio.io/v1beta1",
+            "kind": "VirtualService",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:23:49Z",
+                "generation": 1,
+                "name": "springboot-ingress-rule-0-vs",
+                "namespace": "bar",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "oam.verrazzano.io/v1alpha1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "IngressTrait",
+                        "name": "springboot-ingress",
+                        "uid": "fd792ab2-47ce-4343-baaa-fc389b5d950d"
+                    }
+                ],
+                "resourceVersion": "15273",
+                "uid": "5e82079f-0964-41b2-a14f-7f701941bcf5"
+            },
+            "spec": {
+                "gateways": [
+                    "bar-authpolicy-appconf-gw"
+                ],
+                "hosts": [
+                    "authpolicy-appconf.bar.b90.zb91df2.v8o.io"
+                ],
+                "http": [
+                    {
+                        "match": [
+                            {
+                                "uri": {
+                                    "prefix": "/"
+                                }
+                            },
+                            {
+                                "uri": {
+                                    "prefix": "/verrazzanoFact"
+                                }
+                            },
+                            {
+                                "uri": {
+                                    "prefix": "/externalCall"
+                                }
+                            }
+                        ],
+                        "route": [
+                            {
+                                "destination": {
+                                    "host": "springboot-frontend-workload",
+                                    "port": {
+                                        "number": 8080
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

@@ -1,0 +1,535 @@
+{
+    "kind": "PodList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22310"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "hello-helidon-deployment-6b96b6f8b7-xvd9c",
+                "generateName": "hello-helidon-deployment-6b96b6f8b7-",
+                "namespace": "hello-helidon-2f4c5e4",
+                "uid": "904b4be9-9b3b-4317-ac7c-5b6c2adafb37",
+                "resourceVersion": "16948",
+                "creationTimestamp": "2022-05-26T22:23:36Z",
+                "labels": {
+                    "app": "hello-helidon",
+                    "app.oam.dev/component": "hello-helidon-component",
+                    "app.oam.dev/name": "hello-helidon-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "hello-helidon-component-v1",
+                    "pod-template-hash": "6b96b6f8b7",
+                    "security.istio.io/tlsMode": "istio",
+                    "service.istio.io/canonical-name": "hello-helidon",
+                    "service.istio.io/canonical-revision": "v1",
+                    "verrazzano.io/istio": "hello-helidon-appconf",
+                    "verrazzanohelidonworkloads.oam.verrazzano.io": "b6a40ff0-4ba1-448f-8386-85e074382f03",
+                    "version": "v1"
+                },
+                "annotations": {
+                    "kubectl.kubernetes.io/default-container": "hello-helidon-container",
+                    "kubectl.kubernetes.io/default-logs-container": "hello-helidon-container",
+                    "sidecar.istio.io/status": "{\"initContainers\":[\"istio-init\"],\"containers\":[\"istio-proxy\"],\"volumes\":[\"istio-envoy\",\"istio-data\",\"istio-podinfo\",\"istio-token\",\"istiod-ca-cert\"],\"imagePullSecrets\":[\"verrazzano-container-registry\"],\"revision\":\"default\"}",
+                    "verrazzano.io/metricsEnabled": "true",
+                    "verrazzano.io/metricsPath": "/metrics",
+                    "verrazzano.io/metricsPort": "8080"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "hello-helidon-deployment-6b96b6f8b7",
+                        "uid": "6d7fe5cc-d49b-4384-8baf-265dcc2e7571",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "istio-envoy",
+                        "emptyDir": {
+                            "medium": "Memory"
+                        }
+                    },
+                    {
+                        "name": "istio-data",
+                        "emptyDir": {}
+                    },
+                    {
+                        "name": "istio-podinfo",
+                        "downwardAPI": {
+                            "items": [
+                                {
+                                    "path": "labels",
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.labels"
+                                    }
+                                },
+                                {
+                                    "path": "annotations",
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.annotations"
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "istio-token",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "audience": "istio-ca",
+                                        "expirationSeconds": 43200,
+                                        "path": "istio-token"
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "istiod-ca-cert",
+                        "configMap": {
+                            "name": "istio-ca-root-cert",
+                            "defaultMode": 420
+                        }
+                    },
+                    {
+                        "name": "kube-api-access-klhwh",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "initContainers": [
+                    {
+                        "name": "istio-init",
+                        "image": "ghcr.io/verrazzano/proxyv2:1.13.2",
+                        "args": [
+                            "istio-iptables",
+                            "-p",
+                            "15001",
+                            "-z",
+                            "15006",
+                            "-u",
+                            "1337",
+                            "-m",
+                            "REDIRECT",
+                            "-i",
+                            "*",
+                            "-x",
+                            "",
+                            "-b",
+                            "*",
+                            "-d",
+                            "15090,15021,15020"
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "2",
+                                "memory": "1Gi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "128Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-klhwh",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "capabilities": {
+                                "add": [
+                                    "NET_ADMIN",
+                                    "NET_RAW"
+                                ],
+                                "drop": [
+                                    "ALL"
+                                ]
+                            },
+                            "privileged": false,
+                            "runAsUser": 0,
+                            "runAsGroup": 0,
+                            "runAsNonRoot": false,
+                            "readOnlyRootFilesystem": false,
+                            "allowPrivilegeEscalation": false
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "hello-helidon-container",
+                        "image": "ghcr.io/verrazzano/example-helidon-greet-app-v1:1.0.0-1-20220513221156-7da0d32",
+                        "ports": [
+                            {
+                                "name": "http",
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-klhwh",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    },
+                    {
+                        "name": "istio-proxy",
+                        "image": "ghcr.io/verrazzano/proxyv2:1.13.2",
+                        "args": [
+                            "proxy",
+                            "sidecar",
+                            "--domain",
+                            "$(POD_NAMESPACE).svc.cluster.local",
+                            "--proxyLogLevel=warning",
+                            "--proxyComponentLogLevel=misc:error",
+                            "--log_output_level=default:info",
+                            "--concurrency",
+                            "2"
+                        ],
+                        "ports": [
+                            {
+                                "name": "http-envoy-prom",
+                                "containerPort": 15090,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "env": [
+                            {
+                                "name": "JWT_POLICY",
+                                "value": "third-party-jwt"
+                            },
+                            {
+                                "name": "PILOT_CERT_PROVIDER",
+                                "value": "istiod"
+                            },
+                            {
+                                "name": "CA_ADDR",
+                                "value": "istiod.istio-system.svc:15012"
+                            },
+                            {
+                                "name": "POD_NAME",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.name"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "POD_NAMESPACE",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "metadata.namespace"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "INSTANCE_IP",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "status.podIP"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "SERVICE_ACCOUNT",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "spec.serviceAccountName"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "HOST_IP",
+                                "valueFrom": {
+                                    "fieldRef": {
+                                        "apiVersion": "v1",
+                                        "fieldPath": "status.hostIP"
+                                    }
+                                }
+                            },
+                            {
+                                "name": "PROXY_CONFIG",
+                                "value": "{}\n"
+                            },
+                            {
+                                "name": "ISTIO_META_POD_PORTS",
+                                "value": "[\n    {\"name\":\"http\",\"containerPort\":8080,\"protocol\":\"TCP\"}\n]"
+                            },
+                            {
+                                "name": "ISTIO_META_APP_CONTAINERS",
+                                "value": "hello-helidon-container"
+                            },
+                            {
+                                "name": "ISTIO_META_CLUSTER_ID",
+                                "value": "Kubernetes"
+                            },
+                            {
+                                "name": "ISTIO_META_INTERCEPTION_MODE",
+                                "value": "REDIRECT"
+                            },
+                            {
+                                "name": "ISTIO_META_WORKLOAD_NAME",
+                                "value": "hello-helidon-deployment"
+                            },
+                            {
+                                "name": "ISTIO_META_OWNER",
+                                "value": "kubernetes://apis/apps/v1/namespaces/hello-helidon-2f4c5e4/deployments/hello-helidon-deployment"
+                            },
+                            {
+                                "name": "ISTIO_META_MESH_ID",
+                                "value": "cluster.local"
+                            },
+                            {
+                                "name": "TRUST_DOMAIN",
+                                "value": "cluster.local"
+                            }
+                        ],
+                        "resources": {
+                            "limits": {
+                                "cpu": "2",
+                                "memory": "1Gi"
+                            },
+                            "requests": {
+                                "cpu": "100m",
+                                "memory": "128Mi"
+                            }
+                        },
+                        "volumeMounts": [
+                            {
+                                "name": "istiod-ca-cert",
+                                "mountPath": "/var/run/secrets/istio"
+                            },
+                            {
+                                "name": "istio-data",
+                                "mountPath": "/var/lib/istio/data"
+                            },
+                            {
+                                "name": "istio-envoy",
+                                "mountPath": "/etc/istio/proxy"
+                            },
+                            {
+                                "name": "istio-token",
+                                "mountPath": "/var/run/secrets/tokens"
+                            },
+                            {
+                                "name": "istio-podinfo",
+                                "mountPath": "/etc/istio/pod"
+                            },
+                            {
+                                "name": "kube-api-access-klhwh",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "readinessProbe": {
+                            "httpGet": {
+                                "path": "/healthz/ready",
+                                "port": 15021,
+                                "scheme": "HTTP"
+                            },
+                            "initialDelaySeconds": 1,
+                            "timeoutSeconds": 3,
+                            "periodSeconds": 2,
+                            "successThreshold": 1,
+                            "failureThreshold": 90
+                        },
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent",
+                        "securityContext": {
+                            "capabilities": {
+                                "drop": [
+                                    "ALL"
+                                ]
+                            },
+                            "privileged": false,
+                            "runAsUser": 1337,
+                            "runAsGroup": 1337,
+                            "runAsNonRoot": true,
+                            "readOnlyRootFilesystem": true,
+                            "allowPrivilegeEscalation": false
+                        }
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "hello-helidon-appconf",
+                "serviceAccount": "hello-helidon-appconf",
+                "nodeName": "10.0.94.45",
+                "securityContext": {},
+                "imagePullSecrets": [
+                    {
+                        "name": "verrazzano-container-registry"
+                    }
+                ],
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:23:39Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:48Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:48Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:23:36Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.31",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.31"
+                    }
+                ],
+                "startTime": "2022-05-26T22:23:36Z",
+                "initContainerStatuses": [
+                    {
+                        "name": "istio-init",
+                        "state": {
+                            "terminated": {
+                                "exitCode": 0,
+                                "reason": "Completed",
+                                "startedAt": "2022-05-26T22:23:38Z",
+                                "finishedAt": "2022-05-26T22:23:38Z",
+                                "containerID": "cri-o://5f72017500c981d058e27d84ccadf239300f92aa53c3b8020f8f61c6a5339d57"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/proxyv2:1.13.2",
+                        "imageID": "ghcr.io/verrazzano/proxyv2@sha256:6ef03b1904cde5bb20c12321b5ec5910a50e08ff67a1b5c7c48c16e9ad265f5f",
+                        "containerID": "cri-o://5f72017500c981d058e27d84ccadf239300f92aa53c3b8020f8f61c6a5339d57"
+                    }
+                ],
+                "containerStatuses": [
+                    {
+                        "name": "hello-helidon-container",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:25:36Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/example-helidon-greet-app-v1:1.0.0-1-20220513221156-7da0d32",
+                        "imageID": "ghcr.io/verrazzano/example-helidon-greet-app-v1@sha256:05882f62b1fc84c376dd1aa49abaabb01fe3105d34fc1abf99c906c088a3f42c",
+                        "containerID": "cri-o://dd1a820d4adb132817e3b451e7680f9508d431fa43ac56a4adda2880919bf8e6",
+                        "started": true
+                    },
+                    {
+                        "name": "istio-proxy",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:25:40Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/proxyv2:1.13.2",
+                        "imageID": "ghcr.io/verrazzano/proxyv2@sha256:6ef03b1904cde5bb20c12321b5ec5910a50e08ff67a1b5c7c48c16e9ad265f5f",
+                        "containerID": "cri-o://8fec560c031987b14df034c948830c0adb4d0249d001f548cfaf8927ec9cdee9",
+                        "started": true
+                    }
+                ],
+                "qosClass": "Burstable"
+            }
+        }
+    ]
+}

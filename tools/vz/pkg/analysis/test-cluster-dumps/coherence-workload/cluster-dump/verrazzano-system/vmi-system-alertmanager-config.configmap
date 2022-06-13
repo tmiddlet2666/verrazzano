@@ -1,0 +1,22 @@
+Name:         vmi-system-alertmanager-config
+Namespace:    verrazzano-system
+Labels:       k8s-app=verrazzano.io
+              vmo.v1.verrazzano.io=system
+Annotations:  <none>
+
+Data
+====
+alertmanager.yml:
+----
+
+route:
+  receiver: "system"
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 1m
+  repeat_interval: 3m
+receivers:
+- name: "system"
+  pagerduty_configs:
+  - service_key: changeme
+Events:  <none>

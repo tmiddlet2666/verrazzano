@@ -1,0 +1,32 @@
+Name:         ingress-controller-ingress-nginx-controller
+Namespace:    ingress-nginx
+Labels:       app.kubernetes.io/component=controller
+              app.kubernetes.io/instance=ingress-controller
+              app.kubernetes.io/managed-by=Helm
+              app.kubernetes.io/name=ingress-nginx
+              app.kubernetes.io/version=1.1.1
+              helm.sh/chart=ingress-nginx-4.0.15
+Annotations:  meta.helm.sh/release-name: ingress-controller
+              meta.helm.sh/release-namespace: ingress-nginx
+
+Data
+====
+allow-snippet-annotations:
+----
+true
+client-body-buffer-size:
+----
+64k
+log-format-escape-json:
+----
+true
+log-format-upstream:
+----
+ { "@timestamp": "$time_iso8601", "req_id": "$req_id", "proxy_upstream_name": "$proxy_upstream_name", "proxy_alternative_upstream_name": "$proxy_alternative_upstream_name", "upstream_status": "$upstream_status", "upstream_addr": "$upstream_addr", "message": "$request_method $host$request_uri", "http_request": { "requestMethod": "$request_method", "requestUrl": "$host$request_uri", "status": $status, "requestSize": "$request_length", "responseSize": "$upstream_response_length", "userAgent": "$http_user_agent", "remoteIp": "$remote_addr", "referer": "$http_referer", "latency": "$upstream_response_time s", "protocol":"$server_protocol" } }
+proxy-buffer-size:
+----
+8k
+Events:
+  Type    Reason  Age   From                      Message
+  ----    ------  ----  ----                      -------
+  Normal  CREATE  52m   nginx-ingress-controller  ConfigMap ingress-nginx/ingress-controller-ingress-nginx-controller

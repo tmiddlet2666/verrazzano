@@ -1,0 +1,24 @@
+{
+  "clientVersion": {
+    "major": "1",
+    "minor": "21",
+    "gitVersion": "v1.21.6+2.el7",
+    "gitCommit": "355319327a37545cc863c0faa3eb4cc792d2b9e3",
+    "gitTreeState": "clean",
+    "buildDate": "2021-12-01T20:24:02Z",
+    "goVersion": "go1.16.9",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  },
+  "serverVersion": {
+    "major": "1",
+    "minor": "22",
+    "gitVersion": "v1.22.5",
+    "gitCommit": "c999fea1e6dbf111d64000dfaaff45edaa4c34d2",
+    "gitTreeState": "clean",
+    "buildDate": "2022-01-11T12:16:14Z",
+    "goVersion": "go1.16.12 BoringCrypto",
+    "compiler": "gc",
+    "platform": "linux/amd64"
+  }
+}

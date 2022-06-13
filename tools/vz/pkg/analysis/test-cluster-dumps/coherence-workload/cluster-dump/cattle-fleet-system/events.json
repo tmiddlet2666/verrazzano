@@ -1,0 +1,427 @@
+{
+    "kind": "EventList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22077"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958-tlpj5.16f2c7883a229bf0",
+                "namespace": "cattle-fleet-system",
+                "uid": "b54109aa-3ba4-454d-9858-fe42ce9e2d6c",
+                "resourceVersion": "10364",
+                "creationTimestamp": "2022-05-26T22:16:41Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958-tlpj5",
+                "uid": "b45cdda0-c4da-413c-b884-359565370b59",
+                "apiVersion": "v1",
+                "resourceVersion": "10339"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned cattle-fleet-system/fleet-controller-5746685958-tlpj5 to 10.0.94.45",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:16:41.103211Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958-tlpj5.16f2c7885427e417",
+                "namespace": "cattle-fleet-system",
+                "uid": "360c9938-8bf7-44e7-a70d-1f42dea852a7",
+                "resourceVersion": "10368",
+                "creationTimestamp": "2022-05-26T22:16:41Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958-tlpj5",
+                "uid": "b45cdda0-c4da-413c-b884-359565370b59",
+                "apiVersion": "v1",
+                "resourceVersion": "10349",
+                "fieldPath": "spec.containers{fleet-controller}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"rancher/fleet:v0.3.9\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:16:41Z",
+            "lastTimestamp": "2022-05-26T22:16:41Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958-tlpj5.16f2c78e7bd46389",
+                "namespace": "cattle-fleet-system",
+                "uid": "d020426e-b0f3-4013-a67d-67bacdeca670",
+                "resourceVersion": "10635",
+                "creationTimestamp": "2022-05-26T22:17:07Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958-tlpj5",
+                "uid": "b45cdda0-c4da-413c-b884-359565370b59",
+                "apiVersion": "v1",
+                "resourceVersion": "10349",
+                "fieldPath": "spec.containers{fleet-controller}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"rancher/fleet:v0.3.9\" in 26.435389581s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:07Z",
+            "lastTimestamp": "2022-05-26T22:17:07Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958-tlpj5.16f2c78e9d40f679",
+                "namespace": "cattle-fleet-system",
+                "uid": "01052930-d636-46b8-8847-0c4978152c9a",
+                "resourceVersion": "10648",
+                "creationTimestamp": "2022-05-26T22:17:08Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958-tlpj5",
+                "uid": "b45cdda0-c4da-413c-b884-359565370b59",
+                "apiVersion": "v1",
+                "resourceVersion": "10349",
+                "fieldPath": "spec.containers{fleet-controller}"
+            },
+            "reason": "Created",
+            "message": "Created container fleet-controller",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:08Z",
+            "lastTimestamp": "2022-05-26T22:17:08Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958-tlpj5.16f2c78ea177cc45",
+                "namespace": "cattle-fleet-system",
+                "uid": "c6e3c17c-01b5-41ef-96b5-cfe30a5bcff8",
+                "resourceVersion": "10653",
+                "creationTimestamp": "2022-05-26T22:17:08Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958-tlpj5",
+                "uid": "b45cdda0-c4da-413c-b884-359565370b59",
+                "apiVersion": "v1",
+                "resourceVersion": "10349",
+                "fieldPath": "spec.containers{fleet-controller}"
+            },
+            "reason": "Started",
+            "message": "Started container fleet-controller",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:08Z",
+            "lastTimestamp": "2022-05-26T22:17:08Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller-5746685958.16f2c788310da6e7",
+                "namespace": "cattle-fleet-system",
+                "uid": "5f80006f-cbf1-4f04-8b36-e974870def92",
+                "resourceVersion": "10358",
+                "creationTimestamp": "2022-05-26T22:16:41Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller-5746685958",
+                "uid": "3c7ae846-71a2-4c09-8ed3-cb03044774ad",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "10257"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: fleet-controller-5746685958-tlpj5",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:16:40Z",
+            "lastTimestamp": "2022-05-26T22:16:40Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "fleet-controller.16f2c786c93cac26",
+                "namespace": "cattle-fleet-system",
+                "uid": "2dc43306-7f20-4839-9853-2360c49afe64",
+                "resourceVersion": "10276",
+                "creationTimestamp": "2022-05-26T22:16:35Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "cattle-fleet-system",
+                "name": "fleet-controller",
+                "uid": "479002da-4101-4bce-83ca-eb077c5229ed",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "10250"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set fleet-controller-5746685958 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:16:34Z",
+            "lastTimestamp": "2022-05-26T22:16:34Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7-bwrbg.16f2c7882e79fd79",
+                "namespace": "cattle-fleet-system",
+                "uid": "f1be4499-13e2-4170-ae43-516a6e7283a6",
+                "resourceVersion": "10354",
+                "creationTimestamp": "2022-05-26T22:16:41Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7-bwrbg",
+                "uid": "1be1e870-bee1-487e-9ef3-325120d59f1f",
+                "apiVersion": "v1",
+                "resourceVersion": "10333"
+            },
+            "reason": "Scheduled",
+            "message": "Successfully assigned cattle-fleet-system/gitjob-cc9948fd7-bwrbg to 10.0.94.45",
+            "source": {},
+            "firstTimestamp": null,
+            "lastTimestamp": null,
+            "type": "Normal",
+            "eventTime": "2022-05-26T22:16:40.907602Z",
+            "action": "Binding",
+            "reportingComponent": "default-scheduler",
+            "reportingInstance": "default-scheduler-control-plane-host-10-64-198-66"
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7-bwrbg.16f2c7884c1019e7",
+                "namespace": "cattle-fleet-system",
+                "uid": "39436e4f-f0e2-4ebc-a28a-8c18c3d327d1",
+                "resourceVersion": "10366",
+                "creationTimestamp": "2022-05-26T22:16:41Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7-bwrbg",
+                "uid": "1be1e870-bee1-487e-9ef3-325120d59f1f",
+                "apiVersion": "v1",
+                "resourceVersion": "10340",
+                "fieldPath": "spec.containers{gitjob}"
+            },
+            "reason": "Pulling",
+            "message": "Pulling image \"rancher/gitjob:v0.1.26\"",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:16:41Z",
+            "lastTimestamp": "2022-05-26T22:16:41Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7-bwrbg.16f2c78e89a3784f",
+                "namespace": "cattle-fleet-system",
+                "uid": "e36c7446-09bc-48e8-a662-0d409e47088b",
+                "resourceVersion": "10639",
+                "creationTimestamp": "2022-05-26T22:17:08Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7-bwrbg",
+                "uid": "1be1e870-bee1-487e-9ef3-325120d59f1f",
+                "apiVersion": "v1",
+                "resourceVersion": "10340",
+                "fieldPath": "spec.containers{gitjob}"
+            },
+            "reason": "Pulled",
+            "message": "Successfully pulled image \"rancher/gitjob:v0.1.26\" in 26.802814726s",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:08Z",
+            "lastTimestamp": "2022-05-26T22:17:08Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7-bwrbg.16f2c78e9dd307c8",
+                "namespace": "cattle-fleet-system",
+                "uid": "75d790ad-e88a-4ca0-8f8b-52d4b1cdc10e",
+                "resourceVersion": "10649",
+                "creationTimestamp": "2022-05-26T22:17:08Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7-bwrbg",
+                "uid": "1be1e870-bee1-487e-9ef3-325120d59f1f",
+                "apiVersion": "v1",
+                "resourceVersion": "10340",
+                "fieldPath": "spec.containers{gitjob}"
+            },
+            "reason": "Created",
+            "message": "Created container gitjob",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:08Z",
+            "lastTimestamp": "2022-05-26T22:17:08Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7-bwrbg.16f2c78ea24a00b9",
+                "namespace": "cattle-fleet-system",
+                "uid": "e05742ff-16aa-4705-8643-5c15a6e26005",
+                "resourceVersion": "10655",
+                "creationTimestamp": "2022-05-26T22:17:08Z"
+            },
+            "involvedObject": {
+                "kind": "Pod",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7-bwrbg",
+                "uid": "1be1e870-bee1-487e-9ef3-325120d59f1f",
+                "apiVersion": "v1",
+                "resourceVersion": "10340",
+                "fieldPath": "spec.containers{gitjob}"
+            },
+            "reason": "Started",
+            "message": "Started container gitjob",
+            "source": {
+                "component": "kubelet",
+                "host": "10.0.94.45"
+            },
+            "firstTimestamp": "2022-05-26T22:17:08Z",
+            "lastTimestamp": "2022-05-26T22:17:08Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob-cc9948fd7.16f2c788176b4224",
+                "namespace": "cattle-fleet-system",
+                "uid": "e901db9d-0bb7-4c66-aac0-49c5b5efb028",
+                "resourceVersion": "10343",
+                "creationTimestamp": "2022-05-26T22:16:40Z"
+            },
+            "involvedObject": {
+                "kind": "ReplicaSet",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob-cc9948fd7",
+                "uid": "6be5c8bc-5599-4167-9d07-31311a9ca4f1",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "10256"
+            },
+            "reason": "SuccessfulCreate",
+            "message": "Created pod: gitjob-cc9948fd7-bwrbg",
+            "source": {
+                "component": "replicaset-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:16:40Z",
+            "lastTimestamp": "2022-05-26T22:16:40Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        },
+        {
+            "metadata": {
+                "name": "gitjob.16f2c786c942135d",
+                "namespace": "cattle-fleet-system",
+                "uid": "59666342-2157-453e-8b93-cbea37016ebe",
+                "resourceVersion": "10286",
+                "creationTimestamp": "2022-05-26T22:16:36Z"
+            },
+            "involvedObject": {
+                "kind": "Deployment",
+                "namespace": "cattle-fleet-system",
+                "name": "gitjob",
+                "uid": "423b2fcd-3827-4c30-bae6-ae7f94a77304",
+                "apiVersion": "apps/v1",
+                "resourceVersion": "10251"
+            },
+            "reason": "ScalingReplicaSet",
+            "message": "Scaled up replica set gitjob-cc9948fd7 to 1",
+            "source": {
+                "component": "deployment-controller"
+            },
+            "firstTimestamp": "2022-05-26T22:16:34Z",
+            "lastTimestamp": "2022-05-26T22:16:34Z",
+            "count": 1,
+            "type": "Normal",
+            "eventTime": null,
+            "reportingComponent": "",
+            "reportingInstance": ""
+        }
+    ]
+}

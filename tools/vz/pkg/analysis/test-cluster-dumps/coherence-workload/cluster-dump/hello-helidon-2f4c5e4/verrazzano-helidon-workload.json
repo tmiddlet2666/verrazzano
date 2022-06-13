@@ -1,0 +1,84 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "oam.verrazzano.io/v1alpha1",
+            "kind": "VerrazzanoHelidonWorkload",
+            "metadata": {
+                "annotations": {
+                    "description": "Hello Helidon application",
+                    "version": "v1.0.0"
+                },
+                "creationTimestamp": "2022-05-26T22:23:31Z",
+                "generation": 1,
+                "labels": {
+                    "app": "hello-helidon",
+                    "app.oam.dev/component": "hello-helidon-component",
+                    "app.oam.dev/name": "hello-helidon-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "hello-helidon-component-v1",
+                    "version": "v1"
+                },
+                "name": "hello-helidon-workload",
+                "namespace": "hello-helidon-2f4c5e4",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "ApplicationConfiguration",
+                        "name": "hello-helidon-appconf",
+                        "uid": "4d9dea71-eb1c-405e-8179-b52920677a28"
+                    }
+                ],
+                "resourceVersion": "14463",
+                "uid": "b6a40ff0-4ba1-448f-8386-85e074382f03"
+            },
+            "spec": {
+                "deploymentTemplate": {
+                    "metadata": {
+                        "name": "hello-helidon-deployment"
+                    },
+                    "podSpec": {
+                        "containers": [
+                            {
+                                "image": "ghcr.io/verrazzano/example-helidon-greet-app-v1:1.0.0-1-20220513221156-7da0d32",
+                                "name": "hello-helidon-container",
+                                "ports": [
+                                    {
+                                        "containerPort": 8080,
+                                        "name": "http",
+                                        "protocol": "TCP"
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            },
+            "status": {
+                "resources": [
+                    {
+                        "apiversion": "apps/v1",
+                        "kind": "Deployment",
+                        "name": "hello-helidon-deployment",
+                        "namespace": "hello-helidon-2f4c5e4",
+                        "role": "Deployment"
+                    },
+                    {
+                        "apiversion": "v1",
+                        "kind": "Service",
+                        "name": "hello-helidon-deployment",
+                        "namespace": "hello-helidon-2f4c5e4",
+                        "role": "Service"
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

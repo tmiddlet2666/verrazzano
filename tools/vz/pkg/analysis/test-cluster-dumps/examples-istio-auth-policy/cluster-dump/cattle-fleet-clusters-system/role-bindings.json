@@ -1,0 +1,40 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/5SQwU7DMAyG38XntqxslC0vwH3ihjg4nruFpXEVu0gw9d1RG2nHSRyj/Pq+3/8NBjY8oSG4G2BKYmhBki5P8V9MpmxNDtIQmkVugjyFEzjoI7PVXsTUMo71ypgroMwr4T0MrIbDCC5NMVYQ0XN8yL2gXsDB7qXdbDfbvj34jjz2dNhs23a39+2+6/q2o2fPr4irLeHA9zJ45mT1ma2mzCcovzoiLZGiqUuS4qTGWWv9UeNhIWWJfOR+nWEMb1mmERxkj9TgZBfJ4Xe9q7nutQkCFVxDWoY4SmR43GSuQKdyNLiP/wpK9G4olZ1y/g7ESCRTMoX5c/4LAAD//7yzSffNAQAA",
+                    "objectset.rio.cattle.io/id": "fleet-bootstrap-data"
+                },
+                "creationTimestamp": "2022-05-26T22:17:08Z",
+                "labels": {
+                    "objectset.rio.cattle.io/hash": "4510303f19b6cbafc9031148b1866f16c2be7aaa"
+                },
+                "name": "fleet-agent-get-cred",
+                "namespace": "cattle-fleet-clusters-system",
+                "resourceVersion": "10675",
+                "uid": "3464532e-30c0-4c7e-9a6e-335290873dec"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "fleet-agent-get-cred"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "Group",
+                    "name": "system:serviceaccounts"
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

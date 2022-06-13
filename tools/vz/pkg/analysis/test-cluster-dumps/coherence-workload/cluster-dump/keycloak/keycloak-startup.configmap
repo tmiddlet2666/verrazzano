@@ -1,0 +1,29 @@
+Name:         keycloak-startup
+Namespace:    keycloak
+Labels:       app.kubernetes.io/instance=keycloak
+              app.kubernetes.io/managed-by=Helm
+              app.kubernetes.io/name=keycloak
+              app.kubernetes.io/version=15.0.2-20220510113519-620b97bc83
+              helm.sh/chart=keycloak-15.1.0
+Annotations:  meta.helm.sh/release-name: keycloak
+              meta.helm.sh/release-namespace: keycloak
+
+Data
+====
+keycloak.cli:
+----
+embed-server --server-config=standalone-ha.xml --std-out=echo
+batch
+
+echo Configuring node identifier
+
+## Sets the node identifier to the node name (= pod name). Node identifiers have to be unique. They can have a
+## maximum length of 23 characters. Thus, the chart's fullname template truncates its length accordingly.
+/subsystem=transactions:write-attribute(name=node-identifier, value=${jboss.node.name})
+
+echo Finished configuring node identifier
+
+run-batch
+stop-embedded-server
+
+Events:  <none>

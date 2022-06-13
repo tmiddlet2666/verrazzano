@@ -1,0 +1,1476 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "cert-manager.io/inject-ca-from-secret": "cert-manager/cert-manager-webhook-ca",
+                    "meta.helm.sh/release-name": "cert-manager",
+                    "meta.helm.sh/release-namespace": "cert-manager"
+                },
+                "creationTimestamp": "2022-05-26T22:08:52Z",
+                "generation": 2,
+                "labels": {
+                    "app": "webhook",
+                    "app.kubernetes.io/component": "webhook",
+                    "app.kubernetes.io/instance": "cert-manager",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/name": "webhook",
+                    "app.kubernetes.io/version": "v1.7.1",
+                    "helm.sh/chart": "cert-manager-v1.7.1"
+                },
+                "name": "cert-manager-webhook",
+                "resourceVersion": "3583",
+                "uid": "59a96264-140f-4829-9932-6c62b7ef5d99"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJ3akNDQVVpZ0F3SUJBZ0lSQU1BTUNaSUNGUkZSdDdnQnprYzFhcHN3Q2dZSUtvWkl6ajBFQXdNd0lqRWcKTUI0R0ExVUVBeE1YWTJWeWRDMXRZVzVoWjJWeUxYZGxZbWh2YjJzdFkyRXdIaGNOTWpJd05USTJNakl3T1RBMQpXaGNOTWpNd05USTJNakl3T1RBMVdqQWlNU0F3SGdZRFZRUURFeGRqWlhKMExXMWhibUZuWlhJdGQyVmlhRzl2CmF5MWpZVEIyTUJBR0J5cUdTTTQ5QWdFR0JTdUJCQUFpQTJJQUJFZ1dWdndjSkpHSzBBY3hUa1pJbkVxSkw2UzgKN0hZUVpFK2pYK1hTbGd4Q3NnYU5ndVlvSnRIdFM1dm5mOUs5MURWTHBCRlJXMDNDRThxWE4wUmdKZHpHVGY5TgpVaC9LWnhkVUoxWUNNRmpadW93RGE4ZFhGcmpueHZvSm1hVVdwNk5DTUVBd0RnWURWUjBQQVFIL0JBUURBZ0trCk1BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZQZ3JqTmRrT1FWNnNEMjNSeXpRZG02MUdTMWoKTUFvR0NDcUdTTTQ5QkFNREEyZ0FNR1VDTVFEYkJHYldHdnpSdzJTWDF2TEtyajdBc0Y1a0tMalpoRldiRmxXSApwbU1tOTlIWTJ2Z0JpT0ZDZzZkdXFhcnVSRG9DTURhRjQ0cnVkMEFubkNiclBsQU5FRjhZeVNObnArelhxWWtBCmpnQjB2Mmw0ZGUyOTU4bFpmUjhoUnhjMjNreCs2Zz09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "cert-manager-webhook",
+                            "namespace": "cert-manager",
+                            "path": "/validate",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "webhook.cert-manager.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "cert-manager.io/disable-validation",
+                                "operator": "NotIn",
+                                "values": [
+                                    "true"
+                                ]
+                            },
+                            {
+                                "key": "name",
+                                "operator": "NotIn",
+                                "values": [
+                                    "cert-manager"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cert-manager.io",
+                                "acme.cert-manager.io"
+                            ],
+                            "apiVersions": [
+                                "v1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "*/*"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "operator.coherence.oracle.com/cert-type": "self-signed"
+                },
+                "creationTimestamp": "2022-05-26T22:09:15Z",
+                "generation": 1,
+                "name": "coherence-operator-validating-webhook-configuration",
+                "resourceVersion": "3742",
+                "uid": "c3fcc509-db94-4472-abb3-e24c5aa0c267"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUVGRENDQXZ5Z0F3SUJBZ0lSQUxiZU40OE1SV2JuRU85V1FLeTJQZmd3RFFZSktvWklodmNOQVFFTEJRQXcKT3pFYU1CZ0dBMVVFQ3hNUlkyOW9aWEpsYm1ObExYZGxZbWh2YjJzeEhUQWJCZ05WQkFNVEZHTnZhR1Z5Wlc1agpaUzEzWldKb2IyOXJMV05oTUI0WERUSXlNRFV5TmpJeE5Ua3hOVm9YRFRJek1EVXlOakl5TURreE5Wb3dPekVhCk1CZ0dBMVVFQ3hNUlkyOW9aWEpsYm1ObExYZGxZbWh2YjJzeEhUQWJCZ05WQkFNVEZHTnZhR1Z5Wlc1alpTMTMKWldKb2IyOXJMV05oTUlJQklqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FROEFNSUlCQ2dLQ0FRRUF5bEc4MHp1eAp6Smk2MmRRWEE1aWU0dnhDK0NuVzlBTTNPbEI3eTIzcUVUQWtQQUltUE9HVWlXWVFFMUswaEJUR0N3MitVOWJCCmphYnFTaFQweDUvVkRyUDFrMzZsYU9FMUtGbmF2VWU4S2o5NFdFRk5DUXlPdW0yQjVLVkZuZjhweUJiOXB0TjQKM3VQWDdTRW94WGJmSXFLSXAvRmZaTWFTaWx0RDMyazhLam1tVDdhK25ENU42cHo3K3RRQzQxQ0VOYStmQU1KRgoxQ3k3bmtRbDQzdjh1RVhFWW1kMVdQOUNkZXNqTC9JTnZpY1hIRFpkRjM2WVIrQ0x4V0xuNjJ5dVQ1TnRUUHVnClk2cCtEQUxLY0pNUVhyclRrRXhjK0h0TW91aTRxLzNibWNTN1VPZk1WUzVHaTlmY2VHelFWaVczaFNZRko5SG4KcHplMktTVHN2OE5YSlFJREFRQUJvNElCRVRDQ0FRMHdEZ1lEVlIwUEFRSC9CQVFEQWdLRU1CMEdBMVVkSlFRVwpNQlFHQ0NzR0FRVUZCd01CQmdnckJnRUZCUWNEQWpBUEJnTlZIUk1CQWY4RUJUQURBUUgvTUIwR0ExVWREZ1FXCkJCUTlnQkUwN2Jhb0M2NExtSWZaOG9GMXJhSlQvekNCcXdZRFZSMFJCSUdqTUlHZ2dpeGpiMmhsY21WdVkyVXQKYjNCbGNtRjBiM0l0ZDJWaWFHOXZheTUyWlhKeVlYcDZZVzV2TFhONWMzUmxiWUl3WTI5b1pYSmxibU5sTFc5dwpaWEpoZEc5eUxYZGxZbWh2YjJzdWRtVnljbUY2ZW1GdWJ5MXplWE4wWlcwdWMzWmpnajVqYjJobGNtVnVZMlV0CmIzQmxjbUYwYjNJdGQyVmlhRzl2YXk1MlpYSnlZWHA2WVc1dkxYTjVjM1JsYlM1emRtTXVZMngxYzNSbGNpNXMKYjJOaGJEQU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FRRUFqaExUeGNGelZoYm9OcmIxdzFISU5IcHFxVGpPTjE3MQp3UTVKTU9ZQ3dXZGMyM3paU25naEowanZJMzZscXhhQU9uQXQ0azhNNHRsMUJ2R09pa0RDMDdZbWdYOFBmWkZ2Ck5RS041Z2g5NjBqQzNnbk9MV09FbG9wVllJQlQrMDlNWSt0MGpmQlhJaGVjMW43WHVyTDN6NUdzS3NlaEx3amMKZU5hbk5IUHdxdy9PTUhabVZGWEdOYjdHTG9uWWNnRit1WEsyS0pXV2E2aEdiZmFhV2NqcWFVU3Frc2tocVU4WApyc2FSQnFJTWQwUkViSmVRRTNZckZLaFUrMEE4blBFRVNUYXRhaDQvYkxhcno4ZnBHWmNrTFVlbU5tbXg4VnJCCnRPNDhxdTM2TGFiOStwVHprckt6eUk5WGdxYU9CRmRjQ2xUZlpTUFpBOFpaRTNUeWtmL2VUUT09Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "coherence-operator-webhook",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-coherence-oracle-com-v1-coherence",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "coherence.oracle.com",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "coherence.oracle.com"
+                            ],
+                            "apiVersions": [
+                                "v1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "coherence"
+                            ],
+                            "scope": "Namespaced"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"admissionregistration.k8s.io/v1\",\"kind\":\"ValidatingWebhookConfiguration\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"istiod\",\"install.operator.istio.io/owning-resource-namespace\":\"istio-system\",\"istio\":\"istiod\",\"istio.io/rev\":\"default\",\"operator.istio.io/component\":\"Pilot\",\"operator.istio.io/managed\":\"Reconcile\",\"operator.istio.io/version\":\"1.13.2\",\"release\":\"istio\"},\"name\":\"istio-validator-istio-system\"},\"webhooks\":[{\"admissionReviewVersions\":[\"v1beta1\",\"v1\"],\"clientConfig\":{\"caBundle\":\"\",\"service\":{\"name\":\"istiod\",\"namespace\":\"istio-system\",\"path\":\"/validate\"}},\"failurePolicy\":\"Ignore\",\"name\":\"rev.validation.istio.io\",\"objectSelector\":{\"matchExpressions\":[{\"key\":\"istio.io/rev\",\"operator\":\"In\",\"values\":[\"default\"]}]},\"rules\":[{\"apiGroups\":[\"security.istio.io\",\"networking.istio.io\",\"telemetry.istio.io\",\"extensions.istio.io\"],\"apiVersions\":[\"*\"],\"operations\":[\"CREATE\",\"UPDATE\"],\"resources\":[\"*\"]}],\"sideEffects\":\"None\"}]}\n"
+                },
+                "creationTimestamp": "2022-05-26T22:08:51Z",
+                "generation": 5,
+                "labels": {
+                    "app": "istiod",
+                    "install.operator.istio.io/owning-resource-namespace": "istio-system",
+                    "istio": "istiod",
+                    "istio.io/rev": "default",
+                    "operator.istio.io/component": "Pilot",
+                    "operator.istio.io/managed": "Reconcile",
+                    "operator.istio.io/version": "1.13.2",
+                    "release": "istio"
+                },
+                "name": "istio-validator-istio-system",
+                "resourceVersion": "4650",
+                "uid": "26d0d62d-4e26-4f93-9aa2-235cc56ca173"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZlRENDQTJDZ0F3SUJBZ0lKQUprd2FJQXU0MDYzTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWt4Q3pBSkJnTlYKQkFZVEFsVlRNUXN3Q1FZRFZRUUlEQUpEUVRFYk1Ca0dBMVVFQ2d3U1QzSmhZMnhsSUVOdmNuQnZjbUYwYVc5dQpNUkF3RGdZRFZRUUREQWRTYjI5MElFTkJNQjRYRFRJeU1EVXlOakl5TURnME4xb1hEVFF5TURVeU1USXlNRGcwCk4xb3dTVEVMTUFrR0ExVUVCaE1DVlZNeEN6QUpCZ05WQkFnTUFrTkJNUnN3R1FZRFZRUUtEQkpQY21GamJHVWcKUTI5eWNHOXlZWFJwYjI0eEVEQU9CZ05WQkFNTUIxSnZiM1FnUTBFd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQQpBNElDRHdBd2dnSUtBb0lDQVFEUXZLelp2RVZ4bHc5U1RLRkxTWEFMWldWNnVFVWVUSHV1SnhMQitZOXRReEJTCjZNVzhscGVtbk5vOGplemZKeitKZzdrS3I3RHhqZzRXaUZOWXBOVElmdE1YL3hXVzRUU24wUWFVdWI4dWc1OFUKc1Iya2pKMmN4REl5UkMzZm9xalJNVWkwcm5KWk5BbTVucGtnWUNzT2pCOUFsSnlVcy94bjUxNVhEaUtzTUtHYgo4Wm93d0hsL2FzQm1mMjB4UVBRSERadUtKVlZjd3JueHhGN0M3c3NhbzlaYjFLTkRxS2NxYkdsN3FYVzNLNXlvClMzL2JNRkVFSUVhUXR0TDRlRDNjWnl5SVBCcEh6L1BuRFNPazJmck8zSDRoanQ4bmppWncycUs3N3piK0pubjEKa3BBdUJ4b2V6WnR0WXBudnhMelJzbjRvR3U0RDRlSjZ1bExSV1FjZXU4OGRZenlJNlpod1RLOE1CaG5xTDNXMQpMTUsyN05HeFhqYkJMa1NtSHo0c0Y1dmV1eW5PRnNrUVM3TmxIL3JKNzYwOHFrd0ZHV1VHMlJOVEJXRTgwNDRzCkdOQkV6bnpmSzJmQVp2aWMwRVN0VWtKVGVObjJ0eW9EbVZmVlY2S2Flbi9NeWRMei9iSjhFSWFBWUVaY1RVT3cKLzY1WWcwYllqQXNXYUMva1BPQkxJbGVEQkJGdFJLUTBNdnFsbVloYmR0ZC9obmVyNTh5SXRERjg0Z0YvMHpEZwpJdjR0MzZla1lMRTU3cWNzRVRDek5rQUlHL2kybWxPWStVaDExUWRrWGlidEE1Uk80WHh5TTJXYTgyRHA0M3gzCitvaUVjNFo3VDJWTnd2RXZldnNjbTEwSnZtTlp5WnFhZ2U4WFZBTVhwWmtQNlA5NXRjTnNSSVRJcE1KZUx3SUQKQVFBQm8yTXdZVEFkQmdOVkhRNEVGZ1FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0h3WURWUjBqQkJndwpGb0FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBT0JnTlZIUThCCkFmOEVCQU1DQVlZd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dJQkFNQU5JMHB4L2JlRU1YUXlyb2NlRjlndU8xNzMKaVJlazVKZTJhdkpibzlnMjRMV3VqMEVhK1JBR1dmWnI4a1hiMWRaallPN0l2aTRocXRyVVo4dzBvMmRpMzIzdQpKR0pOWnFCOUVKeDdvUmdsQmxqTFI4alMwRHE5VHpCRjlXTjVydStCK1c2WmJ3UXN1MWhxakVLMTVSL0hQRHp0ClVuTFNBV2xQN3B2N3lkUTJ6eXppdDFvcGk2aXkyejY5TVdoT0o5ODd2L2tNUG45ZEhnMmZSTUpYVVdCb2hiaUEKVjNhblhObkp5ZVZib2dwYkxpNlFVMUdXTzA0NFpBSXFxNG8vbzdNOFVZeEcwZXJpbHJPbzN6bmhBYTlMR09kOQpTbEpVeHljOEVtUmJqM3FHVGJVZmY1ay9TV1o2bVNFWEFDUXVuNm15QlhnK0VCQUN0aXN0UFJsWUN1UUR1M2tyCkN5amx0cVlSY2JXT0RrVzBQamxzUlpnWkZubC9UUWEwNis0T3k2VlphalF3ZFBudjRwdDcvNTFmVHFSYWNSQk0KeVE2a1NkRlJjMXRMQkpMMjQ0WC9wYjdEbUpTeTJuRktmdG54cFl6NGxYUDkvV2FlQjd6NFFINDdhc1BzcSs3QwpIaEFUbTdnUU1MUXVrY003RTVXTzE2K1N3QWlXS0k0ZHV3L1gzNjEvRVlSRlBweU4yaG9vL0lyRFdpZDF5N0R3CnQ2bDk5WEx6ditkRjVQdjJxOWtIVHBRWHZTVlF2d1BBaXh1ODNzVkd2N1VETDgwRlJlOHZPMlBKeW9PWjhwYVQKaWYzbndkbHZ3NlBmT1BtYm1UY0VaVFZzM1JqQ2xYMTVqTTlLeFY1ZURVa2ZBNVJQV0Q5Y1g2RURmckFUaHR4UQp5b1kzaVpQRDlpODVCTU52Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "istiod",
+                            "namespace": "istio-system",
+                            "path": "/validate",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "rev.validation.istio.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "istio.io/rev",
+                                "operator": "In",
+                                "values": [
+                                    "default"
+                                ]
+                            }
+                        ]
+                    },
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "security.istio.io",
+                                "networking.istio.io",
+                                "telemetry.istio.io",
+                                "extensions.istio.io"
+                            ],
+                            "apiVersions": [
+                                "*"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "*"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"admissionregistration.k8s.io/v1\",\"kind\":\"ValidatingWebhookConfiguration\",\"metadata\":{\"annotations\":{},\"creationTimestamp\":null,\"labels\":{\"app\":\"istiod\",\"istio\":\"istiod\",\"istio.io/rev\":\"default\",\"istio.io/tag\":\"default\",\"operator.istio.io/component\":\"Pilot\"},\"name\":\"istiod-default-validator\"},\"webhooks\":[{\"admissionReviewVersions\":[\"v1beta1\",\"v1\"],\"clientConfig\":{\"caBundle\":\"LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZlRENDQTJDZ0F3SUJBZ0lKQUprd2FJQXU0MDYzTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWt4Q3pBSkJnTlYKQkFZVEFsVlRNUXN3Q1FZRFZRUUlEQUpEUVRFYk1Ca0dBMVVFQ2d3U1QzSmhZMnhsSUVOdmNuQnZjbUYwYVc5dQpNUkF3RGdZRFZRUUREQWRTYjI5MElFTkJNQjRYRFRJeU1EVXlOakl5TURnME4xb1hEVFF5TURVeU1USXlNRGcwCk4xb3dTVEVMTUFrR0ExVUVCaE1DVlZNeEN6QUpCZ05WQkFnTUFrTkJNUnN3R1FZRFZRUUtEQkpQY21GamJHVWcKUTI5eWNHOXlZWFJwYjI0eEVEQU9CZ05WQkFNTUIxSnZiM1FnUTBFd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQQpBNElDRHdBd2dnSUtBb0lDQVFEUXZLelp2RVZ4bHc5U1RLRkxTWEFMWldWNnVFVWVUSHV1SnhMQitZOXRReEJTCjZNVzhscGVtbk5vOGplemZKeitKZzdrS3I3RHhqZzRXaUZOWXBOVElmdE1YL3hXVzRUU24wUWFVdWI4dWc1OFUKc1Iya2pKMmN4REl5UkMzZm9xalJNVWkwcm5KWk5BbTVucGtnWUNzT2pCOUFsSnlVcy94bjUxNVhEaUtzTUtHYgo4Wm93d0hsL2FzQm1mMjB4UVBRSERadUtKVlZjd3JueHhGN0M3c3NhbzlaYjFLTkRxS2NxYkdsN3FYVzNLNXlvClMzL2JNRkVFSUVhUXR0TDRlRDNjWnl5SVBCcEh6L1BuRFNPazJmck8zSDRoanQ4bmppWncycUs3N3piK0pubjEKa3BBdUJ4b2V6WnR0WXBudnhMelJzbjRvR3U0RDRlSjZ1bExSV1FjZXU4OGRZenlJNlpod1RLOE1CaG5xTDNXMQpMTUsyN05HeFhqYkJMa1NtSHo0c0Y1dmV1eW5PRnNrUVM3TmxIL3JKNzYwOHFrd0ZHV1VHMlJOVEJXRTgwNDRzCkdOQkV6bnpmSzJmQVp2aWMwRVN0VWtKVGVObjJ0eW9EbVZmVlY2S2Flbi9NeWRMei9iSjhFSWFBWUVaY1RVT3cKLzY1WWcwYllqQXNXYUMva1BPQkxJbGVEQkJGdFJLUTBNdnFsbVloYmR0ZC9obmVyNTh5SXRERjg0Z0YvMHpEZwpJdjR0MzZla1lMRTU3cWNzRVRDek5rQUlHL2kybWxPWStVaDExUWRrWGlidEE1Uk80WHh5TTJXYTgyRHA0M3gzCitvaUVjNFo3VDJWTnd2RXZldnNjbTEwSnZtTlp5WnFhZ2U4WFZBTVhwWmtQNlA5NXRjTnNSSVRJcE1KZUx3SUQKQVFBQm8yTXdZVEFkQmdOVkhRNEVGZ1FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0h3WURWUjBqQkJndwpGb0FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBT0JnTlZIUThCCkFmOEVCQU1DQVlZd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dJQkFNQU5JMHB4L2JlRU1YUXlyb2NlRjlndU8xNzMKaVJlazVKZTJhdkpibzlnMjRMV3VqMEVhK1JBR1dmWnI4a1hiMWRaallPN0l2aTRocXRyVVo4dzBvMmRpMzIzdQpKR0pOWnFCOUVKeDdvUmdsQmxqTFI4alMwRHE5VHpCRjlXTjVydStCK1c2WmJ3UXN1MWhxakVLMTVSL0hQRHp0ClVuTFNBV2xQN3B2N3lkUTJ6eXppdDFvcGk2aXkyejY5TVdoT0o5ODd2L2tNUG45ZEhnMmZSTUpYVVdCb2hiaUEKVjNhblhObkp5ZVZib2dwYkxpNlFVMUdXTzA0NFpBSXFxNG8vbzdNOFVZeEcwZXJpbHJPbzN6bmhBYTlMR09kOQpTbEpVeHljOEVtUmJqM3FHVGJVZmY1ay9TV1o2bVNFWEFDUXVuNm15QlhnK0VCQUN0aXN0UFJsWUN1UUR1M2tyCkN5amx0cVlSY2JXT0RrVzBQamxzUlpnWkZubC9UUWEwNis0T3k2VlphalF3ZFBudjRwdDcvNTFmVHFSYWNSQk0KeVE2a1NkRlJjMXRMQkpMMjQ0WC9wYjdEbUpTeTJuRktmdG54cFl6NGxYUDkvV2FlQjd6NFFINDdhc1BzcSs3QwpIaEFUbTdnUU1MUXVrY003RTVXTzE2K1N3QWlXS0k0ZHV3L1gzNjEvRVlSRlBweU4yaG9vL0lyRFdpZDF5N0R3CnQ2bDk5WEx6ditkRjVQdjJxOWtIVHBRWHZTVlF2d1BBaXh1ODNzVkd2N1VETDgwRlJlOHZPMlBKeW9PWjhwYVQKaWYzbndkbHZ3NlBmT1BtYm1UY0VaVFZzM1JqQ2xYMTVqTTlLeFY1ZURVa2ZBNVJQV0Q5Y1g2RURmckFUaHR4UQp5b1kzaVpQRDlpODVCTU52Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K\",\"service\":{\"name\":\"istiod\",\"namespace\":\"istio-system\",\"path\":\"/validate\"}},\"failurePolicy\":\"Ignore\",\"name\":\"validation.istio.io\",\"objectSelector\":{\"matchExpressions\":[{\"key\":\"istio.io/rev\",\"operator\":\"DoesNotExist\"}]},\"rules\":[{\"apiGroups\":[\"security.istio.io\",\"networking.istio.io\",\"telemetry.istio.io\",\"extensions.istio.io\"],\"apiVersions\":[\"*\"],\"operations\":[\"CREATE\",\"UPDATE\"],\"resources\":[\"*\"]}],\"sideEffects\":\"None\"}]}\n"
+                },
+                "creationTimestamp": "2022-05-26T22:09:39Z",
+                "generation": 4,
+                "labels": {
+                    "app": "istiod",
+                    "istio": "istiod",
+                    "istio.io/rev": "default",
+                    "istio.io/tag": "default",
+                    "operator.istio.io/component": "Pilot"
+                },
+                "name": "istiod-default-validator",
+                "resourceVersion": "4702",
+                "uid": "3bf6d076-0b56-46eb-87d1-1c5ac967b84b"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZlRENDQTJDZ0F3SUJBZ0lKQUprd2FJQXU0MDYzTUEwR0NTcUdTSWIzRFFFQkN3VUFNRWt4Q3pBSkJnTlYKQkFZVEFsVlRNUXN3Q1FZRFZRUUlEQUpEUVRFYk1Ca0dBMVVFQ2d3U1QzSmhZMnhsSUVOdmNuQnZjbUYwYVc5dQpNUkF3RGdZRFZRUUREQWRTYjI5MElFTkJNQjRYRFRJeU1EVXlOakl5TURnME4xb1hEVFF5TURVeU1USXlNRGcwCk4xb3dTVEVMTUFrR0ExVUVCaE1DVlZNeEN6QUpCZ05WQkFnTUFrTkJNUnN3R1FZRFZRUUtEQkpQY21GamJHVWcKUTI5eWNHOXlZWFJwYjI0eEVEQU9CZ05WQkFNTUIxSnZiM1FnUTBFd2dnSWlNQTBHQ1NxR1NJYjNEUUVCQVFVQQpBNElDRHdBd2dnSUtBb0lDQVFEUXZLelp2RVZ4bHc5U1RLRkxTWEFMWldWNnVFVWVUSHV1SnhMQitZOXRReEJTCjZNVzhscGVtbk5vOGplemZKeitKZzdrS3I3RHhqZzRXaUZOWXBOVElmdE1YL3hXVzRUU24wUWFVdWI4dWc1OFUKc1Iya2pKMmN4REl5UkMzZm9xalJNVWkwcm5KWk5BbTVucGtnWUNzT2pCOUFsSnlVcy94bjUxNVhEaUtzTUtHYgo4Wm93d0hsL2FzQm1mMjB4UVBRSERadUtKVlZjd3JueHhGN0M3c3NhbzlaYjFLTkRxS2NxYkdsN3FYVzNLNXlvClMzL2JNRkVFSUVhUXR0TDRlRDNjWnl5SVBCcEh6L1BuRFNPazJmck8zSDRoanQ4bmppWncycUs3N3piK0pubjEKa3BBdUJ4b2V6WnR0WXBudnhMelJzbjRvR3U0RDRlSjZ1bExSV1FjZXU4OGRZenlJNlpod1RLOE1CaG5xTDNXMQpMTUsyN05HeFhqYkJMa1NtSHo0c0Y1dmV1eW5PRnNrUVM3TmxIL3JKNzYwOHFrd0ZHV1VHMlJOVEJXRTgwNDRzCkdOQkV6bnpmSzJmQVp2aWMwRVN0VWtKVGVObjJ0eW9EbVZmVlY2S2Flbi9NeWRMei9iSjhFSWFBWUVaY1RVT3cKLzY1WWcwYllqQXNXYUMva1BPQkxJbGVEQkJGdFJLUTBNdnFsbVloYmR0ZC9obmVyNTh5SXRERjg0Z0YvMHpEZwpJdjR0MzZla1lMRTU3cWNzRVRDek5rQUlHL2kybWxPWStVaDExUWRrWGlidEE1Uk80WHh5TTJXYTgyRHA0M3gzCitvaUVjNFo3VDJWTnd2RXZldnNjbTEwSnZtTlp5WnFhZ2U4WFZBTVhwWmtQNlA5NXRjTnNSSVRJcE1KZUx3SUQKQVFBQm8yTXdZVEFkQmdOVkhRNEVGZ1FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0h3WURWUjBqQkJndwpGb0FVbUJ0QXVJSHFWTlRITFFpaUJjYmo4VE1aWTJNd0R3WURWUjBUQVFIL0JBVXdBd0VCL3pBT0JnTlZIUThCCkFmOEVCQU1DQVlZd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dJQkFNQU5JMHB4L2JlRU1YUXlyb2NlRjlndU8xNzMKaVJlazVKZTJhdkpibzlnMjRMV3VqMEVhK1JBR1dmWnI4a1hiMWRaallPN0l2aTRocXRyVVo4dzBvMmRpMzIzdQpKR0pOWnFCOUVKeDdvUmdsQmxqTFI4alMwRHE5VHpCRjlXTjVydStCK1c2WmJ3UXN1MWhxakVLMTVSL0hQRHp0ClVuTFNBV2xQN3B2N3lkUTJ6eXppdDFvcGk2aXkyejY5TVdoT0o5ODd2L2tNUG45ZEhnMmZSTUpYVVdCb2hiaUEKVjNhblhObkp5ZVZib2dwYkxpNlFVMUdXTzA0NFpBSXFxNG8vbzdNOFVZeEcwZXJpbHJPbzN6bmhBYTlMR09kOQpTbEpVeHljOEVtUmJqM3FHVGJVZmY1ay9TV1o2bVNFWEFDUXVuNm15QlhnK0VCQUN0aXN0UFJsWUN1UUR1M2tyCkN5amx0cVlSY2JXT0RrVzBQamxzUlpnWkZubC9UUWEwNis0T3k2VlphalF3ZFBudjRwdDcvNTFmVHFSYWNSQk0KeVE2a1NkRlJjMXRMQkpMMjQ0WC9wYjdEbUpTeTJuRktmdG54cFl6NGxYUDkvV2FlQjd6NFFINDdhc1BzcSs3QwpIaEFUbTdnUU1MUXVrY003RTVXTzE2K1N3QWlXS0k0ZHV3L1gzNjEvRVlSRlBweU4yaG9vL0lyRFdpZDF5N0R3CnQ2bDk5WEx6ditkRjVQdjJxOWtIVHBRWHZTVlF2d1BBaXh1ODNzVkd2N1VETDgwRlJlOHZPMlBKeW9PWjhwYVQKaWYzbndkbHZ3NlBmT1BtYm1UY0VaVFZzM1JqQ2xYMTVqTTlLeFY1ZURVa2ZBNVJQV0Q5Y1g2RURmckFUaHR4UQp5b1kzaVpQRDlpODVCTU52Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "istiod",
+                            "namespace": "istio-system",
+                            "path": "/validate",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.istio.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "istio.io/rev",
+                                "operator": "DoesNotExist"
+                            }
+                        ]
+                    },
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "security.istio.io",
+                                "networking.istio.io",
+                                "telemetry.istio.io",
+                                "extensions.istio.io"
+                            ],
+                            "apiVersions": [
+                                "*"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "*"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "cert-manager.io/inject-ca-from": "verrazzano-monitoring/prometheus-operator-kube-p-admission",
+                    "certmanager.k8s.io/inject-ca-from": "verrazzano-monitoring/prometheus-operator-kube-p-admission",
+                    "meta.helm.sh/release-name": "prometheus-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-monitoring"
+                },
+                "creationTimestamp": "2022-05-26T22:10:17Z",
+                "generation": 2,
+                "labels": {
+                    "app": "kube-prometheus-stack-admission",
+                    "app.kubernetes.io/instance": "prometheus-operator",
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "app.kubernetes.io/part-of": "kube-prometheus-stack",
+                    "app.kubernetes.io/version": "34.8.0",
+                    "chart": "kube-prometheus-stack-34.8.0",
+                    "heritage": "Helm",
+                    "release": "prometheus-operator"
+                },
+                "name": "prometheus-operator-kube-p-admission",
+                "resourceVersion": "4429",
+                "uid": "ab8a4458-a6e0-4843-ab4f-2d33d939d066"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSURJekNDQWd1Z0F3SUJBZ0lSQVBmSC9tR21VQ0F0Q3RoQnJwR0xIMHd3RFFZSktvWklodmNOQVFFTEJRQXcKS3pFcE1DY0dBMVVFQXhNZ1kyRXVkMlZpYUc5dmF5NXJkV0psTFhCeWIyMWxkR2hsZFhNdGMzUmhZMnN3SGhjTgpNakl3TlRJMk1qSXdPVFEwV2hjTk1qY3dOVEkxTWpJd09UUTBXakFyTVNrd0p3WURWUVFERXlCallTNTNaV0pvCmIyOXJMbXQxWW1VdGNISnZiV1YwYUdWMWN5MXpkR0ZqYXpDQ0FTSXdEUVlKS29aSWh2Y05BUUVCQlFBRGdnRVAKQURDQ0FRb0NnZ0VCQU15SXRaQXA3MExsSk1SWE0yWDBUSUdkOGhUZEpDeXNneCsyNndNMk9qSm9sUkphbE5FSgpBR3lvUnpUbk94dHhUSmpjSDk5UWNoR0xjZHJhd1NJTmY0WjZiQmRvTjhXRlhpK3RobzdhUW9VZ1dpU2FxODlaCm53TEMveEtabHA3bVMrUkZDajN3WDBnTzJoS1p4MVhCd3VnV3NOZWFNQi9tVC9uRW44RUx0dzRkU3Jidis0OUgKT090SmlBVURCemZVb1AzbnJlaUlqTGIramk1eWVGZ3ZyUGVPTkd1NUwvWndJWFUvK1ZPcG9pZkg1OUJKRXp1TQpPM0JVSHBlc2VHeUhaVmdoMXhERXF2SWludGl4QkI0TEdkelRwSzRoME5MZnE3eWNlelBSSnBpQjlDanpmbXVjCmMybEUyMTNROTc2KzU1RzNBNzRRYmNWZ3JJNGlOYWxlRTMwQ0F3RUFBYU5DTUVBd0RnWURWUjBQQVFIL0JBUUQKQWdLa01BOEdBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZHSC9TWXRqbVBNUGlTK2NlbU1ac2xtRgprL3hOTUEwR0NTcUdTSWIzRFFFQkN3VUFBNElCQVFESlh3cGdiWlVCRy9ENVhnMWdSTkV3dFQycng1bnZySkgrCjh3MG9CYTVhK3M1Q2FCMUZnMUtCd2xRVzNzRWJEVFRTU1ljQi9IcnY0V0VRVGkxRDMyb2FzSkIxSXFyZ1plNHoKUDdYZE9IdEZDZDZmZklqUzZzaGd4Smp2WHptK2MzNC9TdThlUzV2YVpnOWpWVGZoYUpTQitZeE92SVkzaE55dwp4cEVKZlZaaWVmQ1hlUmhPQ0lyeEl4OTRSdlgvMno5ODhQZHlDM2JNN2lkQU5paFNaVXdINnBkK2Q5R0QvWmxjCnByMzh3eVlsTWFROUg5Q0VvUGM1a0FjRnlDdEt0NDRhak5XVk9xdDAybTJvSWFMOG9ad3FpNmxCN1lqV3Z5YjkKZytmd2tCR1dtc2g5QzY5NXVIdHViWU96U3FzSUpETlFCU2I1UzVlN21kYkNIa3l4ZlpXSgotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                        "service": {
+                            "name": "prometheus-operator-kube-p-operator",
+                            "namespace": "verrazzano-monitoring",
+                            "path": "/admission-prometheusrules/validate",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Ignore",
+                    "matchPolicy": "Equivalent",
+                    "name": "prometheusrulemutate.monitoring.coreos.com",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "monitoring.coreos.com"
+                            ],
+                            "apiVersions": [
+                                "*"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "prometheusrules"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "rancher-webhook",
+                    "meta.helm.sh/release-namespace": "cattle-system",
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/+yVUU/bMBDHv8p0j5NLk6XVINIeRlumdQhBS3gA9eHiXBKvjh3ZThiq+t0nt0Ww0QKTOrSHvbV3vtz/fvd3soCKHGboEOIFoFLaoRNaWf9Xp9+JO0vuwAh9wNE5SQdCd0UGMQDbmde3ikynaOcQQ7cN2btvQmWfpsQNuRfLFFYEMazDnVtKS63nHY6vKrQ18kfV9s46qmDJgBtazXUpKrIOqxpi1UjJQGJK8tlpS7QlxBAQxz7yoH+Yp5R/zKP0KEJK86MID3sh9vofoqN+2s99t80MBhUvyTw8y+c2E1mIbxaAWSWsFVpNqBV0e0XGruHfQBsCgzZMyWEIMwZcClJuoFUuCi+X43GjMun7nE4DdzoNB5MkG1+K4+HkapxMk+vxRXCSTFa5wA3m4XiajH9MRmfDi6vk7jo4iabJ+Pg6kANgYMm0wqNb/Cb+fgOwnmo7YAY1unK97e6moNuiFNkKus9r4yDu9aLlkkGOQjaGzrUU/A5i+FoobQie4cbANJI2zGrxxeimXlGqUGFBFSn36PSM+UO/wIx8UNdk7t19A4PJ6PPlCBgk50P/Y8bAkNWN4atGwGVjHRnrE5br2isbrGOwZPvTsaN9TugaQ9vb+5jIaJTn3rIQw5lWtFb131EQwwkK+cRP2LjyNZ6qjW6FpyZU8fw2w/246uweQ/bUWGZOnQp5KRR1+GpVe5f0/rVa9njZGAxHp6MtYgqpU5RGS0qFyoQq/vr9ewmP1+KoqiW6HbfxDcXURvuv1GNN2zi90RZ3mPsfVfdgrT96qc6WPwMAAP//zx69GyUJAAA",
+                    "objectset.rio.cattle.io/id": "",
+                    "objectset.rio.cattle.io/owner-gvk": "/v1, Kind=Secret",
+                    "objectset.rio.cattle.io/owner-name": "cattle-webhook-ca",
+                    "objectset.rio.cattle.io/owner-namespace": "cattle-system"
+                },
+                "creationTimestamp": "2022-05-26T22:17:31Z",
+                "generation": 2,
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm",
+                    "objectset.rio.cattle.io/hash": "0eca5ac058fbef7f3b93aebf93a841a452395b5f"
+                },
+                "name": "rancher.cattle.io",
+                "resourceVersion": "11496",
+                "uid": "34474dd3-26e7-4723-9751-24c5ebf42305"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJxRENDQVUyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGoKYkdsemRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdIaGNOTWpJdwpOVEkyTWpJeE56TTVXaGNOTXpJd05USXpNakl4TnpNNVdqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGpiR2x6CmRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdXVEFUQmdjcWhrak8KUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVIwenYrVUkxWURIWUNUakpITlFkZnhVSzZxWGxQK3U2MmE4ZEZ1WVZsSwpMVGdCUmFEV3prVDROZXMxUHYwQUpyRUFGaVlYQzl0OVV4K3Y5bFJaR2ZmZW8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVR1pLM3pFYzVCSWJncW5LTDM3ZDMKNCtSZzRhVXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBSWxhcFdLcnNuZDBPSHdRSFZXSm1WRDQySktxTE9TRwoyZ1FlNTB0Y24xNGNBaUVBdDRCcE1wcDc1WlMvai81Y1BWTEY4SXJEV0llZUVveGF2ZkJWeWVtMzB2ND0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                        "service": {
+                            "name": "rancher-webhook",
+                            "namespace": "cattle-system",
+                            "path": "/v1/webhook/validation",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Ignore",
+                    "matchPolicy": "Equivalent",
+                    "name": "rancher.cattle.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "clusters"
+                            ],
+                            "scope": "Cluster"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "features"
+                            ],
+                            "scope": "Cluster"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUJxRENDQVUyZ0F3SUJBZ0lCQURBS0JnZ3Foa2pPUFFRREFqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGoKYkdsemRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdIaGNOTWpJdwpOVEkyTWpJeE56TTVXaGNOTXpJd05USXpNakl4TnpNNVdqQTdNUnd3R2dZRFZRUUtFeE5rZVc1aGJXbGpiR2x6CmRHVnVaWEl0YjNKbk1Sc3dHUVlEVlFRREV4SmtlVzVoYldsamJHbHpkR1Z1WlhJdFkyRXdXVEFUQmdjcWhrak8KUFFJQkJnZ3Foa2pPUFFNQkJ3TkNBQVIwenYrVUkxWURIWUNUakpITlFkZnhVSzZxWGxQK3U2MmE4ZEZ1WVZsSwpMVGdCUmFEV3prVDROZXMxUHYwQUpyRUFGaVlYQzl0OVV4K3Y5bFJaR2ZmZW8wSXdRREFPQmdOVkhROEJBZjhFCkJBTUNBcVF3RHdZRFZSMFRBUUgvQkFVd0F3RUIvekFkQmdOVkhRNEVGZ1FVR1pLM3pFYzVCSWJncW5LTDM3ZDMKNCtSZzRhVXdDZ1lJS29aSXpqMEVBd0lEU1FBd1JnSWhBSWxhcFdLcnNuZDBPSHdRSFZXSm1WRDQySktxTE9TRwoyZ1FlNTB0Y24xNGNBaUVBdDRCcE1wcDc1WlMvai81Y1BWTEY4SXJEV0llZUVveGF2ZkJWeWVtMzB2ND0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQo=",
+                        "service": {
+                            "name": "rancher-webhook",
+                            "namespace": "cattle-system",
+                            "path": "/v1/webhook/validation",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "rancherauth.cattle.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "provisioning.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "clusters"
+                            ],
+                            "scope": "Namespaced"
+                        },
+                        {
+                            "apiGroups": [
+                                "rke-machine-config.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "*"
+                            ],
+                            "scope": "Namespaced"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE",
+                                "DELETE"
+                            ],
+                            "resources": [
+                                "globalrolebindings"
+                            ],
+                            "scope": "Cluster"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "roletemplates"
+                            ],
+                            "scope": "Cluster"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "projectroletemplatebindings"
+                            ],
+                            "scope": "Namespaced"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "clusterroletemplatebindings"
+                            ],
+                            "scope": "Namespaced"
+                        },
+                        {
+                            "apiGroups": [
+                                "management.cattle.io"
+                            ],
+                            "apiVersions": [
+                                "v3"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "globalroles"
+                            ],
+                            "scope": "Cluster"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/9yWwW7bPBCE32XPlBL9iX87uhWJ20tRBEGaHgIf1uQ62poiVZJSGgR694KS7Lhwm6KAgDq+0V5xdnY+yvQzYMV35DxbAzmgKtnHtaMH9sFhYGvS9cynbE+aDASs2SjI4Q41KwxsHr7QsrB2fWnNih/qfgcIKCmgwoCQPwMaY0NX8PGjXX4lGTyF1LFNJYagKepzFJZOJY+9pIdWgHTU7bzlknzAsoLc1FoL0Lgk/apegb6AHP7PpmeTTEqc4Olker5ani7PLmZKnmfZ5HQ6m6jpf9nFTM1iN4MlQQ7NdrqNl0T+NF8rYGsyv39+ye2GGqbHIdBYgy61JltSwAwWAqRmMqGPK7r35BqWFJdD903LTaW35SuMT0E/X+KffKASBFQY4pQng2dKpK59IJd8T9Yzn7BNhuZJibJgQ9C2AlbIunZ0bTXLJ8jhPbKO1DDIYvvl/FvNDWoyAfaisSYd9NKhYdo1TNmCAFdrGpKp+IOzddVlsffkQuycvyGubVK2Irc5NfdweTN/dzsHAZ+vr+JiIcCRt7WTXScY3HhYtAsBnhXNV6t4LiCHTzaOLd4WJ0WVtk9lTH9kYi/Kh8XuxdfxUCwIdShkQXI9NsYd6cPiuGPseEB6Gv09jFfWQYHzdERvXmWtHptY1DwsZNHRETAbCqPx2iT/b1gJuJp/nP8C2tDkeIBJjd6PTa0TPVB0nbc39C8TlbLG/5HjdtQRb7l96bR38xdof7dhxB/SfZuv0F20PwIAAP//5NXGdTIPAAA",
+                    "objectset.rio.cattle.io/id": "crd-webhooks"
+                },
+                "creationTimestamp": "2022-05-26T22:13:10Z",
+                "generation": 9,
+                "labels": {
+                    "objectset.rio.cattle.io/hash": "617351cca5a0574fb0b398dc41150785d72198d8"
+                },
+                "name": "validating-webhook-configuration",
+                "resourceVersion": "11158",
+                "uid": "146f3ece-ac15-40af-9c3b-8901eea2ecd3"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-machine",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.machine.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "machines"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-machinedeployment",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.machinedeployment.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "machinedeployments"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-machinehealthcheck",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.machinehealthcheck.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "machinehealthchecks"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-machineset",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.machineset.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "machinesets"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-machinepool",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.machinepool.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "machinepools"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-cluster",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.cluster.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE",
+                                "DELETE"
+                            ],
+                            "resources": [
+                                "clusters"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-cluster-x-k8s-io-v1beta1-clusterclass",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.clusterclass.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE",
+                                "DELETE"
+                            ],
+                            "resources": [
+                                "clusterclasses"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1",
+                        "v1beta1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUQ2RENDQXRDZ0F3SUJBZ0lCQWpBTkJna3Foa2lHOXcwQkFRc0ZBREE2TVRnd05nWURWUVFEREM5allYUjAKYkdVdGMzbHpkR1Z0TFhKaGJtTm9aWEl0ZDJWaWFHOXZheTEwYkhNdFkyRkFNVFkxTXpZd016UTFNakFlRncweQpNakExTWpZeU1URTNNekZhRncweU16QTFNall5TVRFM016RmFNRGN4TlRBekJnTlZCQU1NTEdOaGRIUnNaUzF6CmVYTjBaVzB0Y21GdVkyaGxjaTEzWldKb2IyOXJMWFJzYzBBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcWhraUcKOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQTRxRWNIZ0srSEcybVI3RDNDUlZ4UGlOVlp4c2d4U2w3T3VYQwpnTWF6QUlMeWttQmpxM1Z6OVVvY0FoMElERjZpTWhoUjhlT2hjRE1RUlRaYVI5bzZLMmhDTXdUR0FkZ0RkMnQrClpJc0tONFN1Z2FWQTFvYzJtMWpSanlVZXJSU2w4QXFhVGE2dkpKYWVwbzk0R1V6aEEwU2xJQzkzdU9PemhGTnkKcGRtRXNwQmlodlVDSWEwOU9udjAxZHhGeCsvOVdDa3pBRzBjSGZZWS9Ra1V6R3N4cGpnR1VaS2U1QjFjN0JxVQpzcUhaMVlVS3ZMSU9oYytwQmtCRXBZdXZ6U0VwMmhGQ1QzOUtDZGtFOGpvTDZSSEhLRFF5UkdSdlVIeWkyd2Y1CnpZL1B2MzUxVHJOdnMwZFJXdklBWGdqR0VyK01Td1ZkYmFKL1FVd3V6R1p1VE54OUFRSURBUUFCbzRIN01JSDQKTUE0R0ExVWREd0VCL3dRRUF3SUZvREFUQmdOVkhTVUVEREFLQmdnckJnRUZCUWNEQVRBTUJnTlZIUk1CQWY4RQpBakFBTUI4R0ExVWRJd1FZTUJhQUZLUDloaGljeXNLT0Y3Rmx3MUVFSmppWnVFd0JNSUdoQmdOVkhSRUVnWmt3CmdaYUNJV05oZEhSc1pTMXplWE4wWlcwdGNtRnVZMmhsY2kxM1pXSm9iMjlyTFhSc2M0SWRkMlZpYUc5dmF5MXoKWlhKMmFXTmxMbU5oZEhSc1pTMXplWE4wWlcyQ0lYZGxZbWh2YjJzdGMyVnlkbWxqWlM1allYUjBiR1V0YzNsegpkR1Z0TG5OMlk0SXZkMlZpYUc5dmF5MXpaWEoyYVdObExtTmhkSFJzWlMxemVYTjBaVzB1YzNaakxtTnNkWE4wClpYSXViRzlqWVd3d0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFKb0p3c0g2N2lMcm0rWno2SndTeGlOTWhwV1IKUy9VKzZWdmZxTWJVdlVWdEJWSVhnTkV6OFhrOUZQOWF4bFJiemk3Z09ubVNOVXZPK1hGWkxpZWFkUXBrTHJjaQovV0ovUTNtazZxZW5yZWJyMlNhWFgxTDV4UFJGQXdicXQrdUV0YkhrdWw5WitBODlkQ1Q5SFYvZGJGQXRldDFtCnVhT216VmVTbEdIR04yR2NURW12Y0RwMVNQRzhlUDZqaUY4WUVJUldaSHptMUpxVm1sTlF2dDB2L0ZUSEVYZTAKaW9hRHcwelFPY0dqbFJqRGZDWmhUNHZKbjdYclNONk5NelB0VUZEeWVMcjhCQ2prcStxbWRpRUZBU3FDUlN6dwpFSTFzZzNEbFRUSFd0RTREU3ZuUGtmZkpnb0ZFREwrQ1hPVDk0RHBiQ1k1T3Nrbjl6amhEdnIvTXJrUT0KLS0tLS1FTkQgQ0VSVElGSUNBVEUtLS0tLQotLS0tLUJFR0lOIENFUlRJRklDQVRFLS0tLS0KTUlJRE1UQ0NBaG1nQXdJQkFnSUJBVEFOQmdrcWhraUc5dzBCQVFzRkFEQTZNVGd3TmdZRFZRUUREQzlqWVhSMApiR1V0YzNsemRHVnRMWEpoYm1Ob1pYSXRkMlZpYUc5dmF5MTBiSE10WTJGQU1UWTFNell3TXpRMU1qQWVGdzB5Ck1qQTFNall5TVRFM016RmFGdzB5TXpBMU1qWXlNVEUzTXpGYU1Eb3hPREEyQmdOVkJBTU1MMk5oZEhSc1pTMXoKZVhOMFpXMHRjbUZ1WTJobGNpMTNaV0pvYjI5ckxYUnNjeTFqWVVBeE5qVXpOakF6TkRVeU1JSUJJakFOQmdrcQpoa2lHOXcwQkFRRUZBQU9DQVE4QU1JSUJDZ0tDQVFFQXZyaEhRVkxIYW5IWldobHV6SmdDMzliejZGWlk1T2NRCkpSUzFhK3dXclFUWkZSYUxoNmpNVFRDMzJVQUp3bmV6WUJJa1BkWHowQU1zaXNaZzYyMVlubFFsQXhzbWdUNmQKNmpxZkhRM0tsMmNPUHNoTVVRMnd3MnJVUE8vbC8zRFpYRUllV3QrYzN1UzNnYVhnSXJFaERoUkpjK1o0SFBpbwpTMzdWRWQyeVRFOUNsTTJsQ2N3VUZEUVZYNHpvWFdMMzROMlhNY3lUTUtXN2d5RkRuSFlYbU9CMzU3cmNSeWoyClJIYm10RmUrMTY4SlhPTWVPYm10UzdjYUwrK29NN1p2cnp3UEJrL0NBaVFpbTd2NEEyWllhcE5qMHJHOWdYWSsKcHBpSDJKMUExVTlqQ0dDSmpqQVo4SkR3YXJ0SzNvRyt4KzRQV2gxck5McGxUcklZQzkranJ3SURBUUFCbzBJdwpRREFPQmdOVkhROEJBZjhFQkFNQ0FxUXdEd1lEVlIwVEFRSC9CQVV3QXdFQi96QWRCZ05WSFE0RUZnUVVvLzJHCkdKekt3bzRYc1dYRFVRUW1PSm00VEFFd0RRWUpLb1pJaHZjTkFRRUxCUUFEZ2dFQkFJM1RSTk5vdkd3TC96SUMKY0xrdlMxSzFZdFB2Tk54WVhPYjVoVkFWNGVpRzliMUVjMmpsQ04wdDFRMkl6T0I2ZTVHbUlRQlpzMHpQZ2RwdwpTNno2c0FLeDVJRlRoK1BQeGNQQnBwa1NHTHRnd2VxV2JENE5rUjJGeDMrMDBEdFd6dzNKVHZUZ3JsQmRCNEJnCnVZcGZvYms3R2hMYnlNL3FMbXFWa3NOcVN1RDVVYWZ2K0IzRFJ4Y3FXSkx4bGlyVDJNZzdrZTdVdG9IeEdoMGkKR3J5ajlXckpMSzUwcGo0NGNpeXJldktuWUFOek9NTG8waGRmKzlWYXRMZ3BkVW56N2tKdVBiNFhDdDROVXIrMgp5NEdkWDI4MFd6RkxEc2ptYm1rR2RKcWVOZFlFcjEvSXhIU1JZbERyejFwOS8vU1RuOEU4bmxKMnF0Z25zRjQ1CkpRMWRjczQ9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "webhook-service",
+                            "namespace": "cattle-system",
+                            "path": "/validate-addons-cluster-x-k8s-io-v1beta1-clusterresourceset",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Equivalent",
+                    "name": "validation.clusterresourceset.addons.cluster.x-k8s.io",
+                    "namespaceSelector": {},
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "addons.cluster.x-k8s.io"
+                            ],
+                            "apiVersions": [
+                                "v1beta1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "clusterresourcesets"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 10
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-ingresstrait-validator",
+                "resourceVersion": "4833",
+                "uid": "90733470-1781-4d75-89f8-e2feb8611c18"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-oam-verrazzano-io-v1alpha1-ingresstrait",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-application-ingresstrait-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "oam.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "ingresstraits"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-multiclusterapplicationconfiguration",
+                "resourceVersion": "4836",
+                "uid": "0c14a533-32fd-474a-8dda-bd354868d857"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-multiclusterapplicationconfiguration",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-clusters-multiclusterapplicationconfiguration-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "multiclusterapplicationconfigurations"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-multiclustercomponent",
+                "resourceVersion": "4837",
+                "uid": "b5daca55-63e6-45b2-a3f0-a359ab3fcdb2"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-multiclustercomponent",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-clusters-multiclustercomponent-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "multiclustercomponents"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-multiclusterconfigmap",
+                "resourceVersion": "4838",
+                "uid": "95ec1008-0c93-4d43-81c5-f2482085b2e7"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-multiclusterconfigmap",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-clusters-multiclusterconfigmap-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "multiclusterconfigmaps"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-multiclustersecret",
+                "resourceVersion": "4839",
+                "uid": "b6e52e71-0940-4d91-8abb-1915868ddf94"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-multiclustersecret",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-clusters-multiclustersecret-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "multiclustersecrets"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "verrazzano-application-operator",
+                    "meta.helm.sh/release-namespace": "verrazzano-system"
+                },
+                "creationTimestamp": "2022-05-26T22:10:30Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-application-operator",
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "verrazzano-application-verrazzanoproject",
+                "resourceVersion": "4834",
+                "uid": "2dd6d2ba-11c9-4ae1-8e5a-e22cdf20470c"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZzekNDQTV1Z0F3SUJBZ0lVTjNDb0VWaTQ4Rk53ZStLejJpZUNqNUpGeXB3d0RRWUpLb1pJaHZjTkFRRUwKQlFBd1FERStNRHdHQTFVRUF4TTFkbVZ5Y21GNmVtRnVieTFoY0hCc2FXTmhkR2x2YmkxdmNHVnlZWFJ2Y2k1MgpaWEp5WVhwNllXNXZMWE41YzNSbGJTNXpkbU13SGhjTk1qSXdOVEkyTWpJeE1ETTVXaGNOTWpNd05USTJNakl4Ck1ETTVXakJBTVQ0d1BBWURWUVFERXpWMlpYSnlZWHA2WVc1dkxXRndjR3hwWTJGMGFXOXVMVzl3WlhKaGRHOXkKTG5abGNuSmhlbnBoYm04dGMzbHpkR1Z0TG5OMll6Q0NBaUl3RFFZSktvWklodmNOQVFFQkJRQURnZ0lQQURDQwpBZ29DZ2dJQkFLdWw4MUdZV0VITGFUWmMvL0Q3ejNpYldKUm12ODYyd01ZdXpDVHkxbHk5SHJ5amVNSjhKaW00CmVuWFNLaDgveU5RWmlucithWEZKYjFvY2g4UVZwTm43a1FtK2JsbHFlSXcrZEVqbmpSK0RRTWVJSC9jZHBNRmkKTk5JVkxjRjN0MDdwRWtSZ2dhd3V2Rzg0aEJHeGF2aHRJbEVSTGtUZE43dmRxeUJsYTVJUWZlTDA2TEovNXhyMAp5VFNDdmNSRElTdENUMzJ3eElGZGtkemU2V2xIZ21xcmV0Z1lZY1VqUVdVckVySU9uRDdwQlNGdWhkU3ZsWWJFClEvRHR1YmN6R1ZtVURDdVFhTEs0WmM1SnVoRWxWckw4MjFhOVRlL1N0VnFlZUxWbEFhclBoK3JDQjJkNUFlQ04KbU53dDRhZ2ZVdFhSWWpHaUxXeHZCdHR4Tm1qb1FRQ2gwcjFGZ21URkJ6aTNhYmo5emN6NEhaWGdnMCtlOGNRUwp1cVhDemFUWFAxeUZVTUhvNVpsTklFVXMxaTlpU2VQYXdoa2E2VTJWVEQ2amRpTHlxcnJZTXVEL3cwamxjTjVmCnFxQkxzY3RUYWVMSjV5MTJZazZRaWRyS1psSmV1OVhmRVV5NkVlRERzeDBSRHdmN0RBMUFwWCtaWkU2YTRNWkwKL2VpT2hSR0c0b2EyeEFvTmtEYWxpdVZLK2RWVHNIQXUvTUNkczZtSW9hbmdoUkd6VDJaUmJTc0ZNelZueUU4awp3R2JDOHUxTTlJZm1LOTlXRU85Mnk4Ull1UG10eittTXdTZTdXODVlOUd6NVpuZ2JQRDJYUEd4Wm4yeXhtVUFsCi9ETHowTWN2cjFjUXYwMUs2RGVHK1YvVm9NV0NHMjl4aVRaTUtBR2x3cjA3Z2NyY2lsbkhBZ01CQUFHamdhUXcKZ2FFd0RnWURWUjBQQVFIL0JBUURBZ0tFTUIwR0ExVWRKUVFXTUJRR0NDc0dBUVVGQndNQ0JnZ3JCZ0VGQlFjRApBVEFQQmdOVkhSTUJBZjhFQlRBREFRSC9NQjBHQTFVZERnUVdCQlRPZUc1bURFdmpLcnVKRmNoNTdsQVVRNE5PCm5EQkFCZ05WSFJFRU9UQTNnalYyWlhKeVlYcDZZVzV2TFdGd2NHeHBZMkYwYVc5dUxXOXdaWEpoZEc5eUxuWmwKY25KaGVucGhibTh0YzNsemRHVnRMbk4yWXpBTkJna3Foa2lHOXcwQkFRc0ZBQU9DQWdFQUVRTjhQa3Fra1FYVAp1TjdnOVkrU1RqMHRRdHlpdUFsY3ROV0FmT3hVbEhqV2x6a1RSRFNtQzBBcEtRak5teHVWdFgxektGVFRqVlgwCnhqNWZRNFZlbU92S0ZSTVM5MGtUQzNqUldUWWtabU8wUGtINytxUWEwYzlRRzAzQUhRcUJzR2gvSldvQWtIWTMKazExNm82Nzk5Z1NieDlYMHRSOEt0SU15Y3grVUxUczQ4RlcvbEhGdXhCeVJzNVBpS2tOZVJjeEY3RGQwcnF4NgpGTGljVlhQR25aZjZ3UktnRGt4bzc0bURCTWhTRG9IM1AxN0hHVlc0R3hMTmZYL1VXa2d4OTJoaGpDK3kxTXFLCkJFeHNhaThpQmhWWXlkZnRIUHlPSFloWUFvejhsSUZDanpudUFORmJGamJSRHh1TzB1NjBvTTR0d3BXT21GUUwKbUUrSmhNbmpKM0srNkYzVWVmdVRqN2d2cXhNcCtudHhodDMyUzFoR2xNYWd4S3hPKzU3b2xTV1QyNC9adzNDOQo1SHJBUGJvY0cvV2Y3YjFDcjdSZHpycTFOQndDQU1QVUFQNTVzcjZGYzF5RENvTE5XYnNhaUNQRmJNcjZsWVJEClR6SytMUnhJV1l3WnhzcDZReFo0ZlBKN1J4WDkyYkhOb2g1ZmI0aythZi8xLy9BdVpzaExRRy9BL1QrYjlVMzYKYWJ6dTlIY2gzSDBvOEJ2b0JyOEVHc3hEbEg1VVdVdmoxUVZKOW5LNnM1OU9WeFJFcU1URW84VTdZbzBWUDZCawpEWmo3VDBrbWZqQ2pFNHNMcStVQ2NvRWdWYXdaY3J2U3orVno4RzRBbEFIMzc3R2MvSjZVRGh4Q25WanBYTTE0CjZncWRRSTlEL3F1Rk1NZ09OV3R2SWVveGhNZERHTkk9Ci0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K",
+                        "service": {
+                            "name": "verrazzano-application-operator",
+                            "namespace": "verrazzano-system",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-verrazzanoproject",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "verrazzano-clusters-verrazzanoproject-validator.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "verrazzanoprojects"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        },
+        {
+            "apiVersion": "admissionregistration.k8s.io/v1",
+            "kind": "ValidatingWebhookConfiguration",
+            "metadata": {
+                "annotations": {
+                    "kubectl.kubernetes.io/last-applied-configuration": "{\"apiVersion\":\"admissionregistration.k8s.io/v1\",\"kind\":\"ValidatingWebhookConfiguration\",\"metadata\":{\"annotations\":{},\"labels\":{\"app\":\"verrazzano-platform-operator\"},\"name\":\"verrazzano-platform-operator\"},\"webhooks\":[{\"admissionReviewVersions\":[\"v1beta1\",\"v1\"],\"clientConfig\":{\"service\":{\"name\":\"verrazzano-platform-operator\",\"namespace\":\"verrazzano-install\",\"path\":\"/validate-install-verrazzano-io-v1alpha1-verrazzano\"}},\"failurePolicy\":\"Fail\",\"matchPolicy\":\"Exact\",\"name\":\"install.verrazzano.io\",\"namespaceSelector\":{\"matchExpressions\":[{\"key\":\"verrazzano.io/namespace\",\"operator\":\"NotIn\",\"values\":[\"kube-system\"]}]},\"rules\":[{\"apiGroups\":[\"install.verrazzano.io\"],\"apiVersions\":[\"v1alpha1\"],\"operations\":[\"CREATE\",\"UPDATE\"],\"resources\":[\"verrazzanos\"]}],\"sideEffects\":\"None\",\"timeoutSeconds\":30},{\"admissionReviewVersions\":[\"v1beta1\",\"v1\"],\"clientConfig\":{\"service\":{\"name\":\"verrazzano-platform-operator\",\"namespace\":\"verrazzano-install\",\"path\":\"/validate-clusters-verrazzano-io-v1alpha1-verrazzanomanagedcluster\"}},\"failurePolicy\":\"Fail\",\"matchPolicy\":\"Exact\",\"name\":\"clusters.verrazzano.io\",\"namespaceSelector\":{\"matchExpressions\":[{\"key\":\"verrazzano.io/namespace\",\"operator\":\"NotIn\",\"values\":[\"kube-system\"]}]},\"rules\":[{\"apiGroups\":[\"clusters.verrazzano.io\"],\"apiVersions\":[\"v1alpha1\"],\"operations\":[\"CREATE\",\"UPDATE\"],\"resources\":[\"verrazzanomanagedclusters\"]}],\"sideEffects\":\"None\",\"timeoutSeconds\":30}]}\n"
+                },
+                "creationTimestamp": "2022-05-26T22:08:12Z",
+                "generation": 2,
+                "labels": {
+                    "app": "verrazzano-platform-operator"
+                },
+                "name": "verrazzano-platform-operator",
+                "resourceVersion": "2816",
+                "uid": "9bffeedb-4392-41d9-b975-c0b2fccad086"
+            },
+            "webhooks": [
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZyVENDQTVXZ0F3SUJBZ0lVTUJCQTV3eGovT3pGZFdwd0kwdFhUWTE0K3Jrd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1BqRThNRG9HQTFVRUF4TXpkbVZ5Y21GNmVtRnVieTF3YkdGMFptOXliUzF2Y0dWeVlYUnZjaTUyWlhKeQpZWHA2WVc1dkxXbHVjM1JoYkd3dWMzWmpNQjRYRFRJeU1EVXlOakl5TURneU5Wb1hEVEl6TURVeU5qSXlNRGd5Ck5Wb3dQakU4TURvR0ExVUVBeE16ZG1WeWNtRjZlbUZ1Ynkxd2JHRjBabTl5YlMxdmNHVnlZWFJ2Y2k1MlpYSnkKWVhwNllXNXZMV2x1YzNSaGJHd3VjM1pqTUlJQ0lqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FnOEFNSUlDQ2dLQwpBZ0VBdmJKRHE3TWxSUUhJUWk4MlFPamw5NkIrTFM0YmgxSzZFd0FtR1FoajdFazR2cDhuQ1FVdGw0d3VReWYyCndXVWxiMnlIUVdVN29oSk8rWUltMUErU2t6czJxeFFtYkEvVGFOL0t5U3pZMnZGMnQ5dmVtMnJHcnI1MUlRN2MKWUVJMTRiY1JmNkZCb3EzSzEzYjB0UjJUU29Ca0p5eStvdTFZNjhsbHR1UWVxY2pnWnlRMmJNbm5adm1iR09PawpRMjNUVjZJdTJUQTM3VGN1ekFTWnA2dUdDamtRR2c4V0dueXE5WldtcjJTUERKWnB0cHgrUzE4a0VldDBpMDA4CnJVZFY5aEtCbFJlUmhZSU9YMXBMTnpBelpQemNHeng4RyttYm12a09IbjZRZm0xUFZWUTRURFAwYUZ4cDNMZlEKV3lGNXVSUzlSL0JRYkFudk9GaWRDeXJMVTVzbko4Uml5LzM5M2NQNjY5TFlKTzRnR1VybFZyd3owamRCb3B2WApVbm5xN215bGhPNVpZT2Jsek9MRXg2WXJJOG11QzMreDg3dzJMYWsyYXVaTDJzV0RaNTcrdHhSMVVReXRoaFpQClh5S2JTeGxMTVV2WHZ6czkwcWRaVzFUZElFbHMyZXNFaVkxeG9oOHJrUCtEQm94cXdYR3BtVVJYc1NLcEFSa2YKdVZydHFlTlh0bWhYK3J3ZlFFc1NhZE4vMWJpTUc1SW9zVXBST1dlTkdBYUFGYmo1MldjTXBhVWI1WUgvT3R2cQp4cm5LbmxCNEhDNzFZS205T2tSUmsxNEhTS3VJT0h2K0ViMVZ0V01ZSEFQS1paTWY1U3NPSWgvS3M0NEs4THAwCmhlT3ZTaGNLenpaMklQa0g0cEdSYjA4UWcwMnBMT2FNaGxxOVNqVWI4Zkx1VG4wQ0F3RUFBYU9Cb2pDQm56QU8KQmdOVkhROEJBZjhFQkFNQ0FvUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4RwpBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZEVGtlSkRQK3FqSy96SThVSUg4RUhNeFoxelVNRDRHCkExVWRFUVEzTURXQ00zWmxjbkpoZW5waGJtOHRjR3hoZEdadmNtMHRiM0JsY21GMGIzSXVkbVZ5Y21GNmVtRnUKYnkxcGJuTjBZV3hzTG5OMll6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FnRUFvZWZ5ZS9mNFVCVTgvRGF1RkxvRwpZZ1NQSjlnamNyd1BTSnJhZWVieVFyd1FWb1pJWGEyRDNZVzdub2VHZFl1cnZiQjdiSGorQUw1R2tkUGh0MzJuCjBEbXcybHRFTmlidFdQcms0dWpVR0FDbG5OaDhrR1A1WXFMNVNwTHlPWHk0bWN3SHozSy9GVmNHUHlpVjQ1ZVUKUFRGZjBJSDJTbnVJblU4NUVSMlFjZUtJMDdic0pWTDkvZTJOWWdBamV6amdhSXBzbnlpZ2ZPQVdYb0ROZlZ5dQpSU2dRdjQ4NzhwcmEvMEwrcHhTNm93WTdpMTVVVlUrY2l5ZHBBWFBVQjBtek5SNXZsN3lmV1FNekVLK3lyMGFmCkNYekNROEIxekM3WGNmMkY1Ly84czFscXFwVlZQQUwwZjllUFB4dW1LcUtWaXprMnJLOGZsejBHTmtNODd0eTQKSHZtcCtRT0s3Qm1NQnNnMVBucTZZQlZRNHdjQjJ0WW8weDNzZW0zYjgyazdPeFRXbG55NWRZeWdva2QvN0xVMApDOW05b3U5b0xLbFJLZHhPVnQrSWFaUXBWL3AxMmR0dlBQUFVscDB0RlR0dXlETExGVVhYSytjWmRWcUxHVlFGCk9TMmtjUlhJMHc1aDBuYU5qOW5TUExxT3VkMGhoaHNHRHc5NlZFblB0QmF5bWdJbi9KTG1WWjcrWWQwa1pxV1oKSFd3VEJGYXFkVXcxVjFyMEU0RGZXdlk1M2RMLzlNOFVqSVBqN0FSQ1JTTDl2OUFNYUJuNnFMZzFLazE4U1preQpaVDE3U1EwYWpsQTVsMHczQ0NOVUNuaG1XZHI5YmozN0hKUXBxZnpLUjhTNG9CRy82THJhcHV0L0F0L0dZUVpVCkdsSGpvaVFXZmVDTG5HNlVGbWVCUlFZPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                        "service": {
+                            "name": "verrazzano-platform-operator",
+                            "namespace": "verrazzano-install",
+                            "path": "/validate-install-verrazzano-io-v1alpha1-verrazzano",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "install.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "install.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "verrazzanos"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                },
+                {
+                    "admissionReviewVersions": [
+                        "v1beta1",
+                        "v1"
+                    ],
+                    "clientConfig": {
+                        "caBundle": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCk1JSUZyVENDQTVXZ0F3SUJBZ0lVTUJCQTV3eGovT3pGZFdwd0kwdFhUWTE0K3Jrd0RRWUpLb1pJaHZjTkFRRUwKQlFBd1BqRThNRG9HQTFVRUF4TXpkbVZ5Y21GNmVtRnVieTF3YkdGMFptOXliUzF2Y0dWeVlYUnZjaTUyWlhKeQpZWHA2WVc1dkxXbHVjM1JoYkd3dWMzWmpNQjRYRFRJeU1EVXlOakl5TURneU5Wb1hEVEl6TURVeU5qSXlNRGd5Ck5Wb3dQakU4TURvR0ExVUVBeE16ZG1WeWNtRjZlbUZ1Ynkxd2JHRjBabTl5YlMxdmNHVnlZWFJ2Y2k1MlpYSnkKWVhwNllXNXZMV2x1YzNSaGJHd3VjM1pqTUlJQ0lqQU5CZ2txaGtpRzl3MEJBUUVGQUFPQ0FnOEFNSUlDQ2dLQwpBZ0VBdmJKRHE3TWxSUUhJUWk4MlFPamw5NkIrTFM0YmgxSzZFd0FtR1FoajdFazR2cDhuQ1FVdGw0d3VReWYyCndXVWxiMnlIUVdVN29oSk8rWUltMUErU2t6czJxeFFtYkEvVGFOL0t5U3pZMnZGMnQ5dmVtMnJHcnI1MUlRN2MKWUVJMTRiY1JmNkZCb3EzSzEzYjB0UjJUU29Ca0p5eStvdTFZNjhsbHR1UWVxY2pnWnlRMmJNbm5adm1iR09PawpRMjNUVjZJdTJUQTM3VGN1ekFTWnA2dUdDamtRR2c4V0dueXE5WldtcjJTUERKWnB0cHgrUzE4a0VldDBpMDA4CnJVZFY5aEtCbFJlUmhZSU9YMXBMTnpBelpQemNHeng4RyttYm12a09IbjZRZm0xUFZWUTRURFAwYUZ4cDNMZlEKV3lGNXVSUzlSL0JRYkFudk9GaWRDeXJMVTVzbko4Uml5LzM5M2NQNjY5TFlKTzRnR1VybFZyd3owamRCb3B2WApVbm5xN215bGhPNVpZT2Jsek9MRXg2WXJJOG11QzMreDg3dzJMYWsyYXVaTDJzV0RaNTcrdHhSMVVReXRoaFpQClh5S2JTeGxMTVV2WHZ6czkwcWRaVzFUZElFbHMyZXNFaVkxeG9oOHJrUCtEQm94cXdYR3BtVVJYc1NLcEFSa2YKdVZydHFlTlh0bWhYK3J3ZlFFc1NhZE4vMWJpTUc1SW9zVXBST1dlTkdBYUFGYmo1MldjTXBhVWI1WUgvT3R2cQp4cm5LbmxCNEhDNzFZS205T2tSUmsxNEhTS3VJT0h2K0ViMVZ0V01ZSEFQS1paTWY1U3NPSWgvS3M0NEs4THAwCmhlT3ZTaGNLenpaMklQa0g0cEdSYjA4UWcwMnBMT2FNaGxxOVNqVWI4Zkx1VG4wQ0F3RUFBYU9Cb2pDQm56QU8KQmdOVkhROEJBZjhFQkFNQ0FvUXdIUVlEVlIwbEJCWXdGQVlJS3dZQkJRVUhBd0lHQ0NzR0FRVUZCd01CTUE4RwpBMVVkRXdFQi93UUZNQU1CQWY4d0hRWURWUjBPQkJZRUZEVGtlSkRQK3FqSy96SThVSUg4RUhNeFoxelVNRDRHCkExVWRFUVEzTURXQ00zWmxjbkpoZW5waGJtOHRjR3hoZEdadmNtMHRiM0JsY21GMGIzSXVkbVZ5Y21GNmVtRnUKYnkxcGJuTjBZV3hzTG5OMll6QU5CZ2txaGtpRzl3MEJBUXNGQUFPQ0FnRUFvZWZ5ZS9mNFVCVTgvRGF1RkxvRwpZZ1NQSjlnamNyd1BTSnJhZWVieVFyd1FWb1pJWGEyRDNZVzdub2VHZFl1cnZiQjdiSGorQUw1R2tkUGh0MzJuCjBEbXcybHRFTmlidFdQcms0dWpVR0FDbG5OaDhrR1A1WXFMNVNwTHlPWHk0bWN3SHozSy9GVmNHUHlpVjQ1ZVUKUFRGZjBJSDJTbnVJblU4NUVSMlFjZUtJMDdic0pWTDkvZTJOWWdBamV6amdhSXBzbnlpZ2ZPQVdYb0ROZlZ5dQpSU2dRdjQ4NzhwcmEvMEwrcHhTNm93WTdpMTVVVlUrY2l5ZHBBWFBVQjBtek5SNXZsN3lmV1FNekVLK3lyMGFmCkNYekNROEIxekM3WGNmMkY1Ly84czFscXFwVlZQQUwwZjllUFB4dW1LcUtWaXprMnJLOGZsejBHTmtNODd0eTQKSHZtcCtRT0s3Qm1NQnNnMVBucTZZQlZRNHdjQjJ0WW8weDNzZW0zYjgyazdPeFRXbG55NWRZeWdva2QvN0xVMApDOW05b3U5b0xLbFJLZHhPVnQrSWFaUXBWL3AxMmR0dlBQUFVscDB0RlR0dXlETExGVVhYSytjWmRWcUxHVlFGCk9TMmtjUlhJMHc1aDBuYU5qOW5TUExxT3VkMGhoaHNHRHc5NlZFblB0QmF5bWdJbi9KTG1WWjcrWWQwa1pxV1oKSFd3VEJGYXFkVXcxVjFyMEU0RGZXdlk1M2RMLzlNOFVqSVBqN0FSQ1JTTDl2OUFNYUJuNnFMZzFLazE4U1preQpaVDE3U1EwYWpsQTVsMHczQ0NOVUNuaG1XZHI5YmozN0hKUXBxZnpLUjhTNG9CRy82THJhcHV0L0F0L0dZUVpVCkdsSGpvaVFXZmVDTG5HNlVGbWVCUlFZPQotLS0tLUVORCBDRVJUSUZJQ0FURS0tLS0tCg==",
+                        "service": {
+                            "name": "verrazzano-platform-operator",
+                            "namespace": "verrazzano-install",
+                            "path": "/validate-clusters-verrazzano-io-v1alpha1-verrazzanomanagedcluster",
+                            "port": 443
+                        }
+                    },
+                    "failurePolicy": "Fail",
+                    "matchPolicy": "Exact",
+                    "name": "clusters.verrazzano.io",
+                    "namespaceSelector": {
+                        "matchExpressions": [
+                            {
+                                "key": "verrazzano.io/namespace",
+                                "operator": "NotIn",
+                                "values": [
+                                    "kube-system"
+                                ]
+                            }
+                        ]
+                    },
+                    "objectSelector": {},
+                    "rules": [
+                        {
+                            "apiGroups": [
+                                "clusters.verrazzano.io"
+                            ],
+                            "apiVersions": [
+                                "v1alpha1"
+                            ],
+                            "operations": [
+                                "CREATE",
+                                "UPDATE"
+                            ],
+                            "resources": [
+                                "verrazzanomanagedclusters"
+                            ],
+                            "scope": "*"
+                        }
+                    ],
+                    "sideEffects": "None",
+                    "timeoutSeconds": 30
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

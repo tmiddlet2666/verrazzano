@@ -1,0 +1,553 @@
+{
+    "kind": "PodList",
+    "apiVersion": "v1",
+    "metadata": {
+        "resourceVersion": "22587"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "sleep-workload-697db95bbd-n4v4d",
+                "generateName": "sleep-workload-697db95bbd-",
+                "namespace": "noistio",
+                "uid": "955724ef-af68-4f48-a3d7-24d6040b1310",
+                "resourceVersion": "15990",
+                "creationTimestamp": "2022-05-26T22:24:18Z",
+                "labels": {
+                    "app": "sleep",
+                    "app.oam.dev/component": "sleep",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "sleep-v1",
+                    "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289",
+                    "pod-template-hash": "697db95bbd"
+                },
+                "annotations": {
+                    "verrazzano.io/metricsEnabled": "true",
+                    "verrazzano.io/metricsPath": "/metrics",
+                    "verrazzano.io/metricsPort": "8080"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "sleep-workload-697db95bbd",
+                        "uid": "9f75d032-c703-4b4d-9445-524fee3910cb",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-jtn6n",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "sleep",
+                        "image": "ghcr.io/oracle/oraclelinux:7-slim",
+                        "command": [
+                            "/bin/sleep",
+                            "3650d"
+                        ],
+                        "ports": [
+                            {
+                                "name": "http",
+                                "containerPort": 80,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-jtn6n",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "10.0.116.227",
+                "securityContext": {},
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:18Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:29Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:29Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:18Z"
+                    }
+                ],
+                "hostIP": "10.0.116.227",
+                "podIP": "10.244.0.161",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.161"
+                    }
+                ],
+                "startTime": "2022-05-26T22:24:18Z",
+                "containerStatuses": [
+                    {
+                        "name": "sleep",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:24:28Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/oracle/oraclelinux:7-slim",
+                        "imageID": "ghcr.io/oracle/oraclelinux@sha256:ce16f06496bdc911eeba5cd9bc38372da0d8b758638dfb1502ff0aa1704b590e",
+                        "containerID": "cri-o://933287e7af3451b3826eae7e28dd35fe818199be30b6f58dbd8e7af3cba5ef1f",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload-8c58ff47d-xskwp",
+                "generateName": "springboot-backend-workload-8c58ff47d-",
+                "namespace": "noistio",
+                "uid": "b04235ac-5cb5-47ce-9c85-666a72cd4a30",
+                "resourceVersion": "16733",
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-backend",
+                    "app.oam.dev/component": "springboot-backend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-backend-v1",
+                    "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                    "pod-template-hash": "8c58ff47d"
+                },
+                "annotations": {
+                    "verrazzano.io/metricsEnabled": "true",
+                    "verrazzano.io/metricsPath": "/metrics",
+                    "verrazzano.io/metricsPort": "8080"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "springboot-backend-workload-8c58ff47d",
+                        "uid": "6327051e-9760-434e-947b-2872280b2594",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-lm6g2",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "springboot-backend",
+                        "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                        "ports": [
+                            {
+                                "name": "http",
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-lm6g2",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "10.0.94.45",
+                "securityContext": {},
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:18Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:38Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:38Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:18Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.41",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.41"
+                    }
+                ],
+                "startTime": "2022-05-26T22:24:18Z",
+                "containerStatuses": [
+                    {
+                        "name": "springboot-backend",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:25:35Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                        "imageID": "ghcr.io/verrazzano/example-springboot@sha256:2f8da359c01e8f2c4680a266dc6f280c520ee198aa3b5b0e56a1fc2cf4c1c7f9",
+                        "containerID": "cri-o://99465beaa5367415799fe049f3fff0fa4eb59c073a03a4e226d0dd4a057584a0",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload-597d48f8-lchn5",
+                "generateName": "springboot-frontend-workload-597d48f8-",
+                "namespace": "noistio",
+                "uid": "3299aa54-94be-4993-b1e7-1b47130f4d1b",
+                "resourceVersion": "16711",
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-frontend",
+                    "app.oam.dev/component": "springboot-frontend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-frontend-v1",
+                    "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                    "pod-template-hash": "597d48f8"
+                },
+                "annotations": {
+                    "verrazzano.io/metricsEnabled": "true",
+                    "verrazzano.io/metricsPath": "/actuator/prometheus",
+                    "verrazzano.io/metricsPort": "8080"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "apps/v1",
+                        "kind": "ReplicaSet",
+                        "name": "springboot-frontend-workload-597d48f8",
+                        "uid": "9f99bf32-fd2c-48c2-bb09-d060be3da8fe",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "volumes": [
+                    {
+                        "name": "kube-api-access-f4s6z",
+                        "projected": {
+                            "sources": [
+                                {
+                                    "serviceAccountToken": {
+                                        "expirationSeconds": 3607,
+                                        "path": "token"
+                                    }
+                                },
+                                {
+                                    "configMap": {
+                                        "name": "kube-root-ca.crt",
+                                        "items": [
+                                            {
+                                                "key": "ca.crt",
+                                                "path": "ca.crt"
+                                            }
+                                        ]
+                                    }
+                                },
+                                {
+                                    "downwardAPI": {
+                                        "items": [
+                                            {
+                                                "path": "namespace",
+                                                "fieldRef": {
+                                                    "apiVersion": "v1",
+                                                    "fieldPath": "metadata.namespace"
+                                                }
+                                            }
+                                        ]
+                                    }
+                                }
+                            ],
+                            "defaultMode": 420
+                        }
+                    }
+                ],
+                "containers": [
+                    {
+                        "name": "springboot-frontend",
+                        "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                        "ports": [
+                            {
+                                "name": "http",
+                                "containerPort": 8080,
+                                "protocol": "TCP"
+                            }
+                        ],
+                        "resources": {},
+                        "volumeMounts": [
+                            {
+                                "name": "kube-api-access-f4s6z",
+                                "readOnly": true,
+                                "mountPath": "/var/run/secrets/kubernetes.io/serviceaccount"
+                            }
+                        ],
+                        "terminationMessagePath": "/dev/termination-log",
+                        "terminationMessagePolicy": "File",
+                        "imagePullPolicy": "IfNotPresent"
+                    }
+                ],
+                "restartPolicy": "Always",
+                "terminationGracePeriodSeconds": 30,
+                "dnsPolicy": "ClusterFirst",
+                "serviceAccountName": "default",
+                "serviceAccount": "default",
+                "nodeName": "10.0.94.45",
+                "securityContext": {},
+                "schedulerName": "default-scheduler",
+                "tolerations": [
+                    {
+                        "key": "node.kubernetes.io/not-ready",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    },
+                    {
+                        "key": "node.kubernetes.io/unreachable",
+                        "operator": "Exists",
+                        "effect": "NoExecute",
+                        "tolerationSeconds": 300
+                    }
+                ],
+                "priority": 0,
+                "enableServiceLinks": true,
+                "preemptionPolicy": "PreemptLowerPriority"
+            },
+            "status": {
+                "phase": "Running",
+                "conditions": [
+                    {
+                        "type": "Initialized",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:18Z"
+                    },
+                    {
+                        "type": "Ready",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:37Z"
+                    },
+                    {
+                        "type": "ContainersReady",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:25:37Z"
+                    },
+                    {
+                        "type": "PodScheduled",
+                        "status": "True",
+                        "lastProbeTime": null,
+                        "lastTransitionTime": "2022-05-26T22:24:17Z"
+                    }
+                ],
+                "hostIP": "10.0.94.45",
+                "podIP": "10.244.0.40",
+                "podIPs": [
+                    {
+                        "ip": "10.244.0.40"
+                    }
+                ],
+                "startTime": "2022-05-26T22:24:18Z",
+                "containerStatuses": [
+                    {
+                        "name": "springboot-frontend",
+                        "state": {
+                            "running": {
+                                "startedAt": "2022-05-26T22:25:35Z"
+                            }
+                        },
+                        "lastState": {},
+                        "ready": true,
+                        "restartCount": 0,
+                        "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                        "imageID": "ghcr.io/verrazzano/example-springboot@sha256:2f8da359c01e8f2c4680a266dc6f280c520ee198aa3b5b0e56a1fc2cf4c1c7f9",
+                        "containerID": "cri-o://b3ad33fe69e95461f92823779d1a71387175413ca0a5798fdfb2474012866200",
+                        "started": true
+                    }
+                ],
+                "qosClass": "BestEffort"
+            }
+        }
+    ]
+}

@@ -1,0 +1,61 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "networking.istio.io/v1beta1",
+            "kind": "VirtualService",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:23:38Z",
+                "generation": 1,
+                "name": "hello-ingress-rule-0-vs",
+                "namespace": "hello-coherence-7b195c4",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "oam.verrazzano.io/v1alpha1",
+                        "blockOwnerDeletion": true,
+                        "controller": true,
+                        "kind": "IngressTrait",
+                        "name": "hello-ingress",
+                        "uid": "759cfcad-5df6-47b1-8538-5d4764b11200"
+                    }
+                ],
+                "resourceVersion": "14789",
+                "uid": "8b3981cd-1b8f-4fa5-b89f-08d53c9784df"
+            },
+            "spec": {
+                "gateways": [
+                    "hello-coherence-7b195c4-hello-appconf-gw"
+                ],
+                "hosts": [
+                    "hello-appconf.hello-coherence-7b195c4.b90.zb91df2.v8o.io"
+                ],
+                "http": [
+                    {
+                        "match": [
+                            {
+                                "uri": {
+                                    "prefix": "/catalogue"
+                                }
+                            }
+                        ],
+                        "route": [
+                            {
+                                "destination": {
+                                    "host": "hello-coh-http",
+                                    "port": {
+                                        "number": 7001
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

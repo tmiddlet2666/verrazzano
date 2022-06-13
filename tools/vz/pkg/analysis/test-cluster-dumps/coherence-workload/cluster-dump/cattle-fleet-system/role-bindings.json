@@ -1,0 +1,225 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "meta.helm.sh/release-name": "fleet",
+                    "meta.helm.sh/release-namespace": "cattle-fleet-system"
+                },
+                "creationTimestamp": "2022-05-26T22:16:34Z",
+                "labels": {
+                    "app.kubernetes.io/managed-by": "Helm"
+                },
+                "name": "fleet-controller",
+                "namespace": "cattle-fleet-system",
+                "resourceVersion": "10247",
+                "uid": "c8625b52-5b37-4370-8628-8a5b02cb7111"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "fleet-controller"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "fleet-controller"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:17:41Z",
+                "name": "helm-operation-6km99-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-6km99",
+                        "uid": "27b376e8-a2cc-4ed1-b5b0-f0be67ec1c22"
+                    }
+                ],
+                "resourceVersion": "11288",
+                "uid": "23549492-806a-445d-b38f-43649cc35389"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-6km99-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:16:30Z",
+                "name": "helm-operation-85pgs-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-85pgs",
+                        "uid": "80373803-b81e-48c2-8088-fbdadb012ed1"
+                    }
+                ],
+                "resourceVersion": "10178",
+                "uid": "76c6b18a-1a30-4510-b7e8-405ba970513f"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-85pgs-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:15:30Z",
+                "name": "helm-operation-b2m5p-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-b2m5p",
+                        "uid": "3db3d06d-83f4-42b1-a270-792b88a7ea7a"
+                    }
+                ],
+                "resourceVersion": "9688",
+                "uid": "60cbf413-7058-4b58-a012-47d782714891"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-b2m5p-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:16:41Z",
+                "name": "helm-operation-cksgn-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-cksgn",
+                        "uid": "9953bb9d-cafc-4fa5-a2da-4579545628bb"
+                    }
+                ],
+                "resourceVersion": "10383",
+                "uid": "98703983-48e4-4456-baea-28c1a233b6d0"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-cksgn-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:16:51Z",
+                "name": "helm-operation-m5f9q-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-m5f9q",
+                        "uid": "b775c4cc-e0e5-4a37-9d76-89c535c1547d"
+                    }
+                ],
+                "resourceVersion": "10517",
+                "uid": "f5725c98-3835-4a2d-85ea-db0989b9eb5c"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-m5f9q-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "creationTimestamp": "2022-05-26T22:14:29Z",
+                "name": "helm-operation-m95rt-helm-installer-rolebinding",
+                "namespace": "cattle-fleet-system",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "catalog.cattle.io/v1",
+                        "kind": "Operation",
+                        "name": "helm-operation-m95rt",
+                        "uid": "732f2bad-1893-4545-adf7-1ca27b9c86b3"
+                    }
+                ],
+                "resourceVersion": "8444",
+                "uid": "eb8ea419-7db5-48a4-a7b5-9662a3c7059b"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "helm-operation-m95rt-helm-installer-role"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "helm-installer"
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

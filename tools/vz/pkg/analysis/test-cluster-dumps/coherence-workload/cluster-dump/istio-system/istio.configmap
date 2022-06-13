@@ -1,0 +1,29 @@
+Name:         istio
+Namespace:    istio-system
+Labels:       install.operator.istio.io/owning-resource=unknown
+              install.operator.istio.io/owning-resource-namespace=istio-system
+              istio.io/rev=default
+              operator.istio.io/component=Pilot
+              operator.istio.io/managed=Reconcile
+              operator.istio.io/version=1.13.2
+              release=istio
+Annotations:  <none>
+
+Data
+====
+mesh:
+----
+defaultConfig:
+  discoveryAddress: istiod.istio-system.svc:15012
+  proxyMetadata: {}
+  tracing:
+    zipkin:
+      address: zipkin.istio-system:9411
+enablePrometheusMerge: false
+enableTracing: false
+rootNamespace: istio-system
+trustDomain: cluster.local
+meshNetworks:
+----
+networks: {}
+Events:  <none>

@@ -1,0 +1,13 @@
+Name:         cert-manager-webhook
+Namespace:    cert-manager
+Labels:       app=webhook
+              app.kubernetes.io/component=webhook
+              app.kubernetes.io/instance=cert-manager
+              app.kubernetes.io/managed-by=Helm
+              app.kubernetes.io/name=webhook
+Annotations:  meta.helm.sh/release-name: cert-manager
+              meta.helm.sh/release-namespace: cert-manager
+
+Data
+====
+Events:  <none>

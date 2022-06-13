@@ -1,0 +1,9 @@
+Name:         fleet-controller-lock
+Namespace:    cattle-fleet-system
+Labels:       <none>
+Annotations:  control-plane.alpha.kubernetes.io/leader:
+                {"holderIdentity":"fleet-controller-5746685958-tlpj5","leaseDurationSeconds":45,"acquireTime":"2022-05-26T22:17:08Z","renewTime":"2022-05-...
+
+Data
+====
+Events:  <none>

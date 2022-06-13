@@ -1,0 +1,361 @@
+{
+    "kind": "DeploymentList",
+    "apiVersion": "apps/v1",
+    "metadata": {
+        "resourceVersion": "22583"
+    },
+    "items": [
+        {
+            "metadata": {
+                "name": "sleep-workload",
+                "namespace": "noistio",
+                "uid": "ebe4482e-b033-479f-8c59-37bf13d64706",
+                "resourceVersion": "16005",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:18Z",
+                "labels": {
+                    "app": "sleep",
+                    "app.oam.dev/component": "sleep",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "sleep-v1"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "sleep-workload",
+                        "uid": "ead39c60-f5e5-4775-a163-c548f8535289",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "sleep",
+                            "app.oam.dev/component": "sleep",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "sleep-v1",
+                            "containerizedworkload.oam.crossplane.io": "ead39c60-f5e5-4775-a163-c548f8535289"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/metrics",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "sleep",
+                                "image": "ghcr.io/oracle/oraclelinux:7-slim",
+                                "command": [
+                                    "/bin/sleep",
+                                    "3650d"
+                                ],
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 80,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:24:29Z",
+                        "lastTransitionTime": "2022-05-26T22:24:29Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:24:29Z",
+                        "lastTransitionTime": "2022-05-26T22:24:18Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"sleep-workload-697db95bbd\" has successfully progressed."
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-backend-workload",
+                "namespace": "noistio",
+                "uid": "fd70c7c3-98de-4e1d-8d20-9e0d04ef9bc3",
+                "resourceVersion": "16746",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-backend",
+                    "app.oam.dev/component": "springboot-backend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-backend-v1"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-backend-workload",
+                        "uid": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-backend",
+                            "app.oam.dev/component": "springboot-backend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-backend-v1",
+                            "containerizedworkload.oam.crossplane.io": "336e0c7a-9e2e-483e-8fa7-61d61244f3ca"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/metrics",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-backend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:25:36Z",
+                        "lastTransitionTime": "2022-05-26T22:25:36Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:25:38Z",
+                        "lastTransitionTime": "2022-05-26T22:24:17Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"springboot-backend-workload-8c58ff47d\" has successfully progressed."
+                    }
+                ]
+            }
+        },
+        {
+            "metadata": {
+                "name": "springboot-frontend-workload",
+                "namespace": "noistio",
+                "uid": "11667305-b1f2-4d3e-b3e6-3a35d2404344",
+                "resourceVersion": "16727",
+                "generation": 2,
+                "creationTimestamp": "2022-05-26T22:24:17Z",
+                "labels": {
+                    "app": "springboot-frontend",
+                    "app.oam.dev/component": "springboot-frontend",
+                    "app.oam.dev/name": "authpolicy-appconf",
+                    "app.oam.dev/resourceType": "WORKLOAD",
+                    "app.oam.dev/revision": "springboot-frontend-v1"
+                },
+                "annotations": {
+                    "deployment.kubernetes.io/revision": "2",
+                    "description": "Authorization Policy Test App",
+                    "version": "v1.0.0"
+                },
+                "ownerReferences": [
+                    {
+                        "apiVersion": "core.oam.dev/v1alpha2",
+                        "kind": "ContainerizedWorkload",
+                        "name": "springboot-frontend-workload",
+                        "uid": "7c0ec670-da80-412b-bd40-8ba53497a5f7",
+                        "controller": true,
+                        "blockOwnerDeletion": true
+                    }
+                ]
+            },
+            "spec": {
+                "replicas": 1,
+                "selector": {
+                    "matchLabels": {
+                        "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7"
+                    }
+                },
+                "template": {
+                    "metadata": {
+                        "creationTimestamp": null,
+                        "labels": {
+                            "app": "springboot-frontend",
+                            "app.oam.dev/component": "springboot-frontend",
+                            "app.oam.dev/name": "authpolicy-appconf",
+                            "app.oam.dev/resourceType": "WORKLOAD",
+                            "app.oam.dev/revision": "springboot-frontend-v1",
+                            "containerizedworkload.oam.crossplane.io": "7c0ec670-da80-412b-bd40-8ba53497a5f7"
+                        },
+                        "annotations": {
+                            "verrazzano.io/metricsEnabled": "true",
+                            "verrazzano.io/metricsPath": "/actuator/prometheus",
+                            "verrazzano.io/metricsPort": "8080"
+                        }
+                    },
+                    "spec": {
+                        "containers": [
+                            {
+                                "name": "springboot-frontend",
+                                "image": "ghcr.io/verrazzano/example-springboot:1.0.0-1-20220513221156-7da0d32",
+                                "ports": [
+                                    {
+                                        "name": "http",
+                                        "containerPort": 8080,
+                                        "protocol": "TCP"
+                                    }
+                                ],
+                                "resources": {},
+                                "terminationMessagePath": "/dev/termination-log",
+                                "terminationMessagePolicy": "File",
+                                "imagePullPolicy": "IfNotPresent"
+                            }
+                        ],
+                        "restartPolicy": "Always",
+                        "terminationGracePeriodSeconds": 30,
+                        "dnsPolicy": "ClusterFirst",
+                        "securityContext": {},
+                        "schedulerName": "default-scheduler"
+                    }
+                },
+                "strategy": {
+                    "type": "RollingUpdate",
+                    "rollingUpdate": {
+                        "maxUnavailable": "25%",
+                        "maxSurge": "25%"
+                    }
+                },
+                "revisionHistoryLimit": 10,
+                "progressDeadlineSeconds": 600
+            },
+            "status": {
+                "observedGeneration": 2,
+                "replicas": 1,
+                "updatedReplicas": 1,
+                "readyReplicas": 1,
+                "availableReplicas": 1,
+                "conditions": [
+                    {
+                        "type": "Available",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:25:37Z",
+                        "lastTransitionTime": "2022-05-26T22:25:37Z",
+                        "reason": "MinimumReplicasAvailable",
+                        "message": "Deployment has minimum availability."
+                    },
+                    {
+                        "type": "Progressing",
+                        "status": "True",
+                        "lastUpdateTime": "2022-05-26T22:25:37Z",
+                        "lastTransitionTime": "2022-05-26T22:24:17Z",
+                        "reason": "NewReplicaSetAvailable",
+                        "message": "ReplicaSet \"springboot-frontend-workload-597d48f8\" has successfully progressed."
+                    }
+                ]
+            }
+        }
+    ]
+}

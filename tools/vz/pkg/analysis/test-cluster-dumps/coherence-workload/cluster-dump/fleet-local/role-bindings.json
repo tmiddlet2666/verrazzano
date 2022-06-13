@@ -1,0 +1,164 @@
+{
+    "apiVersion": "v1",
+    "items": [
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/5SRO2/bMBDHv0pxs6jWkp8EurRDh26GOxUdjtRJZs2HQJ4UJIa+eyDJDjzEgbNJ4N39H78zOGKskBHkGdD7wMgm+DT+BvWfNCfiPJqQa2S2lJvw1VQgATs+ijaGXvSF0JGViMGSMr4yvoHs7nJ48hRF059AgkOPDTnyfDPQl9mX38ZX33/aLjHFfbB0INdaZPrx4HmPjkCCDRqtqC0Ri/l7en5oPbWo327AkIGONFVzMI4So2tB+s7aDCwqsh8WdsR0BAm0KtZbrfSiXOp6sVmVWJLWqGpNJdJuvftWLFc11aPaJYGOV+d3sogixr5ah8YrmLeuxm9Gx4MjnT3VE+bW/Iqha0FCVKjzEWWI5mWKl5+2KTcBMjgZP4Ie+4d3DOkZz6XSIYPUzfFB/v2sxp80UblodMKFzaZ8ZuYlDP+G1wAAAP//Kl9Z46UCAAA",
+                    "objectset.rio.cattle.io/id": "auth-prov-v2-crtb-rolebinding",
+                    "objectset.rio.cattle.io/owner-gvk": "management.cattle.io/v3, Kind=ClusterRoleTemplateBinding",
+                    "objectset.rio.cattle.io/owner-name": "local-fleet-local-owner",
+                    "objectset.rio.cattle.io/owner-namespace": "local"
+                },
+                "creationTimestamp": "2022-05-26T22:14:17Z",
+                "labels": {
+                    "objectset.rio.cattle.io/hash": "e5268cbc134cf1753a3eccabfce3ae9690245fef"
+                },
+                "name": "crt-local-local-fleet-local-owner-2rrvd6ognb",
+                "namespace": "fleet-local",
+                "resourceVersion": "7784",
+                "uid": "13919bb6-60ff-4a9b-b3e5-37214576ad88"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "crt-local-cluster-owner"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "u-mo773yttt4"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/5SRS4/TMBDHvwqacxyym3aztcQFDhy4VeWEOEzsSWLiR7AnAVr1uyOnRVTioe7Rkv/zf/xO4IhRIyPIE6D3gZFN8Ck/Q/uFFCfiMppQKmS2VJrw2miQgDMPYophEcujUJFbEYOl1nhtfA/FP8Xhm6co+mUECQ499uTI882HpS5efTBev3ln58QU98HSgdxkkentnec9OgIJs2g3X8cheWuOArUz/i5lmlBluQ0KLZwLUJHWVQ7GUWJ0E0g/W1uAxZbsf7caMA0gQe0emt1ON7qu1ZPebp6brX6qqNJUI1bVY7dt6k2nHrLbNbyKLNYE4s8aInz/YXQ/cL3ARfArc2eJrrp8KzPZU7fCncz7GOYJJMQWVZkBhmiOa7NyfE6lCVDAaHzGm1eHv2RRFyhiXSs7pPnSHOSnl3p8TBR/e9y2hPPn888AAAD//6Odu1ybAgAA",
+                    "objectset.rio.cattle.io/id": "auth-prov-v2-crtb-rolebinding",
+                    "objectset.rio.cattle.io/owner-gvk": "management.cattle.io/v3, Kind=ClusterRoleTemplateBinding",
+                    "objectset.rio.cattle.io/owner-name": "u-b4qkhsnliz-admin",
+                    "objectset.rio.cattle.io/owner-namespace": "local"
+                },
+                "creationTimestamp": "2022-05-26T22:14:33Z",
+                "labels": {
+                    "objectset.rio.cattle.io/hash": "c91799d7d33c6d54875d60e0de3aa002f5734fc1"
+                },
+                "name": "crt-local-u-b4qkhsnliz-admin-oxyidght3v",
+                "namespace": "fleet-local",
+                "resourceVersion": "8825",
+                "uid": "dde43b6e-7a07-4122-89b5-9e74da5630d7"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "crt-local-cluster-owner"
+            },
+            "subjects": [
+                {
+                    "apiGroup": "rbac.authorization.k8s.io",
+                    "kind": "User",
+                    "name": "u-b4qkhsnliz"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/6SST8vTQBDGv4rMORubtPkLHkTBgwehihd5D5PtpF2z2Qm7kwqWfHdJ+voqLzQUekx2/jzPb54L9CR4QEGoL4DOsaAYdmH+5OYnaQkksTccaxSxFBt+aw5Qg7ZjEPLq6HkclHBHDqKbLfzLzbXnDmpoLZH893ZO0A4nTKI3n407vPtwHbynowniFzXf7prusCeowfQDe7kqUpY12rs6w4Ca/qp77psi0J6uEkxPQbAfoHajtRFYbMgumF776dHhkWZG4kdaWX7CcIIaKKNqV6RJnjRNU5S7DDd5m2V52WBbVAVV22ybZHkyy7npUZV5m+ki1arabjK1S1OtGp2R2uzStE2L8lClqRJWnu2s6ZblCBYke2rJk9MUoP5xARzMd/LBsFu5H0TQWNbdl3nAR7IkS32LNlAEmp14tpb8y6/OuJnSysHXTjouMbzHNkxPUwSz8T21S84H82mOLdTgG9QxjnJib34vu+OuDLFheNG3/0fsAfQL9ymCMF7TsHB93vCV/Nloeq81j04e3rVy3ulp+hMAAP//GA9fDPMDAAA",
+                    "objectset.rio.cattle.io/id": "cluster-group-token",
+                    "objectset.rio.cattle.io/owner-gvk": "fleet.cattle.io/v1alpha1, Kind=ClusterRegistrationToken",
+                    "objectset.rio.cattle.io/owner-name": "import-token-local",
+                    "objectset.rio.cattle.io/owner-namespace": "fleet-local"
+                },
+                "creationTimestamp": "2022-05-26T22:17:12Z",
+                "labels": {
+                    "fleet.cattle.io/managed": "true",
+                    "objectset.rio.cattle.io/hash": "e5e9472161bbb7845a06f5568baf797e93531561"
+                },
+                "name": "import-token-local-86f5c72c-9305-422c-bc5e-0422f278d922-to-role",
+                "namespace": "fleet-local",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "fleet.cattle.io/v1alpha1",
+                        "blockOwnerDeletion": false,
+                        "controller": false,
+                        "kind": "ClusterRegistrationToken",
+                        "name": "import-token-local",
+                        "uid": "86f5c72c-9305-422c-bc5e-0422f278d922"
+                    }
+                ],
+                "resourceVersion": "10757",
+                "uid": "d8a650ab-988a-4920-aa73-40bfff222161"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "import-token-local-86f5c72c-9305-422c-bc5e-0422f278d922-role"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "import-token-local-86f5c72c-9305-422c-bc5e-0422f278d922",
+                    "namespace": "fleet-local"
+                }
+            ]
+        },
+        {
+            "apiVersion": "rbac.authorization.k8s.io/v1",
+            "kind": "RoleBinding",
+            "metadata": {
+                "annotations": {
+                    "objectset.rio.cattle.io/applied": "H4sIAAAAAAAA/5RTy47TMBT9FXTXSZg2aepEYoFAYsECqSA2iMWNc9J46tjBj45E1X9H8Tw0IIKGTaTYOueex/WFJgTuOTC1F2JjbOCgrPHLr+1uIYNHKJyyheQQNAplX6ueWpI6+gCXOxyVDy6hKFvF2DsDlx/PJ2pp0EB4dnfesJ5H3mSvPirTv3l3z3z4H2LDE6glhx8RPuR343jbvAjkZ5Z41JRrK1nTNSPpkAZ/URN84Gmm1kStM9LcQad0/nQxseEjlmiCi/jH8JH9SC3tdmJXiqbvB4iyLrFtbupKbLqhKgfRVbXgqiplIxc5K/bWDGSUDB4wwMFIeGq/XYhn9RXOL3Gud0AZddrK06eF4D00UvztwNojI2lNcFZruKejkzKL57+XtqI7pg3a7zdAWcm8rjvOq2Er847R5du+qgZRl/UOgq7frxk5q3HAkFZ0Vh+cjfPC2rEsOIbROvUzTSxOwhfK0pOqg9VYk3HNyMf7ilI8D5DPcGcl8VZKG01YAecv0v57QY8P5llRD98Nl329729YNM1i+FcAAAD//x29EB2VAwAA",
+                    "objectset.rio.cattle.io/id": "cluster-registration",
+                    "objectset.rio.cattle.io/owner-gvk": "fleet.cattle.io/v1alpha1, Kind=ClusterRegistration",
+                    "objectset.rio.cattle.io/owner-name": "request-whhj9",
+                    "objectset.rio.cattle.io/owner-namespace": "fleet-local"
+                },
+                "creationTimestamp": "2022-05-26T22:17:21Z",
+                "labels": {
+                    "fleet.cattle.io/managed": "true",
+                    "objectset.rio.cattle.io/hash": "5585389ddfe8363e2906481bf43f8b468a443c9c"
+                },
+                "name": "request-whhj9",
+                "namespace": "fleet-local",
+                "ownerReferences": [
+                    {
+                        "apiVersion": "fleet.cattle.io/v1alpha1",
+                        "blockOwnerDeletion": false,
+                        "controller": false,
+                        "kind": "ClusterRegistration",
+                        "name": "request-whhj9",
+                        "uid": "771ee34c-66ba-4f2c-baeb-2d44f86365e8"
+                    }
+                ],
+                "resourceVersion": "10946",
+                "uid": "3e7dd316-357d-44a0-a700-1b5ee4c05d64"
+            },
+            "roleRef": {
+                "apiGroup": "rbac.authorization.k8s.io",
+                "kind": "Role",
+                "name": "request-whhj9"
+            },
+            "subjects": [
+                {
+                    "kind": "ServiceAccount",
+                    "name": "request-whhj9-771ee34c-66ba-4f2c-baeb-2d44f86365e8",
+                    "namespace": "cluster-fleet-local-local-1a3d67d0a899"
+                }
+            ]
+        }
+    ],
+    "kind": "List",
+    "metadata": {
+        "resourceVersion": "",
+        "selfLink": ""
+    }
+}

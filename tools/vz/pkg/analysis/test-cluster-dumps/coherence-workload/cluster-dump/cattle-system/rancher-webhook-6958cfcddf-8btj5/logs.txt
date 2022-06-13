@@ -1,0 +1,21 @@
+==== START logs for container rancher-webhook of pod cattle-system/rancher-webhook-6958cfcddf-8btj5 ====
+time="2022-05-26T22:17:39Z" level=info msg="Rancher-webhook version dev (HEAD) is starting"
+time="2022-05-26T22:17:39Z" level=warning msg="Failed to init Kubernetes secret: secrets \"cattle-webhook-tls\" not found"
+time="2022-05-26T22:17:39Z" level=info msg="generated self-signed CA certificate CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:17:39.311558967 +0000 UTC notAfter=2032-05-23 22:17:39.311558967 +0000 UTC"
+time="2022-05-26T22:17:39Z" level=info msg="Listening on :9443"
+time="2022-05-26T22:17:39Z" level=info msg="certificate CN=dynamic,O=dynamic signed by CN=dynamiclistener-ca,O=dynamiclistener-org: notBefore=2022-05-26 22:17:39 +0000 UTC notAfter=2032-05-23 22:17:39 +0000 UTC"
+time="2022-05-26T22:17:39Z" level=info msg="Creating new TLS secret for cattle-webhook-tls (count: 1): map[listener.cattle.io/cn-rancher-webhook.cattle-system.svc:rancher-webhook.cattle-system.svc listener.cattle.io/fingerprint:SHA1=990693CEA1A9B6D87C00E46AD5748A37159CCEBE]"
+E0526 22:17:39.342403       1 memcache.go:196] couldn't get resource list for custom.metrics.k8s.io/v1beta1: Got empty response for: custom.metrics.k8s.io/v1beta1
+time="2022-05-26T22:17:39Z" level=info msg="Active TLS secret cattle-webhook-tls (ver=11233) (count 1): map[listener.cattle.io/cn-rancher-webhook.cattle-system.svc:rancher-webhook.cattle-system.svc listener.cattle.io/fingerprint:SHA1=990693CEA1A9B6D87C00E46AD5748A37159CCEBE]"
+time="2022-05-26T22:17:40Z" level=info msg="Starting rbac.authorization.k8s.io/v1, Kind=Role controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting management.cattle.io/v3, Kind=GlobalRole controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting apiextensions.k8s.io/v1, Kind=CustomResourceDefinition controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting /v1, Kind=Secret controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting rbac.authorization.k8s.io/v1, Kind=RoleBinding controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting rbac.authorization.k8s.io/v1, Kind=ClusterRole controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting rbac.authorization.k8s.io/v1, Kind=ClusterRoleBinding controller"
+time="2022-05-26T22:17:40Z" level=info msg="Sleeping for 15 seconds then applying webhook config"
+time="2022-05-26T22:17:40Z" level=info msg="Starting apiregistration.k8s.io/v1, Kind=APIService controller"
+time="2022-05-26T22:17:40Z" level=info msg="Starting management.cattle.io/v3, Kind=RoleTemplate controller"
+time="2022-05-26T22:17:40Z" level=info msg="Updating TLS secret for cattle-webhook-tls (count: 1): map[listener.cattle.io/cn-rancher-webhook.cattle-system.svc:rancher-webhook.cattle-system.svc listener.cattle.io/fingerprint:SHA1=990693CEA1A9B6D87C00E46AD5748A37159CCEBE]"
+==== END logs for container rancher-webhook of pod cattle-system/rancher-webhook-6958cfcddf-8btj5 ====
