@@ -1,9 +1,0 @@
-Name:         vmi-system-alertmanager-config-versions
-Namespace:    verrazzano-system
-Labels:       k8s-app=verrazzano.io
-              vmo.v1.verrazzano.io=system
-Annotations:  <none>
-
-Data
-====
-Events:  <none>

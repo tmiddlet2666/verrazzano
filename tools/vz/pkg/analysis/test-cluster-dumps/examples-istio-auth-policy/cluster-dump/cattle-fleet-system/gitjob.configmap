@@ -1,9 +1,0 @@
-Name:         gitjob
-Namespace:    cattle-fleet-system
-Labels:       <none>
-Annotations:  control-plane.alpha.kubernetes.io/leader:
-                {"holderIdentity":"gitjob-cc9948fd7-bwrbg","leaseDurationSeconds":45,"acquireTime":"2022-05-26T22:17:08Z","renewTime":"2022-05-26T23:47:30...
-
-Data
-====
-Events:  <none>

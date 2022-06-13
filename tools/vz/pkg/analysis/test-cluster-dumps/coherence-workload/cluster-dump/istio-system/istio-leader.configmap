@@ -1,9 +1,0 @@
-Name:         istio-leader
-Namespace:    istio-system
-Labels:       <none>
-Annotations:  control-plane.alpha.kubernetes.io/leader:
-                {"holderIdentity":"istiod-fbd949df5-xr9hj","holderKey":"default","leaseDurationSeconds":30,"acquireTime":"2022-05-26T22:09:00Z","renewTime...
-
-Data
-====
-Events:  <none>

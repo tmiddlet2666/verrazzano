@@ -52,59 +52,15 @@ const VerrazzanoOperatorURL = "https://github.com/verrazzano/verrazzano/releases
 
 // Analysis tool flags
 const (
-	ActionsFlagName  = "actions"
-	ActionsFlagValue = "actions"
-	ActionsFlagUsage = "Include actions in the report, default is true (default true)"
+	DirectoryFlagName  = "directory"
+	DirectoryFlagValue = ""
+	DirectoryFlagUsage = "Directory holding the captured data"
 
-	AnalysisFlagName  = "analysis"
-	AnalysisFlagValue = "analysis"
-	AnalysisFlagUsage = "Type of analysis: cluster (default \"cluster\")"
+	ReportFileFlagName  = "report-file"
+	ReportFileFlagValue = ""
+	ReportFileFlagUsage = "Name of report output file. (default stdout)"
 
-	HelpFlagName  = "help"
-	HelpFlagValue = "help"
-	HelpFlagUsage = "Display usage help"
-
-	InfoFlagName  = "info"
-	InfoFlagValue = "info"
-	InfoFlagUsage = "Include informational messages, default is true (default true)"
-
-	MinConfidenceFlagName  = "minConfidence"
-	MinConfidenceFlagValue = "minConfidence"
-	MinConfidenceFlagUsage = "Minimum confidence threshold to report for issues, 0-10, default is 0"
-
-	MinImpactFlagName  = "minImpact"
-	MinImpactFlagValue = "minImpact"
-	MinImpactFlagUsage = "Minimum impact threshold to report for issues, 0-10, default is 0"
-
-	ReportFileFlagName  = "reportFile"
-	ReportFileFlagValue = "reportFile"
-	ReportFileFlagUsage = "Name of report output file, default is stdout"
-
-	SupportFlagName  = "support"
-	SupportFlagValue = "support"
-	SupportFlagUsage = "Include support data in the report, default is true (default true)"
-
-	VersionFlagName  = "version"
-	VersionFlagValue = "version"
-	VersionFlagUsage = "Display version"
-
-	ZapDevelFlagName  = "zap-devel"
-	ZapDevelFlagValue = "zap-devel"
-	ZapDevelFlagUsage = "Development Mode defaults(encoder=consoleEncoder,logLevel=Debug,stackTraceLevel=Warn). Production Mode defaults(encoder=jsonEncoder,logLevel=Info,stackTraceLevel=Error)"
-
-	ZapEncoderFlagName  = "zap-encoder"
-	ZapEncoderFlagValue = "zap-encoder"
-	ZapEncoderFlagUsage = "Zap log encoding (one of 'json' or 'console')"
-
-	ZapLogLevelFlagName  = "zap-log-level"
-	ZapLogLevelFlagValue = "zap-log-level"
-	ZapLogLevelFlagUsage = "Zap Level to configure the verbosity of logging. Can be one of 'debug', 'info', 'error', or any integer value > 0 which corresponds to custom debug levels of increasing verbosity"
-
-	ZapStackTraceLevelFlagName  = "zap-stacktrace-level"
-	ZapStackTraceLevelFlagValue = "zap-stacktrace-level"
-	ZapStackTraceLevelFlagUsage = "Zap Level at and above which stacktraces are captured (one of 'info', 'error', 'panic')."
-
-	ZapTimeEncodingFlagName  = "zap-time-encoding"
-	ZapTimeEncodingFlagValue = "zap-time-encoding"
-	ZapTimeEncodingFlagUsage = "Zap time encoding (one of 'epoch', 'millis', 'nano', 'iso8601', 'rfc3339' or 'rfc3339nano'). Defaults to 'epoch'."
+	ReportFormatFlagName  = "report-format"
+	ReportFormatFlagValue = "simple"
+	ReportFormatFlagUsage = "The format of the report output. Valid output formats are \"simple\""
 )

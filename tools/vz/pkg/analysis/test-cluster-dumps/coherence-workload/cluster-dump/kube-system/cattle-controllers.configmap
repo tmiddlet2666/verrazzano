@@ -1,9 +1,0 @@
-Name:         cattle-controllers
-Namespace:    kube-system
-Labels:       <none>
-Annotations:  control-plane.alpha.kubernetes.io/leader:
-                {"holderIdentity":"rancher-f47ff7f6d-x978c","leaseDurationSeconds":45,"acquireTime":"2022-05-26T22:14:06Z","renewTime":"2022-05-26T23:04:0...
-
-Data
-====
-Events:  <none>

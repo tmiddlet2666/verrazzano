@@ -1,9 +1,0 @@
-Name:         fleet-agent-lock
-Namespace:    cattle-fleet-local-system
-Labels:       <none>
-Annotations:  control-plane.alpha.kubernetes.io/leader:
-                {"holderIdentity":"fleet-agent-57497ff7dc-mf4b7","leaseDurationSeconds":45,"acquireTime":"2022-05-26T22:17:32Z","renewTime":"2022-05-26T23...
-
-Data
-====
-Events:  <none>
