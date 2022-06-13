@@ -66,7 +66,7 @@ func initFlags(reportFile string) {
 	// Doing this to allow unit testing main logic
 	//flagArgs = flag.Args()
 	flagArgs = append(flagArgs, reportFile)
-	fmt.Println("flagArgs are: %s", flagArgs)
+	fmt.Println("flagArgs are: ", flagArgs)
 }
 
 // handleMain is where the main logic is at, separated here to allow for more test coverage
@@ -137,7 +137,7 @@ func Analyze(logger *zap.SugaredLogger, analyzerType string, flagArgs string) (e
 	analyzerType = "cluster"
 	analyzerFunc, ok := analyzerTypeFunctions[analyzerType]
 	if !ok {
-		printUsage()
+		//printUsage()
 		return fmt.Errorf("Unknown analyzer type supplied: %s", analyzerType)
 	}
 	err = analyzerFunc(logger, flagArgs)
