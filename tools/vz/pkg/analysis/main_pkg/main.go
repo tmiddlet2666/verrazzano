@@ -45,15 +45,15 @@ func MainExecAnalysis(reportFile string) {
 // initFlags is handled here. Separated out here from the main logic for now to allow for more main test coverage
 // TODO: Look at if we can reliably mess with flag variants in Go unit tests
 func initFlags(reportFile string) {
-	//flag.StringVar(&analyzerType, "analysis", "cluster", "Type of analysis: cluster")
+	flag.StringVar(&analyzerType, "analysis", "cluster", "Type of analysis: cluster")
 	//flag.StringVar(&reportFile, "reportFile", "", "Name of report output file, default is stdout")
-	//flag.BoolVar(&includeInfo, "info", true, "Include informational messages, default is true")
-	//flag.BoolVar(&includeSupport, "support", true, "Include support data in the report, default is true")
-	//flag.BoolVar(&includeActions, "actions", true, "Include actions in the report, default is true")
-	//flag.IntVar(&minImpact, "minImpact", 0, "Minimum impact threshold to report for issues, 0-10, default is 0")
-	//flag.IntVar(&minConfidence, "minConfidence", 0, "Minimum confidence threshold to report for issues, 0-10, default is 0")
-	//flag.BoolVar(&help, "help", false, "Display usage help")
-	//flag.BoolVar(&version, "version", false, "Display version")
+	flag.BoolVar(&includeInfo, "info", true, "Include informational messages, default is true")
+	flag.BoolVar(&includeSupport, "support", true, "Include support data in the report, default is true")
+	flag.BoolVar(&includeActions, "actions", true, "Include actions in the report, default is true")
+	flag.IntVar(&minImpact, "minImpact", 0, "Minimum impact threshold to report for issues, 0-10, default is 0")
+	flag.IntVar(&minConfidence, "minConfidence", 0, "Minimum confidence threshold to report for issues, 0-10, default is 0")
+	flag.BoolVar(&help, "help", false, "Display usage help")
+	flag.BoolVar(&version, "version", false, "Display version")
 	// Add the zap logger flag set to the CLI.
 	opts := kzap.Options{}
 	opts.BindFlags(flag.CommandLine)
@@ -134,7 +134,6 @@ func handleMain() (exitCode int) {
 // Analyze is exported for unit testing
 func Analyze(logger *zap.SugaredLogger, analyzerType string, flagArgs string) (err error) {
 	// Call the analyzer for the type specified
-	analyzerType = "cluster"
 	analyzerFunc, ok := analyzerTypeFunctions[analyzerType]
 	if !ok {
 		//printUsage()
