@@ -236,7 +236,7 @@
             },
             {
               "image": "prometheus",
-              "tag": "v2.34.0",
+              "tag": "v2.34.0-1",
               "helmFullImageKey": "monitoringOperator.prometheusImage"
             },
             {
@@ -293,7 +293,7 @@
           "images": [
             {
               "image": "oam-kubernetes-runtime",
-              "tag": "v0.3.0-20220225035616-3a38226",
+              "tag": "v0.3.0-20220602215259-046d772",
               "helmFullImageKey": "image.repository",
               "helmTagKey": "image.tag"
             }
@@ -409,7 +409,7 @@
           "images": [
             {
               "image": "keycloak",
-              "tag": "15.0.2-20220510113519-620b97bc83",
+              "tag": "15.0.2-20220613060015-16e593e4ac",
               "helmFullImageKey": "image.repository",
               "helmTagKey": "image.tag"
             }
@@ -478,7 +478,7 @@
           "images": [
             {
               "image": "prometheus",
-              "tag": "v2.34.0",
+              "tag": "v2.34.0-1",
               "helmFullImageKey": "prometheus.prometheusSpec.image.repository",
               "helmTagKey": "prometheus.prometheusSpec.image.tag"
             }
