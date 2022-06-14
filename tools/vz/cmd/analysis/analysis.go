@@ -29,11 +29,10 @@ func NewCmdAnalysis(vzHelper helpers.VZHelper) *cobra.Command {
 }
 
 func runCmdAnalysis(cmd *cobra.Command, args []string, helper helpers.VZHelper) error {
-	fmt.Println("ran command analysis")
-	reportFile, err := cmd.PersistentFlags().GetString(constants.ReportFileFlagName)
+	reportFile, err := cmd.PersistentFlags().GetString(constants.DirectoryFlagName)
 	if err != nil {
-		fmt.Println("error fetching flag: %s", constants.ReportFileFlagName)
+		fmt.Println("error fetching flag: %s", constants.DirectoryFlagName)
 	}
-	analysis.MainExecAnalysis(reportFile)
+	analysis.AnalysisMain(reportFile)
 	return nil
 }

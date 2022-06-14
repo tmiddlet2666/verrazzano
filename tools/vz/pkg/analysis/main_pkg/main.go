@@ -37,7 +37,7 @@ var flagArgs []string
 var logger *zap.SugaredLogger
 
 // The analyze tool will analyze information which has already been captured from an environment
-func MainExecAnalysis(reportFile string) {
+func AnalysisMain(reportFile string) {
 	initFlags(reportFile)
 	os.Exit(handleMain())
 }
@@ -66,7 +66,6 @@ func initFlags(reportFile string) {
 	// Doing this to allow unit testing main logic
 	//flagArgs = flag.Args()
 	flagArgs = append(flagArgs, reportFile)
-	fmt.Println("flagArgs are: ", flagArgs)
 }
 
 // handleMain is where the main logic is at, separated here to allow for more test coverage
