@@ -291,9 +291,9 @@ data:
         # the other is just a messsage
         @type multi_format
         <pattern>
-          format json
-          time_key @timestamp
-          time_format %Y-%m-%dT%H:%M:%S+%N
+          format /^(?<logtime>\d{4}\/\d{2}\/\d{2} \d{2}\:\d{2}\:\d{2}) \[(?<level>.*?)\] (?<message>[\s\S]*?)$/
+          time_key logtime
+          time_format %Y/%m/%d %H:%M:%S
         </pattern>
         <pattern>
           format none
@@ -866,6 +866,7 @@ data:
       @id out_systemd
       @log_level info
       log_es_400_reason true
+      suppress_type_name true
 
       data_stream_name verrazzano-system
       data_stream_template_name verrazzano-data-stream
@@ -906,6 +907,7 @@ data:
       @id out_all
       @log_level info
       log_es_400_reason true
+      suppress_type_name true
 
       data_stream_name verrazzano-application-${$.kubernetes.namespace_name}
       data_stream_template_name verrazzano-data-stream
