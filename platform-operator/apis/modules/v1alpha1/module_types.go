@@ -1,4 +1,4 @@
-// Copyright (c) 2020, 2022, Oracle and/or its affiliates.
+// Copyright (c) 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 
 package v1alpha1
@@ -9,7 +9,6 @@ import (
 
 type ModuleSpec struct {
 	Installer    []ModuleInstaller  `json:"installer"`
-	Template     []ModuleTemplate   `json:"template"`
 	Dependencies []ModuleDependency `json:"dependencies"`
 }
 
@@ -18,24 +17,17 @@ type ModuleInstaller struct {
 }
 
 type HelmChart struct {
-	Name       string `json:"name"`
-	Repository string `json:"repository,omitempty"`
-	Version    string `json:"version,omitempty"`
+	Name       string         `json:"name"`
+	Namespace  string         `json:"namespace,omitempty"`
+	Repository HelmRepository `json:"repository,omitempty"`
+	Version    string         `json:"version,omitempty"`
+	ValuesFrom []ValuesFrom   `json:"valuesFrom,omitempty"`
 }
 
 type HelmRepository struct {
-	URI       string `json:"uri"`
+	Path      string `json:"path,omitempty"`
+	URI       string `json:"uri,omitempty"`
 	SecretRef string `json:"secretRef,omitempty"`
-}
-
-type ModuleTemplate struct {
-	HelmTemplate *HelmTemplate `json:"helmTemplate,omitempty"`
-}
-
-type HelmTemplate struct {
-	Name       string       `json:"name,omitempty"`
-	Namespace  string       `json:"namespace,omitempty"`
-	ValuesFrom []ValuesFrom `json:"valuesFrom,omitempty"`
 }
 
 type ValuesFrom struct {

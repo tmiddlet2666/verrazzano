@@ -5,7 +5,7 @@ package main
 
 import (
 	"flag"
-	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module"
 	"os"
 	"sync"
 
@@ -63,7 +63,7 @@ func init() {
 	// Add the Prometheus Operator resources to the scheme
 	_ = promoperapi.AddToScheme(scheme)
 
-	utilruntime.Must(modulesv1alpha1.AddToScheme(scheme))
+	_ = modulesv1alpha1.AddToScheme(scheme)
 	// +kubebuilder:scaffold:scheme
 }
 
@@ -221,6 +221,14 @@ func main() {
 
 	// Setup configMaps reconciler
 	if err = (&configmapcontroller.VerrazzanoConfigMapsReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		log.Error(err, "Failed to setup controller", vzlog.FieldController, "VerrazzanoConfigMaps")
+		os.Exit(1)
+	}
+
+	if err = (&module.Reconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
