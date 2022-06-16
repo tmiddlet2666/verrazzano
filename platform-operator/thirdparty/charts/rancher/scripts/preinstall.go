@@ -40,21 +40,23 @@ import (
 
 func main() {
 	log := zap.S()
+	log.Info("Entered main")
 	config, err := ctrl.GetConfig()
 	if err != nil {
-		fmt.Printf("Failed to get kubeconfig: %v", err)
+		log.Errorf("Failed to get kubeconfig: %v", err)
 		os.Exit(1)
 	}
 
 	c, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		fmt.Printf("Failed to create clientset: %s", err.Error())
+		log.Errorf("Failed to create clientset: %s", err.Error())
 		os.Exit(1)
 	}
 	if err := createCattleSystemNamespace(log, c); err != nil {
-		fmt.Printf("Failed creating cattle-system namespace: %s", err.Error())
+		log.Errorf("Failed creating cattle-system namespace: %s", err.Error())
 		os.Exit(1)
 	}
+	os.Exit(0)
 	//if err := copyDefaultCACertificate(log, c, vz); err != nil {
 	//	log.Errorf("Failed copying default CA certificate: %s", err.Error())
 	//	os.Exit(1)
