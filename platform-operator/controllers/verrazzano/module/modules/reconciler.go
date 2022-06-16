@@ -31,7 +31,10 @@ func (r *Reconciler) Reconcile(ctx spi.ComponentContext) error {
 	if err := r.Install(ctx); err != nil {
 		return err
 	}
-	return r.PostUpgrade(ctx)
+	if err := r.PostUpgrade(ctx); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (r *Reconciler) InitForModule(module *modulesv1alpha1.Module) {
@@ -52,18 +55,19 @@ func (r *Reconciler) PreUpgrade(ctx spi.ComponentContext) error {
 	return addFinalizer(ctx)
 }
 
-func (r *Reconciler) Ready(ctx spi.ComponentContext) bool {
+func (r *Reconciler) Ready(_ spi.ComponentContext) bool {
 	return true
 }
 
-func (r *Reconciler) PostUpgrade(ctx spi.ComponentContext) error {
+func (r *Reconciler) PostUpgrade(_ spi.ComponentContext) error {
 	return nil
 }
 
-func (r *Reconciler) Upgrade(ctx spi.ComponentContext) error {
-	return r.HelmComponent.Upgrade(ctx)
+func (r *Reconciler) UpdatePhase(ctx spi.ComponentContext, status modulesv1alpha1.ModulePhase) error {
+	return ctx.Client().Update(context.TODO(), ctx.Module())
 }
 
+//Uninstall cleans up the Helm Chart and removes the Module finalizer so Kubernetes can clean the resource
 func (r *Reconciler) Uninstall(ctx spi.ComponentContext) error {
 	if err := r.HelmComponent.Uninstall(ctx); err != nil {
 		return err
@@ -73,7 +77,7 @@ func (r *Reconciler) Uninstall(ctx spi.ComponentContext) error {
 
 func removeFinalizer(ctx spi.ComponentContext) error {
 	module := ctx.Module()
-	if !module.DeletionTimestamp.IsZero() && vzstring.SliceContainsString(module.Finalizers, FinalizerName) {
+	if needsFinalizerRemoval(module) {
 		module.Finalizers = vzstring.RemoveStringFromSlice(module.Finalizers, FinalizerName)
 		err := ctx.Client().Update(context.TODO(), module)
 		return vzlogInit.ConflictWithLog(fmt.Sprintf("Failed to remove finalizer from module %s/%s", module.Namespace, module.Name), err, zap.S())
@@ -83,11 +87,19 @@ func removeFinalizer(ctx spi.ComponentContext) error {
 
 func addFinalizer(ctx spi.ComponentContext) error {
 	module := ctx.Module()
-	if module.GetDeletionTimestamp().IsZero() && !vzstring.SliceContainsString(module.Finalizers, FinalizerName) {
+	if needsFinalizer(module) {
 		module.Finalizers = append(module.Finalizers, FinalizerName)
 		err := ctx.Client().Update(context.TODO(), module)
 		_, err = vzlogInit.IgnoreConflictWithLog(fmt.Sprintf("Failed to add finalizer to ingress trait %s", module.Name), err, zap.S())
 		return err
 	}
 	return nil
+}
+
+func needsFinalizer(module *modulesv1alpha1.Module) bool {
+	return module.GetDeletionTimestamp().IsZero() && !vzstring.SliceContainsString(module.Finalizers, FinalizerName)
+}
+
+func needsFinalizerRemoval(module *modulesv1alpha1.Module) bool {
+	return !needsFinalizer(module)
 }
