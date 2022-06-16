@@ -5,8 +5,6 @@ package main
 
 import (
 	"context"
-	"fmt"
-	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
 	"log"
 	"os"
@@ -40,23 +38,20 @@ import (
 //)
 
 func main() {
-	zaplog := zap.S()
-	fmt.Println("Entered main print")
 	log.Println("Entered main log")
-	zaplog.Info("Entered main zap")
 	config, err := ctrl.GetConfig()
 	if err != nil {
-		zaplog.Errorf("Failed to get kubeconfig: %v", err)
+		log.Printf("Failed to get kubeconfig: %v", err)
 		os.Exit(1)
 	}
 
 	c, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		zaplog.Errorf("Failed to create clientset: %s", err.Error())
+		log.Printf("Failed to create clientset: %s", err.Error())
 		os.Exit(1)
 	}
-	if err := createCattleSystemNamespace(zaplog, c); err != nil {
-		zaplog.Errorf("Failed creating cattle-system namespace: %s", err.Error())
+	if err := createCattleSystemNamespace(c); err != nil {
+		log.Printf("Failed creating cattle-system namespace: %s", err.Error())
 		os.Exit(1)
 	}
 	os.Exit(0)
@@ -67,14 +62,14 @@ func main() {
 }
 
 // createCattleSystemNamespace creates the cattle-system namespace if it does not exist
-func createCattleSystemNamespace(_ *zap.SugaredLogger, c *kubernetes.Clientset) error {
+func createCattleSystemNamespace(c *kubernetes.Clientset) error {
 	namespace := &v1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:   common.CattleSystem,
 			Labels: map[string]string{"test2": "val"},
 		},
 	}
-	fmt.Printf("Creating %s namespace", common.CattleSystem)
+	log.Printf("Creating %s namespace", common.CattleSystem)
 	_, err := c.CoreV1().Namespaces().Update(context.TODO(), namespace, metav1.UpdateOptions{})
 	if err != nil {
 		return err
