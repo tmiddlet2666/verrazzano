@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"go.uber.org/zap"
 	"k8s.io/client-go/kubernetes"
+	"log"
 	"os"
 	ctrl "sigs.k8s.io/controller-runtime"
 
@@ -39,26 +40,28 @@ import (
 //)
 
 func main() {
-	log := zap.S()
-	log.Info("Entered main")
+	zaplog := zap.S()
+	fmt.Println("Entered main print")
+	log.Println("Entered main log")
+	zaplog.Info("Entered main zap")
 	config, err := ctrl.GetConfig()
 	if err != nil {
-		log.Errorf("Failed to get kubeconfig: %v", err)
+		zaplog.Errorf("Failed to get kubeconfig: %v", err)
 		os.Exit(1)
 	}
 
 	c, err := kubernetes.NewForConfig(config)
 	if err != nil {
-		log.Errorf("Failed to create clientset: %s", err.Error())
+		zaplog.Errorf("Failed to create clientset: %s", err.Error())
 		os.Exit(1)
 	}
-	if err := createCattleSystemNamespace(log, c); err != nil {
-		log.Errorf("Failed creating cattle-system namespace: %s", err.Error())
+	if err := createCattleSystemNamespace(zaplog, c); err != nil {
+		zaplog.Errorf("Failed creating cattle-system namespace: %s", err.Error())
 		os.Exit(1)
 	}
 	os.Exit(0)
-	//if err := copyDefaultCACertificate(log, c, vz); err != nil {
-	//	log.Errorf("Failed copying default CA certificate: %s", err.Error())
+	//if err := copyDefaultCACertificate(zaplog, c, vz); err != nil {
+	//	zaplog.Errorf("Failed copying default CA certificate: %s", err.Error())
 	//	os.Exit(1)
 	//}
 }
