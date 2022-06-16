@@ -1,0 +1,32 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ template "rancher.fullname" . }}-pre-install
+  namespace: {{ .Release.Namespace }}
+  labels: {{ include "rancher.labels" . | nindent 4 }}
+  annotations:
+    "helm.sh/hook": pre-install
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      name: {{ template "rancher.fullname" . }}-pre-install
+      labels: {{ include "rancher.labels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ template "rancher.fullname" . }}-pre-install
+      restartPolicy: OnFailure
+      containers:
+        - name: {{ template "rancher.name" . }}-pre-install
+          image: test:0.0.3
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            runAsUser: 0
+          env:
+            - name: NAMESPACES
+              value: {{ .Values.postDelete.namespaceList | join " " | quote }}
+            - name: TIMEOUT
+              value: {{ .Values.postDelete.timeout | quote }}
+            - name: IGNORETIMEOUTERROR
+              value: {{ .Values.postDelete.ignoreTimeoutError | quote }}
