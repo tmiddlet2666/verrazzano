@@ -6,7 +6,7 @@ metadata:
   labels: {{ include "rancher.labels" . | nindent 4 }}
   annotations:
     "helm.sh/hook": pre-install
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": "3"
     "helm.sh/hook-delete-policy": hook-succeeded
 spec:
   backoffLimit: 3
@@ -19,7 +19,7 @@ spec:
       restartPolicy: OnFailure
       containers:
         - name: {{ template "rancher.name" . }}-pre-install
-          image: test:0.0.3
+          image: test:0.0.1
           imagePullPolicy: IfNotPresent
           securityContext:
             runAsUser: 0
