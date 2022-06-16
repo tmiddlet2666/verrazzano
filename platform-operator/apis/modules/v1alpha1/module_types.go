@@ -4,11 +4,12 @@
 package v1alpha1
 
 import (
+	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type ModuleSpec struct {
-	Installer    []ModuleInstaller  `json:"installer"`
+	Installer    ModuleInstaller    `json:"installer"`
 	Dependencies []ModuleDependency `json:"dependencies"`
 }
 
@@ -17,22 +18,17 @@ type ModuleInstaller struct {
 }
 
 type HelmChart struct {
-	Name       string         `json:"name"`
-	Namespace  string         `json:"namespace,omitempty"`
-	Repository HelmRepository `json:"repository,omitempty"`
-	Version    string         `json:"version,omitempty"`
-	ValuesFrom []ValuesFrom   `json:"valuesFrom,omitempty"`
+	Name                   string         `json:"name"`
+	Namespace              string         `json:"namespace,omitempty"`
+	Repository             HelmRepository `json:"repository,omitempty"`
+	Version                string         `json:"version,omitempty"`
+	vzapi.InstallOverrides `json:",inline"`
 }
 
 type HelmRepository struct {
 	Path      string `json:"path,omitempty"`
 	URI       string `json:"uri,omitempty"`
 	SecretRef string `json:"secretRef,omitempty"`
-}
-
-type ValuesFrom struct {
-	ConfigMapRef string `json:"configMapRef,omitempty"`
-	SecretRef    string `json:"secretRef,omitempty"`
 }
 
 type ModuleDependency struct {
@@ -68,4 +64,15 @@ type ModuleList struct {
 
 func init() {
 	SchemeBuilder.Register(&Module{}, &ModuleList{})
+}
+
+func (m *Module) ChartNamespace() string {
+	if m.Spec.Installer.HelmChart == nil {
+		return m.Namespace
+	}
+	return m.Spec.Installer.HelmChart.Namespace
+}
+
+func (m *Module) IsBeingDeleted() bool {
+	return m != nil && m.GetDeletionTimestamp() != nil
 }

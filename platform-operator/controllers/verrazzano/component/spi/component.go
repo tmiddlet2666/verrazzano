@@ -5,6 +5,7 @@ package spi
 
 import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"k8s.io/apimachinery/pkg/types"
 	clipkg "sigs.k8s.io/controller-runtime/pkg/client"
@@ -16,6 +17,8 @@ type ComponentContext interface {
 	Log() vzlog.VerrazzanoLogger
 	// GetClient returns the controller client for the context
 	Client() clipkg.Client
+	// Module returns the actual Verrazzano Module
+	Module() *modulesv1alpha1.Module
 	// ActualCR returns the actual unmerged Verrazzano resource
 	ActualCR() *vzapi.Verrazzano
 	// EffectiveCR returns the effective merged Verrazzano CR

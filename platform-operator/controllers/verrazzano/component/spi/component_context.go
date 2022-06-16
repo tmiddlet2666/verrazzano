@@ -1,11 +1,13 @@
 // Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 package spi
 
 // Default implementation of the ComponentContext interface
 
 import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/transform"
@@ -27,6 +29,22 @@ func NewContext(log vzlog.VerrazzanoLogger, c clipkg.Client, actualCR *vzapi.Ver
 		log:         log,
 		client:      c,
 		dryRun:      dryRun,
+		cr:          actualCR,
+		effectiveCR: effectiveCR,
+	}, nil
+}
+
+func NewModuleContext(log vzlog.VerrazzanoLogger, c clipkg.Client, actualCR *vzapi.Verrazzano, module *modulesv1alpha1.Module, dryRun bool) (ComponentContext, error) {
+	// Generate the effective CR based ond the declared profile and any overrides in the user-supplied one
+	effectiveCR, err := transform.GetEffectiveCR(actualCR)
+	if err != nil {
+		return nil, err
+	}
+	return componentContext{
+		log:         log,
+		client:      c,
+		dryRun:      dryRun,
+		module:      module,
 		cr:          actualCR,
 		effectiveCR: effectiveCR,
 	}, nil
@@ -70,6 +88,8 @@ type componentContext struct {
 	client clipkg.Client
 	// dryRun If true, do a dry run of operations
 	dryRun bool
+	// module represents the current Module object
+	module *modulesv1alpha1.Module
 	// cr Represents the current Verrazzano object state in the cluster
 	cr *vzapi.Verrazzano
 	// effectiveCR Represents the configuration resulting from any named profiles used and any configured overrides in the CR
@@ -92,6 +112,10 @@ func (c componentContext) IsDryRun() bool {
 	return c.dryRun
 }
 
+func (c componentContext) Module() *modulesv1alpha1.Module {
+	return c.module
+}
+
 func (c componentContext) ActualCR() *vzapi.Verrazzano {
 	return c.cr
 }
@@ -105,6 +129,7 @@ func (c componentContext) Copy() ComponentContext {
 		log:         c.log,
 		client:      c.client,
 		dryRun:      c.dryRun,
+		module:      c.module,
 		cr:          c.cr,
 		effectiveCR: c.effectiveCR,
 		operation:   c.operation,
