@@ -9,6 +9,7 @@ import (
 	"fmt"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"log"
 	"os"
@@ -38,7 +39,12 @@ func main() {
 		log.Printf("Failed to get kubeconfig: %s", err.Error())
 		os.Exit(1)
 	}
-	c, err := client.New(config, client.Options{})
+	scheme := runtime.NewScheme()
+	_ = vzapi.AddToScheme(scheme)
+
+	c, err := client.New(config, client.Options{
+		Scheme: scheme,
+	})
 	if err != nil {
 		log.Printf("Failed to create client: %s", err.Error())
 		os.Exit(1)
