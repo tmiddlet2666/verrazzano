@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function delete_k8s_resources() {
+  ( [ -z "$5" ] && kubectl get $1 --no-headers -o custom-columns="$2" || kubectl get $1 --no-headers -o custom-columns="$2" -n "$5" ) \
+    | ( [ -z "$4" ] && cat || awk "$4" ) \
+    | ( [ -z "$5" ] && xargsr kubectl delete $1 || xargsr kubectl delete $1 -n "$5" ) \
+    || err_return $? "$3" || return $? # return on pipefail
+}
+
 k delete ns cattle-system
 delete_k8s_resources mutatingwebhookconfigurations ":metadata.name,:metadata.labels" "Could not delete MutatingWebhookConfigurations from Rancher" '/cattle.io|app:rancher/ {print $1}' \
   || return $?
@@ -95,11 +102,3 @@ kubectl get namespaces --no-headers -o custom-columns=":metadata.name,:metadata.
   | awk '/controller.cattle.io/ {print $1}' \
   | xargsr kubectl patch namespace -p '{"metadata":{"finalizers":null}}' --type=merge \
   || err_return $? "Could not remove Rancher finalizers from all namespaces" || return $? # return on pipefail
-
-
-function delete_k8s_resources() {
-  ( [ -z "$5" ] && kubectl get $1 --no-headers -o custom-columns="$2" || kubectl get $1 --no-headers -o custom-columns="$2" -n "$5" ) \
-    | ( [ -z "$4" ] && cat || awk "$4" ) \
-    | ( [ -z "$5" ] && xargsr kubectl delete $1 || xargsr kubectl delete $1 -n "$5" ) \
-    || err_return $? "$3" || return $? # return on pipefail
-}
