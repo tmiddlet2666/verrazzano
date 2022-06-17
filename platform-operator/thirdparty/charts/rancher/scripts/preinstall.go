@@ -49,7 +49,11 @@ func main() {
 		log.Printf("Failed to create client: %s", err.Error())
 		os.Exit(1)
 	}
-	vz := &vzapi.Verrazzano{}
+	vz := &vzapi.Verrazzano{
+		ObjectMeta: metav1.ObjectMeta{
+			Name: "min-vz",
+		},
+	}
 	err = c.Get(context.TODO(), client.ObjectKey{Namespace: constants.DefaultNamespace}, vz)
 	if err != nil {
 		log.Printf("Failed to get Verrazzano: %s", err.Error())
