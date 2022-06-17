@@ -24,22 +24,11 @@ const (
 	// note: VZ-5241 In Rancher 2.6.3 the agent was moved from cattle-fleet-system ns
 	// to a new cattle-fleet-local-system ns, the rancher-operator-system ns was
 	// removed, and the rancher-operator is no longer deployed
-	FleetSystemNamespace       = "cattle-fleet-system"
-	FleetLocalSystemNamespace  = "cattle-fleet-local-system"
-	defaultSecretNamespace     = "cert-manager"
-	namespaceLabelKey          = "verrazzano.io/namespace"
-	rancherTLSSecretName       = "tls-ca"
-	defaultVerrazzanoName      = "verrazzano-ca-certificate-secret"
-	fleetAgentDeployment       = "fleet-agent"
-	fleetControllerDeployment  = "fleet-controller"
-	gitjobDeployment           = "gitjob"
-	rancherWebhookDeployment   = "rancher-webhook"
-	letsEncryptTLSSource       = "letsEncrypt"
-	caTLSSource                = "secret"
-	caCertsPem                 = "cacerts.pem"
-	caCert                     = "ca.crt"
-	privateCAValue             = "true"
-	useBundledSystemChartValue = "true"
+	defaultSecretNamespace = "cert-manager"
+	rancherTLSSecretName   = "tls-ca"
+	defaultVerrazzanoName  = "verrazzano-ca-certificate-secret"
+	caCertsPem             = "cacerts.pem"
+	caCert                 = "ca.crt"
 )
 
 func main() {
@@ -58,11 +47,13 @@ func main() {
 	err = c.Get(context.TODO(), client.ObjectKey{Namespace: constants.DefaultNamespace}, vz)
 	if err != nil {
 		log.Printf("Failed to get Verrazzano: %s", err.Error())
+		os.Exit(1)
 	}
 	if err := copyDefaultCACertificate(c, vz); err != nil {
 		log.Printf("Failed copying default CA certificate: %s", err.Error())
 		os.Exit(1)
 	}
+	os.Exit(0)
 }
 
 //copyDefaultCACertificate copies the defaultVerrazzanoName TLS Secret to the ComponentNamespace for use by Rancher
