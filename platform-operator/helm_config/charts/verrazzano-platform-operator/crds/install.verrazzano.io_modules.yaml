@@ -122,6 +122,30 @@ spec:
           status:
             description: ModuleStatus defines the observed state of Module
             properties:
+              conditions:
+                description: Information about the current state of a component
+                items:
+                  description: Condition describes current state of an install.
+                  properties:
+                    lastTransitionTime:
+                      description: Last time the condition transitioned from one status
+                        to another.
+                      type: string
+                    message:
+                      description: Human readable message indicating details about
+                        last transition.
+                      type: string
+                    status:
+                      description: Status of the condition, one of True, False, Unknown.
+                      type: string
+                    type:
+                      description: Type of condition.
+                      type: string
+                  required:
+                  - status
+                  - type
+                  type: object
+                type: array
               observedGeneration:
                 format: int64
                 type: integer

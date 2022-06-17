@@ -1,15 +1,16 @@
 // Copyright (c) 2021, 2022, Oracle and/or its affiliates.
 // Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 package coherence
 
 import (
 	"fmt"
-	"path/filepath"
-
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/reconciler"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 )
@@ -24,33 +25,18 @@ const ComponentNamespace = constants.VerrazzanoSystemNamespace
 const ComponentJSONName = "coherenceOperator"
 
 type coherenceComponent struct {
-	helm.HelmComponent
+	reconciler.Reconciler
 }
 
-func NewComponent() spi.Component {
-	return coherenceComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			JSONName:                ComponentJSONName,
-			ChartDir:                filepath.Join(config.GetThirdPartyDir(), ComponentName),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			ImagePullSecretKeyname:  secret.DefaultImagePullSecretKeyName,
-			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "coherence-values.yaml"),
-			Dependencies:            []string{},
-			GetInstallOverridesFunc: GetOverrides,
+func NewComponent() modules.DelegateReconciler {
+	return &coherenceComponent{
+		reconciler.Reconciler{
+			ChartDir: config.GetThirdPartyDir(),
+			HelmComponent: helm.HelmComponent{
+				ImagePullSecretKeyname: secret.DefaultImagePullSecretKeyName,
+			},
 		},
 	}
-}
-
-// IsEnabled Coherence-specific enabled check for installation
-func (c coherenceComponent) IsEnabled(effectiveCR *vzapi.Verrazzano) bool {
-	comp := effectiveCR.Spec.Components.CoherenceOperator
-	if comp == nil || comp.Enabled == nil {
-		return true
-	}
-	return *comp.Enabled
 }
 
 // IsReady checks if the Coherence deployment is ready

@@ -5,6 +5,7 @@ package v1alpha1
 
 import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -36,9 +37,25 @@ type ModuleDependency struct {
 
 // ModuleStatus defines the observed state of Module
 type ModuleStatus struct {
+	// Information about the current state of a component
+	Conditions         []Condition  `json:"conditions,omitempty"`
 	Phase              *ModulePhase `json:"phase,omitempty"`
 	ObservedGeneration int64        `json:"observedGeneration,omitempty"`
 	ReconciledAt       *string      `json:"reconciledAt,omitempty"`
+}
+
+// Condition describes current state of an install.
+type Condition struct {
+	// Type of condition.
+	Type ModuleCondition `json:"type"`
+	// Status of the condition, one of True, False, Unknown.
+	Status corev1.ConditionStatus `json:"status"`
+	// Last time the condition transitioned from one status to another.
+	// +optional
+	LastTransitionTime string `json:"lastTransitionTime,omitempty"`
+	// Human readable message indicating details about last transition.
+	// +optional
+	Message string `json:"message,omitempty"`
 }
 
 //+kubebuilder:object:root=true

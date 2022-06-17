@@ -1,3 +1,6 @@
+// Copyright (c) 2022, Oracle and/or its affiliates.
+// Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+
 package module
 
 import (
@@ -6,10 +9,9 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules/coherence"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules/rancher"
 	"go.uber.org/zap"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -20,7 +22,6 @@ import (
 
 var delegates = map[string]func() modules.DelegateReconciler{
 	coherence.ComponentName: coherence.NewComponent,
-	rancher.ComponentName:   rancher.NewComponent,
 }
 
 type Reconciler struct {
@@ -88,8 +89,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 	}
 	delegate.SetStatusWriter(r.Status())
 	if err := delegate.Reconcile(moduleCtx); err != nil {
-		log.Errorf("Failed to reconcile module %s/%s: %v", module.Name, module.Namespace, err)
-		return clusters.NewRequeueWithDelay(), err
+		return handleError(moduleCtx, err)
 	}
 	return ctrl.Result{}, nil
 }
@@ -100,4 +100,17 @@ func getDelegateController(module *modulesv1alpha1.Module) modules.DelegateRecon
 		return nil
 	}
 	return newDelegate()
+}
+
+func handleError(ctx spi.ComponentContext, err error) (ctrl.Result, error) {
+	log := ctx.Log()
+	module := ctx.Module()
+	if k8serrors.IsConflict(err) {
+		log.Debugf("Conflict resolving module %s", module.Name)
+	} else if modules.IsNotReadyError(err) {
+		log.Progressf("Module %s is not ready yet", module.Name)
+	} else {
+		log.Errorf("Failed to reconcile module %s/%s: %v", module.Name, module.Namespace, err)
+	}
+	return clusters.NewRequeueWithDelay(), err
 }

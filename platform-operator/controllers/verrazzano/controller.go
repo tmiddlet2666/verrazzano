@@ -6,6 +6,7 @@ package verrazzano
 import (
 	"context"
 	"fmt"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"os"
@@ -731,7 +732,7 @@ func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, mes
 	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
 
 	// Set the state of resource
-	componentStatus.State = checkCondtitionType(conditionType)
+	componentStatus.State = controllers.CheckCondtitionType(conditionType)
 
 	// Update the status
 	return r.updateVerrazzanoStatus(log, cr)
@@ -745,27 +746,6 @@ func appendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *installv
 	}
 	log.Debugf("Adding %s resource newCondition: %v", compStatus.Name, newCondition.Type)
 	return append(compStatus.Conditions, newCondition)
-}
-
-func checkCondtitionType(currentCondition installv1alpha1.ConditionType) installv1alpha1.CompStateType {
-	switch currentCondition {
-	case installv1alpha1.CondPreInstall:
-		return installv1alpha1.CompStatePreInstalling
-	case installv1alpha1.CondInstallStarted:
-		return installv1alpha1.CompStateInstalling
-	case installv1alpha1.CondUninstallStarted:
-		return installv1alpha1.CompStateUninstalling
-	case installv1alpha1.CondUpgradeStarted:
-		return installv1alpha1.CompStateUpgrading
-	case installv1alpha1.CondUpgradePaused:
-		return installv1alpha1.CompStateUpgrading
-	case installv1alpha1.CondUninstallComplete:
-		return installv1alpha1.CompStateReady
-	case installv1alpha1.CondInstallFailed, installv1alpha1.CondUpgradeFailed, installv1alpha1.CondUninstallFailed:
-		return installv1alpha1.CompStateFailed
-	}
-	// Return ready for installv1alpha1.CondInstallComplete, installv1alpha1.CondUpgradeComplete
-	return installv1alpha1.CompStateReady
 }
 
 // Convert a condition to a VZ State
