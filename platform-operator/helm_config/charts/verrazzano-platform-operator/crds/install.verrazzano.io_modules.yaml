@@ -1,7 +1,5 @@
 # Copyright (c) 2022, Oracle and/or its affiliates.
 # Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
-# Copyright (c) 2022, , Oracle and/or its affiliates.
-# Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
@@ -19,7 +17,12 @@ spec:
     singular: module
   scope: Namespaced
   versions:
-  - name: v1alpha1
+  - additionalPrinterColumns:
+    - description: Phase of Module reconciliation
+      jsonPath: .status.phase
+      name: Status
+      type: string
+    name: v1alpha1
     schema:
       openAPIV3Schema:
         description: Module is the Schema for the modules API
@@ -119,9 +122,12 @@ spec:
           status:
             description: ModuleStatus defines the observed state of Module
             properties:
+              observedGeneration:
+                format: int64
+                type: integer
               phase:
-                description: ModulePhase describes the current reconcilating stage
-                  of a Module
+                description: ModulePhase describes the current reconciling stage of
+                  a Module
                 type: string
               reconciledAt:
                 type: string

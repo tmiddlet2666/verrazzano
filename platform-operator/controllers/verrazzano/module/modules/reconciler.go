@@ -11,30 +11,51 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"go.uber.org/zap"
 	"path/filepath"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const FinalizerName = "modules.finalizer.verrazzano.io"
 
 type Reconciler struct {
+	client.StatusWriter
 	ChartDir string
 	helm.HelmComponent
 }
 
-func (r *Reconciler) Reconcile(ctx spi.ComponentContext) error {
-	r.InitForModule(ctx.Module())
-	if ctx.Module().IsBeingDeleted() {
-		return r.Uninstall(ctx)
+func (r *Reconciler) SetStatusWriter(writer client.StatusWriter) {
+	r.StatusWriter = writer
+}
+
+func (r *Reconciler) doReconcile(ctx spi.ComponentContext) error {
+	if ctx.Module().Status.Phase == nil {
+		ctx.Module().SetPhase(modulesv1alpha1.PhasePending)
 	}
-	if err := r.PreUpgrade(ctx); err != nil {
-		return err
-	}
-	if err := r.Install(ctx); err != nil {
-		return err
-	}
-	if err := r.PostUpgrade(ctx); err != nil {
-		return err
+	phase := *ctx.Module().Status.Phase
+	switch phase {
+	case modulesv1alpha1.PhasePending:
+		return r.PendingPhase(ctx)
+	case modulesv1alpha1.PhaseInstalling:
+		return r.InstallingPhase(ctx)
+	case modulesv1alpha1.PhaseReconciling:
+		return r.ReconcilingPhase(ctx)
+	case modulesv1alpha1.PhaseNotReady:
+		return r.NotReadyPhase(ctx)
+	case modulesv1alpha1.PhaseReady:
+		return r.ReadyPhase(ctx)
 	}
 	return nil
+}
+
+func (r *Reconciler) Reconcile(ctx spi.ComponentContext) error {
+	r.InitForModule(ctx.Module())
+	// Delete module if it is being deleted
+	if ctx.Module().IsBeingDeleted() {
+		if err := r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhaseDeleting); err != nil {
+			return err
+		}
+		return r.Uninstall(ctx)
+	}
+	return r.doReconcile(ctx)
 }
 
 func (r *Reconciler) InitForModule(module *modulesv1alpha1.Module) {
@@ -51,20 +72,44 @@ func (r *Reconciler) InitForModule(module *modulesv1alpha1.Module) {
 	}
 }
 
-func (r *Reconciler) PreUpgrade(ctx spi.ComponentContext) error {
-	return addFinalizer(ctx)
+func (r *Reconciler) PendingPhase(ctx spi.ComponentContext) error {
+	if err := addFinalizer(ctx); err != nil {
+		return err
+	}
+	return r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhaseInstalling)
 }
 
-func (r *Reconciler) Ready(_ spi.ComponentContext) bool {
+func (r *Reconciler) InstallingPhase(ctx spi.ComponentContext) error {
+	if err := r.HelmComponent.Install(ctx); err != nil {
+		return err
+	}
+	return r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhaseReconciling)
+}
+
+func (r *Reconciler) IsReady(_ spi.ComponentContext) bool {
 	return true
 }
 
-func (r *Reconciler) PostUpgrade(_ spi.ComponentContext) error {
+func (r *Reconciler) NotReadyPhase(ctx spi.ComponentContext) error {
+	if r.IsReady(ctx) {
+		module := ctx.Module()
+		module.Status.ObservedGeneration = module.Generation
+		return r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhaseReady)
+	}
 	return nil
 }
 
-func (r *Reconciler) UpdatePhase(ctx spi.ComponentContext, status modulesv1alpha1.ModulePhase) error {
-	return ctx.Client().Update(context.TODO(), ctx.Module())
+//ReadyPhase reconciles put the Module back to pending state if the generation has changed
+func (r *Reconciler) ReadyPhase(ctx spi.ComponentContext) error {
+	module := ctx.Module()
+	if module.Status.ObservedGeneration != module.Generation {
+		return r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhasePending)
+	}
+	return nil
+}
+
+func (r *Reconciler) ReconcilingPhase(ctx spi.ComponentContext) error {
+	return r.UpdatePhaseOfModule(ctx, modulesv1alpha1.PhaseNotReady)
 }
 
 //Uninstall cleans up the Helm Chart and removes the Module finalizer so Kubernetes can clean the resource
@@ -102,4 +147,9 @@ func needsFinalizer(module *modulesv1alpha1.Module) bool {
 
 func needsFinalizerRemoval(module *modulesv1alpha1.Module) bool {
 	return !needsFinalizer(module)
+}
+
+func (r *Reconciler) UpdatePhaseOfModule(ctx spi.ComponentContext, phase modulesv1alpha1.ModulePhase) error {
+	ctx.Module().SetPhase(phase)
+	return r.StatusWriter.Update(context.TODO(), ctx.Module())
 }

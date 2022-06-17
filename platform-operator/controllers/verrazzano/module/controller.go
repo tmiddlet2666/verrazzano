@@ -9,6 +9,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules/coherence"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules/rancher"
 	"go.uber.org/zap"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -19,6 +20,7 @@ import (
 
 var delegates = map[string]func() modules.DelegateReconciler{
 	coherence.ComponentName: coherence.NewComponent,
+	rancher.ComponentName:   rancher.NewComponent,
 }
 
 type Reconciler struct {
@@ -69,6 +71,11 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return clusters.NewRequeueWithDelay(), err
 	}
 
+	if module.Generation == module.Status.ObservedGeneration {
+		log.Debugf("Skipping module %s reconcile, observed generation has not change", module.Name)
+		return ctrl.Result{}, nil
+	}
+
 	// Unknown module controller cannot be handled
 	delegate := getDelegateController(module)
 	if delegate == nil {
@@ -79,6 +86,7 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		log.Errorf("Failed to create module context: %v", err)
 		return clusters.NewRequeueWithDelay(), err
 	}
+	delegate.SetStatusWriter(r.Status())
 	if err := delegate.Reconcile(moduleCtx); err != nil {
 		log.Errorf("Failed to reconcile module %s/%s: %v", module.Name, module.Namespace, err)
 		return clusters.NewRequeueWithDelay(), err

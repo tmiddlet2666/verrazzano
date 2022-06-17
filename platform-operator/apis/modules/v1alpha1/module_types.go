@@ -36,12 +36,14 @@ type ModuleDependency struct {
 
 // ModuleStatus defines the observed state of Module
 type ModuleStatus struct {
-	Phase        *ModulePhase `json:"phase,omitempty"`
-	ReconciledAt *string      `json:"reconciledAt,omitempty"`
+	Phase              *ModulePhase `json:"phase,omitempty"`
+	ObservedGeneration int64        `json:"observedGeneration,omitempty"`
+	ReconciledAt       *string      `json:"reconciledAt,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
+// +kubebuilder:printcolumn:name="Status",type="string",JSONPath=".status.phase",description="Phase of Module reconciliation"
 // +genclient
 
 // Module is the Schema for the modules API

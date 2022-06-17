@@ -2,7 +2,6 @@ package coherence
 
 import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
@@ -25,12 +24,4 @@ func NewComponent() modules.DelegateReconciler {
 			},
 		},
 	}
-}
-
-func (r *Controller) PreHook(ctx spi.ComponentContext) error {
-	return nil
-}
-
-func (r *Controller) PostHook(ctx spi.ComponentContext) error {
-	return nil
 }
