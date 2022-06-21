@@ -8,7 +8,6 @@ import (
 	"errors"
 	"fmt"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"log"
@@ -49,17 +48,13 @@ func main() {
 		log.Printf("Failed to create client: %s", err.Error())
 		os.Exit(1)
 	}
-	vz := &vzapi.Verrazzano{
-		ObjectMeta: metav1.ObjectMeta{
-			Name: "min-vz",
-		},
-	}
-	err = c.Get(context.TODO(), client.ObjectKey{Namespace: constants.DefaultNamespace}, vz)
+	vzList := &vzapi.VerrazzanoList{}
+	err = c.List(context.TODO(), vzList)
 	if err != nil {
-		log.Printf("Failed to get Verrazzano: %s", err.Error())
+		log.Printf("Failed to get List of Verrazzanos: %s", err.Error())
 		os.Exit(1)
 	}
-	if err := copyDefaultCACertificate(c, vz); err != nil {
+	if err := copyDefaultCACertificate(c, &vzList.Items[0]); err != nil {
 		log.Printf("Failed copying default CA certificate: %s", err.Error())
 		os.Exit(1)
 	}

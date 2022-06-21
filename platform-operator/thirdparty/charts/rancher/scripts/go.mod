@@ -6,7 +6,6 @@ require (
 	github.com/verrazzano/verrazzano v1.3.0
 	k8s.io/api v0.24.1
 	k8s.io/apimachinery v0.24.1
-	k8s.io/client-go v0.24.1
 	sigs.k8s.io/controller-runtime v0.11.2
 )
 
@@ -73,6 +72,7 @@ require (
 	istio.io/client-go v0.0.0-20200807182027-d287a5abb594 // indirect
 	istio.io/gogo-genproto v0.0.0-20190930162913-45029607206a // indirect
 	k8s.io/apiextensions-apiserver v0.23.5 // indirect
+	k8s.io/client-go v0.24.1 // indirect
 	k8s.io/component-base v0.23.5 // indirect
 	k8s.io/klog/v2 v2.60.1 // indirect
 	k8s.io/kube-openapi v0.0.0-20220328201542-3ee0da9b0b42 // indirect
