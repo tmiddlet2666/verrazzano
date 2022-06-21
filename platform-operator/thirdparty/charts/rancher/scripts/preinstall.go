@@ -48,13 +48,16 @@ func main() {
 		log.Printf("Failed to create client: %s", err.Error())
 		os.Exit(1)
 	}
+	log.Println("Created Client")
 	vzList := &vzapi.VerrazzanoList{}
 	err = c.List(context.TODO(), vzList)
 	if err != nil {
 		log.Printf("Failed to get List of Verrazzanos: %s", err.Error())
 		os.Exit(1)
 	}
-	if err := copyDefaultCACertificate(c, &vzList.Items[0]); err != nil {
+	vz := &vzList.Items[0]
+	log.Printf("Got Verrazzano: %s", vz.Name)
+	if err := copyDefaultCACertificate(c, vz); err != nil {
 		log.Printf("Failed copying default CA certificate: %s", err.Error())
 		os.Exit(1)
 	}
@@ -75,6 +78,7 @@ func copyDefaultCACertificate(c client.Client, vz *vzapi.Verrazzano) error {
 			return errors.New(fmt.Sprintf("Failed, secret %s/%s does not have a value for %s", defaultSecretNamespace, defaultVerrazzanoName, caCert))
 
 		}
+		log.Printf("Got Secret: %S", defaultSecret.Name)
 		rancherCaSecret := &v1.Secret{
 			ObjectMeta: metav1.ObjectMeta{
 				Namespace: common.CattleSystem,
