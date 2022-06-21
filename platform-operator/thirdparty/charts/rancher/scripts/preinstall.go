@@ -8,6 +8,7 @@ import (
 	"errors"
 	"fmt"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/transform"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 	"log"
@@ -57,7 +58,11 @@ func main() {
 	}
 	vz := &vzList.Items[0]
 	log.Printf("Got Verrazzano: %s", vz.Name)
-	if err := copyDefaultCACertificate(c, vz); err != nil {
+	effectiveCR, err := transform.GetEffectiveCR(vz)
+	if err != nil {
+		log.Printf("Error generating effective CR: %s", err.Error())
+	}
+	if err := copyDefaultCACertificate(c, effectiveCR); err != nil {
 		log.Printf("Failed copying default CA certificate: %s", err.Error())
 		os.Exit(1)
 	}

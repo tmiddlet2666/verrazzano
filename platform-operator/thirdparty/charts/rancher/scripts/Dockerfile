@@ -1,6 +1,6 @@
 FROM golang:1.17
 
-WORKDIR /rancher
+WORKDIR /verrazzano
 
 COPY go.mod .
 COPY go.sum .
@@ -8,5 +8,6 @@ COPY go.sum .
 RUN go mod download
 
 COPY ./preinstall.go .
+COPY ../../../../manifests/profiles platform-operator/manifests
 
 CMD ["go","run","preinstall.go"]
