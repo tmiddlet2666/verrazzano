@@ -38,3 +38,6 @@ rules:
   - apiGroups: [ "cert-manager.io" ]
     resources: [ "issuers" ]
     verbs: [ "delete" ]
+  - apiGroups: [ "install.verrazzano.io" ]
+    resources: [ "verrazzanos" ]
+    verbs: [ "get", "list", "delete", "create" ]
