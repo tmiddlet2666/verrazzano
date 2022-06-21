@@ -5,12 +5,13 @@ package coherence
 
 import (
 	"fmt"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/reconciler"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 )
@@ -21,20 +22,22 @@ const ComponentName = "coherence-operator"
 // ComponentNamespace is the namespace of the component
 const ComponentNamespace = constants.VerrazzanoSystemNamespace
 
-// ComponentJSONName is the josn name of the verrazzano component in CRD
+// ComponentJSONName is the json name of the verrazzano component in CRD
 const ComponentJSONName = "coherenceOperator"
 
 type coherenceComponent struct {
-	reconciler.Reconciler
+	helm.HelmComponent
 }
 
-func NewComponent() modules.DelegateReconciler {
-	return &coherenceComponent{
-		reconciler.Reconciler{
-			ChartDir: config.GetThirdPartyDir(),
-			HelmComponent: helm.HelmComponent{
-				ImagePullSecretKeyname: secret.DefaultImagePullSecretKeyName,
-			},
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:               config.GetThirdPartyDir(),
+		ImagePullSecretKeyname: secret.DefaultImagePullSecretKeyName,
+	}
+	helm.SetForModule(&h, module)
+	return &reconciler.Reconciler{
+		ModuleComponent: coherenceComponent{
+			h,
 		},
 	}
 }

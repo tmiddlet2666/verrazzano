@@ -9,9 +9,10 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	modules2 "github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
 	"go.uber.org/zap"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/runtime"
@@ -20,7 +21,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/controller"
 )
 
-var delegates = map[string]func() modules.DelegateReconciler{
+var delegates = map[string]func(*modulesv1alpha1.Module) modules2.DelegateReconciler{
+	keycloak.ComponentName:  keycloak.NewComponent,
 	coherence.ComponentName: coherence.NewComponent,
 }
 
@@ -88,18 +90,18 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return clusters.NewRequeueWithDelay(), err
 	}
 	delegate.SetStatusWriter(r.Status())
-	if err := delegate.Reconcile(moduleCtx); err != nil {
+	if err := delegate.ReconcileModule(moduleCtx); err != nil {
 		return handleError(moduleCtx, err)
 	}
 	return ctrl.Result{}, nil
 }
 
-func getDelegateController(module *modulesv1alpha1.Module) modules.DelegateReconciler {
-	newDelegate := delegates[module.ObjectMeta.Labels[modules.ControllerLabel]]
+func getDelegateController(module *modulesv1alpha1.Module) modules2.DelegateReconciler {
+	newDelegate := delegates[module.ObjectMeta.Labels[modules2.ControllerLabel]]
 	if newDelegate == nil {
 		return nil
 	}
-	return newDelegate()
+	return newDelegate(module)
 }
 
 func handleError(ctx spi.ComponentContext, err error) (ctrl.Result, error) {
@@ -107,10 +109,11 @@ func handleError(ctx spi.ComponentContext, err error) (ctrl.Result, error) {
 	module := ctx.Module()
 	if k8serrors.IsConflict(err) {
 		log.Debugf("Conflict resolving module %s", module.Name)
-	} else if modules.IsNotReadyError(err) {
+	} else if modules2.IsNotReadyError(err) {
 		log.Progressf("Module %s is not ready yet", module.Name)
 	} else {
 		log.Errorf("Failed to reconcile module %s/%s: %v", module.Name, module.Namespace, err)
+		return clusters.NewRequeueWithDelay(), err
 	}
-	return clusters.NewRequeueWithDelay(), err
+	return clusters.NewRequeueWithDelay(), nil
 }

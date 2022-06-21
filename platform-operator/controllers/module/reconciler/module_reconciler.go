@@ -9,12 +9,9 @@ import (
 	vzlogInit "github.com/verrazzano/verrazzano/pkg/log"
 	vzstring "github.com/verrazzano/verrazzano/pkg/string"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
-	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module/modules"
 	"go.uber.org/zap"
-	"path/filepath"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -23,15 +20,14 @@ const FinalizerName = "modules.finalizer.verrazzano.io"
 type Reconciler struct {
 	client.StatusWriter
 	ChartDir string
-	helm.HelmComponent
+	spi.ModuleComponent
 }
 
 func (r *Reconciler) SetStatusWriter(writer client.StatusWriter) {
 	r.StatusWriter = writer
 }
 
-func (r *Reconciler) Reconcile(ctx spi.ComponentContext) error {
-	r.initForModule(ctx.Module())
+func (r *Reconciler) ReconcileModule(ctx spi.ComponentContext) error {
 	// Delete module if it is being deleted
 	if ctx.Module().IsBeingDeleted() {
 		if err := r.UpdateStatus(ctx, modulesv1alpha1.CondUninstall); err != nil {
@@ -67,6 +63,7 @@ func (r *Reconciler) doReconcile(ctx spi.ComponentContext) error {
 				return err
 			}
 			module.Status.ObservedGeneration = module.Generation
+			ctx.Log().Infof("Module %s is ready", ctx.Module().Name)
 			return r.UpdateStatus(ctx, modulesv1alpha1.CondInstallComplete)
 		}
 		return modules.NotReadyErrorf("Install: Module %s is not ready", module.Name)
@@ -95,20 +92,6 @@ func (r *Reconciler) doReconcile(ctx spi.ComponentContext) error {
 	return nil
 }
 
-func (r *Reconciler) initForModule(module *modulesv1alpha1.Module) {
-	chart := module.Spec.Installer.HelmChart
-	if chart != nil {
-		r.ReleaseName = chart.Name
-		r.JSONName = chart.Name
-		r.HelmComponent.ChartDir = filepath.Join(r.ChartDir, chart.Repository.Path)
-		r.ChartNamespace = chart.Namespace
-		r.IgnoreNamespaceOverride = true
-		r.GetInstallOverridesFunc = func(_ *vzapi.Verrazzano) []vzapi.Overrides {
-			return chart.InstallOverrides.ValueOverrides
-		}
-	}
-}
-
 //ReadyPhase reconciles put the Module back to pending state if the generation has changed
 func (r *Reconciler) ReadyPhase(ctx spi.ComponentContext) error {
 	if NeedsReconcile(ctx) {
@@ -119,10 +102,14 @@ func (r *Reconciler) ReadyPhase(ctx spi.ComponentContext) error {
 
 //Uninstall cleans up the Helm Chart and removes the Module finalizer so Kubernetes can clean the resource
 func (r *Reconciler) Uninstall(ctx spi.ComponentContext) error {
-	if err := r.HelmComponent.Uninstall(ctx); err != nil {
+	if err := r.ModuleComponent.Uninstall(ctx); err != nil {
 		return err
 	}
-	return removeFinalizer(ctx)
+	if err := removeFinalizer(ctx); err != nil {
+		return err
+	}
+	ctx.Log().Infof("Uninstalled Module %s", ctx.Module().Name)
+	return nil
 }
 
 func initializeModule(ctx spi.ComponentContext) error {

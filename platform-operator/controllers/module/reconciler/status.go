@@ -6,10 +6,10 @@ package reconciler
 import (
 	"context"
 	"fmt"
-	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	corev1 "k8s.io/api/core/v1"
+	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"time"
 )
 
@@ -46,7 +46,7 @@ func (r *Reconciler) doStatusUpdate(ctx spi.ComponentContext) error {
 	if err == nil {
 		return err
 	}
-	if ctrlerrors.IsUpdateConflict(err) {
+	if k8serrors.IsConflict(err) {
 		ctx.Log().Debugf("Update conflict for Module %s: %v", module.Name, err)
 	} else {
 		ctx.Log().Errorf("Failed to update Module %s :v", module.Name, err)

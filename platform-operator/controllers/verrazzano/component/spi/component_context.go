@@ -47,6 +47,7 @@ func NewModuleContext(log vzlog.VerrazzanoLogger, c clipkg.Client, actualCR *vza
 		module:      module,
 		cr:          actualCR,
 		effectiveCR: effectiveCR,
+		component:   module.Name,
 	}, nil
 }
 

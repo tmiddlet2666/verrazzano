@@ -5,23 +5,24 @@ package helm
 
 import (
 	"fmt"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
-	"os"
-
 	"github.com/verrazzano/verrazzano/pkg/bom"
 	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
 	"github.com/verrazzano/verrazzano/pkg/helm"
 	helmcli "github.com/verrazzano/verrazzano/pkg/helm"
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	vzos "github.com/verrazzano/verrazzano/pkg/os"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/status"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/yaml"
 	"k8s.io/apimachinery/pkg/types"
+	"os"
+	"path/filepath"
 	clipkg "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -246,6 +247,20 @@ func (h HelmComponent) Uninstall(ctx spi.ComponentContext) error {
 	resolvedNamespace := h.resolveNamespace(ctx.EffectiveCR().Namespace)
 	_, _, err := uninstallFunc(ctx.Log(), h.ReleaseName, resolvedNamespace, ctx.IsDryRun())
 	return err
+}
+
+func SetForModule(h *HelmComponent, module *modulesv1alpha1.Module) {
+	chart := module.Spec.Installer.HelmChart
+	if chart != nil {
+		h.ReleaseName = chart.Name
+		h.JSONName = chart.Name
+		h.ChartDir = filepath.Join(h.ChartDir, chart.Repository.Path)
+		h.ChartNamespace = chart.Namespace
+		h.IgnoreNamespaceOverride = true
+		h.GetInstallOverridesFunc = func(_ *vzapi.Verrazzano) []vzapi.Overrides {
+			return chart.InstallOverrides.ValueOverrides
+		}
+	}
 }
 
 // Install installs the component using Helm

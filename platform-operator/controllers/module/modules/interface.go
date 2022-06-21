@@ -11,6 +11,6 @@ import (
 const ControllerLabel = "verrazzano.io/module"
 
 type DelegateReconciler interface {
-	Reconcile(ctx spi.ComponentContext) error
+	ReconcileModule(ctx spi.ComponentContext) error
 	SetStatusWriter(statusWriter clipkg.StatusWriter)
 }

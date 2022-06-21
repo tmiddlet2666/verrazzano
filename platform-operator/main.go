@@ -5,7 +5,7 @@ package main
 
 import (
 	"flag"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/module"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module"
 	"os"
 	"sync"
 
