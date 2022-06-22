@@ -35,6 +35,9 @@ type Reconciler struct {
 func (r *Reconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&modulesv1alpha1.Module{}).
+		WithOptions(controller.Options{
+			MaxConcurrentReconciles: 10,
+		}).
 		Complete(r)
 }
 

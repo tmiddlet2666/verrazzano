@@ -18,6 +18,7 @@ import (
 	promoperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/operator"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/types"
@@ -45,6 +46,7 @@ var certificates = []types.NamespacedName{
 // NewComponent returns a new Keycloak component
 func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
 	h := helm.HelmComponent{
+		ChartDir:               config.GetThirdPartyDir(),
 		ImagePullSecretKeyname: secret.DefaultImagePullSecretKeyName,
 		AppendOverridesFunc:    AppendKeycloakOverrides,
 		Certificates:           certificates,
