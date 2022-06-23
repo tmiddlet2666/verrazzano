@@ -157,10 +157,12 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 				Skip(skipVerifications)
 			}
 			Eventually(func() error {
-				err := createService(namespace, getPromConfigJobName())
+				err := createService(getPromConfigJobName())
 				if err != nil {
 					pkg.Log(pkg.Error, fmt.Sprintf("Failed to create the Service for the Service Monitor: %v", err))
+					return err
 				}
+				return nil
 			}, waitTimeout, pollingInterval).Should(BeNil(), "Expected to be able to create the metrics service")
 		})
 	})
