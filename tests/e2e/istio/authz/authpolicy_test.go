@@ -4,24 +4,19 @@
 package authz
 
 import (
-	"context"
 	"fmt"
 	"net/http"
 	"time"
 
-	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
-	"sigs.k8s.io/controller-runtime/pkg/client"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	promoperapi "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
 	"github.com/verrazzano/verrazzano/pkg/k8sutil"
 	"github.com/verrazzano/verrazzano/pkg/test/framework"
+	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
 	"github.com/verrazzano/verrazzano/tests/e2e/pkg"
+	testpkg "github.com/verrazzano/verrazzano/tests/e2e/pkg"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
-	"k8s.io/apimachinery/pkg/runtime"
-	"k8s.io/apimachinery/pkg/types"
 )
 
 const fooNamespace string = "foo"
@@ -490,7 +485,7 @@ var _ = t.Describe("Verify Auth Policy Prometheus Scrape Targets", func() {
 	// THEN they should be created to use the https protocol
 	t.It("Verify that ServiceMonitor authpolicy-appconf-default-foo-springboot-frontend is using https for scraping.", func() {
 		Eventually(func() bool {
-			serviceMonitor, err := getServiceMonitor(fooNamespace, "authpolicy-appconf-default-foo-springboot-frontend")
+			serviceMonitor, err := testpkg.GetServiceMonitor(fooNamespace, "authpolicy-appconf-default-foo-springboot-frontend")
 			if err != nil {
 				return false
 			}
@@ -504,7 +499,7 @@ var _ = t.Describe("Verify Auth Policy Prometheus Scrape Targets", func() {
 	// THEN they should be created to use the https protocol
 	t.It("Verify that ServiceMonitor authpolicy-appconf-default-bar-springboot-frontend is using https for scraping.", func() {
 		Eventually(func() bool {
-			serviceMonitor, err := getServiceMonitor(barNamespace, "authpolicy-appconf-default-bar-springboot-frontend")
+			serviceMonitor, err := testpkg.GetServiceMonitor(barNamespace, "authpolicy-appconf-default-bar-springboot-frontend")
 			if err != nil {
 				return false
 			}
@@ -518,7 +513,7 @@ var _ = t.Describe("Verify Auth Policy Prometheus Scrape Targets", func() {
 	// THEN they should be created to use the http protocol
 	t.It("Verify that ServiceMonitor authpolicy-appconf-default-noistio-springboot-frontend is using http for scraping.", func() {
 		Eventually(func() bool {
-			serviceMonitor, err := getServiceMonitor(noIstioNamespace, "authpolicy-appconf-default-noistio-springboot-frontend")
+			serviceMonitor, err := testpkg.GetServiceMonitor(noIstioNamespace, "authpolicy-appconf-default-noistio-springboot-frontend")
 			if err != nil {
 				return false
 			}
@@ -535,39 +530,4 @@ func checkPodsRunning(namespace string, expectedPods []string) bool {
 		AbortSuite(fmt.Sprintf("One or more pods are not running in the namespace: %v, error: %v", namespace, err))
 	}
 	return result
-}
-
-// getServiceMonitor returns the ServiceMonitor identified by namespace and name
-func getServiceMonitor(namespace string, name string) (*promoperapi.ServiceMonitor, error) {
-	client, err := getClient()
-	if err != nil {
-		return nil, err
-	}
-
-	serviceMonitor := &promoperapi.ServiceMonitor{}
-	err = client.Get(context.TODO(), types.NamespacedName{Namespace: namespace, Name: name}, serviceMonitor)
-	if err != nil {
-		t.Logs.Errorf("Error getting ServiceMonitor: %v", err)
-		return nil, err
-	}
-	return serviceMonitor, nil
-}
-
-// getClient returns a client for fetching ServiceMonitor resources
-func getClient() (client.Client, error) {
-	config, err := k8sutil.GetKubeConfig()
-	if err != nil {
-		t.Logs.Errorf("Failed to get kubeconfig with error: %v", err)
-		return nil, err
-	}
-
-	scheme := runtime.NewScheme()
-	_ = promoperapi.AddToScheme(scheme)
-
-	client, err := client.New(config, client.Options{Scheme: scheme})
-	if err != nil {
-		t.Logs.Errorf("Failed to get clusters client with error: %v", err)
-		return nil, err
-	}
-	return client, nil
 }

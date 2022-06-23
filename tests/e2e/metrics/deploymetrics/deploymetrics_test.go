@@ -5,16 +5,17 @@ package deploymetrics
 
 import (
 	"fmt"
-	"github.com/verrazzano/verrazzano/pkg/k8sutil"
 	"os"
 	"time"
 
-	"github.com/verrazzano/verrazzano/pkg/test/framework"
-	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
-
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
+	promoperapi "github.com/prometheus-operator/prometheus-operator/pkg/apis/monitoring/v1"
+	"github.com/verrazzano/verrazzano/pkg/k8sutil"
+	"github.com/verrazzano/verrazzano/pkg/test/framework"
+	"github.com/verrazzano/verrazzano/pkg/test/framework/metrics"
 	"github.com/verrazzano/verrazzano/tests/e2e/pkg"
+	testpkg "github.com/verrazzano/verrazzano/tests/e2e/pkg"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 )
@@ -154,9 +155,9 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 			if skipVerify {
 				Skip(skipVerifications)
 			}
-			Eventually(func() bool {
-				return pkg.IsAppInPromConfig(promConfigJobName)
-			}, waitTimeout, pollingInterval).Should(BeTrue(), "Expected to find App in Prometheus Config")
+			Eventually(func() (*promoperapi.ServiceMonitor, error) {
+				return testpkg.GetServiceMonitor(namespace, promConfigJobName)
+			}, waitTimeout, pollingInterval).Should(Not(BeNil()), "Expected to find Service Monitor")
 		})
 	})
 
