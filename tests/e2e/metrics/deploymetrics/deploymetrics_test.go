@@ -41,9 +41,8 @@ var (
 	imagePullWaitTimeout     = 40 * time.Minute
 	imagePullPollingInterval = 30 * time.Second
 
-	adminKubeConfig   string
-	promConfigJobName string
-	clusterNameLabel  string
+	adminKubeConfig  string
+	clusterNameLabel string
 
 	t = framework.NewTestFramework("deploymetrics")
 )
@@ -60,7 +59,6 @@ var _ = clusterDump.BeforeSuite(func() {
 		Fail(err.Error())
 	}
 	initKubeConfigPath()
-	initPromConfigJobName()
 })
 var _ = clusterDump.AfterEach(func() {}) // Dump cluster if spec fails
 var _ = clusterDump.AfterSuite(func() {  // Dump cluster if aftersuite fails
@@ -127,8 +125,9 @@ func undeployMetricsApplication() {
 	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
 
 	Eventually(func() bool {
-		return pkg.IsAppInPromConfig(promConfigJobName)
-	}, waitTimeout, pollingInterval).Should(BeFalse(), "Expected App to be removed from Prometheus Config")
+		_, err := pkg.GetServiceMonitor(namespace, getPromConfigJobName())
+		return err != nil
+	}, waitTimeout, pollingInterval).Should(BeTrue(), "Expected Service Monitor to not exist")
 
 	t.Logs.Info("Delete namespace")
 	Eventually(func() error {
@@ -151,12 +150,12 @@ func undeployMetricsApplication() {
 var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), func() {
 
 	t.Context("for Prometheus Config.", Label("f:observability.monitoring.prom"), func() {
-		t.It(fmt.Sprintf("Verify that Prometheus Config Data contains %s", promConfigJobName), func() {
+		t.It(fmt.Sprintf("Verify that Prometheus Config Data contains %s", getPromConfigJobName()), func() {
 			if skipVerify {
 				Skip(skipVerifications)
 			}
 			Eventually(func() (*promoperapi.ServiceMonitor, error) {
-				return testpkg.GetServiceMonitor(namespace, promConfigJobName)
+				return testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
 			}, waitTimeout, pollingInterval).Should(Not(BeNil()), "Expected to find Service Monitor")
 		})
 	})
@@ -230,7 +229,7 @@ func initKubeConfigPath() {
 	pkg.Log(pkg.Info, "Initialized kube config path - "+adminKubeConfig)
 }
 
-func initPromConfigJobName() {
+func getPromConfigJobName() string {
 	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
 	if err != nil {
 		pkg.Log(pkg.Error, err.Error())
@@ -239,11 +238,9 @@ func initPromConfigJobName() {
 	if isPromJobNameInNewFmt {
 		// For VZ versions starting from 1.4.0, the job name in prometheus scrape config is of the format
 		// <app_name>_<app_namespace>
-		promConfigJobName = fmt.Sprintf("%s_%s", deploymetricsAppName, namespace)
-	} else {
-		// For VZ versions prior to 1.4.0, the job name in prometheus scrape config was of the old format
-		// <app_name>_default_<app_namespace>_<app_component_name>
-		promConfigJobName =
-			fmt.Sprintf("%s_default_%s_%s", deploymetricsAppName, generatedNamespace, deploymetricsCompName)
+		return fmt.Sprintf("%s_%s", deploymetricsAppName, namespace)
 	}
+	// For VZ versions prior to 1.4.0, the job name in prometheus scrape config was of the old format
+	// <app_name>_default_<app_namespace>_<app_component_name>
+	return fmt.Sprintf("%s_default_%s_%s", deploymetricsAppName, generatedNamespace, deploymetricsCompName)
 }
