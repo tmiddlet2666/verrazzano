@@ -61,6 +61,15 @@ var _ = clusterDump.BeforeSuite(func() {
 		pkg.Log(pkg.Error, err.Error())
 		Fail(err.Error())
 	}
+
+	Eventually(func() error {
+		err := createService(getPromConfigJobName())
+		if err != nil {
+			pkg.Log(pkg.Error, fmt.Sprintf("Failed to create the Service for the Service Monitor: %v", err))
+			return err
+		}
+		return nil
+	}, waitTimeout, pollingInterval).Should(BeNil(), "Expected to be able to create the metrics service")
 })
 var _ = clusterDump.AfterEach(func() {}) // Dump cluster if spec fails
 var _ = clusterDump.AfterSuite(func() {  // Dump cluster if aftersuite fails
@@ -152,23 +161,7 @@ func undeployMetricsApplication() {
 var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), func() {
 
 	t.Context("for Prometheus Config.", Label("f:observability.monitoring.prom"), func() {
-		t.It(fmt.Sprintf("Verify that Prometheus Config Data contains %s", getPromConfigJobName()), func() {
-			if skipVerify {
-				Skip(skipVerifications)
-			}
-			Eventually(func() error {
-				err := createService(getPromConfigJobName())
-				if err != nil {
-					pkg.Log(pkg.Error, fmt.Sprintf("Failed to create the Service for the Service Monitor: %v", err))
-					return err
-				}
-				return nil
-			}, waitTimeout, pollingInterval).Should(BeNil(), "Expected to be able to create the metrics service")
-		})
-	})
-
-	t.Context("for Prometheus Config.", Label("f:observability.monitoring.prom"), func() {
-		t.It(fmt.Sprintf("Verify that Prometheus Config Data contains %s", getPromConfigJobName()), func() {
+		t.It(fmt.Sprintf("Verify that Prometheus Service Monitor %s exists", getPromConfigJobName()), func() {
 			if skipVerify {
 				Skip(skipVerifications)
 			}
