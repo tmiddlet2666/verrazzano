@@ -4,6 +4,7 @@
 package deploymetrics
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"time"
@@ -18,6 +19,9 @@ import (
 	testpkg "github.com/verrazzano/verrazzano/tests/e2e/pkg"
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/runtime"
+	k8sclient "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 const (
@@ -152,10 +156,24 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 			if skipVerify {
 				Skip(skipVerifications)
 			}
+			Eventually(func() error {
+				err := createService(namespace, getPromConfigJobName())
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to create the Service for the Service Monitor: %v", err))
+				}
+			}, waitTimeout, pollingInterval).Should(BeNil(), "Expected to be able to create the metrics service")
+		})
+	})
+
+	t.Context("for Prometheus Config.", Label("f:observability.monitoring.prom"), func() {
+		t.It(fmt.Sprintf("Verify that Prometheus Config Data contains %s", getPromConfigJobName()), func() {
+			if skipVerify {
+				Skip(skipVerifications)
+			}
 			Eventually(func() (*promoperapi.ServiceMonitor, error) {
 				monitor, err := testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
 				if err != nil {
-					pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the Service Monitor from the cluster %v", err))
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the Service Monitor from the cluster: %v", err))
 				}
 				return monitor, err
 			}, waitTimeout, pollingInterval).Should(Not(BeNil()), "Expected to find Service Monitor")
@@ -244,4 +262,38 @@ func getPromConfigJobName() string {
 	// For VZ versions prior to 1.4.0, the job name in prometheus scrape config was of the old format
 	// <app_name>_default_<app_namespace>_<app_component_name>
 	return fmt.Sprintf("%s_default_%s_%s", deploymetricsAppName, generatedNamespace, deploymetricsCompName)
+}
+
+// create Service creates a service for metrics collection
+func createService(name string) error {
+	config, err := k8sutil.GetKubeConfig()
+	if err != nil {
+		return err
+	}
+	scheme := runtime.NewScheme()
+	_ = v1.AddToScheme(scheme)
+	cli, err := k8sclient.New(config, k8sclient.Options{Scheme: scheme})
+	if err != nil {
+		return err
+	}
+
+	svc := v1.Service{
+		ObjectMeta: metav1.ObjectMeta{
+			Namespace: namespace,
+			Name:      name,
+		},
+		Spec: v1.ServiceSpec{
+			Selector: map[string]string{
+				"app": "deploymetrics",
+			},
+			Ports: []v1.ServicePort{
+				{
+					Name:     "metrics",
+					Port:     8080,
+					Protocol: "TCP",
+				},
+			},
+		},
+	}
+	return cli.Create(context.TODO(), &svc)
 }
