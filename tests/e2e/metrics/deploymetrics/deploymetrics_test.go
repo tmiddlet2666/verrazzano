@@ -153,7 +153,11 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 				Skip(skipVerifications)
 			}
 			Eventually(func() (*promoperapi.ServiceMonitor, error) {
-				return testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
+				monitor, err := testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
+				if err != nil {
+					pkg.Log(pkg.Error, "Failed to get the Service Monitor from the cluster")
+				}
+				return monitor, err
 			}, waitTimeout, pollingInterval).Should(Not(BeNil()), "Expected to find Service Monitor")
 		})
 	})
@@ -210,7 +214,7 @@ func getDefaultKubeConfigPath() string {
 	if err != nil {
 		Fail(fmt.Sprintf("Failed to get default kubeconfig path: %s", err.Error()))
 	}
-	pkg.Log(pkg.Info, "Default kube config path -"+kubeConfigPath)
+	pkg.Log(pkg.Info, "Default kube config path - "+kubeConfigPath)
 	return kubeConfigPath
 }
 
