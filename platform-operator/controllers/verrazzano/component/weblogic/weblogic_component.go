@@ -5,16 +5,16 @@ package weblogic
 
 import (
 	"fmt"
-	"path/filepath"
-
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
-	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 )
 
 // ComponentName is the name of the component
@@ -30,21 +30,18 @@ type weblogicComponent struct {
 	helm.HelmComponent
 }
 
-func NewComponent() spi.Component {
-	return weblogicComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			JSONName:                ComponentJSONName,
-			ChartDir:                filepath.Join(config.GetThirdPartyDir(), ComponentName),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			ImagePullSecretKeyname:  secret.DefaultImagePullSecretKeyName,
-			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "weblogic-values.yaml"),
-			PreInstallFunc:          WeblogicOperatorPreInstall,
-			AppendOverridesFunc:     AppendWeblogicOperatorOverrides,
-			Dependencies:            []string{istio.ComponentName},
-			GetInstallOverridesFunc: GetOverrides,
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:               config.GetThirdPartyDir(),
+		ImagePullSecretKeyname: secret.DefaultImagePullSecretKeyName,
+		PreInstallFunc:         WeblogicOperatorPreInstall,
+		AppendOverridesFunc:    AppendWeblogicOperatorOverrides,
+	}
+	helm.SetForModule(&h, module)
+
+	return &reconciler.Reconciler{
+		ModuleComponent: weblogicComponent{
+			h,
 		},
 	}
 }

@@ -28,7 +28,6 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/verrazzano"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/vmo"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 )
 
 type GetCompoentsFnType func() []spi.Component
@@ -61,7 +60,6 @@ func getComponents() []spi.Component {
 			oam.NewComponent(),
 			appoper.NewComponent(),
 			istio.NewComponent(),
-			weblogic.NewComponent(),
 			nginx.NewComponent(),
 			certmanager.NewComponent(),
 			externaldns.NewComponent(),
