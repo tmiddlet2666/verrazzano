@@ -282,6 +282,9 @@ func getKubeConfigPath() (string, error) {
 
 func getPromConfigJobName() (string, error) {
 	kubeconfig, err := getKubeConfigPath()
+	if err != nil {
+		return kubeconfig, err
+	}
 	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", kubeconfig)
 	if err != nil {
 		return kubeconfig, err
