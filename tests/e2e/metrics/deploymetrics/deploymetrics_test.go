@@ -41,7 +41,6 @@ var (
 	imagePullWaitTimeout     = 40 * time.Minute
 	imagePullPollingInterval = 30 * time.Second
 
-	adminKubeConfig  string
 	clusterNameLabel string
 
 	t = framework.NewTestFramework("deploymetrics")
@@ -58,7 +57,6 @@ var _ = clusterDump.BeforeSuite(func() {
 		pkg.Log(pkg.Error, err.Error())
 		Fail(err.Error())
 	}
-	initKubeConfigPath()
 })
 var _ = clusterDump.AfterEach(func() {}) // Dump cluster if spec fails
 var _ = clusterDump.AfterSuite(func() {  // Dump cluster if aftersuite fails
@@ -170,7 +168,7 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 				clusterNameLabel:   getClusterNameForPromQuery(),
 			}
 			Eventually(func() bool {
-				return pkg.MetricsExistInCluster("http_server_requests_seconds_count", metricLabels, adminKubeConfig)
+				return pkg.MetricsExistInCluster("http_server_requests_seconds_count", metricLabels, getKubeConfigPath())
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue(), "Expected to find Prometheus scraped metrics for App Component.")
 		})
 		t.It("App Config", func() {
@@ -182,7 +180,7 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 				clusterNameLabel:        getClusterNameForPromQuery(),
 			}
 			Eventually(func() bool {
-				return pkg.MetricsExistInCluster("tomcat_sessions_created_sessions_total", metricLabels, adminKubeConfig)
+				return pkg.MetricsExistInCluster("tomcat_sessions_created_sessions_total", metricLabels, getKubeConfigPath())
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue(), "Expected to find Prometheus scraped metrics for App Config.")
 		})
 	})
@@ -196,7 +194,7 @@ func getClusterNameForPromQuery() string {
 		pkg.Log(pkg.Info, "This is a managed cluster, returning cluster name - "+clusterName)
 		return clusterName
 	}
-	isMinVersion110, err := pkg.IsVerrazzanoMinVersion("1.1.0", adminKubeConfig)
+	isMinVersion110, err := pkg.IsVerrazzanoMinVersion("1.1.0", getKubeConfigPath())
 	if err != nil {
 		pkg.Log(pkg.Error, err.Error())
 		return ""
@@ -216,21 +214,20 @@ func getDefaultKubeConfigPath() string {
 	return kubeConfigPath
 }
 
-func initKubeConfigPath() {
-	var present bool
-	adminKubeConfig, present = os.LookupEnv("ADMIN_KUBECONFIG")
+func getKubeConfigPath() string {
+	adminKubeConfig, present := os.LookupEnv("ADMIN_KUBECONFIG")
 	if pkg.IsManagedClusterProfile() {
 		if !present {
 			Fail(fmt.Sprintln("Environment variable ADMIN_KUBECONFIG is required to run the test"))
 		}
 	} else {
-		adminKubeConfig = getDefaultKubeConfigPath()
+		return getDefaultKubeConfigPath()
 	}
-	pkg.Log(pkg.Info, "Initialized kube config path - "+adminKubeConfig)
+	return adminKubeConfig
 }
 
 func getPromConfigJobName() string {
-	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", getKubeConfigPath())
 	if err != nil {
 		pkg.Log(pkg.Error, err.Error())
 		Fail(err.Error())
