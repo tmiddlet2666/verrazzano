@@ -155,7 +155,7 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 			Eventually(func() (*promoperapi.ServiceMonitor, error) {
 				monitor, err := testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
 				if err != nil {
-					pkg.Log(pkg.Error, "Failed to get the Service Monitor from the cluster")
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the Service Monitor from the cluster %v", err))
 				}
 				return monitor, err
 			}, waitTimeout, pollingInterval).Should(Not(BeNil()), "Expected to find Service Monitor")
