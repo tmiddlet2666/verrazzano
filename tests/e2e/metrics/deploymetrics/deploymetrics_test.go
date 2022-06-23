@@ -239,7 +239,7 @@ func getPromConfigJobName() string {
 	if isPromJobNameInNewFmt {
 		// For VZ versions starting from 1.4.0, the job name in prometheus scrape config is of the format
 		// <app_name>_<app_namespace>
-		return fmt.Sprintf("%s_%s", deploymetricsAppName, namespace)
+		return fmt.Sprintf("%s-%s", deploymetricsAppName, namespace)
 	}
 	// For VZ versions prior to 1.4.0, the job name in prometheus scrape config was of the old format
 	// <app_name>_default_<app_namespace>_<app_component_name>
