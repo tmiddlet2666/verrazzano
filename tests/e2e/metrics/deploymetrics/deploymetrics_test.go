@@ -56,14 +56,23 @@ var _ = clusterDump.BeforeSuite(func() {
 		deployMetricsApplication()
 	}
 	var err error
-	clusterNameLabel, err = pkg.GetClusterNameMetricLabel(getDefaultKubeConfigPath())
+
+	kubeconfig, err := getKubeConfigPath()
+	if err != nil {
+		pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the kubeconfig: %v", err))
+	}
+	clusterNameLabel, err = pkg.GetClusterNameMetricLabel(kubeconfig)
 	if err != nil {
 		pkg.Log(pkg.Error, err.Error())
 		Fail(err.Error())
 	}
 
 	Eventually(func() error {
-		err := createService(getPromConfigJobName())
+		promJobName, err := getPromConfigJobName()
+		if err != nil {
+			pkg.Log(pkg.Error, fmt.Sprintf("Failed to generate the Service Monitor job name: %v", err))
+		}
+		err = createService(promJobName)
 		if err != nil {
 			pkg.Log(pkg.Error, fmt.Sprintf("Failed to create the Service for the Service Monitor: %v", err))
 			return err
@@ -136,7 +145,12 @@ func undeployMetricsApplication() {
 	}, shortWaitTimeout, shortPollingInterval).Should(BeTrue())
 
 	Eventually(func() bool {
-		_, err := pkg.GetServiceMonitor(namespace, getPromConfigJobName())
+		promJobName, err := getPromConfigJobName()
+		if err != nil {
+			pkg.Log(pkg.Error, fmt.Sprintf("Failed to generate the Service Monitor job name: %v", err))
+			return false
+		}
+		_, err = pkg.GetServiceMonitor(namespace, promJobName)
 		return err != nil
 	}, waitTimeout, pollingInterval).Should(BeTrue(), "Expected Service Monitor to not exist")
 
@@ -161,12 +175,16 @@ func undeployMetricsApplication() {
 var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), func() {
 
 	t.Context("for Prometheus Config.", Label("f:observability.monitoring.prom"), func() {
-		t.It(fmt.Sprintf("Verify that Prometheus Service Monitor %s exists", getPromConfigJobName()), func() {
+		t.It("Verify that Prometheus Service Monitor exists", func() {
 			if skipVerify {
 				Skip(skipVerifications)
 			}
+			promJobName, err := getPromConfigJobName()
+			if err != nil {
+				pkg.Log(pkg.Error, fmt.Sprintf("Failed to generate the Service Monitor job name: %v", err))
+			}
 			Eventually(func() (*promoperapi.ServiceMonitor, error) {
-				monitor, err := testpkg.GetServiceMonitor(namespace, getPromConfigJobName())
+				monitor, err := testpkg.GetServiceMonitor(namespace, promJobName)
 				if err != nil {
 					pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the Service Monitor from the cluster: %v", err))
 				}
@@ -180,24 +198,40 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 			if skipVerify {
 				Skip(skipVerifications)
 			}
+			clusterName, err := getClusterNameForPromQuery()
+			if err != nil {
+				pkg.Log(pkg.Error, fmt.Sprintf("Failed getting the cluster name: %v", err))
+			}
 			metricLabels := map[string]string{
 				"app_oam_dev_name": "deploymetrics-appconf",
-				clusterNameLabel:   getClusterNameForPromQuery(),
+				clusterNameLabel:   clusterName,
+			}
+			kubeconfig, err := getKubeConfigPath()
+			if err != nil {
+				pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the kubeconfig path: %v", err))
 			}
 			Eventually(func() bool {
-				return pkg.MetricsExistInCluster("http_server_requests_seconds_count", metricLabels, getKubeConfigPath())
+				return pkg.MetricsExistInCluster("http_server_requests_seconds_count", metricLabels, kubeconfig)
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue(), "Expected to find Prometheus scraped metrics for App Component.")
 		})
 		t.It("App Config", func() {
 			if skipVerify {
 				Skip(skipVerifications)
 			}
+			clusterName, err := getClusterNameForPromQuery()
+			if err != nil {
+				pkg.Log(pkg.Error, fmt.Sprintf("Failed getting the cluster name: %v", err))
+			}
 			metricLabels := map[string]string{
 				"app_oam_dev_component": "deploymetrics-deployment",
-				clusterNameLabel:        getClusterNameForPromQuery(),
+				clusterNameLabel:        clusterName,
 			}
 			Eventually(func() bool {
-				return pkg.MetricsExistInCluster("tomcat_sessions_created_sessions_total", metricLabels, getKubeConfigPath())
+				kubeconfig, err := getKubeConfigPath()
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to get the kubeconfig: %v", err))
+				}
+				return pkg.MetricsExistInCluster("tomcat_sessions_created_sessions_total", metricLabels, kubeconfig)
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue(), "Expected to find Prometheus scraped metrics for App Config.")
 		})
 	})
@@ -205,58 +239,61 @@ var _ = t.Describe("DeployMetrics Application test", Label("f:app-lcm.oam"), fun
 })
 
 // Return the cluster name used for the Prometheus query
-func getClusterNameForPromQuery() string {
+func getClusterNameForPromQuery() (string, error) {
 	if pkg.IsManagedClusterProfile() {
 		var clusterName = os.Getenv("CLUSTER_NAME")
 		pkg.Log(pkg.Info, "This is a managed cluster, returning cluster name - "+clusterName)
-		return clusterName
+		return clusterName, nil
 	}
-	isMinVersion110, err := pkg.IsVerrazzanoMinVersion("1.1.0", getKubeConfigPath())
-	if err != nil {
-		pkg.Log(pkg.Error, err.Error())
-		return ""
-	}
-	if isMinVersion110 {
-		return "local"
-	}
-	return ""
-}
-
-func getDefaultKubeConfigPath() string {
 	kubeConfigPath, err := k8sutil.GetKubeConfigLocation()
 	if err != nil {
-		Fail(fmt.Sprintf("Failed to get default kubeconfig path: %s", err.Error()))
+		return kubeConfigPath, err
 	}
-	pkg.Log(pkg.Info, "Default kube config path - "+kubeConfigPath)
-	return kubeConfigPath
+	isMinVersion110, err := pkg.IsVerrazzanoMinVersion("1.1.0", kubeConfigPath)
+	if err != nil {
+		return "", err
+	}
+	if isMinVersion110 {
+		return "local", nil
+	}
+	return "", nil
 }
 
-func getKubeConfigPath() string {
+func getDefaultKubeConfigPath() (string, error) {
+	kubeConfigPath, err := k8sutil.GetKubeConfigLocation()
+	if err != nil {
+		return kubeConfigPath, err
+	}
+	pkg.Log(pkg.Info, "Default kube config path - "+kubeConfigPath)
+	return kubeConfigPath, nil
+}
+
+func getKubeConfigPath() (string, error) {
 	adminKubeConfig, present := os.LookupEnv("ADMIN_KUBECONFIG")
 	if pkg.IsManagedClusterProfile() {
 		if !present {
-			Fail(fmt.Sprintln("Environment variable ADMIN_KUBECONFIG is required to run the test"))
+			return adminKubeConfig, fmt.Errorf("Environment variable ADMIN_KUBECONFIG is required to run the test")
 		}
 	} else {
 		return getDefaultKubeConfigPath()
 	}
-	return adminKubeConfig
+	return adminKubeConfig, nil
 }
 
-func getPromConfigJobName() string {
-	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", getKubeConfigPath())
+func getPromConfigJobName() (string, error) {
+	kubeconfig, err := getKubeConfigPath()
+	isPromJobNameInNewFmt, err := pkg.IsVerrazzanoMinVersion("1.4.0", kubeconfig)
 	if err != nil {
-		pkg.Log(pkg.Error, err.Error())
-		Fail(err.Error())
+		return kubeconfig, err
 	}
 	if isPromJobNameInNewFmt {
 		// For VZ versions starting from 1.4.0, the job name in prometheus scrape config is of the format
 		// <app_name>_<app_namespace>
-		return fmt.Sprintf("%s-%s", deploymetricsAppName, namespace)
+		return fmt.Sprintf("%s-%s", deploymetricsAppName, namespace), nil
 	}
 	// For VZ versions prior to 1.4.0, the job name in prometheus scrape config was of the old format
 	// <app_name>_default_<app_namespace>_<app_component_name>
-	return fmt.Sprintf("%s_default_%s_%s", deploymetricsAppName, generatedNamespace, deploymetricsCompName)
+	return fmt.Sprintf("%s_default_%s_%s", deploymetricsAppName, generatedNamespace, deploymetricsCompName), nil
 }
 
 // create Service creates a service for metrics collection
