@@ -7,7 +7,6 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	"github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/vzinstance"
 	"k8s.io/api/core/v1"
@@ -53,13 +52,13 @@ func UpdateComponentStatus(c client.Client, compContext spi.ComponentContext, me
 			componentStatus.ReconcilingGeneration = cr.Generation
 		}
 	}
-	componentStatus.Conditions = verrazzano.AppendConditionIfNecessary(log, componentStatus, condition)
+	componentStatus.Conditions = AppendConditionIfNecessary(log, componentStatus, condition)
 
 	// Set the state of resource
 	componentStatus.State = controllers.CheckCondtitionType(conditionType)
 
 	// Update the status
-	return UpdateVerrazzanoStatus(compContext.Client(), log, cr)
+	return UpdateVerrazzanoStatus(c, log, cr)
 }
 
 func UpdateVerrazzanoStatus(c client.Client, log vzlog.VerrazzanoLogger, vz *v1alpha1.Verrazzano) error {
@@ -74,4 +73,14 @@ func UpdateVerrazzanoStatus(c client.Client, log vzlog.VerrazzanoLogger, vz *v1a
 	}
 	// Return error so that reconcile gets called again
 	return err
+}
+
+func AppendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *v1alpha1.ComponentStatusDetails, newCondition v1alpha1.Condition) []v1alpha1.Condition {
+	for _, existingCondition := range compStatus.Conditions {
+		if existingCondition.Type == newCondition.Type {
+			return compStatus.Conditions
+		}
+	}
+	log.Debugf("Adding %s resource newCondition: %v", compStatus.Name, newCondition.Type)
+	return append(compStatus.Conditions, newCondition)
 }

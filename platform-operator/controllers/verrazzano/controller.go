@@ -690,16 +690,6 @@ func (r *Reconciler) updateVzState(log vzlog.VerrazzanoLogger, cr *installv1alph
 	return ctrlUtils.UpdateVerrazzanoStatus(r.Client, log, cr)
 }
 
-func AppendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *installv1alpha1.ComponentStatusDetails, newCondition installv1alpha1.Condition) []installv1alpha1.Condition {
-	for _, existingCondition := range compStatus.Conditions {
-		if existingCondition.Type == newCondition.Type {
-			return compStatus.Conditions
-		}
-	}
-	log.Debugf("Adding %s resource newCondition: %v", compStatus.Name, newCondition.Type)
-	return append(compStatus.Conditions, newCondition)
-}
-
 // Convert a condition to a VZ State
 func conditionToVzState(currentCondition installv1alpha1.ConditionType) installv1alpha1.VzStateType {
 	switch currentCondition {
