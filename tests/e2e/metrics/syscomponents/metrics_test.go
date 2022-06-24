@@ -49,8 +49,7 @@ const (
 	job                 = "job"
 	app                 = "app"
 	namespace           = "namespace"
-	podName             = "pod"
-	oldPodName          = "pod_name"
+	podName             = "pod_name"
 )
 
 var clusterName = os.Getenv("CLUSTER_NAME")
@@ -273,17 +272,8 @@ func getClusterNameMetricLabel() string {
 // Assert the existence of labels for namespace and pod in the envoyStatsMetric
 func verifyLabels(envoyStatsMetric string, ns string, pod string) bool {
 	metrics := pkg.JTq(envoyStatsMetric, "data", "result").([]interface{})
-	below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
-	if err != nil {
-		pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
-		return false
-	}
-	podNameLabel := podName
-	if below {
-		podNameLabel = oldPodName
-	}
 	for _, metric := range metrics {
-		if pkg.Jq(metric, "metric", namespace) == ns && pkg.Jq(metric, "metric", podNameLabel) == pod {
+		if pkg.Jq(metric, "metric", namespace) == ns && pkg.Jq(metric, "metric", podName) == pod {
 			if isManagedClusterProfile {
 				// when the admin cluster scrapes the metrics from a managed cluster, as label verrazzano_cluster with value
 				// name of the managed cluster is added to the metrics
