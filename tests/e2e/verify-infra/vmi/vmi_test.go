@@ -319,8 +319,14 @@ var _ = t.Describe("VMI", Label("f:infra-lcm"), func() {
 		})
 	} else if pkg.IsProdProfile() {
 		t.It("Check persistent volumes for prod cluster profile", func() {
-			Expect(len(volumeClaims)).To(Equal(8))
-			assertPersistentVolume("vmi-system-prometheus", size)
+			below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", kubeconfig)
+			Expect(err).ToNot(HaveOccurred())
+			if below {
+				Expect(len(volumeClaims)).To(Equal(8))
+				assertPersistentVolume("vmi-system-prometheus", size)
+			} else {
+				Expect(len(volumeClaims)).To(Equal(7))
+			}
 			assertPersistentVolume("vmi-system-grafana", size)
 			assertPersistentVolume("elasticsearch-master-vmi-system-es-master-0", size)
 			assertPersistentVolume("elasticsearch-master-vmi-system-es-master-1", size)
