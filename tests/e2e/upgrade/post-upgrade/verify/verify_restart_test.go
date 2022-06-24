@@ -27,6 +27,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/mysql"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/oam"
+	promoperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/prometheus/operator"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/rancher"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/verrazzano"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
@@ -180,7 +181,7 @@ var _ = t.Describe("Checking if Verrazzano system components are ready, post-upg
 			t.Entry("Checking Deployment verrazzano-monitoring-operator", constants.VerrazzanoSystemNamespace, verrazzano.ComponentName, "verrazzano-monitoring-operator"),
 			t.Entry("Checking Deployment vmi-system-grafana", constants.VerrazzanoSystemNamespace, verrazzano.ComponentName, "vmi-system-grafana"),
 			t.Entry("Checking Deployment vmi-system-kibana", constants.VerrazzanoSystemNamespace, verrazzano.ComponentName, "vmi-system-kibana"),
-			t.Entry("Checking Deployment vmi-system-prometheus-0", constants.VerrazzanoSystemNamespace, verrazzano.ComponentName, "vmi-system-prometheus-0"),
+			t.Entry("Checking Deployment prometheus-operator-kube-p-operator", vzconst.PrometheusOperatorNamespace, promoperator.ComponentName, "prometheus-operator-kube-p-operator"),
 			t.Entry("Checking Deployment weblogic-operator", constants.VerrazzanoSystemNamespace, weblogic.ComponentName, "weblogic-operator"),
 
 			t.Entry("Checking Deployment cert-manager", certmanager.ComponentNamespace, certmanager.ComponentName, "cert-manager"),
