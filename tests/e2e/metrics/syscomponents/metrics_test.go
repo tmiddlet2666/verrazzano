@@ -137,7 +137,7 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 			Eventually(func() bool {
 				below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
 				if err != nil {
-					pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to verify the Verrazzano version was below 1.4.0: %v", err))
 					return false
 				}
 				kv := map[string]string{
@@ -167,7 +167,7 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 				Eventually(func() bool {
 					below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
 					if err != nil {
-						pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+						pkg.Log(pkg.Error, fmt.Sprintf("Failed to verify the Verrazzano version was below 1.4.0: %v", err))
 						return false
 					}
 					kv := map[string]string{
@@ -189,7 +189,7 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 			Eventually(func() bool {
 				below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
 				if err != nil {
-					pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+					pkg.Log(pkg.Error, fmt.Sprintf("Failed to verify the Verrazzano version was below 1.4.0: %v", err))
 					return false
 				}
 				kv := map[string]string{
