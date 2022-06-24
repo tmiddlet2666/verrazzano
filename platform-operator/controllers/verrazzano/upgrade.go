@@ -6,6 +6,7 @@ package verrazzano
 import (
 	"context"
 	"fmt"
+	ctrlUtils "github.com/verrazzano/verrazzano/platform-operator/controllers/controller_utils"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/transform"
@@ -153,7 +154,7 @@ func (r *Reconciler) reconcileUpgrade(log vzlog.VerrazzanoLogger, cr *installv1a
 			}
 			// Update the status with the new version and component generations
 			cr.Status.Version = targetVersion
-			if err := r.updateVerrazzanoStatus(log, cr); err != nil {
+			if err := ctrlUtils.UpdateVerrazzanoStatus(r.Client, log, cr); err != nil {
 				return newRequeueWithDelay(), err
 			}
 			tracker.vzState = vzStateEnd

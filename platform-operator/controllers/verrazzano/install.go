@@ -8,6 +8,7 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/semver"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	vzconst "github.com/verrazzano/verrazzano/platform-operator/constants"
+	ctrlUtils "github.com/verrazzano/verrazzano/platform-operator/controllers/controller_utils"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/registry"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	vzcontext "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/context"
@@ -57,7 +58,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 				oldState := componentStatus.State
 				oldGen := componentStatus.ReconcilingGeneration
 				componentStatus.ReconcilingGeneration = 0
-				if err := r.updateComponentStatus(compContext, "PreInstall started", vzapi.CondPreInstall); err != nil {
+				if err := ctrlUtils.UpdateComponentStatus(r.Client, compContext, "PreInstall started", vzapi.CondPreInstall); err != nil {
 					return ctrl.Result{Requeue: true}, err
 				}
 				compLog.Oncef("CR.generation: %v reset component %s state: %v generation: %v to state: %v generation: %v ",
@@ -89,7 +90,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 				return newRequeueWithDelay(), err
 			}
 			// After restore '.status.instance' is empty and not updated. Below change will populate the correct values when comp state is Ready
-			if err := r.updateComponentStatus(compContext, "Component is Ready", vzapi.CondInstallComplete); err != nil {
+			if err := ctrlUtils.UpdateComponentStatus(r.Client, compContext, "Component is Ready", vzapi.CondInstallComplete); err != nil {
 				return ctrl.Result{Requeue: true}, err
 			}
 			continue
@@ -105,7 +106,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 					comp.Name(), comp.GetMinVerrazzanoVersion())
 				continue
 			}
-			if err := r.updateComponentStatus(compContext, "PreInstall started", vzapi.CondPreInstall); err != nil {
+			if err := ctrlUtils.UpdateComponentStatus(r.Client, compContext, "PreInstall started", vzapi.CondPreInstall); err != nil {
 				return ctrl.Result{Requeue: true}, err
 			}
 			requeue = true
@@ -127,7 +128,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 				requeue = true
 				continue
 			}
-			if err := r.updateComponentStatus(compContext, "Install started", vzapi.CondInstallStarted); err != nil {
+			if err := ctrlUtils.UpdateComponentStatus(r.Client, compContext, "Install started", vzapi.CondInstallStarted); err != nil {
 				return ctrl.Result{Requeue: true}, err
 			}
 			// Install started requeue to check status
@@ -143,7 +144,7 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 					continue
 				}
 				compLog.Oncef("Component %s successfully installed", comp.Name())
-				if err := r.updateComponentStatus(compContext, "Install complete", vzapi.CondInstallComplete); err != nil {
+				if err := ctrlUtils.UpdateComponentStatus(r.Client, compContext, "Install complete", vzapi.CondInstallComplete); err != nil {
 					return ctrl.Result{Requeue: true}, err
 				}
 				// Don't requeue because of this component, it is done install

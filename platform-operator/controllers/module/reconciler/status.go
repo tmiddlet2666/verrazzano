@@ -7,6 +7,8 @@ import (
 	"context"
 	"fmt"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	ctrlUtils "github.com/verrazzano/verrazzano/platform-operator/controllers/controller_utils"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -14,13 +16,18 @@ import (
 )
 
 //UpdateStatus configures the Module's status based on the passed in state and then updates the Module on the cluster
-func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, condition modulesv1alpha1.ModuleCondition) error {
-	module := ctx.Module()
-	phase := modulesv1alpha1.Phase(condition)
+func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, moduleCondition modulesv1alpha1.ModuleCondition) error {
+	phase := modulesv1alpha1.Phase(moduleCondition)
 	// Update the Module's Phase
-	module.SetPhase(phase)
-	// Append a new condition, if applicable
-	appendCondition(module, string(phase), condition)
+	ctx.Module().SetPhase(phase)
+	// Append a new moduleCondition, if applicable
+	appendCondition(ctx.Module(), string(phase), moduleCondition)
+
+	// update the Verrazzano CR component status to align with the module status
+	if err := ctrlUtils.UpdateComponentStatus(ctx.Client(), ctx, string(phase), convertModuleConditiontoCondition(moduleCondition)); err != nil {
+		return err
+	}
+
 	return r.doStatusUpdate(ctx)
 }
 
@@ -72,4 +79,26 @@ func appendCondition(module *modulesv1alpha1.Module, message string, condition m
 //needsConditionUpdate checks if the condition needs an update
 func needsConditionUpdate(last, new modulesv1alpha1.Condition) bool {
 	return last.Type != new.Type && last.Message != new.Message
+}
+
+// convertModuleConditiontoCondition converts ModuleCondition types to ConditionType types
+// this will then get converted to CompStateType in updateComponentStatus by the CheckCondtitionType function
+// return nil if ModuleCondition is unknown
+func convertModuleConditiontoCondition(moduleCondion modulesv1alpha1.ModuleCondition) v1alpha1.ConditionType {
+	switch moduleCondion {
+	// install ConditionTypes
+	case modulesv1alpha1.CondPreInstall:
+		return v1alpha1.CondPreInstall
+	case modulesv1alpha1.CondInstallStarted:
+		return v1alpha1.CondInstallStarted
+	case modulesv1alpha1.CondInstallComplete:
+		return v1alpha1.CondInstallComplete
+	// upgrade ConditionTypes
+	case modulesv1alpha1.CondPreUpgrade, modulesv1alpha1.CondUpgradeStarted:
+		return v1alpha1.CondUpgradeStarted
+	case modulesv1alpha1.CondUpgradeComplete:
+		return v1alpha1.CondUpgradeComplete
+	}
+	// otherwise return UninstallStarted
+	return v1alpha1.CondUninstallStarted
 }
