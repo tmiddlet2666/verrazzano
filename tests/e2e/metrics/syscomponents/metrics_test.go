@@ -38,8 +38,11 @@ const (
 
 	// Constants for various metric labels, used in the validation
 	nodeExporter        = "prometheus-node-exporter"
+	oldNodeExporter     = "node-exporter"
 	istiod              = "istiod"
+	pilot               = "pilot"
 	prometheus          = "prometheus-operator-kube-p-prometheus"
+	oldPrometheus       = "prometheus"
 	controllerNamespace = "controller_namespace"
 	ingressController   = "ingress-controller"
 	appK8SIOInstance    = "app_kubernetes_io_instance"
@@ -132,9 +135,20 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 
 		t.It("Verify sample Node Exporter metrics can be queried from Prometheus", func() {
 			Eventually(func() bool {
+				below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+					return false
+				}
 				kv := map[string]string{
 					job: nodeExporter,
 				}
+				if below {
+					kv = map[string]string{
+						job: oldNodeExporter,
+					}
+				}
+
 				return metricsContainLabels(cpuSecondsTotal, kv)
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
@@ -151,9 +165,20 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 
 			t.It("Verify sample istiod metrics can be queried from Prometheus", func() {
 				Eventually(func() bool {
+					below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
+					if err != nil {
+						pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+						return false
+					}
 					kv := map[string]string{
 						app: istiod,
 						job: istiod,
+					}
+					if below {
+						kv = map[string]string{
+							app: istiod,
+							job: pilot,
+						}
 					}
 					return metricsContainLabels(sidecarInjectionRequests, kv)
 				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
@@ -162,8 +187,18 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 
 		t.It("Verify sample metrics can be queried from Prometheus", func() {
 			Eventually(func() bool {
+				below, err := pkg.IsVerrazzanoBelowVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, "Failed to verify the Verrazzano version was below 1.4.0")
+					return false
+				}
 				kv := map[string]string{
 					job: prometheus,
+				}
+				if below {
+					kv = map[string]string{
+						job: oldPrometheus,
+					}
 				}
 				return metricsContainLabels(prometheusTargetIntervalLength, kv)
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
