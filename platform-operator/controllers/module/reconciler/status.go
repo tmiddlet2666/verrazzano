@@ -12,7 +12,6 @@ import (
 	installv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/vzinstance"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
 	"time"
@@ -104,19 +103,7 @@ func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, mes
 		}
 		cr.Status.Components[componentName] = componentStatus
 	}
-	if conditionType == installv1alpha1.CondInstallComplete {
-		cr.Status.VerrazzanoInstance = vzinstance.GetInstanceInfo(compContext)
-		if componentStatus.ReconcilingGeneration > 0 {
-			componentStatus.LastReconciledGeneration = componentStatus.ReconcilingGeneration
-			componentStatus.ReconcilingGeneration = 0
-		} else {
-			componentStatus.LastReconciledGeneration = cr.Generation
-		}
-	} else {
-		if componentStatus.ReconcilingGeneration == 0 {
-			componentStatus.ReconcilingGeneration = cr.Generation
-		}
-	}
+
 	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
 
 	// Set the state of resource
