@@ -5,13 +5,15 @@
 if [ ! -z "${kubeConfig}" ]; then
     export KUBECONFIG="${kubeConfig}"
 fi
+
+TEST_DUMP_ROOT=${TEST_DUMP_ROOT:-"."}
+RUN_PARALLEL=${RUN_PARALLEL:-true}
+
+TEST_SUITES=${TEST_SUITES:-$*}
 if [ -z "${TEST_SUITES}" ]; then
   echo "${0}: No test suites specified"
   exit 0
 fi
-
-TEST_DUMP_ROOT=${TEST_DUMP_ROOT:-"."}
-RUN_PARALLEL=${RUN_PARALLEL:-true}
 
 GINGKO_ARGS=${GINGKO_ARGS:-"-v --keep-going --no-color"}
 if [ "${RUN_PARALLEL}" == "true" ]; then

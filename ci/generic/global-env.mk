@@ -21,3 +21,5 @@ export DUMP_ROOT_DIRECTORY ?= ${WORKSPACE}/cluster-dumps
 export OCI_OS_ARTIFACT_BUCKET=build-failure-artifacts
 export OCI_OS_BUCKET=verrazzano-builds
 export OCI_CLI_PROFILE ?= DEFAULT
+
+export RUNGINKGO = ${CI_SCRIPTS_DIR}/run-ginkgo.sh
