@@ -10,6 +10,8 @@ import (
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	modules2 "github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
@@ -23,9 +25,11 @@ import (
 )
 
 var delegates = map[string]func(*modulesv1alpha1.Module) modules2.DelegateReconciler{
-	keycloak.ComponentName:  keycloak.NewComponent,
-	coherence.ComponentName: coherence.NewComponent,
-	weblogic.ComponentName:  weblogic.NewComponent,
+	keycloak.ComponentName:    keycloak.NewComponent,
+	coherence.ComponentName:   coherence.NewComponent,
+	weblogic.ComponentName:    weblogic.NewComponent,
+	authproxy.ComponentName:   authproxy.NewComponent,
+	certmanager.ComponentName: certmanager.NewComponent,
 }
 
 type Reconciler struct {

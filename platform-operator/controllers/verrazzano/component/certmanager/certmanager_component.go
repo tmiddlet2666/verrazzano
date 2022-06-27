@@ -6,11 +6,11 @@ package certmanager
 import (
 	"context"
 	"fmt"
-	"path/filepath"
-
 	vzconst "github.com/verrazzano/verrazzano/pkg/constants"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
@@ -30,6 +30,10 @@ const ComponentNamespace = vzconst.CertManagerNamespace
 // ComponentJSONName is the josn name of the verrazzano component in CRD
 const ComponentJSONName = "certManager"
 
+const ConfigMapName = "cert-manager-vz-config"
+
+const overridesFile = "cert-manager-values.yaml"
+
 // certManagerComponent represents an CertManager component
 type certManagerComponent struct {
 	helm.HelmComponent
@@ -38,24 +42,29 @@ type certManagerComponent struct {
 // Verify that certManagerComponent implements Component
 var _ spi.Component = certManagerComponent{}
 
-// NewComponent returns a new CertManager component
-func NewComponent() spi.Component {
-	return certManagerComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			JSONName:                ComponentJSONName,
-			ChartDir:                filepath.Join(config.GetThirdPartyDir(), "cert-manager"),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			ImagePullSecretKeyname:  "global.imagePullSecrets[0].name",
-			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "cert-manager-values.yaml"),
-			AppendOverridesFunc:     AppendOverrides,
-			MinVerrazzanoVersion:    constants.VerrazzanoVersion1_0_0,
-			Dependencies:            []string{},
-			GetInstallOverridesFunc: GetOverrides,
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:               config.GetThirdPartyDir(),
+		ImagePullSecretKeyname: "global.imagePullSecrets[0].name",
+		AppendOverridesFunc:    AppendOverrides,
+	}
+	helm.SetForModule(&h, module)
+	return &reconciler.Reconciler{
+		ModuleComponent: certManagerComponent{
+			h,
 		},
 	}
+}
+
+func (c certManagerComponent) IsOperatorInstallSupported() bool {
+	return false
+}
+
+func (c certManagerComponent) Name() string {
+	if c.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return c.HelmComponent.ReleaseName
 }
 
 // IsEnabled returns true if the cert-manager is enabled, which is the default
@@ -93,6 +102,10 @@ func (c certManagerComponent) ValidateInstall(vz *vzapi.Verrazzano) error {
 	return c.HelmComponent.ValidateInstall(vz)
 }
 
+func (c certManagerComponent) PreUpgrade(ctx spi.ComponentContext) error {
+	return common.ApplyOverride(ctx, overridesFile)
+}
+
 // PreInstall runs before cert-manager components are installed
 // The cert-manager namespace is created
 // The cert-manager manifest is patched if needed and applied to create necessary CRDs
@@ -125,7 +138,7 @@ func (c certManagerComponent) PreInstall(compContext spi.ComponentContext) error
 	if err := common.ProcessAdditionalCertificates(log, cli, vz); err != nil {
 		return err
 	}
-	return nil
+	return common.ApplyOverride(compContext, overridesFile)
 }
 
 // PostInstall applies necessary cert-manager resources after the install has occurred

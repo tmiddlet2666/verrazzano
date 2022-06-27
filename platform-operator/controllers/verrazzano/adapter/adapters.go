@@ -5,6 +5,8 @@ package adapter
 
 import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
@@ -22,7 +24,45 @@ func ApplyComponentAsModule(client clipkg.Client, vz *vzapi.Verrazzano, componen
 	return nil
 }
 
+// Adapter can be a part of the Component interface
 var componentAdapters = map[string]func(*vzapi.Verrazzano) *componentAdapter{
+	// cert manager adapter
+	certmanager.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
+		adapter := NewAdapter(vzconfig.IsCertManagerEnabled(vz))
+		if adapter.IsEnabled {
+			adapter.Name = certmanager.ComponentName
+			adapter.Namespace = vz.Namespace
+			adapter.ChartNamespace = certmanager.ComponentNamespace
+			adapter.ChartPath = certmanager.ComponentName
+			cm := vz.Spec.Components.CertManager
+			if cm != nil {
+				adapter.InstallOverrides = cm.InstallOverrides
+				override := vzapi.Overrides{
+					ConfigMapRef: &corev1.ConfigMapKeySelector{
+						Key: valuesYaml,
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: certmanager.ConfigMapName,
+						},
+					},
+				}
+				adapter.InstallOverrides.ValueOverrides = append([]vzapi.Overrides{override}, cm.ValueOverrides...)
+			}
+		}
+		return adapter
+	},
+
+	// Authproxy adapter
+	authproxy.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
+		adapter := NewAdapter(vzconfig.IsAuthProxyEnabled(vz))
+		if adapter.IsEnabled {
+			adapter.Name = authproxy.ComponentName
+			adapter.Namespace = vz.Namespace
+			adapter.ChartNamespace = authproxy.ComponentNamespace
+			adapter.ChartPath = authproxy.ComponentName
+		}
+		return adapter
+	},
+
 	// Keycloak Adapter
 	keycloak.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
 		adapter := NewAdapter(vzconfig.IsKeycloakEnabled(vz))

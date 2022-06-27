@@ -5,11 +5,10 @@ package authproxy
 
 import (
 	"fmt"
-	"path/filepath"
-
-	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
-
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
 
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
@@ -34,32 +33,38 @@ type authProxyComponent struct {
 // Verify that AuthProxyComponent implements Component
 var _ spi.Component = authProxyComponent{}
 
-// NewComponent returns a new authProxyComponent component
-func NewComponent() spi.Component {
-	return authProxyComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			JSONName:                ComponentJSONName,
-			ChartDir:                filepath.Join(config.GetHelmChartsDir(), ComponentName),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			AppendOverridesFunc:     AppendOverrides,
-			MinVerrazzanoVersion:    constants.VerrazzanoVersion1_3_0,
-			ImagePullSecretKeyname:  "global.imagePullSecrets[0]",
-			GetInstallOverridesFunc: GetOverrides,
-			Dependencies:            []string{nginx.ComponentName},
-			Certificates: []types.NamespacedName{
-				{Name: constants.VerrazzanoIngressSecret, Namespace: ComponentNamespace},
-			},
-			IngressNames: []types.NamespacedName{
-				{
-					Namespace: ComponentNamespace,
-					Name:      constants.VzConsoleIngress,
-				},
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:               config.GetHelmChartsDir(),
+		ImagePullSecretKeyname: "global.imagePullSecrets[0]",
+		AppendOverridesFunc:    AppendOverrides,
+		Certificates: []types.NamespacedName{
+			{Name: constants.VerrazzanoIngressSecret, Namespace: ComponentNamespace},
+		},
+		IngressNames: []types.NamespacedName{
+			{
+				Namespace: ComponentNamespace,
+				Name:      constants.VzConsoleIngress,
 			},
 		},
 	}
+	helm.SetForModule(&h, module)
+	return &reconciler.Reconciler{
+		ModuleComponent: authProxyComponent{
+			h,
+		},
+	}
+}
+
+func (c authProxyComponent) IsOperatorInstallSupported() bool {
+	return false
+}
+
+func (c authProxyComponent) Name() string {
+	if c.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return c.HelmComponent.ReleaseName
 }
 
 // IsEnabled authProxyComponent-specific enabled check for installation
