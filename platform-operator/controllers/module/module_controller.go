@@ -11,6 +11,7 @@ import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	modules2 "github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 	"go.uber.org/zap"
@@ -22,7 +23,7 @@ import (
 )
 
 var delegates = map[string]func(*modulesv1alpha1.Module) modules2.DelegateReconciler{
-	//keycloak.ComponentName:  keycloak.NewComponent,
+	keycloak.ComponentName:  keycloak.NewComponent,
 	coherence.ComponentName: coherence.NewComponent,
 	weblogic.ComponentName:  weblogic.NewComponent,
 }

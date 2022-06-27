@@ -10,7 +10,6 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	installv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -134,10 +133,31 @@ func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, mes
 	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
 
 	// Set the state of resource
-	componentStatus.State = controllers.CheckCondtitionType(conditionType)
+	componentStatus.State = checkCondtitionType(conditionType)
 
 	// Update the status
 	return r.updateVerrazzanoStatus(log, cr)
+}
+
+func checkCondtitionType(currentCondition installv1alpha1.ConditionType) installv1alpha1.CompStateType {
+	switch currentCondition {
+	case installv1alpha1.CondPreInstall:
+		return installv1alpha1.CompStatePreInstalling
+	case installv1alpha1.CondInstallStarted:
+		return installv1alpha1.CompStateInstalling
+	case installv1alpha1.CondUninstallStarted:
+		return installv1alpha1.CompStateUninstalling
+	case installv1alpha1.CondUpgradeStarted:
+		return installv1alpha1.CompStateUpgrading
+	case installv1alpha1.CondUpgradePaused:
+		return installv1alpha1.CompStateUpgrading
+	case installv1alpha1.CondUninstallComplete:
+		return installv1alpha1.CompStateReady
+	case installv1alpha1.CondInstallFailed, installv1alpha1.CondUpgradeFailed, installv1alpha1.CondUninstallFailed:
+		return installv1alpha1.CompStateFailed
+	}
+	// Return ready for installv1alpha1.CondInstallComplete, installv1alpha1.CondUpgradeComplete
+	return installv1alpha1.CompStateReady
 }
 
 func appendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *installv1alpha1.ComponentStatusDetails, newCondition installv1alpha1.Condition) []installv1alpha1.Condition {

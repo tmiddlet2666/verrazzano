@@ -73,7 +73,6 @@ func getComponents() []spi.Component {
 			grafana.NewComponent(),
 			authproxy.NewComponent(),
 			mysql.NewComponent(),
-			keycloak.NewComponent(),
 			kiali.NewComponent(),
 			promoperator.NewComponent(),
 			promadapter.NewComponent(),
