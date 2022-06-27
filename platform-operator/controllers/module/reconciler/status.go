@@ -82,6 +82,7 @@ func needsConditionUpdate(last, new modulesv1alpha1.Condition) bool {
 	return last.Type != new.Type && last.Message != new.Message
 }
 
+// updateComponentStatus updates the component status in the VZ CR
 func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, message string, conditionType installv1alpha1.ConditionType) error {
 	t := time.Now().UTC()
 	condition := installv1alpha1.Condition{
@@ -108,6 +109,18 @@ func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, mes
 		cr.Status.Components[componentName] = componentStatus
 	}
 
+	if conditionType == installv1alpha1.CondInstallComplete {
+		if componentStatus.ReconcilingGeneration > 0 {
+			componentStatus.LastReconciledGeneration = componentStatus.ReconcilingGeneration
+			componentStatus.ReconcilingGeneration = 0
+		} else {
+			componentStatus.LastReconciledGeneration = cr.Generation
+		}
+	} else {
+		if componentStatus.ReconcilingGeneration == 0 {
+			componentStatus.ReconcilingGeneration = cr.Generation
+		}
+	}
 	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
 
 	// Set the state of resource
