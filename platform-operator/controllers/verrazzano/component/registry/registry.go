@@ -13,6 +13,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/grafana"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/istio"
 	jaegeroperator "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/jaeger/operator"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/kiali"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/mysql"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/nginx"
@@ -28,6 +29,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/verrazzano"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/vmo"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 )
 
 type GetCompoentsFnType func() []spi.Component
@@ -80,6 +82,8 @@ func getComponents() []spi.Component {
 			jaegeroperator.NewComponent(),
 			console.NewComponent(),
 			fluentd.NewComponent(),
+			weblogic.NewComponent(nil),
+			keycloak.NewComponent(nil),
 		}
 	}
 	return componentsRegistry

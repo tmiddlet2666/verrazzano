@@ -87,6 +87,14 @@ func IsConsoleEnabled(vz *vzapi.Verrazzano) bool {
 	return true
 }
 
+func IsWeblogicOperatorEnabled(vz *vzapi.Verrazzano) bool {
+	comp := vz.Spec.Components.WebLogicOperator
+	if comp == nil || comp.Enabled == nil {
+		return true
+	}
+	return *comp.Enabled
+}
+
 // IsKeycloakEnabled - Returns false only if explicitly disabled in the CR
 func IsKeycloakEnabled(vz *vzapi.Verrazzano) bool {
 	if vz != nil && vz.Spec.Components.Keycloak != nil && vz.Spec.Components.Keycloak.Enabled != nil {

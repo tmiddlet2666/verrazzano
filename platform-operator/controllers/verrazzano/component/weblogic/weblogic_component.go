@@ -9,8 +9,10 @@ import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/secret"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
@@ -25,6 +27,10 @@ const ComponentNamespace = constants.VerrazzanoSystemNamespace
 
 // ComponentJSONName is the josn name of the verrazzano component in CRD
 const ComponentJSONName = "weblogicOperator"
+
+const ConfigMapName = "weblogic-operator-vz-config"
+
+const overridesFile = "weblogic-values.yaml"
 
 type weblogicComponent struct {
 	helm.HelmComponent
@@ -46,13 +52,17 @@ func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
 	}
 }
 
+func (c weblogicComponent) PreInstall(ctx spi.ComponentContext) error {
+	return common.ApplyOverride(ctx, overridesFile)
+}
+
+func (c weblogicComponent) PreUpgrade(ctx spi.ComponentContext) error {
+	return common.ApplyOverride(ctx, overridesFile)
+}
+
 // IsEnabled WebLogic-specific enabled check for installation
 func (c weblogicComponent) IsEnabled(effectiveCR *vzapi.Verrazzano) bool {
-	comp := effectiveCR.Spec.Components.WebLogicOperator
-	if comp == nil || comp.Enabled == nil {
-		return true
-	}
-	return *comp.Enabled
+	return vzconfig.IsWeblogicOperatorEnabled(effectiveCR)
 }
 
 // ValidateUpdate checks if the specified new Verrazzano CR is valid for this component to be updated
@@ -81,4 +91,15 @@ func (c weblogicComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
 		return true
 	}
 	return false
+}
+
+func (c weblogicComponent) IsOperatorInstallSupported() bool {
+	return false
+}
+
+func (c weblogicComponent) Name() string {
+	if c.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return c.HelmComponent.ReleaseName
 }

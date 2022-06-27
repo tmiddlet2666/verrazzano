@@ -34,6 +34,10 @@ const ComponentNamespace = constants.KeycloakNamespace
 // ComponentJSONName is the josn name of the verrazzano component in CRD
 const ComponentJSONName = "keycloak"
 
+const ConfigMapName = "keycloak-vz-config"
+
+const overridesFile = "keycloak-values.yaml"
+
 // KeycloakComponent represents an Keycloak component
 type KeycloakComponent struct {
 	helm.HelmComponent
@@ -63,6 +67,10 @@ func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
 			HelmComponent: h,
 		},
 	}
+}
+
+func (c KeycloakComponent) IsOperatorInstallSupported() bool {
+	return false
 }
 
 // Reconcile - the only condition currently being handled by this function is to restore
@@ -115,7 +123,7 @@ func (c KeycloakComponent) PreInstall(ctx spi.ComponentContext) error {
 		return err
 	}
 
-	return nil
+	return common.ApplyOverride(ctx, overridesFile)
 }
 
 func (c KeycloakComponent) PostInstall(ctx spi.ComponentContext) error {
@@ -151,6 +159,10 @@ func (c KeycloakComponent) PostInstall(ctx spi.ComponentContext) error {
 	}
 
 	return c.HelmComponent.PostInstall(ctx)
+}
+
+func (c KeycloakComponent) PreUpgrade(ctx spi.ComponentContext) error {
+	return common.ApplyOverride(ctx, overridesFile)
 }
 
 // PostUpgrade Keycloak-post-upgrade processing, create or update the Kiali ingress
@@ -216,4 +228,11 @@ func (c KeycloakComponent) MonitorOverrides(ctx spi.ComponentContext) bool {
 		return true
 	}
 	return false
+}
+
+func (c KeycloakComponent) Name() string {
+	if c.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return c.HelmComponent.ReleaseName
 }

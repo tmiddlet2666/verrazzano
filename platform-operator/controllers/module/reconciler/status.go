@@ -57,10 +57,14 @@ func (r *Reconciler) doStatusUpdate(ctx spi.ComponentContext) error {
 
 func appendCondition(module *modulesv1alpha1.Module, message string, condition modulesv1alpha1.ModuleCondition) {
 	conditions := module.Status.Conditions
-	lastCondition := conditions[len(conditions)-1]
 	newCondition := NewCondition(message, condition)
+	var lastCondition *modulesv1alpha1.Condition
+	if len(conditions) > 0 {
+		lastCondition = &conditions[len(conditions)-1]
+	}
+
 	// Only update the conditions if there is a notable change between the last update
-	if needsConditionUpdate(lastCondition, newCondition) {
+	if needsConditionUpdate(lastCondition, &newCondition) {
 		// Delete oldest condition if at tracking limit
 		if len(conditions) > modulesv1alpha1.ConditionArrayLimit {
 			conditions = conditions[1:]
@@ -70,6 +74,9 @@ func appendCondition(module *modulesv1alpha1.Module, message string, condition m
 }
 
 //needsConditionUpdate checks if the condition needs an update
-func needsConditionUpdate(last, new modulesv1alpha1.Condition) bool {
+func needsConditionUpdate(last, new *modulesv1alpha1.Condition) bool {
+	if last == nil {
+		return true
+	}
 	return last.Type != new.Type && last.Message != new.Message
 }

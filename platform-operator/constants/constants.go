@@ -191,3 +191,6 @@ const VerrazzanoComponentLabelKey = "verrazzano-component"
 
 // IstioAppLabel is the label used for Verrazzano Istio components
 const IstioAppLabel = "verrazzano.io/istio"
+
+//VerrazzanoModuleConfigLabel is the label used to denote if an object is Verrazzano managed
+const VerrazzanoModuleConfigLabel = "verrazzano.io/module-config"

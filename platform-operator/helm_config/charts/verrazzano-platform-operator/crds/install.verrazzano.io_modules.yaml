@@ -116,7 +116,6 @@ spec:
                     type: object
                 type: object
             required:
-            - dependencies
             - installer
             type: object
           status:

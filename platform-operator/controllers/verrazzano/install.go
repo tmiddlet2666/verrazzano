@@ -8,6 +8,7 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/semver"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	vzconst "github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/adapter"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/registry"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	vzcontext "github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/context"
@@ -42,7 +43,9 @@ func (r *Reconciler) reconcileComponents(vzctx vzcontext.VerrazzanoContext) (ctr
 		compLog.Oncef("Component %s is being reconciled", compName)
 
 		if !comp.IsOperatorInstallSupported() {
-			compLog.Debugf("Component based install not supported for %s", compName)
+			if err := adapter.ApplyComponentAsModule(spiCtx.Client(), spiCtx.EffectiveCR(), compName); err != nil {
+				return ctrl.Result{Requeue: true}, err
+			}
 			continue
 		}
 		componentStatus, ok := cr.Status.Components[comp.Name()]

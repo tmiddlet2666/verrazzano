@@ -11,7 +11,7 @@ import (
 
 type ModuleSpec struct {
 	Installer    ModuleInstaller    `json:"installer"`
-	Dependencies []ModuleDependency `json:"dependencies"`
+	Dependencies []ModuleDependency `json:"dependencies,omitempty"`
 }
 
 type ModuleInstaller struct {
