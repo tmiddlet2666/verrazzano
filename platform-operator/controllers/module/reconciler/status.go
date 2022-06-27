@@ -6,7 +6,11 @@ package reconciler
 import (
 	"context"
 	"fmt"
+	ctrlerrors "github.com/verrazzano/verrazzano/pkg/controller/errors"
+	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
 	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
+	installv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	corev1 "k8s.io/api/core/v1"
 	k8serrors "k8s.io/apimachinery/pkg/api/errors"
@@ -16,11 +20,18 @@ import (
 //UpdateStatus configures the Module's status based on the passed in state and then updates the Module on the cluster
 func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, condition modulesv1alpha1.ModuleCondition) error {
 	module := ctx.Module()
-	phase := modulesv1alpha1.Phase(condition)
-	// Update the Module's Phase
-	module.SetPhase(phase)
+	state := modulesv1alpha1.State(condition)
+	// Update the Module's State
+	module.SetState(state)
 	// Append a new condition, if applicable
-	appendCondition(module, string(phase), condition)
+	appendCondition(module, string(state), condition)
+
+	// update the components status in the VZ CR
+	if err := r.updateComponentStatus(ctx, string(state), convertModuleConditiontoCondition(condition)); err != nil {
+		return err
+	}
+
+	// Update the module status
 	return r.doStatusUpdate(ctx)
 }
 
@@ -79,4 +90,98 @@ func needsConditionUpdate(last, new *modulesv1alpha1.Condition) bool {
 		return true
 	}
 	return last.Type != new.Type && last.Message != new.Message
+}
+
+// updateComponentStatus updates the component status in the VZ CR
+func (r *Reconciler) updateComponentStatus(compContext spi.ComponentContext, message string, conditionType installv1alpha1.ConditionType) error {
+	t := time.Now().UTC()
+	condition := installv1alpha1.Condition{
+		Type:    conditionType,
+		Status:  corev1.ConditionTrue,
+		Message: message,
+		LastTransitionTime: fmt.Sprintf("%d-%02d-%02dT%02d:%02d:%02dZ",
+			t.Year(), t.Month(), t.Day(),
+			t.Hour(), t.Minute(), t.Second()),
+	}
+
+	componentName := compContext.GetComponent()
+	cr := compContext.ActualCR()
+	log := compContext.Log()
+
+	if cr.Status.Components == nil {
+		cr.Status.Components = make(map[string]*installv1alpha1.ComponentStatusDetails)
+	}
+	componentStatus := cr.Status.Components[componentName]
+	if componentStatus == nil {
+		componentStatus = &installv1alpha1.ComponentStatusDetails{
+			Name: componentName,
+		}
+		cr.Status.Components[componentName] = componentStatus
+	}
+
+	if conditionType == installv1alpha1.CondInstallComplete {
+		if componentStatus.ReconcilingGeneration > 0 {
+			componentStatus.LastReconciledGeneration = componentStatus.ReconcilingGeneration
+			componentStatus.ReconcilingGeneration = 0
+		} else {
+			componentStatus.LastReconciledGeneration = cr.Generation
+		}
+	} else {
+		if componentStatus.ReconcilingGeneration == 0 {
+			componentStatus.ReconcilingGeneration = cr.Generation
+		}
+	}
+	componentStatus.Conditions = appendConditionIfNecessary(log, componentStatus, condition)
+
+	// Set the state of resource
+	componentStatus.State = controllers.CheckCondtitionType(conditionType)
+
+	// Update the status
+	return r.updateVerrazzanoStatus(log, cr)
+}
+
+func appendConditionIfNecessary(log vzlog.VerrazzanoLogger, compStatus *installv1alpha1.ComponentStatusDetails, newCondition installv1alpha1.Condition) []installv1alpha1.Condition {
+	for _, existingCondition := range compStatus.Conditions {
+		if existingCondition.Type == newCondition.Type {
+			return compStatus.Conditions
+		}
+	}
+	log.Debugf("Adding %s resource newCondition: %v", compStatus.Name, newCondition.Type)
+	return append(compStatus.Conditions, newCondition)
+}
+
+func (r *Reconciler) updateVerrazzanoStatus(log vzlog.VerrazzanoLogger, vz *installv1alpha1.Verrazzano) error {
+	err := r.StatusWriter.Update(context.TODO(), vz)
+	if err == nil {
+		return nil
+	}
+	if ctrlerrors.IsUpdateConflict(err) {
+		log.Debugf("Requeuing to get a fresh copy of the Verrazzano resource since the current one is outdated.")
+	} else {
+		log.Errorf("Failed to update Verrazzano resource :v", err)
+	}
+	// Return error so that reconcile gets called again
+	return err
+}
+
+// convertModuleConditiontoCondition converts ModuleCondition types to ConditionType types
+// this will then get converted to CompStateType in updateComponentStatus by the CheckCondtitionType function
+// return nil if ModuleCondition is unknown
+func convertModuleConditiontoCondition(moduleCondion modulesv1alpha1.ModuleCondition) installv1alpha1.ConditionType {
+	switch moduleCondion {
+	// install ConditionTypes
+	case modulesv1alpha1.CondPreInstall:
+		return installv1alpha1.CondPreInstall
+	case modulesv1alpha1.CondInstallStarted:
+		return installv1alpha1.CondInstallStarted
+	case modulesv1alpha1.CondInstallComplete:
+		return installv1alpha1.CondInstallComplete
+	// upgrade ConditionTypes
+	case modulesv1alpha1.CondPreUpgrade, modulesv1alpha1.CondUpgradeStarted:
+		return installv1alpha1.CondUpgradeStarted
+	case modulesv1alpha1.CondUpgradeComplete:
+		return installv1alpha1.CondUpgradeComplete
+	}
+	// otherwise return UninstallStarted
+	return installv1alpha1.CondUninstallStarted
 }
