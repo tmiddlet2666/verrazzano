@@ -373,7 +373,9 @@ pipeline {
                         stage ('Deploy Coherence example application - multi cluster') {
                             when { expression { isMultiCluster() && isVZOperatorMinimumCompatibleVersion("v1.1.0") } }
                             steps {
-                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", "false", "false", "false")
+                                if (checkUpgradeFrom() == "true") {
+                                    runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", "false", "true", "true")
+                                }
                             }
                         }
                     }
@@ -515,6 +517,16 @@ pipeline {
         cleanup {
             deleteAll()
         }
+    }
+}
+
+def checkUpgradeFrom() {
+    script {
+        def undeploy = "true" // undeploy
+        if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3")) {
+            undeploy = "false" // deploy
+        }
+        return undeploy
     }
 }
 
