@@ -20,13 +20,13 @@ import (
 //UpdateStatus configures the Module's status based on the passed in state and then updates the Module on the cluster
 func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, condition modulesv1alpha1.ModuleCondition) error {
 	module := ctx.Module()
-	phase := modulesv1alpha1.Phase(condition)
-	// Update the Module's Phase
-	module.SetPhase(phase)
+	state := modulesv1alpha1.State(condition)
+	// Update the Module's State
+	module.SetState(state)
 	// Append a new condition, if applicable
-	appendCondition(module, string(phase), condition)
+	appendCondition(module, string(state), condition)
 
-	if err := r.updateComponentStatus(ctx, string(phase), convertModuleConditiontoCondition(condition)); err != nil {
+	if err := r.updateComponentStatus(ctx, string(state), convertModuleConditiontoCondition(condition)); err != nil {
 		return err
 	}
 	return r.doStatusUpdate(ctx)
