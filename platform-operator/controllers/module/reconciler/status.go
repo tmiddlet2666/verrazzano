@@ -26,9 +26,12 @@ func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, condition modulesv1a
 	// Append a new condition, if applicable
 	appendCondition(module, string(state), condition)
 
+	// update the components status in the VZ CR
 	if err := r.updateComponentStatus(ctx, string(state), convertModuleConditiontoCondition(condition)); err != nil {
 		return err
 	}
+
+	// Update the module status
 	return r.doStatusUpdate(ctx)
 }
 
