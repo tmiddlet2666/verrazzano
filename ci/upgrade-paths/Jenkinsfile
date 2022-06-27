@@ -437,6 +437,7 @@ pipeline {
                         stage ('Verify/Uninstall Example Coherence') {
                             steps {
                                 script {
+                                    echo "VERRAZZANO_DEV_VERSION :::: ${VERRAZZANO_DEV_VERSION}"
                                     def undeploy = "true" // undeploy
                                     if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3")) {
                                         undeploy = "false" // deploy
