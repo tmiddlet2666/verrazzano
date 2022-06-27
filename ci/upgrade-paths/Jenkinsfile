@@ -434,14 +434,13 @@ pipeline {
                                 runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/mchelidon-workload", "true", "false", "false")
                             }
                         }
-
-                        /* if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3")) {
-                            undeploy = "false" // deploy
-                        } */
                         stage ('Verify/Uninstall Example Coherence') {
                             steps {
                                 script {
                                     def undeploy = "true" // undeploy
+                                    if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3")) {
+                                        undeploy = "false" // deploy
+                                    }
                                     runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", "${undeploy}", "false", "false")
                                 }
                             }
