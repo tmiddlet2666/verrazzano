@@ -435,7 +435,7 @@ pipeline {
                             }
                         }
                         def undeploy = "true" // undeploy
-                        if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3") {
+                        if (!params.VERSION_FOR_INSTALL.startsWith("v1.3") && params.VERSION_FOR_UPGRADE.startsWith("v1.3")) {
                             undeploy = "false" // deploy
                         }
                         stage ('Verify/Uninstall Example Coherence') {
