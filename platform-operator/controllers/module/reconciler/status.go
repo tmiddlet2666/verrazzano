@@ -25,6 +25,10 @@ func (r *Reconciler) UpdateStatus(ctx spi.ComponentContext, condition modulesv1a
 	module.SetPhase(phase)
 	// Append a new condition, if applicable
 	appendCondition(module, string(phase), condition)
+
+	if err := r.updateComponentStatus(ctx, string(phase), convertModuleConditiontoCondition(condition)); err != nil {
+		return err
+	}
 	return r.doStatusUpdate(ctx)
 }
 
@@ -135,4 +139,26 @@ func (r *Reconciler) updateVerrazzanoStatus(log vzlog.VerrazzanoLogger, vz *inst
 	}
 	// Return error so that reconcile gets called again
 	return err
+}
+
+// convertModuleConditiontoCondition converts ModuleCondition types to ConditionType types
+// this will then get converted to CompStateType in updateComponentStatus by the CheckCondtitionType function
+// return nil if ModuleCondition is unknown
+func convertModuleConditiontoCondition(moduleCondion modulesv1alpha1.ModuleCondition) installv1alpha1.ConditionType {
+	switch moduleCondion {
+	// install ConditionTypes
+	case modulesv1alpha1.CondPreInstall:
+		return installv1alpha1.CondPreInstall
+	case modulesv1alpha1.CondInstallStarted:
+		return installv1alpha1.CondInstallStarted
+	case modulesv1alpha1.CondInstallComplete:
+		return installv1alpha1.CondInstallComplete
+	// upgrade ConditionTypes
+	case modulesv1alpha1.CondPreUpgrade, modulesv1alpha1.CondUpgradeStarted:
+		return installv1alpha1.CondUpgradeStarted
+	case modulesv1alpha1.CondUpgradeComplete:
+		return installv1alpha1.CondUpgradeComplete
+	}
+	// otherwise return UninstallStarted
+	return installv1alpha1.CondUninstallStarted
 }
