@@ -42,11 +42,52 @@ prometheusOperator:
       enabled: true
   tls:
     enabled: true
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
 kubelet:
   serviceMonitor:
     cAdvisorRelabelings:
       - sourceLabels: [__metrics_path__]
         targetLabel: metrics_path
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+coreDns:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+kubeApiServer:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+kubeControllerManager:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+kubeEtcd:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+kubeProxy:
+  serviceMonitor:
+    relabelings:
+      - action: replace
+        targetLabel: verrazzano_cluster
+        replacement: local
+kubeScheduler:
+  serviceMonitor:
+    relabelings:
       - action: replace
         targetLabel: verrazzano_cluster
         replacement: local
