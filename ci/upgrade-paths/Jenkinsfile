@@ -512,26 +512,24 @@ pipeline {
 }
 
 def checkUpgradeAcrossVer(version) {
-    println(isMinVersion(params.VERSION_FOR_INSTALL, "v1.3"))
+    //println(isMinVersion(params.VERSION_FOR_INSTALL, "v1.3"))
     //echo "compared running vz version with v1.3 : ${ans1}"
 
     //isMinVersion(params.VERSION_FOR_INSTALL, "v1.3")
     //echo "compared running vz version with v1.3 : ${ans2}"
 
-    println(isMinVersion(getVzUpgradeVer(), "v1.3"))
+    //println(isMinVersion(getVzUpgradeVer(), "v1.3"))
     //echo "compared running vz version with v1.3 : ${ans3}"
 
-    script {
-        def undeploy = "true" // undeploy
-        /* if (isMinVersion(params.VERSION_FOR_INSTALL, version) && !isMinVersion(getVzUpgradeVer(), version)) {
-            return "false"
-        }
-        return "true" */
+    if (isMinVersion(params.VERSION_FOR_INSTALL, version) && !isMinVersion(VERRAZZANO_DEV_VERSION, version)) {
+        return "false"
+    }
+    return "true"
+        /* def undeploy = "true" // undeploy
         if (!params.VERSION_FOR_INSTALL.startsWith("${version}") && params.VERSION_FOR_UPGRADE.startsWith("${version}")) {
             undeploy = "false" // deploy
         }
-        return undeploy
-    }
+        return undeploy */
 }
 
 def createOCIDNSZone() {
@@ -1842,19 +1840,15 @@ def isMultiCluster() {
 def isMinVersion(v1, v2) {
     v2 = v2 - 'v'
     v1 = v1 - 'v'
-    //echo " Version v1 : ${v1}, v2 : ${v2}"
-
     def v2Split  = v2.split('\\.')
     runningVZVersion = v2Split[0] + '.' + v2Split[1]
-    //echo "Verrazzano Version issss: ${runningVZVersion}"
-    //Splitting the string v1 to compare minor and patch versions.
     v1Split = v1.split('\\.')
     if(v2Split[0] > v1Split[0]){
-        return "true"
+        return true
     }else if(v2Split[0] == v1Split[0] && v1Split[1] < v2Split[1]){
-        return "true"
+        return true
     }
-    return "false"
+    return false
 }
 
 def isVZOperatorMinimumCompatibleVersion(minimumOperatorVersion){
