@@ -64,7 +64,7 @@ func getComponents() []spi.Component {
 			istio.NewComponent(),
 			nginx.NewComponent(),
 			certmanager.NewComponent(nil),
-			externaldns.NewComponent(),
+			externaldns.NewComponent(nil),
 			rancher.NewComponent(),
 			verrazzano.NewComponent(),
 			vmo.NewComponent(),

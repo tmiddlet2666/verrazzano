@@ -7,6 +7,7 @@ import (
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/externaldns"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
@@ -26,6 +27,31 @@ func ApplyComponentAsModule(client clipkg.Client, vz *vzapi.Verrazzano, componen
 
 // Adapter can be a part of the Component interface
 var componentAdapters = map[string]func(*vzapi.Verrazzano) *componentAdapter{
+	// external DNS adapter
+	externaldns.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
+		adapter := NewAdapter(vzconfig.IsExternalDNSEnabled(vz))
+		if adapter.IsEnabled {
+			adapter.Name = externaldns.ComponentName
+			adapter.Namespace = vz.Namespace
+			adapter.ChartNamespace = externaldns.ComponentNamespace
+			adapter.ChartPath = externaldns.ComponentName
+			dns := vz.Spec.Components.CertManager
+			if dns != nil {
+				adapter.InstallOverrides = dns.InstallOverrides
+				override := vzapi.Overrides{
+					ConfigMapRef: &corev1.ConfigMapKeySelector{
+						Key: valuesYaml,
+						LocalObjectReference: corev1.LocalObjectReference{
+							Name: externaldns.ConfigMapName,
+						},
+					},
+				}
+				adapter.InstallOverrides.ValueOverrides = append([]vzapi.Overrides{override}, dns.ValueOverrides...)
+			}
+		}
+		return adapter
+	},
+
 	// cert manager adapter
 	certmanager.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
 		adapter := NewAdapter(vzconfig.IsCertManagerEnabled(vz))

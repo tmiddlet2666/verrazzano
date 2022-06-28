@@ -5,13 +5,20 @@
 # NOTE: The image you're looking for isn't here. The external-dns image now comes from
 # the bill of materials file (verrazzano-bom.json).
 
-interval: "24h"
-logLevel: info
-registry: "txt"
-policy: sync
-provider: oci
-sources:
-  - service
-  - ingress
-  - istio-gateway
-triggerLoopOnEvent: true
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: external-dns-vz-config
+  namespace: default
+data:
+  values.yaml: |-
+    interval: "24h"
+    logLevel: info
+    registry: "txt"
+    policy: sync
+    provider: oci
+    sources:
+      - service
+      - ingress
+      - istio-gateway
+    triggerLoopOnEvent: true

@@ -13,6 +13,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/authproxy"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/externaldns"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
@@ -30,6 +31,7 @@ var delegates = map[string]func(*modulesv1alpha1.Module) modules2.DelegateReconc
 	weblogic.ComponentName:    weblogic.NewComponent,
 	authproxy.ComponentName:   authproxy.NewComponent,
 	certmanager.ComponentName: certmanager.NewComponent,
+	externaldns.ComponentName: externaldns.NewComponent,
 }
 
 type Reconciler struct {

@@ -5,10 +5,11 @@ package externaldns
 
 import (
 	"fmt"
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
-	"path/filepath"
-
-	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
@@ -20,6 +21,9 @@ const ComponentName = "external-dns"
 // ComponentNamespace is the namespace of the component
 const ComponentNamespace = "cert-manager"
 
+const overrideFile = "external-dns-values.yaml"
+const ConfigMapName = "external-dns-vz-config"
+
 type externalDNSComponent struct {
 	helm.HelmComponent
 }
@@ -27,26 +31,38 @@ type externalDNSComponent struct {
 // Verify that nginxComponent implements Component
 var _ spi.Component = externalDNSComponent{}
 
-func NewComponent() spi.Component {
-	return externalDNSComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			ChartDir:                filepath.Join(config.GetThirdPartyDir(), ComponentName),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			ImagePullSecretKeyname:  imagePullSecretHelmKey,
-			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "external-dns-values.yaml"),
-			AppendOverridesFunc:     AppendOverrides,
-			MinVerrazzanoVersion:    constants.VerrazzanoVersion1_0_0,
-			Dependencies:            []string{},
-			GetInstallOverridesFunc: GetOverrides,
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:               config.GetThirdPartyDir(),
+		ImagePullSecretKeyname: imagePullSecretHelmKey,
+		AppendOverridesFunc:    AppendOverrides,
+	}
+	helm.SetForModule(&h, module)
+
+	return &reconciler.Reconciler{
+		ModuleComponent: externalDNSComponent{
+			h,
 		},
 	}
 }
 
+func (e externalDNSComponent) PreUpgrade(compContext spi.ComponentContext) error {
+	return common.ApplyOverride(compContext, overrideFile)
+}
+
 func (e externalDNSComponent) PreInstall(compContext spi.ComponentContext) error {
 	return preInstall(compContext)
+}
+
+func (e externalDNSComponent) IsOperatorInstallSupported() bool {
+	return false
+}
+
+func (e externalDNSComponent) Name() string {
+	if e.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return e.HelmComponent.ReleaseName
 }
 
 func (e externalDNSComponent) IsReady(ctx spi.ComponentContext) bool {

@@ -10,6 +10,7 @@ import (
 	"github.com/verrazzano/verrazzano/pkg/helm"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/k8s/status"
 	"hash/fnv"
@@ -81,7 +82,7 @@ func preInstall(compContext spi.ComponentContext) error {
 	}); err != nil {
 		return compContext.Log().ErrorfNewErr("Failed to create or update the external DNS secret: %v", err)
 	}
-	return nil
+	return common.ApplyOverride(compContext, overrideFile)
 }
 
 func isExternalDNSReady(compContext spi.ComponentContext) bool {
