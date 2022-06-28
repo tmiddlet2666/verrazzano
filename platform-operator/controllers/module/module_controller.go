@@ -15,6 +15,7 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/coherence"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/externaldns"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/oam"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
 	"go.uber.org/zap"
@@ -32,6 +33,7 @@ var delegates = map[string]func(*modulesv1alpha1.Module) modules2.DelegateReconc
 	authproxy.ComponentName:   authproxy.NewComponent,
 	certmanager.ComponentName: certmanager.NewComponent,
 	externaldns.ComponentName: externaldns.NewComponent,
+	oam.ComponentName:         oam.NewComponent,
 }
 
 type Reconciler struct {

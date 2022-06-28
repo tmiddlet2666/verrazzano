@@ -59,7 +59,7 @@ func GetComponents() []spi.Component {
 func getComponents() []spi.Component {
 	if len(componentsRegistry) == 0 {
 		componentsRegistry = []spi.Component{
-			oam.NewComponent(),
+			oam.NewComponent(nil),
 			appoper.NewComponent(),
 			istio.NewComponent(),
 			nginx.NewComponent(),

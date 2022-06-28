@@ -5,10 +5,11 @@ package oam
 
 import (
 	"fmt"
-	"path/filepath"
-
+	modulesv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	vzapi "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/modules"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/module/reconciler"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/common"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/helm"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/spi"
@@ -29,21 +30,25 @@ type oamComponent struct {
 	helm.HelmComponent
 }
 
-func NewComponent() spi.Component {
-	return oamComponent{
-		helm.HelmComponent{
-			ReleaseName:             ComponentName,
-			JSONName:                ComponentJSONName,
-			ChartDir:                filepath.Join(config.GetThirdPartyDir(), ComponentName),
-			ChartNamespace:          ComponentNamespace,
-			IgnoreNamespaceOverride: true,
-			SupportsOperatorInstall: true,
-			ValuesFile:              filepath.Join(config.GetHelmOverridesDir(), "oam-kubernetes-runtime-values.yaml"),
-			ImagePullSecretKeyname:  secret.DefaultImagePullSecretKeyName,
-			Dependencies:            []string{},
-			GetInstallOverridesFunc: GetOverrides,
+func NewComponent(module *modulesv1alpha1.Module) modules.DelegateReconciler {
+	h := helm.HelmComponent{
+		ChartDir:                config.GetThirdPartyDir(),
+		ImagePullSecretKeyname:  secret.DefaultImagePullSecretKeyName,
+		SupportsOperatorInstall: false,
+	}
+	helm.SetForModule(&h, module)
+	return &reconciler.Reconciler{
+		ModuleComponent: oamComponent{
+			h,
 		},
 	}
+}
+
+func (c oamComponent) Name() string {
+	if c.HelmComponent.ReleaseName == "" {
+		return ComponentName
+	}
+	return c.HelmComponent.ReleaseName
 }
 
 // IsEnabled OAM-specific enabled check for installation

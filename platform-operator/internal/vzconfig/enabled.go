@@ -187,3 +187,10 @@ func IsApplicationOperatorEnabled(vz *vzapi.Verrazzano) bool {
 	}
 	return true
 }
+
+func IsOAMEnabled(vz *vzapi.Verrazzano) bool {
+	if vz != nil && vz.Spec.Components.OAM != nil && vz.Spec.Components.OAM.Enabled != nil {
+		return *vz.Spec.Components.OAM.Enabled
+	}
+	return true
+}

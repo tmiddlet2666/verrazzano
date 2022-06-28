@@ -9,9 +9,14 @@ import (
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/certmanager"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/externaldns"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/keycloak"
+	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/oam"
 	"github.com/verrazzano/verrazzano/platform-operator/controllers/verrazzano/component/weblogic"
+	"github.com/verrazzano/verrazzano/platform-operator/internal/config"
 	"github.com/verrazzano/verrazzano/platform-operator/internal/vzconfig"
 	corev1 "k8s.io/api/core/v1"
+	apiextensionsv1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"os"
+	"path"
 	clipkg "sigs.k8s.io/controller-runtime/pkg/client"
 )
 
@@ -25,8 +30,38 @@ func ApplyComponentAsModule(client clipkg.Client, vz *vzapi.Verrazzano, componen
 	return nil
 }
 
+func overridesData(fileName string) []byte {
+	data, err := os.ReadFile(path.Join(config.GetHelmOverridesDir(), fileName))
+	if err != nil {
+		panic(err)
+	}
+	return data
+}
+
 // Adapter can be a part of the Component interface
 var componentAdapters = map[string]func(*vzapi.Verrazzano) *componentAdapter{
+	// oam adapter
+	oam.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
+		adapter := NewAdapter(vzconfig.IsOAMEnabled(vz))
+		if adapter.IsEnabled {
+			adapter.Name = oam.ComponentName
+			adapter.Namespace = vz.Namespace
+			adapter.ChartNamespace = oam.ComponentNamespace
+			adapter.ChartPath = oam.ComponentName
+			oam := vz.Spec.Components.OAM
+			if oam != nil {
+				adapter.InstallOverrides = oam.InstallOverrides
+				override := vzapi.Overrides{
+					Values: &apiextensionsv1.JSON{
+						Raw: overridesData("oam-kubernetes-runtime-values.yaml"),
+					},
+				}
+				adapter.InstallOverrides.ValueOverrides = append([]vzapi.Overrides{override}, oam.ValueOverrides...)
+			}
+		}
+		return adapter
+	},
+
 	// external DNS adapter
 	externaldns.ComponentName: func(vz *vzapi.Verrazzano) *componentAdapter {
 		adapter := NewAdapter(vzconfig.IsExternalDNSEnabled(vz))
@@ -35,7 +70,7 @@ var componentAdapters = map[string]func(*vzapi.Verrazzano) *componentAdapter{
 			adapter.Namespace = vz.Namespace
 			adapter.ChartNamespace = externaldns.ComponentNamespace
 			adapter.ChartPath = externaldns.ComponentName
-			dns := vz.Spec.Components.CertManager
+			dns := vz.Spec.Components.DNS
 			if dns != nil {
 				adapter.InstallOverrides = dns.InstallOverrides
 				override := vzapi.Overrides{
