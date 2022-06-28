@@ -518,11 +518,15 @@ def checkUpgradeAcrossVer(version) {
     //isMinVersion(params.VERSION_FOR_INSTALL, "v1.3")
     //echo "compared running vz version with v1.3 : ${ans2}"
 
-    //isMinVersion(getVzUpgradeVer(), "v1.3")
+    println(isMinVersion(getVzUpgradeVer(), "v1.3"))
     //echo "compared running vz version with v1.3 : ${ans3}"
 
     script {
         def undeploy = "true" // undeploy
+        /* if (isMinVersion(params.VERSION_FOR_INSTALL, version) && !isMinVersion(getVzUpgradeVer(), version)) {
+            return "false"
+        }
+        return "true" */
         if (!params.VERSION_FOR_INSTALL.startsWith("${version}") && params.VERSION_FOR_UPGRADE.startsWith("${version}")) {
             undeploy = "false" // deploy
         }
