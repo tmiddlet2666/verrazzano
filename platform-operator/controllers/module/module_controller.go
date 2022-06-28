@@ -65,6 +65,11 @@ func (r *Reconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Resu
 		return clusters.NewRequeueWithDelay(), err
 	}
 
+	if len(verrazzanos.Items) < 1 {
+		zap.S().Errorf("No Verrazzanos present on cluster")
+		return clusters.NewRequeueWithDelay(), nil
+	}
+
 	// Get the module for the request
 	module := &modulesv1alpha1.Module{}
 	if err := r.Get(ctx, req.NamespacedName, module); err != nil {
