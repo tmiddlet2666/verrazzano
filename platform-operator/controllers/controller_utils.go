@@ -7,6 +7,7 @@ import (
 	"context"
 	"fmt"
 	"github.com/verrazzano/verrazzano/pkg/log/vzlog"
+	"github.com/verrazzano/verrazzano/platform-operator/apis/modules/v1alpha1"
 	"github.com/verrazzano/verrazzano/platform-operator/constants"
 
 	installv1alpha1 "github.com/verrazzano/verrazzano/platform-operator/apis/verrazzano/v1alpha1"
@@ -49,6 +50,22 @@ func VzContainsResource(ctx spi.ComponentContext, objectName string, objectKind 
 	return "", false
 }
 
+// ModuleContainsResource checks to see if the resource is listed in the Verrazzano
+func ModuleContainsResource(ctx spi.ComponentContext, objectName string, objectKind string) (v1alpha1.Module, error) {
+	var module v1alpha1.Module
+	var moduleList v1alpha1.ModuleList
+	err := ctx.Client().List(context.TODO(), &moduleList)
+	if err != nil {
+		return module, err
+	}
+	for _, m := range moduleList.Items {
+		if componentContainsResource(m.Spec.Installer.HelmChart.InstallOverrides.ValueOverrides, objectName, objectKind) {
+			return m, nil
+		}
+	}
+	return module, nil
+}
+
 // componentContainsResource looks through the component override list see if the resource is listed
 func componentContainsResource(Overrides []installv1alpha1.Overrides, objectName string, objectKind string) bool {
 	for _, override := range Overrides {
@@ -81,6 +98,12 @@ func UpdateVerrazzanoForInstallOverrides(c client.Client, componentCtx spi.Compo
 		return nil
 	}
 	return err
+}
+
+// UpdateModuleForInstallOverrides mutates the module status to force the module to reconcile
+func UpdateModuleForInstallOverrides(c client.Client, module v1alpha1.Module) error {
+	module.Status.ObservedGeneration = module.Generation + 1
+	return c.Status().Update(context.TODO(), &module)
 }
 
 // ProcDeletedOverride checks Verrazzano CR for an override resource that has now been deleted,
