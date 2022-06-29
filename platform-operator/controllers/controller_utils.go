@@ -101,8 +101,8 @@ func UpdateVerrazzanoForInstallOverrides(c client.Client, componentCtx spi.Compo
 }
 
 // UpdateModuleForInstallOverrides mutates the module status to force the module to reconcile
-func UpdateModuleForInstallOverrides(c client.Client, componentCtx spi.ComponentContext, module v1alpha1.Module) error {
-	module.Status.ObservedGeneration = 0
+func UpdateModuleForInstallOverrides(c client.Client, module v1alpha1.Module) error {
+	module.Status.ObservedGeneration = module.Generation + 1
 	return c.Status().Update(context.TODO(), &module)
 }
 

@@ -141,7 +141,7 @@ func (r *VerrazzanoConfigMapsReconciler) reconcileInstallOverrideConfigMap(ctx c
 			return newRequeueWithDelay(), err
 		}
 		if module.Name != "" {
-			err = controllers.UpdateModuleForInstallOverrides(componentCtx.Client(), componentCtx, module)
+			err = controllers.UpdateModuleForInstallOverrides(componentCtx.Client(), module)
 			if err != nil {
 				r.log.Errorf("Error updating the status for module %s: %v", module.Name, err)
 				return newRequeueWithDelay(), err
