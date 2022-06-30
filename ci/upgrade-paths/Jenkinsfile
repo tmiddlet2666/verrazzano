@@ -367,14 +367,35 @@ pipeline {
                         stage ('Deploy Coherence example application - single cluster') {
                             when { expression { isVZOperatorMinimumCompatibleVersion("v1.1.0") } }
                             steps {
-                                runGinkgoVerify('workloads/coherence', "${TEST_DUMP_ROOT}/coherence-workload", "false", "false", "true", "hello-coherence-sc")
+                                runGinkgoVerify('workloads/coherence', "${TEST_DUMP_ROOT}/coherence-workload", "false", "true", "true", "hello-coherence-sc")
                             }
                         }
                         stage ('Deploy Coherence example application - multi cluster') {
-                            when { expression { isMultiCluster() && isVZOperatorMinimumCompatibleVersion("v1.1.0") && checkUpgradeAcrossVer("v1.3") == "true"} }
+                            when { expression { isMultiCluster() && isVZOperatorMinimumCompatibleVersion("v1.1.0") && checkUpgradeBelowVer("v1.3.0") } }
                             steps {
                                 runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", "false", "true", "true")
                             }
+                        }
+                    }
+                }
+                stage("upgrade-platform-operator") {
+                    steps {
+                        upgradePlatformOperator()
+                    }
+                }
+                stage("Verify Upgrade Required") {
+                    steps {
+                        runGinkgoRandomizeSerial('upgrade/pre-upgrade/verify-upgrade-required')
+                    }
+                }
+
+                stage("upgrade-verrazzano") {
+                    steps {
+                        upgradeVerrazzano()
+                    }
+                    post {
+                        always {
+                            performDescribeVerrazzanoResource()
                         }
                     }
                 }
@@ -384,6 +405,100 @@ pipeline {
                     script {
                         dumpK8sCluster("${WORKSPACE}/multicluster-install-cluster-dump")
                     }
+                }
+            }
+        }
+
+        stage('Verify Upgrade') {
+            // Rerun some stages to verify the upgrade
+            parallel {
+                stage ('Verify Register') {
+                    when { expression { isMultiCluster() } }
+                    steps {
+                        verifyRegisterManagedClusters(false)
+                    }
+                }
+                stage ('Verify Managed Cluster Permissions') {
+                    when { expression { isMultiCluster() } }
+                    steps {
+                        verifyManagedClusterPermissions()
+                    }
+                }
+                stage ('Verify Metrics') {
+                    steps {
+                        runGinkgoRandomizeParallel('metrics/syscomponents')
+                    }
+                }
+            }
+            post {
+                failure {
+                    script {
+                        dumpK8sCluster("${WORKSPACE}/multicluster-verify-upgrade-cluster-dump")
+                    }
+                }
+            }
+        }
+        stage ('Verify Install') {
+            parallel {
+                stage('verify-install') {
+                    steps {
+                        runGinkgoRandomizeSerial('verify-install')
+                    }
+                }
+
+                stage ('multicluster/verify-install') {
+                    when { expression { isMultiCluster() } }
+                    steps {
+                        runGinkgoRandomizeParallel('multicluster/verify-install')
+                    }
+                }
+            }
+        }
+
+        // Run Verify Registry
+        stage('Verify Registry') {
+            steps {
+                catchError(buildResult: 'FAILURE', stageResult: 'FAILURE') {
+                    script {
+                        runMulticlusterVerifyRegistry()
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
+                    junit testResults: '**/*test-result.xml', allowEmptyResults: true
+                }
+            }
+        }
+
+        stage ('Verify Infra') {
+            parallel {
+                stage('verify-scripts') {
+                    steps {
+                        runGinkgoRandomizeParallel('scripts')
+                    }
+                }
+                stage('verify-infra restapi') {
+                    steps {
+                        runGinkgoRandomizeParallel('verify-infra/restapi')
+                    }
+                }
+                stage('verify-infra oam') {
+                    steps {
+                        runGinkgoRandomizeParallel('verify-infra/oam')
+                    }
+                }
+                stage('verify-infra vmi') {
+                    steps {
+                        runGinkgoRandomizeParallel('verify-infra/vmi')
+                    }
+                }
+            }
+            post {
+                always {
+                    archiveArtifacts artifacts: '**/coverage.html,**/logs/*', allowEmptyArchive: true
+                    junit testResults: '**/*test-result.xml', allowEmptyResults: true
                 }
             }
         }
@@ -434,9 +549,14 @@ pipeline {
                                 runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/mchelidon-workload", "true", "false", "false")
                             }
                         }
-                        stage ('Verify/Uninstall Example Coherence') {
+                        stage ('Verify/Uninstall Example Coherence - single cluster') {
                             steps {
-                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", checkUpgradeAcrossVer("v1.3"), "false", "false")
+                                runGinkgoVerify('workloads/coherence', "${TEST_DUMP_ROOT}/coherence-workload", "true", "false", "false", "hello-coherence-sc")
+                            }
+                        }
+                        stage ('Verify/Uninstall Example Coherence - multi cluster') {
+                            steps {
+                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", checkUpgradeBelowVer("v1.3.0"), "false", "false")
                             }
                         }
                     }
@@ -511,11 +631,31 @@ pipeline {
     }
 }
 
-def checkUpgradeAcrossVer(version) {
-    if (isMinVersion(params.VERSION_FOR_INSTALL, version) && !isMinVersion(VERRAZZANO_DEV_VERSION, version)) {
-        return "false"
+// false : version parameter falls between vz to(current) and from(to be upgraded) version
+// true  : vz to(current) and from(to be upgraded) version falls below version parameter
+def checkUpgradeBelowVer(version) {
+    if(VERSION_FOR_UPGRADE != "NONE" && VERSION_FOR_UPGRADE != "current_branch"){
+        VERRAZZANO_DEV_VERSION = VERSION_FOR_UPGRADE
     }
-    return "true"
+    return !(isMinVersion(params.VERSION_FOR_INSTALL, version) && !isMinVersion(VERRAZZANO_DEV_VERSION, version))
+}
+
+// compares the two vz versions v1 & v2
+// true : v1 < v2, false : v1 >= v2
+def isMinVersion(v1, v2) {
+    v2 = v2 - 'v'
+    v1 = v1 - 'v'
+    def v2Split  = v2.split('\\.')
+    runningVZVersion = v2Split[0] + '.' + v2Split[1] + '.' + v2Split[2].charAt(0)
+    v1Split = v1.split('\\.')
+    if(v1Split[0] < v2Split[0]){
+        return true
+    }else if(v1Split[0] == v2Split[0] && v1Split[1] < v2Split[1]){
+        return true
+    }else if(v1Split[0] == v2Split[0] && v1Split[1] == v2Split[1] && v1Split[2].charAt(0) < v2Split[2].charAt(0)){
+        return true
+    }
+    return false
 }
 
 def createOCIDNSZone() {
@@ -1804,20 +1944,6 @@ def setVZConfigForInstallation(){
 
 def isMultiCluster() {
     return params.TOTAL_CLUSTERS.toInteger() >= 2
-}
-
-def isMinVersion(v1, v2) {
-    v2 = v2 - 'v'
-    v1 = v1 - 'v'
-    def v2Split  = v2.split('\\.')
-    runningVZVersion = v2Split[0] + '.' + v2Split[1]
-    v1Split = v1.split('\\.')
-    if(v2Split[0] > v1Split[0]){
-        return true
-    }else if(v2Split[0] == v1Split[0] && v1Split[1] < v2Split[1]){
-        return true
-    }
-    return false
 }
 
 def isVZOperatorMinimumCompatibleVersion(minimumOperatorVersion){
