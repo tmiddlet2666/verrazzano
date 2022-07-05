@@ -61,10 +61,7 @@ pipeline {
                 defaultValue: '',
                 description: 'The branch to check out after cloning the console repository.',
                 trim: true)
-        string (name: 'PROMOTE_COMMIT',
-                defaultValue '',
-                description 'This will skip all testing and promote the specified FULL commit value as the last stable commit for the branch. For master and release-* branches only do this if you have permission to do so',
-                trim: true )
+        booleanParam (description: 'This will FORCE a stable commit update without running any tests. This is normally ONLY used for debugging, it can be used to force a manual value into object storage', name: 'FORCE_STABLE_COMMIT_UPDATE', defaultValue: false)
     }
 
     environment {
@@ -141,8 +138,8 @@ pipeline {
         stage ('Kick off parallel tests') {
             when {
                 allOf {
-                    not { buildingTag();
-                    expression {params.PROMOTE_COMMIT == ''};
+                    not { buildingTag() }
+                    expression {params.FORCE_STABLE_COMMIT_UPDATE == false}
                 }
             }
             parallel {
@@ -372,6 +369,10 @@ def storePipelineArtifacts() {
         // as well
         sh """
             echo "git-commit=${env.GIT_COMMIT}" > $WORKSPACE/last-stable-commit.txt
+            if [ "true" == "${params.FORCE_STABLE_COMMIT_UPDATE}" ]; then
+                echo "forced-by-job=${env.BUILD_URL}" >> $WORKSPACE/last-stable-commit.txt
+            fi
+            cat $WORKSPACE/last-stable-commit.txt
             oci --region us-phoenix-1 os object put --force --namespace ${OCI_OS_NAMESPACE} -bn ${OCI_OS_BUCKET} --name ${CLEAN_BRANCH_NAME}/last-stable-commit.txt --file $WORKSPACE/last-stable-commit.txt
         """
     }

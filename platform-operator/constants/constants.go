@@ -122,8 +122,11 @@ const VerrazzanoVersion1_0_0 = "1.0.0"
 // VerrazzanoVersion1_1_0 is the Verrazzano version string for 1.1.0
 const VerrazzanoVersion1_1_0 = "1.1.0"
 
-// VerrazzanoVersion1_3_0 is the Verrazzano version string for 1.2.0
+// VerrazzanoVersion1_3_0 is the Verrazzano version string for 1.3.0
 const VerrazzanoVersion1_3_0 = "1.3.0"
+
+// VerrazzanoVersion1_4_0 is the Verrazzano version string for 1.4.0
+const VerrazzanoVersion1_4_0 = "1.4.0"
 
 // UpgradeRetryVersion is the restart version annotation field
 const UpgradeRetryVersion = "verrazzano.io/upgrade-retry-version"
@@ -134,13 +137,16 @@ const ObservedUpgradeRetryVersion = "verrazzano.io/observed-upgrade-retry-versio
 // NGINXControllerServiceName is the nginx ingress controller name
 const NGINXControllerServiceName = "ingress-controller-ingress-nginx-controller"
 
-// InstallOperation is the install string
+// InstallOperation indicates that an install operation being executed by a component
 const InstallOperation = "install"
 
-// UpgradeOperation is the install string
+// UpgradeOperation indicates that an upgrade operation being executed by a component
 const UpgradeOperation = "upgrade"
 
-// InitializeOperation is the initialize string
+// UninstallOperation indicates that an uninstall operation being executed by a component
+const UninstallOperation = "uninstall"
+
+// InitializeOperation indicates that an initialize operation being executed by a component
 const InitializeOperation = "initialize"
 
 // ReconcileLoopRequeueInterval is the interval before reconcile gets called again.
@@ -191,3 +197,21 @@ const VerrazzanoComponentLabelKey = "verrazzano-component"
 
 // IstioAppLabel is the label used for Verrazzano Istio components
 const IstioAppLabel = "verrazzano.io/istio"
+
+// OldReclaimPolicyLabel is the name of the label used to store the old reclaim policy of a persistent volume before it is migrated
+const OldReclaimPolicyLabel = "verrazzano.io/old-reclaim-policy"
+
+// StorageForLabel is the name of the label applied to a persistent volume so storage can be selected by a pod
+const StorageForLabel = "verrazzano.io/storage-for"
+
+// PrometheusStorageLabelValue is the label value for Prometheus storage
+const PrometheusStorageLabelValue = "prometheus"
+
+// VMISystemPrometheusVolumeClaim is the name of the VMO-managed Prometheus persistent volume claim
+const VMISystemPrometheusVolumeClaim = "vmi-system-prometheus"
+
+// VeleroNameSpace indicates the namespace to be used for velero installation
+const VeleroNameSpace = "velero"
+
+// ResticDaemonSetName indicates name of the daemonset that is installed as part of component velero
+const ResticDaemonSetName = "restic"

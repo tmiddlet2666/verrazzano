@@ -23,9 +23,10 @@ const (
 	TimeoutFlag     = "timeout"
 	TimeoutFlagHelp = "Limits the amount of time a command will wait to complete"
 
-	VersionFlag        = "version"
-	VersionFlagDefault = "latest"
-	VersionFlagHelp    = "The version of Verrazzano to install or upgrade"
+	VersionFlag            = "version"
+	VersionFlagDefault     = "latest"
+	VersionFlagInstallHelp = "The version of Verrazzano to install"
+	VersionFlagUpgradeHelp = "The version of Verrazzano to upgrade to"
 
 	DryRunFlag = "dry-run"
 
@@ -41,7 +42,7 @@ const (
 
 	FilenameFlag          = "filename"
 	FilenameFlagShorthand = "f"
-	FilenameFlagHelp      = "Path to file containing Verrazzano custom resource.  This flag can be specified multiple times to overlay multiple files."
+	FilenameFlagHelp      = "Path to file containing Verrazzano custom resource.  This flag can be specified multiple times to overlay multiple files.  Specifying \"-\" as the filename accepts input from stdin."
 )
 
 // VerrazzanoReleaseList - API for getting the list of Verrazzano releases
@@ -49,3 +50,28 @@ const VerrazzanoReleaseList = "https://api.github.com/repos/verrazzano/verrazzan
 
 // VerrazzanoOperatorURL - URL for downloading Verrazzano releases
 const VerrazzanoOperatorURL = "https://github.com/verrazzano/verrazzano/releases/download/%s/operator.yaml"
+
+const VerrazzanoPlatformOperator = "verrazzano-platform-operator"
+
+const VerrazzanoUninstall = "verrazzano-uninstall"
+
+const VerrazzanoInstall = "verrazzano-install"
+
+const VerrazzanoManagedCluster = "verrazzano-managed-cluster"
+
+const VerrazzanoPlatformOperatorWait = 1
+
+// Analysis tool flags
+const (
+	DirectoryFlagName  = "capture-dir"
+	DirectoryFlagValue = ""
+	DirectoryFlagUsage = "Directory holding the captured data [Required]"
+
+	ReportFileFlagName  = "report-file"
+	ReportFileFlagValue = ""
+	ReportFileFlagUsage = "Name of report output file. (default stdout)"
+
+	ReportFormatFlagName  = "report-format"
+	ReportFormatFlagValue = "simple"
+	ReportFormatFlagUsage = "The format of the report output. Valid output format is \"simple\""
+)

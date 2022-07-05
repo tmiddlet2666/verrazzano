@@ -262,6 +262,9 @@ const (
 	// CompStateUninstalling is the state when an uninstall is in progress
 	CompStateUninstalling CompStateType = "Uninstalling"
 
+	// CompStateUninstalled is the state when a component has been uninstalled
+	CompStateUninstalled CompStateType = "Uninstalled"
+
 	// CompStateUpgrading is the state when an upgrade is in progress
 	CompStateUpgrading CompStateType = "Upgrading"
 
@@ -373,6 +376,10 @@ type ComponentSpec struct {
 	// WebLogicOperator configuration
 	// +optional
 	WebLogicOperator *WebLogicOperatorComponent `json:"weblogicOperator,omitempty"`
+
+	// Velero configuration
+	// +optional
+	Velero *VeleroComponent `json:"velero,omitempty"`
 
 	// Verrazzano configuration
 	// +optional
@@ -617,7 +624,8 @@ func (c *IstioComponent) IsInjectionEnabled() bool {
 // JaegerOperatorComponent specifies the Jaeger Operator configuration
 type JaegerOperatorComponent struct {
 	// +optional
-	Enabled *bool `json:"enabled,omitempty"`
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // KeycloakComponent specifies the Keycloak configuration
@@ -673,11 +681,19 @@ type FluentdComponent struct {
 
 	// Configuration for integration with OCI (Oracle Cloud Infrastructure) Logging Service
 	// +optional
-	OCI *OciLoggingConfiguration `json:"oci,omitempty"`
+	OCI              *OciLoggingConfiguration `json:"oci,omitempty"`
+	InstallOverrides `json:",inline"`
 }
 
 // WebLogicOperatorComponent specifies the WebLogic Operator configuration
 type WebLogicOperatorComponent struct {
+	// +optional
+	Enabled          *bool `json:"enabled,omitempty"`
+	InstallOverrides `json:",inline"`
+}
+
+// VeleroComponent  specifies the Velero configuration
+type VeleroComponent struct {
 	// +optional
 	Enabled          *bool `json:"enabled,omitempty"`
 	InstallOverrides `json:",inline"`

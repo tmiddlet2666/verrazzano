@@ -11,16 +11,14 @@ SCRIPT_DIR=$(cd $(dirname "$0"); pwd -P)
 declare -a releaseArtifacts=("operator.yaml"
                              "k8s-dump-cluster.sh"
                              "k8s-dump-cluster.sh.sha256"
-                             "verrazzano-analysis-darwin-amd64.tar.gz"
-                             "verrazzano-analysis-darwin-amd64.tar.gz.sha256"
-                             "verrazzano-analysis-linux-amd64.tar.gz"
-                             "verrazzano-analysis-linux-amd64.tar.gz.sha256"
                              "vz-darwin-amd64.tar.gz"
                              "vz-darwin-amd64.tar.gz.sha256"
                              "vz-darwin-arm64.tar.gz"
                              "vz-darwin-arm64.tar.gz.sha256"
                              "vz-linux-amd64.tar.gz"
-                             "vz-linux-amd64.tar.gz.sha256")
+                             "vz-linux-amd64.tar.gz.sha256"
+                             "vz-linux-arm64.tar.gz"
+                             "vz-linux-arm64.tar.gz.sha256")
 
 # Validates whether OCI CLI is installed
 function validate_oci_cli() {
@@ -37,4 +35,3 @@ function validate_github_cli() {
       return 1
     }
 }
-
