@@ -219,8 +219,9 @@
           "name": "verrazzano-monitoring-operator",
           "images": [
             {
+              "registry": "iad.ocir.io/odsbuilddev/sandboxes/robert.donat",
               "image": "verrazzano-monitoring-operator",
-              "tag": "1.4.0-20220707165907-46d90dc",
+              "tag": "1.4.0-20220719204315-f3285dd",
               "helmFullImageKey": "monitoringOperator.imageName",
               "helmTagKey": "monitoringOperator.imageVersion"
             },
