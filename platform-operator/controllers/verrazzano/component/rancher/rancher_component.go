@@ -268,12 +268,16 @@ func (r rancherComponent) PostInstall(ctx spi.ComponentContext) error {
 	if err := removeBootstrapSecretIfExists(log, c); err != nil {
 		return log.ErrorfThrottledNewErr("Failed removing Rancher bootstrap secret: %s", err.Error())
 	}
+	log.Info("Activating OCI Driver as part of PostInstall")
 	if err := rest.ActivateOCIDriver(); err != nil {
 		return log.ErrorfThrottledNewErr("Failed activating OCI Driver: %s", err.Error())
 	}
+	log.Info("Activated OCI Driver as part of PostInstall")
+	log.Info("Activating OKE Driver as part of PostInstall")
 	if err := rest.ActivateOKEDriver(); err != nil {
 		return log.ErrorfThrottledNewErr("Failed activating OKE Driver: %s", err.Error())
 	}
+	log.Info("Activated OKE Driver as part of PostInstall")
 	if err := r.HelmComponent.PostInstall(ctx); err != nil {
 		return log.ErrorfThrottledNewErr("Failed helm component post install: %s", err.Error())
 	}
