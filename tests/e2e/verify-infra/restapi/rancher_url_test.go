@@ -25,6 +25,7 @@ var _ = t.Describe("rancher", Label("f:infra-lcm",
 	const (
 		waitTimeout     = 5 * time.Minute
 		pollingInterval = 5 * time.Second
+		waitTimeoutHigh = 7 * time.Minute
 	)
 
 	t.Context("url test to", func() {
@@ -131,13 +132,13 @@ var _ = t.Describe("rancher", Label("f:infra-lcm",
 					start = time.Now()
 					Eventually(func() (string, error) {
 						return getFieldOrErrorFromRancherAPIResponse(rancherURL, "v3/nodeDrivers/oci", token, httpClient, "state")
-					}, waitTimeout, pollingInterval).Should(Equal("active"), "rancher oci driver not activated")
+					}, waitTimeoutHigh, pollingInterval).Should(Equal("active"), "rancher oci driver not activated")
 					metrics.Emit(t.Metrics.With("get_oci_driver_state_elapsed_time", time.Since(start).Milliseconds()))
 
 					start = time.Now()
 					Eventually(func() (string, error) {
 						return getFieldOrErrorFromRancherAPIResponse(rancherURL, "v3/kontainerDrivers/oraclecontainerengine", token, httpClient, "state")
-					}, waitTimeout, pollingInterval).Should(Equal("active"), "rancher oke driver not activated")
+					}, waitTimeoutHigh, pollingInterval).Should(Equal("active"), "rancher oke driver not activated")
 					metrics.Emit(t.Metrics.With("get_oke_driver_state_elapsed_time", time.Since(start).Milliseconds()))
 				}
 			}
