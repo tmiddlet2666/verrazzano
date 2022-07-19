@@ -173,7 +173,7 @@ func getFieldOrErrorFromRancherAPIResponse(rancherURL string, apiPath string, to
 	if err != nil {
 		return "", err
 	}
-
+	t.Logs.Info(string(body))
 	return httputil.ExtractFieldFromResponseBodyOrReturnError(string(body), field, fmt.Sprintf("unable to find %s in rancher api response for %s", field, apiPath))
 }
 
