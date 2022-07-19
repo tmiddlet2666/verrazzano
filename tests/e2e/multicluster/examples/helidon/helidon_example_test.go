@@ -25,8 +25,8 @@ const (
 	waitTimeout          = 5 * time.Minute
 	consistentlyDuration = 1 * time.Minute
 	sourceDir            = "hello-helidon"
-	testNamespace        = "hello-helidon"
-	testProjectName      = "hello-helidon"
+	testNamespace        = "hello-helidon-mc"
+	testProjectName      = "hello-helidon-project"
 	testApp              = "hello-helidon"
 	skipVerifications    = "Skip Verifications"
 	skipDeletions        = "Skip Deletions"
