@@ -376,7 +376,12 @@ pipeline {
                                 runGinkgoRandomizeSerialAdmin('upgrade/pre-upgrade/metricsbinding', "${TEST_DUMP_ROOT}/metricsbinding")
                             }
                         }
-                        stage ('Deploy Helidon example application - single cluster') {
+                        stage ('Deploy Helidon example application - multi cluster') {
+                            steps {
+                                deploySampleApp()
+                            }
+                        }
+                        /*stage ('Deploy Helidon example application - single cluster') {
                             when { expression { isVZOperatorMinimumCompatibleVersion("v1.1.0") } }
                             steps {
                                 runGinkgoVerify('examples/helidon', "${TEST_DUMP_ROOT}/helidon-workload", "false", "true", "true", "hello-helidon-sc")
@@ -399,7 +404,7 @@ pipeline {
                             steps {
                                 runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", "false", "true", "true")
                             }
-                        }
+                        }*/
                         stage('Prometheus pre-upgrade') {
                             steps {
                                 runGinkgoVerifyParallel('Prometheus pre-upgrade', 'metrics/deploymetrics', "${TEST_DUMP_ROOT}/prompreupgrade", "false", "true", "true", "deploymetrics")
@@ -590,12 +595,12 @@ pipeline {
                     parallel {
                         stage ('Examples Helidon') {
                             steps {
-                                runGinkgoVerifyManaged("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/mchelidon-workload", "true", "false", "false")
+                                runGinkgo("multicluster/examples/helidon", "${TEST_DUMP_ROOT}/helidon-workload")
                             }
                         }
-                        stage ('Verify/Uninstall Example Coherence') {
+                        stage ('Undeploy Sample Application') {
                             steps {
-                                runGinkgoVerifyManaged("multicluster/workloads/mccoherence", "${TEST_DUMP_ROOT}/mccoherence-workload", checkUpgradeBelowVer("v1.3.0"), "false", "false")
+                                undeploySampleApp()
                             }
                         }
                     }
@@ -722,6 +727,8 @@ def createTestOCIConfigSecret() {
         }
     }
 }
+
+
 
 def deleteAll() {
     // Delete clusters as the very first thing in cleanup to reclaim cluster resources especially OKE resources
@@ -954,6 +961,25 @@ def installVerrazzanoOnCluster(count, verrazzanoConfig) {
     }
 }
 
+def deploySampleApp() {
+    modifyHelloHelidonApp("${SAMPLE_APP_NAMESPACE}", "${SAMPLE_APP_PROJECT}")
+    sh """
+      export KUBECONFIG=$ADMIN_KUBECONFIG
+      kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/verrazzano-project.yaml
+      kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
+      kubectl apply -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
+    """
+}
+
+def undeploySampleApp() {
+    sh """
+      export KUBECONFIG=$ADMIN_KUBECONFIG
+      kubectl delete -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/mc-hello-helidon-app.yaml
+      kubectl delete -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/hello-helidon-comp.yaml
+      kubectl delete -f ${GO_REPO_PATH}/verrazzano/examples/multicluster/hello-helidon-sample/verrazzano-project.yaml
+    """
+}
+
 def getPlatformOperatorForRelease(){
     script {
         //Removing v from the upgrade version for error handling.
@@ -1166,6 +1192,22 @@ def verifyManagedClusterPermissions(count) {
                 ginkgo -v -stream --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" multicluster/verify-permissions/...
             """
         }
+    }
+}
+
+// Run ginkgo test suites
+def runGinkgo(testSuitePath, clusterDumpDirectory) {
+    script {
+        int clusterCount = params.TOTAL_CLUSTERS.toInteger()
+        sh """
+            export MANAGED_CLUSTER_NAME="managed1"
+            export MANAGED_KUBECONFIG="${KUBECONFIG_DIR}/2/kube_config"
+            export CLUSTER_COUNT=$clusterCount
+            cd ${GO_REPO_PATH}/verrazzano/tests/e2e
+            export DUMP_KUBECONFIG="${KUBECONFIG_DIR}/2/kube_config"
+            export DUMP_DIRECTORY="${clusterDumpDirectory}"
+            ginkgo -v --keep-going --no-color ${GINKGO_REPORT_ARGS} -tags="${params.TAGGED_TESTS}" --focus-file="${params.INCLUDED_TESTS}" --skip-file="${params.EXCLUDED_TESTS}" ${testSuitePath}/...
+        """
     }
 }
 
