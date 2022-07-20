@@ -64,7 +64,7 @@ func deployFooApplication() {
 	t.Logs.Info("Create namespace")
 	Eventually(func() (*v1.Namespace, error) {
 		return pkg.CreateNamespace(fooNamespace, map[string]string{"verrazzano-managed": "true", "istio-injection": istioInjection})
-	}, waitTimeout, shortPollingInterval).ShouldNot(BeNil())
+	}, waitTimeout, shortPollingInterval).Should(BeNil())
 
 	t.Logs.Info("Create AuthPolicy App resources")
 	Eventually(func() error {
@@ -94,7 +94,7 @@ func deployBarApplication() {
 	t.Logs.Info("Create namespace")
 	Eventually(func() (*v1.Namespace, error) {
 		return pkg.CreateNamespace(barNamespace, map[string]string{"verrazzano-managed": "true", "istio-injection": istioInjection})
-	}, waitTimeout, shortPollingInterval).ShouldNot(BeNil())
+	}, waitTimeout, shortPollingInterval).Should(BeNil())
 
 	t.Logs.Info("Create AuthPolicy App resources")
 	Eventually(func() error {
@@ -124,7 +124,7 @@ func deployNoIstioApplication() {
 	t.Logs.Info("Create namespace")
 	Eventually(func() (*v1.Namespace, error) {
 		return pkg.CreateNamespace(noIstioNamespace, map[string]string{"verrazzano-managed": "true"})
-	}, waitTimeout, shortPollingInterval).ShouldNot(BeNil())
+	}, waitTimeout, shortPollingInterval).Should(BeNil())
 
 	t.Logs.Info("Create AuthPolicy App resources")
 	Eventually(func() error {
@@ -154,7 +154,7 @@ func undeployFooApplication() {
 	t.Logs.Info("Delete application")
 	Eventually(func() error {
 		return pkg.DeleteResourceFromFile("testdata/istio/authz/foo/istio-securitytest-app.yaml")
-	}, waitTimeout, shortPollingInterval).ShouldNot(HaveOccurred())
+	}, waitTimeout, shortPollingInterval).Should(HaveOccurred())
 
 	t.Logs.Info("Delete components")
 	Eventually(func() error {
