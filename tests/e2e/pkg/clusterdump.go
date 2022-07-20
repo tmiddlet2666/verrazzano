@@ -8,8 +8,6 @@ import (
 	"fmt"
 	"github.com/onsi/ginkgo/v2"
 	"github.com/verrazzano/verrazzano/pkg/test"
-	"io/ioutil"
-	"log"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -104,34 +102,34 @@ func ExecuteBugReport(vzCommand string, kubeconfig string, bugReportDirectory st
 	filename := fmt.Sprintf("%s/%s", bugReportDirectory, "bug-report.tar.gz")
 	fmt.Printf("Starting bug report command: KUBECONFIG=%s; %s --report-file %s\n", kubeconfig, vzCommand, filename)
 	os.MkdirAll(bugReportDirectory, 0755)
-	swd, err := os.Getwd()
-	if err != nil {
-		fmt.Println("error while getting current working directory")
-	}
-	fmt.Println("Current working directory is: ", swd)
-	os.Chdir("../../../tools/vz/")
-
-	cwd, err := os.Getwd()
-	if err != nil {
-		fmt.Println("error while getting current working directory")
-	}
-	fmt.Println("Current working directory changed to: ", cwd)
-
-	files, err := ioutil.ReadDir(".")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, file := range files {
-		fmt.Println("Files under current directory are: ", file.Name(), file.IsDir())
-	}
-
-	files2, err := ioutil.ReadDir(".")
-	if err != nil {
-		log.Fatal(err)
-	}
-	for _, file := range files2 {
-		fmt.Println("Files under the ../../../tools/vz/ directory are ", file.Name(), file.IsDir())
-	}
+	//swd, err := os.Getwd()
+	//if err != nil {
+	//	fmt.Println("error while getting current working directory")
+	//}
+	//fmt.Println("Current working directory is: ", swd)
+	//os.Chdir("../../../tools/vz/")
+	//
+	//cwd, err := os.Getwd()
+	//if err != nil {
+	//	fmt.Println("error while getting current working directory")
+	//}
+	//fmt.Println("Current working directory changed to: ", cwd)
+	//
+	//files, err := ioutil.ReadDir(".")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//for _, file := range files {
+	//	fmt.Println("Files under current directory are: ", file.Name(), file.IsDir())
+	//}
+	//
+	//files2, err := ioutil.ReadDir("../../../tools/vz/")
+	//if err != nil {
+	//	log.Fatal(err)
+	//}
+	//for _, file := range files2 {
+	//	fmt.Println("Files under the ../../../tools/vz/ directory are ", file.Name(), file.IsDir())
+	//}
 
 	cmd = exec.Command(vzCommand, "bug-report", "--report-file", filename)
 	fmt.Printf("past the exec.Command \n")
@@ -151,17 +149,17 @@ func ExecuteBugReport(vzCommand string, kubeconfig string, bugReportDirectory st
 	}
 	fmt.Printf("command succeeded without error \n")
 
-	errChdir := os.Chdir(swd)
-	if errChdir != nil {
-		fmt.Println("Error changing back to saved working directory: ", swd, cwd)
-		return errChdir
-	}
-
-	cwd, err = os.Getwd()
-	if err != nil {
-		fmt.Println("error while getting current working directory")
-	}
-	fmt.Println("Current working directory after the command execution is: ", cwd)
+	//errChdir := os.Chdir(swd)
+	//if errChdir != nil {
+	//	fmt.Println("Error changing back to saved working directory: ", swd, cwd)
+	//	return errChdir
+	//}
+	//
+	//cwd, err = os.Getwd()
+	//if err != nil {
+	//	fmt.Println("error while getting current working directory")
+	//}
+	//fmt.Println("Current working directory after the command execution is: ", cwd)
 
 	return nil
 }
