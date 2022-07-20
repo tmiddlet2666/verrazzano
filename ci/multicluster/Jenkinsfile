@@ -512,13 +512,6 @@ pipeline {
 
         stage('Acceptance Tests') {
             stages {
-                stage ('Example apps') {
-                    steps {
-                        script {
-                            parallel verifyExamples()
-                        }
-                    }
-                }
                 stage ('Console') {
                     steps {
                         runConsoleTests()
@@ -527,11 +520,6 @@ pipeline {
                         always {
                             sh "${GO_REPO_PATH}/verrazzano/ci/scripts/save_console_test_artifacts.sh"
                         }
-                    }
-                }
-                stage ('Undeploy Sample Application') {
-                    steps {
-                        undeploySampleApp()
                     }
                 }
                 stage ('Multi-cluster Verify Api') {
