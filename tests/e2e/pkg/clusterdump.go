@@ -108,14 +108,14 @@ func ExecuteBugReport(vzCommand string, kubeconfig string, bugReportDirectory st
 	if err != nil {
 		fmt.Println("error while getting current working directory")
 	}
-	fmt.Printf("Current working directory is: ", swd)
+	fmt.Println("Current working directory is: ", swd)
 	os.Chdir("../../../tools/vz/")
 
 	cwd, err := os.Getwd()
 	if err != nil {
 		fmt.Println("error while getting current working directory")
 	}
-	fmt.Printf("Current working directory changed to: ", cwd)
+	fmt.Println("Current working directory changed to: ", cwd)
 
 	files, err := ioutil.ReadDir(".")
 	if err != nil {
@@ -161,7 +161,7 @@ func ExecuteBugReport(vzCommand string, kubeconfig string, bugReportDirectory st
 	if err != nil {
 		fmt.Println("error while getting current working directory")
 	}
-	fmt.Printf("Current working directory after the command execution is: ", cwd)
+	fmt.Println("Current working directory after the command execution is: ", cwd)
 
 	return nil
 }
