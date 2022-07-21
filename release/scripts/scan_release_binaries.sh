@@ -40,8 +40,10 @@ BRANCH=${1}
 WORK_DIR=${2:-$SCRIPT_DIR}
 RELEASE_VERSION=${3}
 SCAN_REPORT_DIR="$WORK_DIR/scan_report_dir"
+RELEASE_BUNDLE_EXTRACT_DIR="$WORK_DIR/release_bundle_extract_dir"
 SCANNER_HOME="$WORK_DIR/scanner_home"
 SCAN_REPORT="$SCAN_REPORT_DIR/scan_report.out"
+SCAN_REPORT_EXTRACTED="$SCAN_REPORT_DIR/scan_report_extracted.out"
 RELEASE_TAR_BALL="verrazzano_$RELEASE_VERSION.zip"
 
 function downaload_release_tarball() {
@@ -51,6 +53,8 @@ function downaload_release_tarball() {
         -bn ${OBJECT_STORAGE_BUCKET} \
         --name "${BRANCH}/${RELEASE_TAR_BALL}" \
         --file "${RELEASE_TAR_BALL}"
+  mkdir -p $RELEASE_BUNDLE_EXTRACT_DIR
+  cp $WORK_DIR/$RELEASE_TAR_BALL $RELEASE_BUNDLE_EXTRACT_DIR/$RELEASE_TAR_BALL
 }
 
 function install_scanner() {
@@ -122,9 +126,66 @@ function scan_release_binaries() {
   fi
 }
 
+function scan_extracted_release_binary() {
+  # Extract the release bundle and scan verrazzano_periodic.tar
+  cd $RELEASE_BUNDLE_EXTRACT_DIR
+  unzip $RELEASE_TAR_BALL
+  rm $RELEASE_TAR_BALL
+  gunzip verrazzano_periodic.tar.gz
+
+  cd $SCANNER_HOME
+
+  # The scan takes more than 50 minutes, the option --SUMMARY prints each and every file from all the layers, which is removed.
+  # Also --REPORT option prints the output of the scan in the console, which is removed and redirected to a file
+  echo "Starting the scan of $RELEASE_BUNDLE_EXTRACT_DIR/verrazzano_periodic.tar, it might take a longer duration. The output of the scan is being written to $SCAN_REPORT_EXTRACTED ..."
+  ./uvscan $RELEASE_BUNDLE_EXTRACT_DIR/verrazzano_periodic.tar --RPTALL --RECURSIVE --CLEAN --UNZIP --VERBOSE --SUB --SUMMARY --PROGRAM --RPTOBJECTS >> $SCAN_REPORT_EXTRACTED 2>&1
+
+  # Extract only the last 25 lines from the scan report and create a file, which will be used for the validation
+  local scan_extracted_summary="${SCAN_REPORT_DIR}/scan_extracted_summary.out"
+  if [ -e "${scan_extracted_summary}" ]; then
+    rm -f $scan_extracted_summary
+  fi
+  tail -25 ${SCAN_REPORT_EXTRACTED} > ${scan_extracted_summary}
+
+  # The following set of lines from the summary in the scan report is used here for validation.
+  declare -a expectedLines=("Total files:...................     1"
+                            "Clean:.........................     1"
+                            "Not Scanned:...................     0"
+                            "Possibly Infected:.............     0"
+                            "Objects Possibly Infected:.....     0"
+                            "Cleaned:.......................     0"
+                            "Deleted:.......................     0")
+
+  array_count=${#expectedLines[@]}
+  echo "Count of expected lines: ${array_count}"
+  result_count=0
+
+  # Read the file scan_summary.out line by line and increment the counter when the line matches one of the expected lines defined above.
+  while IFS= read -r line
+  do
+    for i in "${expectedLines[@]}"
+    do
+      case $line in
+        *${i}*)
+          result_count=$(($result_count+1))
+          ;;
+        *)
+      esac
+    done
+  done < "$scan_extracted_summary"
+  echo "Count of expected lines in the scan summary: ${result_count}"
+  if [ "$result_count" == "$array_count" ];then
+    echo "Found all the expected lines in the summary of the scan report."
+    return 0
+  else
+    echo "One or more expected lines are not found in the summary of the scan report, please check the complete report $SCAN_REPORT"
+    return 1
+  fi
+}
+
 mkdir -p $SCANNER_HOME
-validate_oci_cli || exit 1
 downaload_release_tarball || exit 1
 install_scanner || exit 1
 update_virus_definition || exit 1
 scan_release_binaries || exit 1
+scan_extracted_release_binary || exit 1
