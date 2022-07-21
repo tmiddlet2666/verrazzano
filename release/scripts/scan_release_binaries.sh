@@ -48,12 +48,15 @@ RELEASE_TAR_BALL="verrazzano_$RELEASE_VERSION.zip"
 
 function downaload_release_tarball() {
   cd $WORK_DIR
+  echo "Downloading release bundle ${BRANCH}/${RELEASE_TAR_BALL} ..."
   oci --region ${OCI_REGION} os object get \
         --namespace ${OBJECT_STORAGE_NS} \
         -bn ${OBJECT_STORAGE_BUCKET} \
         --name "${BRANCH}/${RELEASE_TAR_BALL}" \
         --file "${RELEASE_TAR_BALL}"
   mkdir -p $RELEASE_BUNDLE_EXTRACT_DIR
+
+  echo "Copying release bundle to $RELEASE_BUNDLE_EXTRACT_DIR/$RELEASE_TAR_BALL ..."
   cp $WORK_DIR/$RELEASE_TAR_BALL $RELEASE_BUNDLE_EXTRACT_DIR/$RELEASE_TAR_BALL
 }
 
@@ -129,9 +132,19 @@ function scan_release_binaries() {
 function scan_extracted_release_binary() {
   # Extract the release bundle and scan verrazzano_periodic.tar
   cd $RELEASE_BUNDLE_EXTRACT_DIR
+
+  echo "Present working directory"
+  pwd
+
+  echo "Unzip $RELEASE_TAR_BALL ..."
   unzip $RELEASE_TAR_BALL
+
+  echo "Remove $RELEASE_TAR_BALL ..."
   rm $RELEASE_TAR_BALL
   gunzip verrazzano_periodic.tar.gz
+
+  echo "List contents of $RELEASE_BUNDLE_EXTRACT_DIR ..."
+  ls
 
   cd $SCANNER_HOME
 
