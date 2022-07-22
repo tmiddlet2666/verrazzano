@@ -166,6 +166,52 @@ spec:
 {{- end }}
 
 ---
+#
+# Istio AuthorizationPolicy for VPO
+#
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: verrazzano-platform-operator
+  namespace: verrazzano-install
+spec:
+  selector:
+    matchLabels:
+      app: verrazzano-platform-operator
+  action: ALLOW
+  rules:
+    # verrazzano-platform-operator:15090, 9100 <- prometheus
+    - from:
+        - source:
+            namespaces: ["{{ .Values.prometheus.namespace }}"]
+            principals: ["cluster.local/ns/{{ .Values.prometheus.namespace }}/sa/{{ .Values.prometheus.serviceAccount }}"]
+      to:
+        - operation:
+            ports: ["15090", "9100"]
+---
+#
+# Istio AuthorizationPolicy for VAO
+#
+apiVersion: security.istio.io/v1beta1
+kind: AuthorizationPolicy
+metadata:
+  name: verrazzano-application-operator
+  namespace: verrazzano-system
+spec:
+  selector:
+    matchLabels:
+      app: verrazzano-application-operator
+  action: ALLOW
+  rules:
+    # verrazzano-application-operator:15090, 9100 <- prometheus
+    - from:
+        - source:
+            namespaces: ["{{ .Values.prometheus.namespace }}"]
+            principals: ["cluster.local/ns/{{ .Values.prometheus.namespace }}/sa/{{ .Values.prometheus.serviceAccount }}"]
+      to:
+        - operation:
+            ports: ["15090", "9100"]
+---
 {{- if .Values.kibana.enabled }}
 #
 # Istio AuthorizationPolicy for vmi-system-kibana
