@@ -159,3 +159,60 @@ spec:
         - port: 14250
           protocol: TCP
 {{- end }}
+---
+# Network policy for VAO
+# Ingress: allow access from Prometheus to scrape VAO metrics on port 9100
+# Egress: allow all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: verrazzano-application-operator
+  namespace: verrazzano-system
+spec:
+  podSelector:
+    matchLabels:
+      app: verrazzano-application-operator
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              verrazzano.io/namespace: verrazzano-monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - port: 15090
+          protocol: TCP
+        - port: 9100
+          protocol: TCP
+
+---
+# Network policy for VPO
+# Ingress: allow access from Prometheus to scrape VPO metrics on port 9100
+# Egress: allow all
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: verrazzano-platform-operator
+  namespace: verrazzano-install
+spec:
+  podSelector:
+    matchLabels:
+      app: verrazzano-platform-operator
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              verrazzano.io/namespace: verrazzano-monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - port: 15090
+          protocol: TCP
+        - port: 9100
+          protocol: TCP
