@@ -73,6 +73,7 @@ func newNetworkPolicy(apiServerIP string, apiServerPort int32) *netv1.NetworkPol
 	dnsPort := intstr.FromInt(53)
 	httpsPort := intstr.FromInt(443)
 	webhookPort := intstr.FromInt(9443)
+	metricsPort := intstr.FromInt(9100)
 	apiPort := intstr.FromInt(int(apiServerPort))
 	apiServerCidr := apiServerIP + "/32"
 
@@ -170,6 +171,29 @@ func newNetworkPolicy(apiServerIP string, apiServerPort int32) *netv1.NetworkPol
 						{
 							Protocol: &tcpProtocol,
 							Port:     &webhookPort,
+						},
+					},
+				},
+				{
+					From: []netv1.NetworkPolicyPeer {
+						{
+							NamespaceSelector: &metav1.LabelSelector{
+								MatchLabels: map[string]string{
+									verrazzanoNamespaceLabel : constants.VerrazzanoMonitoringNamespace,
+								},
+							},
+							PodSelector: &metav1.LabelSelector{
+								MatchLabels: map[string]string{
+									appInstanceLabel: constants.PrometheusStorageLabelValue,
+								},
+							},
+						},
+					},
+					// ingress from Prometheus server for scraping metrics
+					Ports: []netv1.NetworkPolicyPort{
+						{
+							Protocol: &tcpProtocol,
+							Port:     &metricsPort,
 						},
 					},
 				},
