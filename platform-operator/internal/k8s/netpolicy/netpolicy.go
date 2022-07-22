@@ -175,11 +175,11 @@ func newNetworkPolicy(apiServerIP string, apiServerPort int32) *netv1.NetworkPol
 					},
 				},
 				{
-					From: []netv1.NetworkPolicyPeer {
+					From: []netv1.NetworkPolicyPeer{
 						{
 							NamespaceSelector: &metav1.LabelSelector{
 								MatchLabels: map[string]string{
-									verrazzanoNamespaceLabel : constants.VerrazzanoMonitoringNamespace,
+									verrazzanoNamespaceLabel: constants.VerrazzanoMonitoringNamespace,
 								},
 							},
 							PodSelector: &metav1.LabelSelector{
