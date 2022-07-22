@@ -59,7 +59,6 @@ var kubeConfig = os.Getenv("KUBECONFIG")
 // will be initialized in BeforeSuite so that any log messages during init are available
 var clusterNameMetricsLabel = ""
 var isMinVersion110 bool
-var isMinVersion140 bool
 
 var adminKubeConfig string
 var isManagedClusterProfile bool
@@ -110,10 +109,6 @@ var _ = t.BeforeSuite(func() {
 	if err != nil {
 		Fail(err.Error())
 	}
-	isMinVersion140, err = pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
-	if err != nil {
-		Fail(err.Error())
-	}
 })
 
 var _ = t.AfterSuite(func() {})
@@ -139,46 +134,82 @@ var _ = t.Describe("Prometheus Metrics", Label("f:observability.monitoring.prom"
 			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 		t.It("Verify VPO summary counter metrics can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vpo_reconcile_duration_count", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vpo_reconcile_duration_count", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 		t.It("Verify VPO summary sum times can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vpo_reconcile_duration_sum", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vpo_reconcile_duration_sum", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 		t.It("Verify VPO counter metrics can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vpo_reconcile_counter", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vpo_reconcile_counter", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 		t.It("Verify VPO error counter metrics can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vpo_error_reconcile_counter", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vpo_error_reconcile_counter", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 		t.It("Verify VPO install metrics can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vz_nginx_install_duration_seconds", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vz_nginx_install_duration_seconds", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
-		t.It("Verify VPO upgrade metrics can be queried from Prometheus", func() {
-			if isMinVersion140 {
-				Eventually(func() bool {
-					return metricsContainLabels("vz_nginx_upgrade_duration_seconds", map[string]string{})
-				}, longWaitTimeout, longPollingInterval).Should(BeTrue())
-			}
+		t.It("Verify VPO upgrade counter metrics can be queried from Prometheus", func() {
+			Eventually(func() bool {
+				minVer14, err := pkg.IsVerrazzanoMinVersion("1.4.0", adminKubeConfig)
+				if err != nil {
+					pkg.Log(pkg.Error, fmt.Sprintf(failedVerifyVersionMsg, err))
+					return false
+				}
+				if !minVer14 {
+					return true
+				}
+				return metricsContainLabels("vz_nginx_upgrade_duration_seconds", map[string]string{})
+			}, longWaitTimeout, longPollingInterval).Should(BeTrue())
 		})
 
 		t.It("Verify sample Node Exporter metrics can be queried from Prometheus", func() {
