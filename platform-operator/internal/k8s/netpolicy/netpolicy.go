@@ -30,6 +30,7 @@ const (
 	kubeDNSPodName           = "kube-dns"
 	nginxControllerPodName   = "ingress-controller"
 	appInstanceLabel         = "app.kubernetes.io/instance"
+	appNameLabel             = "app.kubernetes.io/name"
 	apiServerEndpointName    = "kubernetes"
 )
 
@@ -184,7 +185,7 @@ func newNetworkPolicy(apiServerIP string, apiServerPort int32) *netv1.NetworkPol
 							},
 							PodSelector: &metav1.LabelSelector{
 								MatchLabels: map[string]string{
-									appInstanceLabel: constants.PrometheusStorageLabelValue,
+									appNameLabel: constants.PrometheusStorageLabelValue,
 								},
 							},
 						},
